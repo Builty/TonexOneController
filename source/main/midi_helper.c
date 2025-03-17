@@ -161,11 +161,14 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
 
         // 9 tuner
         
-        //case 10: 
-        //{
+        case 10: 
+        {
             //tap tempo
-            //to do
-        //} break;
+            control_trigger_tap_tempo();
+            
+            // no param change needed
+            return ESP_OK;
+        } break;
 
         // 11: expression pedal
         // 12: preset on/off
@@ -863,7 +866,7 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
 *****************************************************************************/
 uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
 {
-    uint16_t param = 0xFFFF;
+    uint16_t param = TONEX_UNKNOWN;
 
     // Midi mapping done to match the big Tonex pedal
     switch (change_num)
@@ -914,8 +917,8 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
         
         case 10: 
         {
-            //tap tempo
-            //to do
+            //tap tempo, not a param
+            param = TONEX_TAP_TEMPO;
         } break;
 
         // 11: expression pedal

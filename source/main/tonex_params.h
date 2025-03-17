@@ -188,6 +188,10 @@ enum TonexParameters
     TONEX_PARAM_LAST
 };
 
+// special cases for handling effect switches that use Midi but don't change a parameter
+#define TONEX_TAP_TEMPO         0xFFFE
+#define TONEX_UNKNOWN           0xFFFF
+
 esp_err_t tonex_params_init(void);
 esp_err_t tonex_params_get_locked_access(tTonexParameter** param_ptr);
 esp_err_t tonex_params_release_locked_access(void);

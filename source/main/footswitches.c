@@ -542,6 +542,7 @@ static void footswitch_handle_efects(tFootswitchHandler* handler)
 {
     uint8_t loop; 
     uint8_t value;
+    uint8_t param_handled;
     uint16_t param;
     float new_value;
     tTonexParameter* param_ptr;
@@ -564,60 +565,68 @@ static void footswitch_handle_efects(tFootswitchHandler* handler)
                         {
                             // get the parameter that corresponds to this Midi control change value
                             param = midi_helper_get_param_for_change_num(FootswitchControl.ExternalFootswitchEffectHandler[loop].config.CC);
+                            param_handled = 0;
 
-                            if (param != 0xFFFF)
+                            if (param != TONEX_UNKNOWN)
                             {
-                                // get the current value of the parameter
-                                if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
+                                // check if its a param or other special case
+                                if (param < TONEX_PARAM_LAST)
                                 {
-                                    // is the parameter a boolean type?
-                                    if ((param_ptr[param].Min == 0) && (param_ptr[param].Max == 1))
+                                    // get the current value of the parameter
+                                    if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
                                     {
-                                        // toggle the current value
-                                        if (param_ptr[param].Value == 0)
+                                        // is the parameter a boolean type?
+                                        if ((param_ptr[param].Min == 0) && (param_ptr[param].Max == 1))
                                         {
-                                            new_value = 1;
-                                        }
-                                        else
-                                        {
-                                            new_value = 0;
+                                            // toggle the current value
+                                            if (param_ptr[param].Value == 0)
+                                            {
+                                                new_value = 1;
+                                            }
+                                            else
+                                            {
+                                                new_value = 0;
+                                            }
+
+                                            ESP_LOGI(TAG, "Footswitch Param change to %d", (int)new_value);
+
+                                            // change the parameter
+                                            usb_modify_parameter(param, new_value);   
+                                            
+                                            param_handled = 1;
                                         }
 
                                         tonex_params_release_locked_access();
+                                    }
+                                }
+                                     
+                                if (!param_handled)
+                                {
+                                    tonex_params_release_locked_access();
 
-                                        ESP_LOGI(TAG, "Footswitch Param change to %d", (int)new_value);
-
-                                        // change the parameter
-                                        usb_modify_parameter(param, new_value);                                        
+                                    // not a boolean, use local toggle variable
+                                    if (FootswitchControl.ExternalFootswitchEffectHandler[loop].toggle == 0)
+                                    {
+                                        // send first value
+                                        midi_helper_adjust_param_via_midi(FootswitchControl.ExternalFootswitchEffectHandler[loop].config.CC, FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Value_1);
+    
+                                        ESP_LOGI(TAG, "Footswitch Param change (1). Switch: %d. CC:%d. Value:%d", (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Switch, 
+                                                                                                                (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.CC, 
+                                                                                                                (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Value_1);
                                     }
                                     else
                                     {
-                                        tonex_params_release_locked_access();
-
-                                        // not a boolean, use local toggle variable
-                                        if (FootswitchControl.ExternalFootswitchEffectHandler[loop].toggle == 0)
-                                        {
-                                            // send first value
-                                            midi_helper_adjust_param_via_midi(FootswitchControl.ExternalFootswitchEffectHandler[loop].config.CC, FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Value_1);
-        
-                                            ESP_LOGI(TAG, "Footswitch Param change (1). Switch: %d. CC:%d. Value:%d", (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Switch, 
-                                                                                                                    (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.CC, 
-                                                                                                                    (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Value_1);
-                                        }
-                                        else
-                                        {
-                                            // send second value
-                                            midi_helper_adjust_param_via_midi(FootswitchControl.ExternalFootswitchEffectHandler[loop].config.CC, FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Value_2);
-        
-                                            ESP_LOGI(TAG, "Footswitch Param change (2). Switch: %d. CC:%d. Value:%d", (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Switch, 
-                                                                                                                    (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.CC, 
-                                                                                                                    (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Value_2);
-                                        }
-        
-                                        // flip toggle state
-                                        FootswitchControl.ExternalFootswitchEffectHandler[loop].toggle = !FootswitchControl.ExternalFootswitchEffectHandler[loop].toggle;
-                                    }                                                                        
-                                }                                
+                                        // send second value
+                                        midi_helper_adjust_param_via_midi(FootswitchControl.ExternalFootswitchEffectHandler[loop].config.CC, FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Value_2);
+    
+                                        ESP_LOGI(TAG, "Footswitch Param change (2). Switch: %d. CC:%d. Value:%d", (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Switch, 
+                                                                                                                (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.CC, 
+                                                                                                                (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Value_2);
+                                    }
+    
+                                    // flip toggle state
+                                    FootswitchControl.ExternalFootswitchEffectHandler[loop].toggle = !FootswitchControl.ExternalFootswitchEffectHandler[loop].toggle;
+                                }   
                             }
 
                             // save the switch index

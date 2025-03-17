@@ -19,6 +19,7 @@ limitations under the License.
 #include <inttypes.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -62,7 +63,8 @@ enum CommandEvents
     EVENT_SAVE_USER_DATA,
     EVENT_SET_USER_TEXT,
     EVENT_SET_CONFIG_ITEM_INT,
-    EVENT_SET_CONFIG_ITEM_STRING
+    EVENT_SET_CONFIG_ITEM_STRING,
+    EVENT_TRIGGER_TAP_TEMPO
 };
 
 typedef struct
@@ -119,6 +121,13 @@ typedef struct __attribute__ ((packed))
     tExternalFootswitchEffectConfig ExternalFootswitchEffectConfig[MAX_EXTERNAL_EFFECT_FOOTSWITCHES];
 } tConfigData;
 
+typedef struct
+{
+    uint32_t LastTime;
+    float BPM;
+} tTapTempo;
+
+
 typedef struct 
 {
     uint32_t PresetIndex;                        // 0-based index
@@ -127,6 +136,7 @@ typedef struct
     uint32_t BTStatus;
     uint32_t WiFiStatus;
     tConfigData ConfigData;
+    tTapTempo TapTempo;
 } tControlData;
 
 static const char *TAG = "app_control";
@@ -491,6 +501,50 @@ static uint8_t process_control_command(tControlMessage* message)
                 } break;
             }
         } break;
+
+        case EVENT_TRIGGER_TAP_TEMPO:
+        {
+            uint32_t current_time = xTaskGetTickCount(); 
+            uint32_t delta = current_time - ControlData.TapTempo.LastTime;
+            float bpm;
+
+            // debug
+            //ESP_LOGI(TAG, "Tap Tempo %d %d", (int)current_time, (int)delta);
+
+            // BPM can range from 60 to 240 bpm: 1 second maximum to 250 msec minimum between beats
+            
+            // check time since last tap
+            if (delta > 1000)
+            {
+                // less than 60 bpm, save time and wait for another trigger
+                ControlData.TapTempo.LastTime = current_time;
+            }
+            else 
+            {
+                if (delta < 250)
+                {
+                    // clamp at maximum bpm
+                    delta = 250;                       
+                }
+
+                // calculate bpm (60,000 is 60 seconds in msec)
+                bpm = 60000.0f / (float)delta;
+
+                // check if the bpm has changed significantly from its current value
+                if (fabs(bpm - ControlData.TapTempo.BPM) > 25.0f)
+                {
+                    ControlData.TapTempo.BPM = bpm;
+
+                    ESP_LOGI(TAG, "Tap Tempo BPM = %d", (int)bpm);
+
+                    // update pedal
+                    //to do
+                }
+
+                // save time for next trigger
+                ControlData.TapTempo.LastTime = current_time;
+            }
+        } break;
     }
 
     return 1;
@@ -723,6 +777,28 @@ void control_set_amp_skin_index(uint32_t status)
     if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
     {
         ESP_LOGE(TAG, "control_set_amp_skin_index queue send failed!");            
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      none
+* NOTES:       none
+****************************************************************************/
+void control_trigger_tap_tempo(void)
+{
+    tControlMessage message;
+
+    ESP_LOGI(TAG, "control_trigger_tap_tempo");
+
+    message.Event = EVENT_TRIGGER_TAP_TEMPO;
+
+    // send to queue
+    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    {
+        ESP_LOGE(TAG, "control_trigger_tap_tempo queue send failed!");            
     }
 }
 
