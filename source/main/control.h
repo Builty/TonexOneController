@@ -166,13 +166,18 @@ enum FootswitchLayouts
 {
     FOOTSWITCH_LAYOUT_1X3,                // 1 row of 3 switches, bank via 1+2 and 2+3
     FOOTSWITCH_LAYOUT_1X4,                // 1 row of 4 switches, bank via 1+2 and 3+4
-    FOOTSWITCH_LAYOUT_1X5,                // 1 row of 5 switches, bank via 1+2 and 4+5
+    FOOTSWITCH_LAYOUT_1X5A,               // 1 row of 5 switches, bank via 1+2 and 4+5
+    FOOTSWITCH_LAYOUT_1X5B,               // 1 row of 5 switches, bank via last 2
+    FOOTSWITCH_LAYOUT_1X6A,               // 1 row of 6 switches, bank via 1+2 and 5+6  
+    FOOTSWITCH_LAYOUT_1X6B,               // 1 row of 6 switches, bank via last 2
+    FOOTSWITCH_LAYOUT_1X7A,               // 1 row of 7 switches, bank via 1+2 and 6+7  
+    FOOTSWITCH_LAYOUT_1X7B,               // 1 row of 7 switches, bank via last 2
     FOOTSWITCH_LAYOUT_2X3,                // 2 row2 of 3 switches, bank via 1+2 and 2+3
     FOOTSWITCH_LAYOUT_2X4,                // 2 rows of 4 switches, bank via 1+2 and 3+4
     FOOTSWITCH_LAYOUT_2X5A,               // 2 rows of 5 switches, bank via 1+2 and 4+5
-    FOOTSWITCH_LAYOUT_2X5B,               // 2 rows of 5 switches, bank via 5 and 10
+    FOOTSWITCH_LAYOUT_2X5B,               // 2 rows of 5 switches, bank via last 2
     FOOTSWITCH_LAYOUT_2X6A,               // 2 rows of 6 switches, bank via 1+2 and 5+6
-    FOOTSWITCH_LAYOUT_2X6B,               // 2 rows of 6 switches, bank via 6 and 12
+    FOOTSWITCH_LAYOUT_2X6B,               // 2 rows of 6 switches, bank via last 2
     FOOTSWITCH_LAYOUT_LAST
 };
 
@@ -222,6 +227,7 @@ void control_set_skin_previous(void);
 void control_save_user_data(uint8_t reboot);
 void control_sync_preset_details(uint16_t index, char* name);
 void control_set_user_text(char* text);
+void control_trigger_tap_tempo(void);
 
 // config API
 void control_set_default_config(void);

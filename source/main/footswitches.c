@@ -109,7 +109,12 @@ static const __attribute__((unused)) tFootswitchLayoutEntry FootswitchLayouts[FO
     //tot  ppb  bdm     bum
     {3,    3,   0x0003,   0x0006},            // FOOTSWITCH_LAYOUT_1X3
     {4,    4,   0x0003,   0x000C},            // FOOTSWITCH_LAYOUT_1X4
-    {5,    5,   0x0003,   0x0018},            // FOOTSWITCH_LAYOUT_1X5
+    {5,    5,   0x0003,   0x0018},            // FOOTSWITCH_LAYOUT_1X5A
+    {5,    3,   0x0008,   0x0010},            // FOOTSWITCH_LAYOUT_1X5B
+    {6,    6,   0x0003,   0x0030},            // FOOTSWITCH_LAYOUT_1X6A
+    {6,    4,   0x0010,   0x0020},            // FOOTSWITCH_LAYOUT_1X6B
+    {7,    7,   0x0003,   0x0060},            // FOOTSWITCH_LAYOUT_1X7A
+    {7,    5,   0x0020,   0x0040},            // FOOTSWITCH_LAYOUT_1X7B
     {6,    6,   0x0003,   0x0006},            // FOOTSWITCH_LAYOUT_2X3
     {8,    8,   0x0003,   0x000C},            // FOOTSWITCH_LAYOUT_2X4
     {10,   10,  0x0003,   0x0018},            // FOOTSWITCH_LAYOUT_2X5A

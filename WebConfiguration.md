@@ -74,7 +74,12 @@ This controls how preset switching will be handled. Options are as follows.
 |----------- | ------------ | ----------- | ----------- | ------------- | ------------------------- |
 | 1x3  | 3   |  1 row of 3 |  2 + 3 | 1 + 2 | |
 | 1x4  | 4   |  1 row of 4 |  3 + 4 | 1 + 2 | |
-| 1x5  | 5   |  1 row of 5 |  4 + 5 | 1 + 2 | |
+| 1x5A | 5   |  1 row of 5 |  4 + 5 | 1 + 2 | |
+| 1x5B | 5   |  1 row of 5 |  5 | 4 | Dedicated bank switches |
+| 1x6A | 6   |  1 row of 6 |  5 + 6 | 1 + 2 | |
+| 1x6B | 6   |  1 row of 6 |  6 | 5 | Dedicated bank switches |
+| 1x7A | 7   |  1 row of 7 |  6 + 7 | 1 + 2 | |
+| 1x7B | 7   |  1 row of 7 |  7 | 6 | Dedicated bank switches |
 | 2x3  | 6   |  2 rows of 3 |  2 + 3 | 1 + 2 | |
 | 2x4  | 8   |  2 rows of 4 |  3 + 4 | 1 + 2 | |
 | 2x5A  | 10   |  2 rows of 5 |  4 + 5 | 1 + 2 | |
