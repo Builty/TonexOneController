@@ -231,6 +231,9 @@ extern lv_obj_t * ui_AmplifierVolumeSlider;
 extern lv_obj_t * ui_AmplifierPresenseLabel;
 void ui_event_AmplifierPresenseSlider(lv_event_t * e);
 extern lv_obj_t * ui_AmplifierPresenseSlider;
+extern lv_obj_t * ui_AmplifierDepthLabel;
+void ui_event_AmplifierDepthSlider(lv_event_t * e);
+extern lv_obj_t * ui_AmplifierDepthSlider;
 void ui_event_CloseImage(lv_event_t * e);
 extern lv_obj_t * ui_CloseImage;
 // CUSTOM VARIABLES

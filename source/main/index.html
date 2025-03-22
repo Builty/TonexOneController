@@ -313,13 +313,13 @@
         const TONEX_PARAM_VIR_RESO = 26;
         const TONEX_PARAM_VIR_MIC_1 = 27;
         const TONEX_PARAM_VIR_MIC_1_X = 28;
-        const TONEX_PARAM_VIR_MIC_1_Y = 29;
-        const TONEX_PARAM_VIR_MIC_1_Z = 30;
-        const TONEX_PARAM_VIR_MIC_2 = 31;
-        const TONEX_PARAM_VIR_MIC_2_X = 32;
-        const TONEX_PARAM_VIR_MIC_2_Y = 33;
-        const TONEX_PARAM_VIR_MIC_2_Z = 34;
-        const TONEX_PARAM_VIR_BLEND = 35;
+        const TONEX_PARAM_VIR_MIC_1_Z = 29;
+        const TONEX_PARAM_VIR_MIC_2 = 30;
+        const TONEX_PARAM_VIR_MIC_2_X = 31;
+        const TONEX_PARAM_VIR_MIC_2_Z = 32;
+        const TONEX_PARAM_VIR_BLEND = 33;
+        const TONEX_PARAM_MODEL_PRESENCE = 34;
+        const TONEX_PARAM_MODEL_DEPTH = 35;
         
         // Reverb
         const TONEX_PARAM_REVERB_POSITION = 36;
@@ -674,10 +674,7 @@
                                 setParamData("am_mix", parseInt(key));                            
                                 break;
 
-                            //case TONEX_PARAM_PRESENCE:
-                            //    configureParamRange("am_presence", value, min, max);
-                            //    setParamData("am_presence", parseInt(key));
-                            //    break;
+                           
 
                             case TONEX_PARAM_MODEL_CABINET_ENABLE:
                                 configureParamSwitch("am_sw2", value);
@@ -688,12 +685,7 @@
                                 configureParamSwitch("am_caben", value);
                                 setParamData("am_caben", parseInt(key));
                                 break;
-
-                            //case TONEX_PARAM_DEPTH:
-                            //    configureParamRange("am_depth", value, min, max);
-                            //    setParamData("am_depth", parseInt(key));                            
-                            //    break;
-
+                        
                             case TONEX_PARAM_VIR_CABINET_MODEL:
                                 break;
 
@@ -706,9 +698,6 @@
                             case TONEX_PARAM_VIR_MIC_1_X:
                                 break;
 
-                            case TONEX_PARAM_VIR_MIC_1_Y:
-                                break;
-
                             case TONEX_PARAM_VIR_MIC_1_Z:
                                 break;
 
@@ -718,15 +707,22 @@
                             case TONEX_PARAM_VIR_MIC_2_X:
                                 break;
 
-                            case TONEX_PARAM_VIR_MIC_2_Y:
-                                break;
-
                             case TONEX_PARAM_VIR_MIC_2_Z:
                                 break;
 
                             case TONEX_PARAM_VIR_BLEND:
                                 break;
                             
+                            case TONEX_PARAM_MODEL_PRESENCE:
+                                configureParamRange("am_presence", value, min, max,  0.1);
+                                setParamData("am_presence", parseInt(key));
+                                break;
+
+                            case TONEX_PARAM_MODEL_DEPTH:
+                                configureParamRange("am_depth", value, min, max, 0.1);
+                                setParamData("am_depth", parseInt(key));                            
+                                break;
+
                             // Reverb
                             case TONEX_PARAM_REVERB_POSITION:
                                 configureParamSwitch("rv_post", value);
@@ -1929,17 +1925,16 @@
                     <label for="am_mix" class="form-label">Mix</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="am_mix">
                 </div>
-            <!-- 
-                unsupported for now
+
                 <div class="container">
                     <label for="am_presence" class="form-label">Presence</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="am_presence">
                 </div>
+
                 <div class="container">
                     <label for="am_depth" class="form-label">Depth</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="am_depth">
                 </div>
-            -->
             </p>
         </div>
     </div>

@@ -225,6 +225,9 @@ lv_obj_t * ui_AmplifierVolumeSlider;
 lv_obj_t * ui_AmplifierPresenseLabel;
 void ui_event_AmplifierPresenseSlider(lv_event_t * e);
 lv_obj_t * ui_AmplifierPresenseSlider;
+lv_obj_t * ui_AmplifierDepthLabel;
+void ui_event_AmplifierDepthSlider(lv_event_t * e);
+lv_obj_t * ui_AmplifierDepthSlider;
 void ui_event_CloseImage(lv_event_t * e);
 lv_obj_t * ui_CloseImage;
 // CUSTOM VARIABLES
@@ -817,6 +820,15 @@ void ui_event_AmplifierVolumeSlider(lv_event_t * e)
 }
 
 void ui_event_AmplifierPresenseSlider(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
+}
+
+void ui_event_AmplifierDepthSlider(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 

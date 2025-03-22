@@ -81,13 +81,13 @@ static tTonexParameter TonexParameters[TONEX_GLOBAL_LAST] =
     {0,      0,      10,   "VIR_RESO"},           // TONEX_PARAM_VIR_RESO,
     {0,      0,      2,    "VIR M1"},             // TONEX_PARAM_VIR_MIC_1,
     {0,      0,      10,   "VIR M1X"},            // TONEX_PARAM_VIR_MIC_1_X,
-    {0,      0,      10,   "VIR M1Y"},            // TONEX_PARAM_VIR_MIC_1_Y,
     {0,      0,      10,   "VIR M1Z"},            // TONEX_PARAM_VIR_MIC_1_Z,
-    {0,      0,      2,    "VIR M2"},             // TONEX_PARAM_VIR_MIC_2,
-    {0,      0,      10,   "VIR M2X"},            // TONEX_PARAM_VIR_MIC_2_X,
-    {0,      0,      10,   "VIR M2Y"},            // TONEX_PARAM_VIR_MIC_2_Y,
-    {0,      0,      10,   "VIR M2Z"},            // TONEX_PARAM_VIR_MIC_2_Z,
-    {0,      -100,   100,  "VIR BLEND"},          // TONEX_PARAM_VIR_BLEND,
+    {0,      0,      2,    "VIR M2"},             // TONEX_PARAM_VIR_MIC_2
+    {0,      0,      2,    "VIR M2X"},            // TONEX_PARAM_VIR_MIC_2_X
+    {0,      0,      10,   "VIR M2Z"},            // TONEX_PARAM_VIR_MIC_2_Z
+    {0,      -100,   100,  "VIR BLEND"},          // TONEX_PARAM_VIR_BLEND
+    {5,      0,      10,   "MDL PRE"},            // TONEX_PARAM_MODEL_PRESENCE
+    {5,      0,      10,   "MDL DEP"},            // TONEX_PARAM_MODEL_DEPTH
     
     // Reverb
     {0,      0,      1,    "RVB POS"},             // TONEX_PARAM_REVERB_POSITION,

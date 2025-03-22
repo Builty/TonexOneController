@@ -73,7 +73,7 @@ enum TonexParameters
     TONEX_PARAM_COMP_ENABLE,
     TONEX_PARAM_COMP_THRESHOLD,
     TONEX_PARAM_COMP_MAKE_UP,
-    TONEX_PARAM_COMP_ATTACK,
+    TONEX_PARAM_COMP_ATTACK,            //9
 
     // EQ    
     TONEX_PARAM_EQ_POST,                // Pre/Post
@@ -83,9 +83,9 @@ enum TonexParameters
     TONEX_PARAM_EQ_MIDQ,
     TONEX_PARAM_EQ_MID_FREQ,
     TONEX_PARAM_EQ_TREBLE,
-    TONEX_PARAM_EQ_TREBLE_FREQ,
+    TONEX_PARAM_EQ_TREBLE_FREQ,         //17
     
-    //Model and VIR params. TONEX_PARAM_PRESENCE and TONEX_PARAM_DEPTH location  is unknown!
+    //Model and VIR params
     TONEX_PARAM_MODEL_AMP_ENABLE,
     TONEX_PARAM_MODEL_SW1,          // results in silence, unknown function
     TONEX_PARAM_MODEL_GAIN,
@@ -97,13 +97,13 @@ enum TonexParameters
     TONEX_PARAM_VIR_RESO,
     TONEX_PARAM_VIR_MIC_1,
     TONEX_PARAM_VIR_MIC_1_X,
-    TONEX_PARAM_VIR_MIC_1_Y,
-    TONEX_PARAM_VIR_MIC_1_Z,
+    TONEX_PARAM_VIR_MIC_1_Z,                    
     TONEX_PARAM_VIR_MIC_2,
     TONEX_PARAM_VIR_MIC_2_X,
-    TONEX_PARAM_VIR_MIC_2_Y,
     TONEX_PARAM_VIR_MIC_2_Z,
     TONEX_PARAM_VIR_BLEND,
+    TONEX_PARAM_MODEL_PRESENCE,
+    TONEX_PARAM_MODEL_DEPTH,
     
     // Reverb
     TONEX_PARAM_REVERB_POSITION,

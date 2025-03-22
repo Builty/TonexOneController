@@ -1060,7 +1060,11 @@ void ParameterChanged(lv_event_t * e)
     }
     else if (obj == ui_AmplifierPresenseSlider)
     {
-        // unsupported for now  usb_modify_parameter(TONEX_PARAM_PRESENCE, lv_slider_get_value(obj));
+        usb_modify_parameter(TONEX_PARAM_MODEL_PRESENCE, lv_slider_get_value(obj));
+    }
+    else if (obj == ui_AmplifierDepthSlider)
+    {
+        usb_modify_parameter(TONEX_PARAM_MODEL_DEPTH, lv_slider_get_value(obj));
     }
     else
     {
@@ -1801,21 +1805,22 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             // not exposed via UI
                         } break;
 
-                        // unsupported for now  case TONEX_PARAM_PRESENCE:
-                        //{                            
-                        //  lv_slider_set_range(ui_AmplifierPresenseSlider, round(param_entry->Min), round(param_entry->Max));
-                        //    lv_slider_set_value(ui_AmplifierPresenseSlider, round(param_entry->Value), LV_ANIM_OFF);
-                        //} break;
+                        case TONEX_PARAM_MODEL_PRESENCE:
+                        {                            
+                            lv_slider_set_range(ui_AmplifierPresenseSlider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(ui_AmplifierPresenseSlider, round(param_entry->Value), LV_ANIM_OFF);
+                        } break;
 
                         //case TONEX_PARAM_VIR_CABINET:
                         //{
                             // not exposed via UI
                         //} break;
 
-                        // unsupported for now   case TONEX_PARAM_DEPTH:
-                        //{
-                            // not exposed via UI
-                        //} break;
+                        case TONEX_PARAM_MODEL_DEPTH:
+                        {
+                            lv_slider_set_range(ui_AmplifierDepthSlider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(ui_AmplifierDepthSlider, round(param_entry->Value), LV_ANIM_OFF);
+                        } break;
 
                         case TONEX_PARAM_VIR_RESO:
                         {
@@ -1832,11 +1837,6 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             // not exposed via UI
                         } break;
 
-                        case TONEX_PARAM_VIR_MIC_1_Y:
-                        {
-                            // not exposed via UI
-                        } break;
-
                         case TONEX_PARAM_VIR_MIC_1_Z:
                         {
                             // not exposed via UI
@@ -1848,11 +1848,6 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         } break;
 
                         case TONEX_PARAM_VIR_MIC_2_X:
-                        {
-                            // not exposed via UI
-                        } break;
-
-                        case TONEX_PARAM_VIR_MIC_2_Y:
                         {
                             // not exposed via UI
                         } break;

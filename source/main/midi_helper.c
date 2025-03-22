@@ -772,20 +772,19 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
 
         // 105 not used
 
-        // next 2 unsupported until I can figure out where they are in param block
-        //case 106:
-        //{
-        //    param = TONEX_PARAM_PRESENCE;
-        //    value = midi_helper_scale_midi_to_float(param, midi_value);
-        //    value = tonex_params_clamp_value(param, value);
-        //} break;
+        case 106:
+        {
+            param = TONEX_PARAM_MODEL_PRESENCE;
+            value = midi_helper_scale_midi_to_float(param, midi_value);
+            value = tonex_params_clamp_value(param, value);
+        } break;
 
-        //case 107:
-        //{ 
-        //    param = TONEX_PARAM_DEPTH;
-        //    value = midi_helper_scale_midi_to_float(param, midi_value);
-        //    value = tonex_params_clamp_value(param, value);
-        //} break;
+        case 107:
+        { 
+            param = TONEX_PARAM_MODEL_DEPTH;
+            value = midi_helper_scale_midi_to_float(param, midi_value);
+            value = tonex_params_clamp_value(param, value);
+        } break;
 
         case 108:
         {
@@ -843,13 +842,6 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
             value = tonex_params_clamp_value(param, value);
         } break;
      
-        // these params not mapped to channels        
-        //param = TONEX_PARAM_UNKNOWN_1
-        //param = TONEX_PARAM_UNKNOWN_2
-        //param = TONEX_PARAM_UNKNOWN_3
-        //param = TONEX_PARAM_VIR_MIC_1_Y
-        //param = TONEX_PARAM_VIR_MIC_2_Y      
-
         default:
         {
             ESP_LOGW(TAG, "Unsupported Midi change number %d", change_num);
@@ -923,8 +915,7 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
         
         case 10: 
         {
-            // BPM
-            param = TONEX_GLOBAL_BPM;
+            // tap tempo, not need here
         } break;
 
         // 11: expression pedal
@@ -1297,7 +1288,12 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
             //preset up
         } break;
 
-        // 88: bpm
+        case 88: 
+        {
+            //bpm
+            param = TONEX_GLOBAL_BPM;
+        } break;
+
         // 89: bank down
         // 90: bank up    
 
@@ -1345,20 +1341,15 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
 
         // 105 not used
 
-        // next 2 unsupported until I can figure out where they are in param block
-        //case 106:
-        //{
-        //    param = TONEX_PARAM_PRESENCE;
-        //    value = midi_helper_scale_midi_to_float(param, midi_value);
-        //    value = tonex_params_clamp_value(param, value);
-        //} break;
+        case 106:
+        {        
+            param = TONEX_PARAM_MODEL_PRESENCE;
+        } break;
 
-        //case 107:
-        //{ 
-        //    param = TONEX_PARAM_DEPTH;
-        //    value = midi_helper_scale_midi_to_float(param, midi_value);
-        //    value = tonex_params_clamp_value(param, value);
-        //} break;
+        case 107:
+        { 
+            param = TONEX_PARAM_MODEL_DEPTH;
+        } break;
 
         case 108:
         {
