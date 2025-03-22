@@ -184,12 +184,20 @@ enum TonexParameters
     TONEX_PARAM_DELAY_TAPE_MODE,
     TONEX_PARAM_DELAY_TAPE_MIX,
     
-    // must be last
-    TONEX_PARAM_LAST
+    // must be last actual parameter
+    TONEX_PARAM_LAST,
+
+    // these are not parameters as such, but globals/special/set differently to the params above
+    TONEX_GLOBAL_BPM,
+    TONEX_GLOBAL_INPUT_TRIM,
+    TONEX_GLOBAL_CABSIM_BYPASS,
+    TONEX_GLOBAL_TEMPO_SOURCE,
+
+    // must be last actual global
+    TONEX_GLOBAL_LAST
 };
 
 // special cases for handling effect switches that use Midi but don't change a parameter
-#define TONEX_TAP_TEMPO         0xFFFE
 #define TONEX_UNKNOWN           0xFFFF
 
 esp_err_t tonex_params_init(void);

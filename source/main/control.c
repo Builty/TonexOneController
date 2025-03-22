@@ -42,6 +42,7 @@ limitations under the License.
 #include "display.h"
 #include "wifi_config.h"
 #include "task_priorities.h"
+#include "tonex_params.h"
 
 #define CTRL_TASK_STACK_SIZE                (3 * 1024)
 #define NVS_USERDATA_NAME                   "userdata"        
@@ -538,7 +539,7 @@ static uint8_t process_control_command(tControlMessage* message)
                     ESP_LOGI(TAG, "Tap Tempo BPM = %d", (int)bpm);
 
                     // update pedal
-                    //to do
+                    usb_modify_parameter(TONEX_GLOBAL_BPM, ControlData.TapTempo.BPM);
                 }
 
                 // save time for next trigger

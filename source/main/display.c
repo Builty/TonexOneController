@@ -1600,7 +1600,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
             tTonexParameter* param_ptr;
 
-            for (uint16_t param = 0; param < TONEX_PARAM_LAST; param++)
+            for (uint16_t param = 0; param < TONEX_GLOBAL_LAST; param++)
             {                     
                 if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
                 {

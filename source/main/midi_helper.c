@@ -694,7 +694,13 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
             return ESP_OK;
         } break;
 
-        // 88: bpm
+        case 88: 
+        {
+            // bpm
+            param = TONEX_GLOBAL_BPM;            
+            value = midi_helper_scale_midi_to_float(param, midi_value);
+        } break;
+
         // 89: bank down
         // 90: bank up    
 
@@ -917,8 +923,8 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
         
         case 10: 
         {
-            //tap tempo, not a param
-            param = TONEX_TAP_TEMPO;
+            // BPM
+            param = TONEX_GLOBAL_BPM;
         } break;
 
         // 11: expression pedal

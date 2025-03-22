@@ -279,7 +279,7 @@ static void wifi_build_params_json(void)
 
     json_gen_push_object(&pWebConfig->jstr, "PARAMS");
 
-    for (uint16_t loop = 0; loop < TONEX_PARAM_LAST; loop++)
+    for (uint16_t loop = 0; loop < TONEX_GLOBAL_LAST; loop++)
     {
         // get access to parameters
         tonex_params_get_locked_access(&param_ptr);

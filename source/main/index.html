@@ -398,8 +398,15 @@
         const TONEX_PARAM_DELAY_TAPE_TIME = 105;
         const TONEX_PARAM_DELAY_TAPE_FEEDBACK = 106;
         const TONEX_PARAM_DELAY_TAPE_MODE = 107;
-        const TONEX_PARAM_DELAY_TAPE_MIX = 108;
-        
+        const TONEX_PARAM_DELAY_TAPE_MIX = 108;        
+        const TONEX_PARAM_LAST = 109;           // last actual parameter
+
+        // globals 
+        const TONEX_GLOBAL_BPM = 110;                 
+        const TONEX_GLOBAL_INPUT_TRIM = 111;        
+        const TONEX_GLOBAL_CABSIM_BYPASS = 112;
+        const TONEX_GLOBAL_TEMPO_SOURCE = 113;
+
         // Init web socket when the page loads
         window.addEventListener('load', onload);
 
@@ -481,10 +488,10 @@
             //console.log("configureParamRange");
             //console.log(objname);
             var paramrange = document.getElementById(objname);
+            paramrange.step = step;
             paramrange.min = min;
             paramrange.max = max;
-            paramrange.value = value;
-            paramrange.step = step;
+            paramrange.value = value;            
 			showValue(paramrange);
         }
 
@@ -1232,6 +1239,26 @@
                                     setParamData("dl_mix", parseInt(key));
                                 }
                                 break;
+
+                            case TONEX_GLOBAL_BPM:
+                                configureParamRange("gb_bpm", value, min, max);
+                                setParamData("gb_bpm", parseInt(key));
+                                break;
+
+                            case TONEX_GLOBAL_INPUT_TRIM:
+                                configureParamRange("gb_trim", value, min, max, 0.1);
+                                setParamData("gb_trim", parseInt(key));
+                                break;
+
+                            case TONEX_GLOBAL_CABSIM_BYPASS:
+                                configureParamSwitch("gb_cabsim", value);
+                                setParamData("gb_cabsim", parseInt(key));
+                                break;
+
+                            case TONEX_GLOBAL_TEMPO_SOURCE: 
+                                configureParamSwitch("gb_tempos", value);
+                                setParamData("gb_tempos", parseInt(key));
+                                break;
                         }
                     } 
                     break;
@@ -1538,6 +1565,7 @@
       <button class="tablinks" onclick="openTab(event, 'Modulation')">Mod</button>
       <button class="tablinks" onclick="openTab(event, 'Delay')">Delay</button>
       <button class="tablinks" onclick="openTab(event, 'Amplifier')">Amp</button>
+      <button class="tablinks" onclick="openTab(event, 'Global')">Global</button>
       <button class="tablinks" onclick="openTab(event, 'Bluetooth')">BT</button>
       <button class="tablinks" onclick="openTab(event, 'Midi')">Midi</button>
       <button class="tablinks" onclick="openTab(event, 'Miscellaneous')">Misc</button>
@@ -1915,7 +1943,40 @@
             </p>
         </div>
     </div>
-    
+        
+    <div id="Global" class="tabcontent">
+        <div class="col py-3 text-white">
+            <h5 class="selected_text">Global</h5>
+            <p class="lead">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="gb_cabsim">
+                                <label class="form-check-label" for="gb_cabsim">Cab Bypass</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="gb_tempos">
+                                <label class="form-check-label" for="gb_tempos">Tempo Src</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="container">
+                    <label for="gb_bpm" class="form-label">BPM</label>
+                    <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="gb_bpm">
+                </div>
+                <div class="container">
+                    <label for="gb_trim" class="form-label">Input Trim</label>
+                    <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="gb_trim">
+                </div>
+            </p>
+        </div>
+    </div>
+
     <div id="Bluetooth" class="tabcontent">
         <div class="col py-3 text-white">
             <h5 class="selected_text">Bluetooth</h5>

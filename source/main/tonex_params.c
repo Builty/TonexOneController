@@ -41,7 +41,7 @@ static const char *TAG = "app_ToneParams";
 static SemaphoreHandle_t ParamMutex;
 
 // "value" below is just a default, is overridden by the preset on load
-static tTonexParameter TonexParameters[TONEX_PARAM_LAST] = 
+static tTonexParameter TonexParameters[TONEX_GLOBAL_LAST] = 
 {
     //value, Min,    Max,  Name
     {0,      0,      1,    "NG POST"},            // TONEX_PARAM_NOISE_GATE_POST   
@@ -166,7 +166,16 @@ static tTonexParameter TonexParameters[TONEX_PARAM_LAST] =
     {0,      0,      1000, "DLY TA M"},            // TONEX_PARAM_DELAY_TAPE_TIME,
     {0,      0,      100,  "DLY TA F"},            // TONEX_PARAM_DELAY_TAPE_FEEDBACK,
     {0,      0,      1,    "DLY TA O"},            // TONEX_PARAM_DELAY_TAPE_MODE,
-    {0,      0,      100,  "DLY TA X"},            // TONEX_PARAM_DELAY_TAPE_MIX,    
+    {0,      0,      100,  "DLY TA X"},            // TONEX_PARAM_DELAY_TAPE_MIX,   
+    
+    // dummy end of params marker
+    {0,      0,      0,    "LAST"},                // TONEX_PARAM_LAST,
+
+    //************* Global params *****************
+    {80,     40,     240,  "BPM"},                 // TONEX_GLOBAL_BPM
+    {0,      -15,    15,   "TRIM"},                // TONEX_GLOBAL_INPUT_TRIM
+    {0,      0,      1,    "CABSIM"},              // TONEX_GLOBAL_CABSIM_BYPASS
+    {0,      0,      1,    "TEMPOS"},              // TONEX_GLOBAL_TEMPO_SOURCE
 };
 
 /****************************************************************************
@@ -216,7 +225,7 @@ esp_err_t tonex_params_release_locked_access(void)
 *****************************************************************************/
 esp_err_t tonex_params_get_min_max(uint16_t param_index, float* min, float* max)
 {
-    if (param_index >= TONEX_PARAM_LAST)
+    if (param_index >= TONEX_GLOBAL_LAST)
     {
         // invalid
         return ESP_FAIL;
@@ -250,7 +259,7 @@ esp_err_t tonex_params_get_min_max(uint16_t param_index, float* min, float* max)
 *****************************************************************************/
 float tonex_params_clamp_value(uint16_t param_index, float value)
 {
-    if (param_index >= TONEX_PARAM_LAST)
+    if (param_index >= TONEX_GLOBAL_LAST)
     {
         // invalid
         return 0;
