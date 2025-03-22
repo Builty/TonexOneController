@@ -1,0 +1,30 @@
+name: ESP-IDF Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:  # Allows manual triggering from the Actions page
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          clean: true
+          # submodules: 'recursive'
+
+      - name: esp-idf build
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          path: 'source'
+          # esp_idf_version: v5 # optional, default is latest
+          # target: esp32 # optional, default is esp32
+          # target: esp32s2
+          # command: # optional, default is idf.py build
