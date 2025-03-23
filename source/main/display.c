@@ -2792,7 +2792,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
         default:
         {
-            ESP_LOGE(TAG, "Unknown display action");
+            ESP_LOGE(TAG, "Unknown display action %d, element %d", (int)update->Action, (int)update->ElementID);
         } break;
     }
 #endif 

@@ -722,6 +722,8 @@ void footswitch_task(void *arg)
 
     while (1)
     {
+        // Waveshare 4.3 (not B) development board has different pinout 
+#if !CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY        
         // handle onboard IO foot switches (direct GPIO and IO expander on main PCB)
         switch (FootswitchControl.onboard_switch_mode) 
         {
@@ -744,6 +746,7 @@ void footswitch_task(void *arg)
                 footswitch_handle_quad_binary(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD]);
             } break;
         }
+#endif 
 
         // did we find an IO expander on boot?
         if (FootswitchControl.io_expander_ok)
@@ -755,6 +758,7 @@ void footswitch_task(void *arg)
             footswitch_handle_efects(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_EXTERNAL_EFFECTS]);
         }
 
+#if !CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY        
         // check for button held for data reset
         if (FOOTSWITCH_1 != -1)
         {
@@ -779,6 +783,7 @@ void footswitch_task(void *arg)
                 }
             }
         }
+#endif 
 
         // handle leds from this task, to save wasting ram on another task for it
         leds_handle();

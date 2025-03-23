@@ -437,15 +437,16 @@ static esp_err_t usb_tonex_one_request_state(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static esp_err_t __attribute__((unused)) usb_tonex_one_request_full_preset_details(uint8_t preset_index)
+static esp_err_t __attribute__((unused)) usb_tonex_one_request_preset_details(uint8_t preset_index, uint8_t full_details)
 {
     uint16_t outlength;
 
     ESP_LOGI(TAG, "Requesting full preset details for %d", (int)preset_index);
 
-    // build message                                                                                               Preset     
-    uint8_t request[] = {0xb9, 0x03, 0x81, 0x00, 0x03, 0x82, 0x06, 0x00, 0x80, 0x0b, 0x03, 0xb9, 0x04, 0x0b, 0x01, 0x00, 0x01};  
+    // build message                                                                                               Preset Full    
+    uint8_t request[] = {0xb9, 0x03, 0x81, 0x00, 0x03, 0x82, 0x06, 0x00, 0x80, 0x0b, 0x03, 0xb9, 0x04, 0x0b, 0x01, 0x00,  0x00};  
     request[15] = preset_index;
+    request[16] = full_details;     // 0x00 = approx 2k byte summary. 0x01 = approx 30k byte full preset details
 
     // add framing
     outlength = addFraming(request, sizeof(request), FramedBuffer);
@@ -1188,24 +1189,10 @@ static esp_err_t usb_tonex_one_process_single_message(uint8_t* data, uint16_t le
 
                     TonexData->TonexState = COMMS_STATE_READY;   
 
-                    // note here: after boot, the state doesn't contain the preset name
-                    // work around here is to request a change of preset A, but not to the currently active slot
-                    // this results in pedal sending the full status details including the preset name
                     if (boot_init_needed)
                     {
-                        uint8_t temp_preset = TonexData->Message.SlotAPreset;
-
-                        if (temp_preset < (MAX_PRESETS - 1))
-                        {
-                            temp_preset++;
-                        }
-                        else
-                        {
-                            temp_preset--;
-                        }
-                        
-                        usb_tonex_one_set_preset_in_slot(temp_preset, A, 0);
-
+                        // request details of the current preset, so we can update UI
+                        usb_tonex_one_request_preset_details(current_preset, 0);
                         boot_init_needed = 0;
                     }
                     else
