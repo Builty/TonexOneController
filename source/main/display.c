@@ -362,17 +362,18 @@ void toggle_effect_cab(lv_event_t * e)
     ESP_LOGI(TAG, "UI Toggle cab");
     
     tonex_params_get_locked_access(&param_ptr);
-    if (param_ptr[TONEX_PARAM_MODEL_CABINET_ENABLE].Value == 0.0f)
+    if (param_ptr[TONEX_PARAM_CABINET_TYPE].Value == TONEX_CABINET_DISABLED)
     {
-        value = 1.0f;
+        //todo here: this could have been a VIR cabinet
+        value = TONEX_CABINET_TONE_MODEL;
     }
     else
     {
-        value = 0.0f;
+        value = TONEX_CABINET_DISABLED;
     }
     tonex_params_release_locked_access();
 
-    usb_modify_parameter(TONEX_PARAM_MODEL_CABINET_ENABLE, value);   
+    usb_modify_parameter(TONEX_PARAM_CABINET_TYPE, value);   
 }
 
 /****************************************************************************
@@ -1050,6 +1051,10 @@ void ParameterChanged(lv_event_t * e)
     {
         usb_modify_parameter(TONEX_PARAM_MODEL_AMP_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
+    else if (obj == ui_CabinetModeDropdown)
+    {
+        usb_modify_parameter(TONEX_PARAM_CABINET_TYPE, lv_dropdown_get_selected(obj));
+    } 
     else if (obj == ui_AmplifierGainSlider)
     {
         usb_modify_parameter(TONEX_PARAM_MODEL_GAIN, lv_slider_get_value(obj));
@@ -1066,14 +1071,26 @@ void ParameterChanged(lv_event_t * e)
     {
         usb_modify_parameter(TONEX_PARAM_MODEL_DEPTH, lv_slider_get_value(obj));
     }
+    else if (obj == ui_BPMSlider)
+    {
+        usb_modify_parameter(TONEX_GLOBAL_BPM, lv_slider_get_value(obj));
+    }
+    else if (obj == ui_InputTrimSlider)
+    {
+        usb_modify_parameter(TONEX_GLOBAL_INPUT_TRIM, lv_slider_get_value(obj));
+    }
+    else if (obj == ui_CabBypassSwitch)
+    {
+        usb_modify_parameter(TONEX_GLOBAL_CABSIM_BYPASS, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
+    }
+    else if (obj == ui_TempoSourceSwitch)
+    {
+        usb_modify_parameter(TONEX_GLOBAL_TEMPO_SOURCE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
+    }
     else
     {
         ESP_LOGW(TAG, "Unknown Parameter changed");    
     }
-
-
-    
-    // to do
 }
 #endif
 
@@ -1773,19 +1790,18 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             // not exposed via UI
                         } break;
 
-                        case TONEX_PARAM_MODEL_CABINET_ENABLE:
+                        case TONEX_PARAM_CABINET_TYPE:
                         {
-                            if (param_entry->Value)
+                            lv_dropdown_set_selected(ui_CabinetModeDropdown, param_entry->Value);
+
+                            if (param_entry->Value == TONEX_CABINET_DISABLED)
                             {
-                                lv_obj_add_state(ui_AmpCabSwitch, LV_STATE_CHECKED);
-                                lv_img_set_src(ui_IconCab, (lv_obj_t*)&ui_img_effect_icon_cab_on_png);
+                                lv_img_set_src(ui_IconCab, (lv_obj_t*)&ui_img_effect_icon_cab_off_png);
                             }
                             else
                             {
-                                lv_obj_clear_state(ui_AmpCabSwitch, LV_STATE_CHECKED);
-                                lv_img_set_src(ui_IconCab, (lv_obj_t*)&ui_img_effect_icon_cab_off_png);
+                                lv_img_set_src(ui_IconCab, (lv_obj_t*)&ui_img_effect_icon_cab_on_png);
                             }
-
                         } break;
 
                         case TONEX_PARAM_MODEL_GAIN:
@@ -1810,6 +1826,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             lv_slider_set_range(ui_AmplifierPresenseSlider, round(param_entry->Min), round(param_entry->Max));
                             lv_slider_set_value(ui_AmplifierPresenseSlider, round(param_entry->Value), LV_ANIM_OFF);
                         } break;
+
+                        //case TONEX_PARAM_CABINET_UNKNOWN:
+                        //{
+                            // not exposed via UI 
+                        //} break;
 
                         //case TONEX_PARAM_VIR_CABINET:
                         //{
@@ -2612,6 +2633,42 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 lv_slider_set_range(ui_DelayMixSlider, round(param_entry->Min), round(param_entry->Max));
                                 lv_slider_set_value(ui_DelayMixSlider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
+                        } break;
+
+                        case TONEX_GLOBAL_CABSIM_BYPASS:
+                        {
+                            if (param_entry->Value)
+                            {
+                                lv_obj_add_state(ui_CabBypassSwitch, LV_STATE_CHECKED);
+                            }
+                            else
+                            {
+                                lv_obj_clear_state(ui_CabBypassSwitch, LV_STATE_CHECKED);
+                            }
+                        } break;
+
+                        case TONEX_GLOBAL_TEMPO_SOURCE:
+                        {
+                            if (param_entry->Value)
+                            {
+                                lv_obj_add_state(ui_TempoSourceSwitch, LV_STATE_CHECKED);
+                            }
+                            else
+                            {
+                                lv_obj_clear_state(ui_TempoSourceSwitch, LV_STATE_CHECKED);
+                            }
+                        } break;
+
+                        case TONEX_GLOBAL_BPM:
+                        {
+                            lv_slider_set_range(ui_BPMSlider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(ui_BPMSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                        } break;
+
+                        case TONEX_GLOBAL_INPUT_TRIM:
+                        {
+                            lv_slider_set_range(ui_InputTrimSlider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(ui_InputTrimSlider, round(param_entry->Value), LV_ANIM_OFF);                                
                         } break;
                     } 
 

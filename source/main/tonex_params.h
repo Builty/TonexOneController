@@ -58,6 +58,13 @@ enum TonexDelayModels
     TONEX_DELAY_TAPE
 };
 
+enum TonexCabinetTypes
+{
+    TONEX_CABINET_DISABLED,
+    TONEX_CABINET_VIR,
+    TONEX_CABINET_TONE_MODEL
+};
+
 // defined in the same order as they are sent by the Pedal
 enum TonexParameters
 {
@@ -91,8 +98,8 @@ enum TonexParameters
     TONEX_PARAM_MODEL_GAIN,
     TONEX_PARAM_MODEL_VOLUME,
     TONEX_PARAM_MODEX_MIX,
-    TONEX_PARAM_MODEL_CABINET_ENABLE,
-    TONEX_PARAM_VIR_CABINET,        // select VIR cabinet
+    TONEX_PARAM_CABINET_UNKNOWN,        // seems always set to 1 regardless of cabinet options
+    TONEX_PARAM_CABINET_TYPE,           // 0 = disabled. 1 = VIR. 2 = Tone Model
     TONEX_PARAM_VIR_CABINET_MODEL,
     TONEX_PARAM_VIR_RESO,
     TONEX_PARAM_VIR_MIC_1,

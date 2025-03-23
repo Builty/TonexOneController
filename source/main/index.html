@@ -307,8 +307,8 @@
         const TONEX_PARAM_MODEL_GAIN = 20;
         const TONEX_PARAM_MODEL_VOLUME = 21;
         const TONEX_PARAM_MODEX_MIX = 22;
-        const TONEX_PARAM_MODEL_CABINET_ENABLE = 23;
-        const TONEX_PARAM_VIR_CABINET = 24;
+        const TONEX_PARAM_CABINET_UNKNOWN = 23;
+        const TONEX_PARAM_CABINET_TYPE = 24;
         const TONEX_PARAM_VIR_CABINET_MODEL = 25;
         const TONEX_PARAM_VIR_RESO = 26;
         const TONEX_PARAM_VIR_MIC_1 = 27;
@@ -654,11 +654,6 @@
                                 setParamData("am_ampen", parseInt(key));
                                 break;
 
-                            case TONEX_PARAM_MODEL_SW1:
-                                configureParamSwitch("am_sw1", value);
-                                setParamData("am_sw1", parseInt(key));
-                                break;
-
                             case TONEX_PARAM_MODEL_GAIN:
                                 configureParamRange("am_gain", value, min, max, 0.1);
                                 setParamData("am_gain", parseInt(key));
@@ -674,16 +669,9 @@
                                 setParamData("am_mix", parseInt(key));                            
                                 break;
 
-                           
-
-                            case TONEX_PARAM_MODEL_CABINET_ENABLE:
-                                configureParamSwitch("am_sw2", value);
-                                setParamData("am_sw2", parseInt(key));
-                                break;                            
-
-                            case TONEX_PARAM_VIR_CABINET:
-                                configureParamSwitch("am_caben", value);
-                                setParamData("am_caben", parseInt(key));
+                            case TONEX_PARAM_CABINET_TYPE:
+                                configureParamSelect("am_cabtype", value);
+                                setParamData("am_cabtype", parseInt(key));
                                 break;
                         
                             case TONEX_PARAM_VIR_CABINET_MODEL:
@@ -1887,30 +1875,19 @@
                         <div class="col">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="am_ampen">
-                                <label class="form-check-label" for="am_ampen">Amp</label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="am_caben">
-                                <label class="form-check-label" for="am_caben">VIR Cab</label>
+                                <label class="form-check-label" for="am_ampen">Amp Enable</label>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="am_sw1">
-                                <label class="form-check-label" for="am_sw1">??</label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="am_sw2">
-                                <label class="form-check-label" for="am_sw2">Cab</label>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+                <br>
+                <div class="container">
+                    <label class="form-check-label" for="am_cabtype">Cabinet Type</label>
+                    <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="am_cabtype">
+                        <option value="0">Disabled</option>
+                        <option value="1">VIR</option>
+                        <option value="2" selected>Tone Model</option>
+                    </select>            
                 </div>
                 <br>
                 <div class="container">
