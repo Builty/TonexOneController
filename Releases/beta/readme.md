@@ -1,5 +1,17 @@
 Note: files in this directory are beta versions may contain bugs.
 <br><br>
+V1.0.8.2 Beta 5.
+- added Amplifier Presence and Depth controls to web and 4.3B UI
+- fixed up issues with cabinet disable via web and 4.3B UI
+- added globals page to web and 4.3B UI, with input trim, BPM, tempo source and global cabinet bypass
+- added support for Tap Tempo, via Midi and external footswitches
+- fixed issue where some web params would be displayed as rounded to the nearest integer
+- set Direct Monitoring automatically to the right setting
+- New method of preset sync on boot that no longer changes any preset assignments
+- State packet is now mapped to a data structure, for easier handling and no more array indexing with magic number offsets
+- added more external footswitch assignements: 1x5B, 1x6A, 1x6B, 1x7A, 1x7B
+
+<br><br>
 V1.0.8.2 Beta 4.
 - Fixed issue where Stomp mode was not set by code, requiring it to be set manually 
 - Fixed issue where the new external footswitch effect toggles didn't take into account the current state, resulting in needing multiple presses in some cases
