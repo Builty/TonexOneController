@@ -1154,7 +1154,7 @@ void ui_Settings_screen_init(void)
     lv_obj_set_style_text_font(ui_AmpCabLabel, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_CabinetModeDropdown = lv_dropdown_create(ui_Amplifier);
-    lv_dropdown_set_options(ui_CabinetModeDropdown, "Disabled\nVIR\nTone Model");
+    lv_dropdown_set_options(ui_CabinetModeDropdown, "Tone Model\nVIR\nDisabled");
     lv_obj_set_width(ui_CabinetModeDropdown, 202);
     lv_obj_set_height(ui_CabinetModeDropdown, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_CabinetModeDropdown, -117);
