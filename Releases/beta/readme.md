@@ -1,6 +1,7 @@
 Note: files in this directory are beta versions may contain bugs.
 <br><br>
 V1.0.8.2 Beta 5.
+REMOVED DUE TO MAJOR BUG
 - added Amplifier Presence and Depth controls to web and 4.3B UI
 - fixed up issues with cabinet disable via web and 4.3B UI
 - added globals page to web and 4.3B UI, with input trim, BPM, tempo source and global cabinet bypass
