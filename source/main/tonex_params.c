@@ -74,7 +74,7 @@ static tTonexParameter TonexParameters[TONEX_GLOBAL_LAST] =
     {5,      0,      10,   "MDL VOL"},            // TONEX_PARAM_MODEL_VOLUME,
     {100,    0,      100,  "MDL MIX"},            // TONEX_PARAM_MODEX_MIX,
     {1,      0,      1,    "MDL CABU"},           // TONEX_PARAM_MODEL_CABINET_UNKNOWN
-    {2,      0,      2,    "VIR CAB"},            // TONEX_PARAM_CABINET_TYPE,
+    {0,      0,      2,    "MDL CAB"},            // TONEX_PARAM_CABINET_TYPE,      // 0 = TONEX_CABINET_TONE_MODEL, 1=TONEX_CABINET_VIR, 2=TONEX_CABINET_DISABLED
 
     // Virtual IR Cabinet
     {5,      0,      10,   "VIR_CMDL"},           // TONEX_PARAM_VIR_CABINET_MODEL,
@@ -86,6 +86,8 @@ static tTonexParameter TonexParameters[TONEX_GLOBAL_LAST] =
     {0,      0,      2,    "VIR M2X"},            // TONEX_PARAM_VIR_MIC_2_X
     {0,      0,      10,   "VIR M2Z"},            // TONEX_PARAM_VIR_MIC_2_Z
     {0,      -100,   100,  "VIR BLEND"},          // TONEX_PARAM_VIR_BLEND
+
+    // More amp params
     {5,      0,      10,   "MDL PRE"},            // TONEX_PARAM_MODEL_PRESENCE
     {5,      0,      10,   "MDL DEP"},            // TONEX_PARAM_MODEL_DEPTH
     

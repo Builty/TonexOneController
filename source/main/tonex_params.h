@@ -60,9 +60,9 @@ enum TonexDelayModels
 
 enum TonexCabinetTypes
 {
-    TONEX_CABINET_DISABLED,
+    TONEX_CABINET_TONE_MODEL,
     TONEX_CABINET_VIR,
-    TONEX_CABINET_TONE_MODEL
+    TONEX_CABINET_DISABLED
 };
 
 // defined in the same order as they are sent by the Pedal
