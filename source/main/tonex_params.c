@@ -305,7 +305,7 @@ esp_err_t __attribute__((unused)) tonex_dump_parameters(void)
     if (xSemaphoreTake(ParamMutex, pdMS_TO_TICKS(PARAM_MUTEX_TIMEOUT)) == pdTRUE)
     {	
         // dump all the param values and names
-        for (uint32_t loop = 0; loop < TONEX_PARAM_LAST; loop++)
+        for (uint32_t loop = 0; loop < TONEX_GLOBAL_LAST; loop++)
         {
             ESP_LOGI(TAG, "Param Dump: %s = %0.2f", TonexParameters[loop].Name, TonexParameters[loop].Value);
         }

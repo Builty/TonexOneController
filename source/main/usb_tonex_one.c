@@ -113,47 +113,22 @@ typedef enum Slot
     C = 2
 } Slot;
 
-typedef struct __attribute__ ((packed)) 
-{
-    uint8_t Prefix; // 0x88
-    float Value;
-} tTonexFloat;
 
-typedef struct __attribute__ ((packed)) 
-{
-    uint8_t Prefix; // 0x81
-    uint16_t Value;
-} tTonexU16;
+#define TONEX_STATE_OFFSET_START_INPUT_TRIM     15          // 0x000070c1 (-15.0) -> 0x000058c1 (0) -> 0x00007041 (15.0) 
+#define TONEX_STATE_OFFSET_START_STOMP_MODE     19          // 0x00 - off, 0x01 - on
+#define TONEX_STATE_OFFSET_START_CAB_BYPASS     20          // 0x00 - off, 0x01 - on
+#define TONEX_STATE_OFFSET_START_TUNING_MODE    21          // 0x00 - mute, 0x01 - through
 
-typedef struct __attribute__ ((packed)) 
-{
-    uint8_t ObjectData_1[14];
-    tTonexFloat InputTrim;          // 0x000070c1 (-15.0) -> 0x000058c1 (0) -> 0x00007041 (15.0) 
-    uint8_t StompMode;              // 0x00 - off, 0x01 - on
-    uint8_t CabSimBypass;           // 0x00 - off, 0x01 - on
-    uint8_t TuningMode;             // 0x00 - mute, 0x01 - thru
-    
-    uint8_t LedColourData[116];     // RGB colours of the leds per preset
-    uint8_t ObjectData_2[2];
-    
-    uint8_t SlotAPreset;
-    uint8_t Unknown_3;
+#define TONEX_STATE_OFFSET_END_BPM              4          
+#define TONEX_STATE_OFFSET_END_TEMPO_SOURCE     6           // 00 - GLOBAL, 01 - PRESET 
+#define TONEX_STATE_OFFSET_END_DIRECT_MONITOR   7           // 0x00 - off, 0x01 - on 
+#define TONEX_STATE_OFFSET_END_TUNING_REF       9           
+#define TONEX_STATE_OFFSET_END_CURRENT_SLOT     11           
+#define TONEX_STATE_OFFSET_END_BYPASS_MODE      12
+#define TONEX_STATE_OFFSET_END_SLOT_C_PRESET    14
+#define TONEX_STATE_OFFSET_END_SLOT_B_PRESET    16
+#define TONEX_STATE_OFFSET_END_SLOT_A_PRESET    18
 
-    uint8_t SlotBPreset;
-    uint8_t Unknown_4;
-
-    uint8_t SlotCPreset;
-    uint8_t Unknown_5;
-
-    uint8_t BypassMode;
-    uint8_t CurrentSlot;
-
-    tTonexU16 TuningReference;
-    
-    uint8_t DirectMonitoring;       // 0x00 - off, 0x01 - on
-    uint8_t TempoSource;            // 00 - GLOBAL, 01 - PRESET
-    tTonexFloat BPM;
-} tTonexStateData;
 
 typedef struct __attribute__ ((packed)) 
 {
@@ -165,9 +140,8 @@ typedef struct __attribute__ ((packed))
 typedef struct __attribute__ ((packed)) 
 {
     // storage for current pedal state data
+    uint8_t StateData[MAX_STATE_DATA]; 
     uint16_t StateDataLength;
-
-    tTonexStateData TonexStateData;
 
     // storage for current preset details data (short version)
     uint8_t PresetData[MAX_SHORT_PRESET_DATA];
@@ -501,15 +475,33 @@ static esp_err_t usb_tonex_one_send_single_parameter(uint16_t index, float value
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void __attribute__((unused)) usb_tonex_one_dump_state(tTonexStateData* data)
+static void __attribute__((unused)) usb_tonex_one_dump_state(void)
 {
+    float InputTrim;
+    float BPM;
+    uint16_t TuningRef;
+
+    memcpy((void*)&BPM, (void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BPM], sizeof(float));
+    memcpy((void*)&InputTrim, (void*)&TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_INPUT_TRIM], sizeof(float));    
+    memcpy((void*)&TuningRef, (void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TUNING_REF], sizeof(uint16_t));
+
     ESP_LOGI(TAG, "**** Tonex State Data ****");
-    ESP_LOGI(TAG, "Input Trim: %3.2f.\t\tStomp Mode: %d", data->InputTrim.Value, (int)data->StompMode);
-    ESP_LOGI(TAG, "Cab Sim Bypass: %d.\t\tTuning Mode: %d", (int)data->CabSimBypass, (int)data->TuningMode);
-    ESP_LOGI(TAG, "Slot A Preset: %d,\t\tSlot B Preset: %d", (int)data->SlotAPreset, (int)data->SlotBPreset);
-    ESP_LOGI(TAG, "Slot C Preset: %d.\t\tCurrent Slot: %d", (int)data->SlotCPreset, (int)data->CurrentSlot);
-    ESP_LOGI(TAG, "Tuning Reference: %d.\t\tDirect Monitoring: %d", (int)data->TuningReference.Value, (int)data->DirectMonitoring);
-    ESP_LOGI(TAG, "BPM: %3.2f\t\t\tTempo Source: %d", data->BPM.Value, (int)data->TempoSource); 
+    ESP_LOGI(TAG, "Input Trim: %3.2f.\t\tStomp Mode: %d", InputTrim, 
+                                                          (int)TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_STOMP_MODE]);
+
+    ESP_LOGI(TAG, "Cab Sim Bypass: %d.\t\tTuning Mode: %d", (int)TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_CAB_BYPASS], 
+                                                            (int)TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_TUNING_MODE]);
+
+    ESP_LOGI(TAG, "Slot A Preset: %d,\t\tSlot B Preset: %d", (int)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_SLOT_A_PRESET], 
+                                                             (int)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_SLOT_B_PRESET]);
+
+    ESP_LOGI(TAG, "Slot C Preset: %d.\t\tCurrent Slot: %d", (int)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_SLOT_C_PRESET], 
+                                                            (int)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_CURRENT_SLOT]);
+
+    ESP_LOGI(TAG, "Tuning Reference: %d.\t\tDirect Monitoring: %d", (int)TuningRef, 
+                                                                    (int)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_DIRECT_MONITOR]);
+
+    ESP_LOGI(TAG, "BPM: %3.2f\t\t\tTempo Source: %d", BPM, (int)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TEMPO_SOURCE]);     
 }
 
 /****************************************************************************
@@ -536,11 +528,11 @@ static esp_err_t __attribute__((unused)) usb_tonex_one_set_active_slot(Slot newS
     TonexData->Message.CurrentSlot = newSlot;
 
     // modify the buffer with the new slot
-    TonexData->Message.PedalData.TonexStateData.CurrentSlot = (uint8_t)newSlot;
+    TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_CURRENT_SLOT] = (uint8_t)newSlot;
 
     // build total message
     memcpy((void*)TxBuffer, (void*)message, sizeof(message));
-    memcpy((void*)&TxBuffer[sizeof(message)], (void*)&TonexData->Message.PedalData.TonexStateData, sizeof(tTonexStateData));
+    memcpy((void*)&TxBuffer[sizeof(message)], (void*)TonexData->Message.PedalData.StateData, TonexData->Message.PedalData.StateDataLength);
 
     // add framing
     framed_length = addFraming(TxBuffer, sizeof(message) + TonexData->Message.PedalData.StateDataLength, FramedBuffer);
@@ -570,10 +562,10 @@ static esp_err_t usb_tonex_one_set_preset_in_slot(uint16_t preset, Slot newSlot,
     message[7] = (TonexData->Message.PedalData.StateDataLength >> 8) & 0xFF;
 
     // force pedal to Stomp mode. 0 here = A/B mode, 1 = stomp mode
-    TonexData->Message.PedalData.TonexStateData.StompMode = 1;      // thanks to Riccardo for finding
+    TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_STOMP_MODE] = 1;      // thanks to Riccardo for finding
 
     // make sure direct monitoring is on so sound not muted from USB connection
-    TonexData->Message.PedalData.TonexStateData.DirectMonitoring = 1;
+    TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_DIRECT_MONITOR] = 1;
 
     // check if setting same preset twice will set bypass
     if (control_get_config_item_int(CONFIG_ITEM_TOGGLE_BYPASS))
@@ -581,25 +573,25 @@ static esp_err_t usb_tonex_one_set_preset_in_slot(uint16_t preset, Slot newSlot,
         if (selectSlot && (TonexData->Message.CurrentSlot == newSlot) && (preset == usb_tonex_one_get_current_active_preset()))
         {
             // are we in bypass mode?
-            if (TonexData->Message.PedalData.TonexStateData.BypassMode == 1)
+            if (TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BYPASS_MODE] == 1)
             {
                 ESP_LOGI(TAG, "Disabling bypass mode");
 
                 // disable bypass mode
-                TonexData->Message.PedalData.TonexStateData.BypassMode = 0;
+                TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BYPASS_MODE] = 0;
             }
             else
             {
                 ESP_LOGI(TAG, "Enabling bypass mode");
 
                 // enable bypass mode
-                TonexData->Message.PedalData.TonexStateData.BypassMode = 1;
+                TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BYPASS_MODE] = 1;
             }
         }
         else
         {
             // new preset, disable bypass mode to be sure
-            TonexData->Message.PedalData.TonexStateData.BypassMode = 0;
+            TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BYPASS_MODE] = 0;
         }
     }
 
@@ -611,29 +603,29 @@ static esp_err_t usb_tonex_one_set_preset_in_slot(uint16_t preset, Slot newSlot,
     {
         case A:
         {
-            TonexData->Message.PedalData.TonexStateData.SlotAPreset = preset;
+            TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_SLOT_A_PRESET] = preset;
         } break;
 
         case B:
         {
-            TonexData->Message.PedalData.TonexStateData.SlotBPreset = preset;
+            TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_SLOT_B_PRESET] = preset;
         } break;
 
         case C:
         {
-            TonexData->Message.PedalData.TonexStateData.SlotCPreset = preset;
+            TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_SLOT_C_PRESET] = preset;
         } break;
     }
 
     if (selectSlot)
     {
         // modify the buffer with the new slot
-        TonexData->Message.PedalData.TonexStateData.CurrentSlot = (uint8_t)newSlot;
+        TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_CURRENT_SLOT] = (uint8_t)newSlot;
     }
 
     // build total message
     memcpy((void*)TxBuffer, (void*)message, sizeof(message));
-    memcpy((void*)&TxBuffer[sizeof(message)], (void*)&TonexData->Message.PedalData.TonexStateData, sizeof(tTonexStateData));
+    memcpy((void*)&TxBuffer[sizeof(message)], (void*)TonexData->Message.PedalData.StateData, TonexData->Message.PedalData.StateDataLength);
 
     // do framing
     framed_length = addFraming(TxBuffer, sizeof(message) + TonexData->Message.PedalData.StateDataLength, FramedBuffer);
@@ -778,28 +770,28 @@ static esp_err_t usb_tonex_one_modify_global(uint16_t global_val, float value)
         case TONEX_GLOBAL_BPM:
         {
             // modify the BPM value in state packet
-            TonexData->Message.PedalData.TonexStateData.BPM.Value = value;            
+            memcpy((void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BPM], (void*)&value, sizeof(float));
             res = ESP_OK;
         } break;
 
         case TONEX_GLOBAL_INPUT_TRIM:
         {
             // modify the input trim value in state
-            TonexData->Message.PedalData.TonexStateData.InputTrim.Value = value;
+            memcpy((void*)&TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_INPUT_TRIM], (void*)&value, sizeof(float));
             res = ESP_OK;
         } break;
 
         case TONEX_GLOBAL_CABSIM_BYPASS:
         {
             // modify the cabsim bypass in state
-            TonexData->Message.PedalData.TonexStateData.CabSimBypass = (uint8_t)value;
+            TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_CAB_BYPASS] = (uint8_t)value;
             res = ESP_OK;
         } break;
 
         case TONEX_GLOBAL_TEMPO_SOURCE:
         {
             // modify the tempo source value in state
-            TonexData->Message.PedalData.TonexStateData.TempoSource = (uint8_t)value;
+            TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TEMPO_SOURCE] = (uint8_t)value;
             res = ESP_OK;
         } break;
     }
@@ -851,37 +843,31 @@ static Status usb_tonex_one_parse_state(uint8_t* unframed, uint16_t length, uint
     TonexData->Message.Header.type = TYPE_STATE_UPDATE;
 
     TonexData->Message.PedalData.StateDataLength = length - index;
+    memcpy((void*)TonexData->Message.PedalData.StateData, (void*)&unframed[index], TonexData->Message.PedalData.StateDataLength);
     ESP_LOGI(TAG, "Saved Pedal StateData: %d", TonexData->Message.PedalData.StateDataLength);
-
-
-    if (sizeof(tTonexStateData) != TonexData->Message.PedalData.StateDataLength)
-    {
-        ESP_LOGW(TAG, "Non-matching state data!: %d vs %d", TonexData->Message.PedalData.StateDataLength, sizeof(tTonexStateData));
-    }
-
-    // only copy the amount we know about, so we don't overflow
-    memcpy((void*)&TonexData->Message.PedalData.TonexStateData, (void*)&unframed[index], sizeof(tTonexStateData));
     
-    // debug
-    //usb_tonex_one_dump_state(&TonexData->Message.PedalData.TonexStateData);
-
     // save preset details
-    TonexData->Message.SlotAPreset = TonexData->Message.PedalData.TonexStateData.SlotAPreset;
-    TonexData->Message.SlotBPreset = TonexData->Message.PedalData.TonexStateData.SlotBPreset;
-    TonexData->Message.SlotCPreset = TonexData->Message.PedalData.TonexStateData.SlotCPreset;
-    TonexData->Message.CurrentSlot = TonexData->Message.PedalData.TonexStateData.CurrentSlot;
-
+    TonexData->Message.SlotAPreset = TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_SLOT_A_PRESET];
+    TonexData->Message.SlotBPreset = TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_SLOT_B_PRESET];
+    TonexData->Message.SlotCPreset = TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_SLOT_C_PRESET];
+    TonexData->Message.CurrentSlot = TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_CURRENT_SLOT];
+ 
     // update global params
     if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
     {
-        param_ptr[TONEX_GLOBAL_BPM].Value = TonexData->Message.PedalData.TonexStateData.BPM.Value;
-        param_ptr[TONEX_GLOBAL_INPUT_TRIM].Value = TonexData->Message.PedalData.TonexStateData.InputTrim.Value;
-        param_ptr[TONEX_GLOBAL_CABSIM_BYPASS].Value = (float)TonexData->Message.PedalData.TonexStateData.CabSimBypass;
-        param_ptr[TONEX_GLOBAL_TEMPO_SOURCE].Value = (float)TonexData->Message.PedalData.TonexStateData.TempoSource;
-
+        memcpy((void*)&param_ptr[TONEX_GLOBAL_BPM].Value, (void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BPM], sizeof(float));
+        memcpy((void*)&param_ptr[TONEX_GLOBAL_INPUT_TRIM].Value, (void*)&TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_INPUT_TRIM], sizeof(float));
+        param_ptr[TONEX_GLOBAL_CABSIM_BYPASS].Value = (float)TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_CAB_BYPASS];
+        param_ptr[TONEX_GLOBAL_TEMPO_SOURCE].Value = (float)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TEMPO_SOURCE];
+ 
         tonex_params_release_locked_access();
     }
-    
+
+    // debug
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, TonexData->Message.PedalData.StateData, TonexData->Message.PedalData.StateDataLength, ESP_LOG_INFO);
+    //tonex_dump_parameters();
+    usb_tonex_one_dump_state();
+
     ESP_LOGI(TAG, "Slot A: %d. Slot B:%d. Slot C:%d. Current slot: %d", (int)TonexData->Message.SlotAPreset, (int)TonexData->Message.SlotBPreset, (int)TonexData->Message.SlotCPreset, (int)TonexData->Message.CurrentSlot);
 
     return STATUS_OK;
