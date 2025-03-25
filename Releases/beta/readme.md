@@ -1,5 +1,10 @@
 Note: files in this directory are beta versions may contain bugs.
 <br><br>
+V1.0.8.2 Beta 6.
+- fixed bug introduced as part of "State packet is now mapped to a data structure" change in beta 5. 
+
+<br><br>
+
 V1.0.8.2 Beta 5.
 REMOVED DUE TO MAJOR BUG
 - added Amplifier Presence and Depth controls to web and 4.3B UI
