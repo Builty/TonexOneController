@@ -915,7 +915,8 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
         
         case 10: 
         {
-            // tap tempo, not need here
+            // BPM
+            param = TONEX_GLOBAL_BPM;
         } break;
 
         // 11: expression pedal
