@@ -439,6 +439,8 @@ void usb_modify_parameter(uint16_t index, float value)
 {
     tUSBMessage message;
 
+    ESP_LOGI(TAG, "usb_modify_parameter: %d, %f", (int)index, value);            
+
     if (usb_input_queue == NULL)
     {
         ESP_LOGE(TAG, "usb_modify_parameter queue null");            
