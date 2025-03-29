@@ -95,7 +95,7 @@ For more information about the firmware development and customisation, refer to 
 - https://github.com/vit3k/tonex_controller for great work on reverse engineering the Tonex One USB protocol
 
 ## Firmware Release Notes <a name="release_notes"></a>
-V1.0.8.2 (beta 4):
+V1.0.8.2:
 - Changes to make the controller work with the latest Tonex editor release
 - Fixed memory leak in web config that would eventually lead to malfunction
 - Added the ability to configure the WiFi transmit power
@@ -104,6 +104,14 @@ V1.0.8.2 (beta 4):
 - Fixed issue where Stomp mode was not set by code, requiring it to be set manually (was broken by latest Ik changes)
 - Fixed issue where the new external footswitch effect toggles didn't take into account the current state, resulting in needing multiple presses in some cases
 - Changed communications to use the new messages that IK added. Much faster effect switching, and reduced ram usage
+- added Amplifier Presence and Depth controls to web and 4.3B UI
+- fixed up issues with cabinet disable via web and 4.3B UI
+- added globals page to web and 4.3B UI, with input trim, BPM, tempo source and global cabinet bypass
+- added support for Tap Tempo, via Midi and external footswitches
+- fixed issue where some web params would be displayed as rounded to the nearest integer
+- set Direct Monitoring automatically to the right setting
+- New method of preset sync on boot that no longer changes any preset assignments
+
 
 V1.0.7.2:
 - New WiFi options, now allowing connection to other access points.
