@@ -226,6 +226,9 @@ extern lv_obj_t * ui_BPMSlider;
 extern lv_obj_t * ui_InputTrimLabel;
 void ui_event_InputTrimSlider(lv_event_t * e);
 extern lv_obj_t * ui_InputTrimSlider;
+extern lv_obj_t * ui_TuningReferenceLabel;
+void ui_event_TuningReferenceSlider(lv_event_t * e);
+extern lv_obj_t * ui_TuningReferenceSlider;
 void ui_event_CloseImage(lv_event_t * e);
 extern lv_obj_t * ui_CloseImage;
 // CUSTOM VARIABLES

@@ -1087,6 +1087,10 @@ void ParameterChanged(lv_event_t * e)
     {
         usb_modify_parameter(TONEX_GLOBAL_TEMPO_SOURCE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
+    else if (obj == ui_TuningReferenceSlider)
+    {
+        usb_modify_parameter(TONEX_GLOBAL_TUNING_REFERENCE, lv_slider_get_value(obj));
+    }
     else
     {
         ESP_LOGW(TAG, "Unknown Parameter changed");    
@@ -2669,6 +2673,12 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             lv_slider_set_range(ui_InputTrimSlider, round(param_entry->Min), round(param_entry->Max));
                             lv_slider_set_value(ui_InputTrimSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                        } break;
+
+                        case TONEX_GLOBAL_TUNING_REFERENCE:
+                        {                            
+                            lv_slider_set_range(ui_TuningReferenceSlider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(ui_TuningReferenceSlider, round(param_entry->Value), LV_ANIM_OFF);                                
                         } break;
                     } 
 

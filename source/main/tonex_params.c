@@ -178,6 +178,7 @@ static tTonexParameter TonexParameters[TONEX_GLOBAL_LAST] =
     {0,      -15,    15,   "TRIM"},                // TONEX_GLOBAL_INPUT_TRIM
     {0,      0,      1,    "CABSIM"},              // TONEX_GLOBAL_CABSIM_BYPASS
     {0,      0,      1,    "TEMPOS"},              // TONEX_GLOBAL_TEMPO_SOURCE
+    {440,    415,    465,  "TUNEREF"},              // TONEX_GLOBAL_TUNING_REFERENCE
 };
 
 /****************************************************************************

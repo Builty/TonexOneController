@@ -445,8 +445,9 @@ static esp_err_t usb_tonex_one_send_single_parameter(uint16_t index, float value
     // Build message                                         len LSB  len MSB
     uint8_t message[] = {0xb9, 0x03, 0x81, 0x09, 0x03, 0x82, 0x0A,     0x00, 0x80, 0x0B, 0x03};
 
-    // payload           unknown                 param index             4 byte float value
-    uint8_t payload[] = {0xB9, 0x04, 0x02, 0x00, 0x00,             0x88, 0x00, 0x00, 0x00, 0x00 };
+    //                               0x00 here for global params???
+    // payload           unknown       |         param index             4 byte float value
+    uint8_t payload[] = {0xB9, 0x04, 0x02, 0x00, 0x00,         0x88, 0x00, 0x00, 0x00, 0x00 };
 
     // set param index
     payload[4] = index;
@@ -794,6 +795,13 @@ static esp_err_t usb_tonex_one_modify_global(uint16_t global_val, float value)
             TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TEMPO_SOURCE] = (uint8_t)value;
             res = ESP_OK;
         } break;
+
+        case TONEX_GLOBAL_TUNING_REFERENCE:
+        {
+            // modify the tuning ref value in state packet
+            memcpy((void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TUNING_REF], (void*)&value, sizeof(float));
+            res = ESP_OK;
+        } break;
     }
 
     return res;
@@ -858,8 +866,9 @@ static Status usb_tonex_one_parse_state(uint8_t* unframed, uint16_t length, uint
         memcpy((void*)&param_ptr[TONEX_GLOBAL_BPM].Value, (void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BPM], sizeof(float));
         memcpy((void*)&param_ptr[TONEX_GLOBAL_INPUT_TRIM].Value, (void*)&TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_INPUT_TRIM], sizeof(float));
         param_ptr[TONEX_GLOBAL_CABSIM_BYPASS].Value = (float)TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_CAB_BYPASS];
-        param_ptr[TONEX_GLOBAL_TEMPO_SOURCE].Value = (float)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TEMPO_SOURCE];
- 
+        param_ptr[TONEX_GLOBAL_TEMPO_SOURCE].Value = (float)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TEMPO_SOURCE];        
+        memcpy((void*)&param_ptr[TONEX_GLOBAL_TUNING_REFERENCE].Value, (void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TUNING_REF], sizeof(float));
+
         tonex_params_release_locked_access();
     }
 

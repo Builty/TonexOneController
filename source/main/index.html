@@ -406,6 +406,7 @@
         const TONEX_GLOBAL_INPUT_TRIM = 111;        
         const TONEX_GLOBAL_CABSIM_BYPASS = 112;
         const TONEX_GLOBAL_TEMPO_SOURCE = 113;
+        const TONEX_GLOBAL_TUNING_REFERENCE = 114;
 
         // Init web socket when the page loads
         window.addEventListener('load', onload);
@@ -1243,6 +1244,11 @@
                                 configureParamSwitch("gb_tempos", value);
                                 setParamData("gb_tempos", parseInt(key));
                                 break;
+
+                            case TONEX_GLOBAL_TUNING_REFERENCE:
+                                configureParamRange("gb_tref", value, min, max, 1);
+                                setParamData("gb_tref", parseInt(key));
+                                break;
                         }
                     } 
                     break;
@@ -1944,6 +1950,10 @@
                 <div class="container">
                     <label for="gb_trim" class="form-label">Input Trim</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="gb_trim">
+                </div>
+                <div class="container">
+                    <label for="gb_tref" class="form-label">Tuning Reference</label>
+                    <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="gb_tref">
                 </div>
             </p>
         </div>

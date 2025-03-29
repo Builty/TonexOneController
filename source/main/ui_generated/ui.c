@@ -220,6 +220,9 @@ lv_obj_t * ui_BPMSlider;
 lv_obj_t * ui_InputTrimLabel;
 void ui_event_InputTrimSlider(lv_event_t * e);
 lv_obj_t * ui_InputTrimSlider;
+lv_obj_t * ui_TuningReferenceLabel;
+void ui_event_TuningReferenceSlider(lv_event_t * e);
+lv_obj_t * ui_TuningReferenceSlider;
 void ui_event_CloseImage(lv_event_t * e);
 lv_obj_t * ui_CloseImage;
 // CUSTOM VARIABLES
@@ -857,6 +860,15 @@ void ui_event_BPMSlider(lv_event_t * e)
 }
 
 void ui_event_InputTrimSlider(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
+}
+
+void ui_event_TuningReferenceSlider(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
