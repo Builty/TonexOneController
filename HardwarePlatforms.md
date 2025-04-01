@@ -35,7 +35,7 @@ Note: the controller code relies on the Tonex One pedal being set to Stomp mode.
 - Optional: connect dual footswitches to the isolated inputs on the Waveshare board. GND to ground. DI0 for footswitch 1. DI1 for footwitch 2. Exact wiring depends on the footswitch but is usually a 6.5mm stereo jack
 - Connect 9V DC power supply to the terminals on the Waveshare board. The terminals are screw terminals, so most likely a DC jack to wires will be needed.
 - Switch on the power supply
-- The Waveshare board USB port will power the Tonex One. Do not connect 9 volts to it!
+- The Waveshare board USB port will power the Tonex One. Some users have tried powering the Tonex from both USB and 9 volts at the same time, however I do not know if this is recommended by IK Muliemedia
 - Optional: for the Bluetooth Client version of code, switch on a M-Vave Chocolate Midi pedal (https://www.cuvave.com/productinfo/724103.html). After a few seconds it should connect and the Bluetooth icon should change from gray to blue
 - Optional: for the Bluetooth Server version of code, the controller will be available as a peripheral for you to connect to via a Bluetooth Midi device. The Bluetooth icon should change from gray to blue when connected.
 
@@ -90,7 +90,7 @@ Note: the controller code relies on the Tonex One pedal being set to Stomp mode.
 - Connect the USB-C port on the Waveshare board to the ToneX One USB-C port
 - Connect 5 volts DC to the power input jack that you soldered in the first step
 - Switch on the power supply
-- The Waveshare board USB port will power the Tonex One. Do not connect 9 volts to it!
+- The Waveshare board USB port will power the Tonex One. Some users have tried powering the Tonex from both USB and 9 volts at the same time, however I do not know if this is recommended by IK Muliemedia
 ![wiring_waveshare_169](https://github.com/user-attachments/assets/104c7423-a844-4c03-878e-3543ede0bc2d)
 
 # Hardware Platform 4: Espressif ESP32-S3 DevKit-C (no Display support) <a name="esp_devkitc"></a>
@@ -125,7 +125,7 @@ Note: the controller code relies on the Tonex One pedal being set to Stomp mode.
 - Connect the OTG USB-C port on the board to the ToneX One USB-C port
 - Connect 5 volts DC to the power input jack that you connected in the first step
 - Switch on the power supply
-- The board USB port will power the Tonex One. Do not connect 9 volts to it!
+- The board USB port will power the Tonex One. Some users have tried powering the Tonex from both USB and 9 volts at the same time, however I do not know if this is recommended by IK Muliemedia
 - Optional: for the Bluetooth Client version of code, switch on a M-Vave Chocolate Midi pedal (https://www.cuvave.com/productinfo/724103.html). After a few seconds it should connect and the Bluetooth icon should change from gray to blue
 - Optional: for the Bluetooth Server version of code, the controller will be available as a peripheral for you to connect to via a Bluetooth Midi device. The Bluetooth icon should change from gray to blue when connected.
 ![wiring_atom_s3r](https://github.com/user-attachments/assets/0829c254-23bb-4ef6-8695-c5a8d363d817)
