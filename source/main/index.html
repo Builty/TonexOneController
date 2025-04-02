@@ -241,6 +241,61 @@
           padding: 10px 10px;
         }
 
+        .bpm-tap{
+            width: 50%;
+            height: 150px;
+            margin-left: 25%;
+            border-radius: 25px;
+            border-color: #FB9230;
+            border-width: 4px;
+            border-style: none;
+            background-color: #2A2A2A;
+            transition: background 0.2s;
+            box-shadow: 0px 2px 15px #00000030;
+        }
+
+        .bpm-tap:active {
+            background: #513D2B;
+        }
+        
+        .dl-indicator{
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #2A2A2A;
+            box-shadow: 0px 2px 15px #00000030;
+        }
+
+        .mo-indicator{
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #2A2A2A;
+            box-shadow: 0px 2px 15px #00000030;
+            animation: mo-animation;
+            animation-duration: 0s;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes mo-animation {
+            0% {
+                background-color: #2A2A2A;
+                box-shadow: 0px 2px 15px #00000030;
+            }
+            50% {
+                background-color: #FB9230;
+                box-shadow: 0 2px 15px #FB9230d0;
+            }
+            100% {
+                background-color: #2A2A2A;
+                box-shadow: 0px 2px 15px #00000030;
+            }
+        }
+
+        * {
+            /* prevents zoom when double-tapping tap tempo */
+            touch-action: manipulation;
+        }
     </style>
 
     <script>   
@@ -410,6 +465,9 @@
         const TONEX_GLOBAL_CABSIM_BYPASS = 112;
         const TONEX_GLOBAL_TEMPO_SOURCE = 113;
 
+        // tap tempo
+        let globalTapTempo = new TapTempo();
+
         // Init web socket when the page loads
         window.addEventListener('load', onload);
 
@@ -427,7 +485,12 @@
 				if (inputs[i].type == "range") {
 					inputs[i].oninput = function(e){showValue(e.target);};
 				}
-            }	
+            }
+
+            // initialize animations
+            bpmBlink();
+            delayBlink();
+            modulationAnimate();
         }
 
         function pageTimerEvent(){
@@ -1503,15 +1566,128 @@
             }
         }
 		function showValue(e) {
-			let s = e.previousElementSibling;
-			if (s.tagName == "LABEL") {
-                let t = s.innerText;
-                let i = t.indexOf(":");
-                if (i>0) s.innerText = t.substr(0, i);
-                s.innerText += " : " + parseFloat(e.value);	
-			}				
+            let s = document.querySelector(`label[for="${e.id}"]`);
+            let t = s.innerText;
+            let i = t.indexOf(":");
+            if (i>0) s.innerText = t.substr(0, i);
+            s.innerText += " : " + parseFloat(e.value);
 		}
      
+        // Tap tempo
+
+        function TapTempo() {
+            this.prevTime = 0;
+            this.countClicks = 0;
+            this.currentTime = 0;
+            this.bpm = 0;
+            this.timeDifference = 0;
+            this.bpmTotal = 0;
+            this.bpmFinal = 0;
+
+            this.tap = (input) => {
+                if (this.prevTime === 0) {
+                    this.prevTime = Date.now();
+                } else if ((Date.now()-this.prevTime) > 2200) {
+                    this.prevTime = 0;
+                    this.bpm = 0;
+                    this.bpmTotal = 0;
+                    this.bpmFinal = 0;
+                    this.countClicks = 0;
+                } else {
+                    this.currentTime = Date.now();
+                    this.timeDifference = this.currentTime - this.prevTime;
+                    this.prevTime = this.currentTime;
+                    this.bpm = 60 / this.timeDifference;
+                    this.bpmTotal = this.bpmTotal + this.bpm;
+                    this.countClicks++;
+                    this.bpmFinal = (this.bpmTotal / this.countClicks) * 1000;
+
+                    if (this.bpmFinal < input.min) {
+                        this.bpmFinal = input.min;
+                    }
+                    if (this.bpmFinal > input.max) {
+                        this.bpmFinal = input.max;
+                    }
+                }
+                return this.bpmFinal;
+            }
+        }
+
+        function globalTempoTap() {
+            let input = document.getElementById("gb_bpm");
+            let bpm = globalTapTempo.tap(input);
+            if (bpm > 0) {
+                setParamValue("gb_bpm", bpm);
+                showValue(input);
+
+                var event = new Event('change');
+                input.dispatchEvent(event);
+            }
+        }
+
+        function bpmBlink() {
+            let input = document.getElementById("gb_bpm");
+            var milliseconds = 1000*60/input.value;
+            if (milliseconds <= 0) {
+                setTimeout(() => {
+                    bpmBlink();
+                }, 500);
+                return;
+            }
+
+            var tap =  document.getElementById("gb_tap");
+            tap.style.borderStyle = "solid";
+            tap.style.boxShadow = "0 2px 15px #FB9230d0, inset 0 0 8px #FB9230d0";
+            
+            setTimeout(() => {
+                tap.style.borderStyle = "none";
+                tap.style.boxShadow = "0 2px 15px #00000030";
+            }, milliseconds/4);
+
+            setTimeout(() => {
+                bpmBlink();
+            }, milliseconds);
+        }
+
+        function delayBlink() {
+            let input = document.getElementById("dl_time");
+            var milliseconds = input.value;
+
+            if (milliseconds <= 0) {
+                setTimeout(() => {
+                    delayBlink();
+                }, 500);
+                return;
+            }
+
+            var indicator =  document.getElementById("dl_indicator");
+            indicator.style.backgroundColor = "#FB9230d0";
+            indicator.style.boxShadow = "0 2px 15px #FB9230d0";
+            
+            setTimeout(() => {
+                indicator.style.backgroundColor = "#2A2A2A";
+                indicator.style.boxShadow = "0 2px 15px #00000030";
+            }, milliseconds/4);
+
+            setTimeout(() => {
+                delayBlink();
+            }, milliseconds);
+        }
+        
+        function modulationAnimate() {
+            let inputId = "mo_param1";
+            let input = document.getElementById(inputId);
+            let label = document.querySelector(`label[for="${inputId}"]`);
+            let isRate = label.innerHTML.startsWith("Rate");
+            let milliseconds = input.value > 0 ? (isRate ? 1000/input.value : 1000*60/input.value) : 0;
+
+            var indicator =  document.getElementById("mo_indicator");
+            indicator.style.animationDuration = `${milliseconds}ms`;
+            
+            setTimeout(() => {
+                modulationAnimate();
+            }, 100);
+        }
     </script>
         
     <nav class="navbar navbar-dark bg-dark">
@@ -1788,7 +1964,14 @@
                 </div>
                 <br>
                 <div class="container">
-                    <label for="mo_param1" id="mo_param1l" class="form-label">Param1</label>
+                    <div class="row">
+                        <div class="col">
+                            <label for="mo_param1" id="mo_param1l" class="form-label">Param1</label>
+                        </div>
+                        <div class="col">
+                            <div id="mo_indicator" class="mo-indicator user-select-none"></div>
+                        </div>
+                    </div>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="mo_param1">
                 </div>
                 <div class="container">
@@ -1854,7 +2037,14 @@
                 </div>
                 <br>
                 <div class="container">
-                    <label for="dl_time" class="form-label">Time</label>
+                    <div class="row">
+                        <div class="col">
+                            <label for="dl_time" class="form-label">Time</label>
+                        </div>
+                        <div class="col">
+                            <div id="dl_indicator" class="dl-indicator user-select-none"></div>
+                        </div>
+                    </div>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="dl_time">
                 </div>
                 <div class="container">
@@ -1940,6 +2130,11 @@
                     </div>
                 </div>
                 <br>
+                <div class="container">
+                    <div id="gb_tap" class="bpm-tap d-flex user-select-none" onclick="globalTempoTap()" ontouchstart="">
+                        <div class="justify-content-center align-self-center text-center w-100">TAP</div>
+                    </div>
+                </div>
                 <div class="container">
                     <label for="gb_bpm" class="form-label">BPM</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="gb_bpm">
