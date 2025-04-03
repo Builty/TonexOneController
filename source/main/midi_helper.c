@@ -694,13 +694,14 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
             return ESP_OK;
         } break;
 
+
         case 88: 
         {
             // bpm
             param = TONEX_GLOBAL_BPM;            
             value = midi_helper_scale_midi_to_float(param, midi_value);
         } break;
-
+        
         // 89: bank down
         // 90: bank up    
 
@@ -748,6 +749,20 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         } break;
 
         // 96 to 101 not used       
+
+        case 99: 
+        {
+            // bpm
+            param = TONEX_GLOBAL_BPM; 
+            value = (midi_value < 40) ? 40 : midi_value;
+        } break;
+        
+        case 100: 
+        {
+            // bpm
+            param = TONEX_GLOBAL_BPM;            
+            value = midi_value+100;
+        } break;
 
         case 102:
         {
