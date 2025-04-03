@@ -30,6 +30,14 @@ extern lv_obj_t * ui_BTStatusDisconn;
 extern lv_obj_t * ui_BTStatusConn;
 extern lv_obj_t * ui_WiFiStatusDisconn;
 extern lv_obj_t * ui_WiFiStatusConn;
+
+extern lv_obj_t * ui_BPMLabel;
+extern lv_obj_t * ui_BPM;
+
+extern lv_obj_t * ui_CStatus;
+extern lv_obj_t * ui_MStatus;
+extern lv_obj_t * ui_DStatus;
+extern lv_obj_t * ui_RStatus;
 // CUSTOM VARIABLES
 
 // EVENTS

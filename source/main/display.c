@@ -2674,7 +2674,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             lv_slider_set_range(ui_InputTrimSlider, round(param_entry->Min), round(param_entry->Max));
                             lv_slider_set_value(ui_InputTrimSlider, round(param_entry->Value), LV_ANIM_OFF);                                
                         } break;
-
+                        
                         case TONEX_GLOBAL_TUNING_REFERENCE:
                         {                            
                             lv_slider_set_range(ui_TuningReferenceSlider, round(param_entry->Min), round(param_entry->Max));
@@ -2685,7 +2685,92 @@ static uint8_t update_ui_element(tUIUpdate* update)
                     tonex_params_release_locked_access();
                 }               
             }
-#endif            
+#endif
+
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH
+
+
+
+
+            ESP_LOGI(TAG, "Syncing params to UI");
+
+            tTonexParameter* param_ptr;
+
+            for (uint16_t param = 0; param < TONEX_GLOBAL_LAST; param++)
+            {                     
+                if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
+                {
+                    tTonexParameter* param_entry = &param_ptr[param];
+
+                    // debug
+                    //ESP_LOGI(TAG, "Param %d: val: %02f, min: %02f, max: %02f", param, param_entry->Value, param_entry->Min, param_entry->Max);
+
+                    switch (param)
+                    {
+                        case TONEX_GLOBAL_BPM:
+                        {
+                            char buf[128];
+                            sprintf(buf, "%d", (int)round(param_entry->Value));
+                            lv_label_set_text(ui_BPM, buf);  
+                        } break;
+
+
+
+                        case TONEX_PARAM_COMP_ENABLE:
+                        {
+                            if (param_entry->Value)
+                            {
+                                lv_obj_set_style_border_color(ui_CStatus, lv_color_hex(0xDDDD00), LV_PART_MAIN | LV_STATE_DEFAULT);
+                            }
+                            else
+                            {
+                                lv_obj_set_style_border_color(ui_CStatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
+                            }
+                        } break;
+                        case TONEX_PARAM_MODULATION_ENABLE:
+                        {
+                            if (param_entry->Value)
+                            {
+                                lv_obj_set_style_border_color(ui_MStatus, lv_color_hex(0xEEAA00), LV_PART_MAIN | LV_STATE_DEFAULT);
+                            }
+                            else
+                            {
+                                lv_obj_set_style_border_color(ui_MStatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
+                            }
+                        } break;
+                        case TONEX_PARAM_DELAY_ENABLE:
+                        {
+                            if (param_entry->Value)
+                            {
+                                lv_obj_set_style_border_color(ui_DStatus, lv_color_hex(0x00CC00), LV_PART_MAIN | LV_STATE_DEFAULT);
+                            }
+                            else
+                            {
+                                lv_obj_set_style_border_color(ui_DStatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
+                            }
+                        } break;
+
+                        case TONEX_PARAM_REVERB_ENABLE:
+                        {
+                            if (param_entry->Value)
+                            {
+                                lv_obj_set_style_border_color(ui_RStatus, lv_color_hex(0x33FFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+                            }
+                            else
+                            {
+                                lv_obj_set_style_border_color(ui_RStatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
+                            }
+                        } break;
+
+                    }
+
+                    tonex_params_release_locked_access();
+                }               
+            }
+
+
+
+#endif
         } break;
 
         default:

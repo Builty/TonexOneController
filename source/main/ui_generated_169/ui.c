@@ -23,6 +23,14 @@ lv_obj_t * ui_BTStatusDisconn;
 lv_obj_t * ui_BTStatusConn;
 lv_obj_t * ui_WiFiStatusDisconn;
 lv_obj_t * ui_WiFiStatusConn;
+
+lv_obj_t * ui_BPMLabel;
+lv_obj_t * ui_BPM;
+
+lv_obj_t * ui_CStatus;
+lv_obj_t * ui_MStatus;
+lv_obj_t * ui_DStatus;
+lv_obj_t * ui_RStatus;
 // CUSTOM VARIABLES
 
 // EVENTS
