@@ -141,4 +141,83 @@ void ui_Screen1_screen_init(void)
     lv_img_set_zoom(ui_WiFiStatusConn, 220);
 
 
+    ui_BPMLabel = lv_label_create(ui_Screen1);
+    lv_obj_set_width(ui_BPMLabel, 80);
+    lv_obj_set_height(ui_BPMLabel, 50);
+    lv_obj_set_x(ui_BPMLabel, 6);
+    lv_obj_set_y(ui_BPMLabel, -55);
+    lv_obj_set_align(ui_BPMLabel, LV_ALIGN_RIGHT_MID);
+    lv_label_set_text(ui_BPMLabel, "BPM\n");
+    lv_obj_set_style_text_color(ui_BPMLabel, lv_color_hex(0xCCCCCC), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_BPMLabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_BPMLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_BPMLabel, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    
+    ui_BPM = lv_label_create(ui_Screen1);
+    lv_obj_set_width(ui_BPM, 80);
+    lv_obj_set_height(ui_BPM, 50);
+    lv_obj_set_x(ui_BPM, 6);
+    lv_obj_set_y(ui_BPM, -35);
+    lv_obj_set_align(ui_BPM, LV_ALIGN_RIGHT_MID);
+    lv_label_set_text(ui_BPM, "?");
+    lv_obj_set_style_text_color(ui_BPM, lv_color_hex(0xCCCCCC), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_BPM, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_BPM, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_BPM, &lv_font_montserrat_30, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+
+    static lv_style_t FXstyle;
+    lv_style_init(&FXstyle);
+    lv_style_set_radius(&FXstyle, 5);
+    lv_style_set_bg_opa(&FXstyle, LV_OPA_COVER);
+    lv_style_set_bg_color(&FXstyle, lv_color_hex(0x1F1F1F));
+    lv_style_set_border_width(&FXstyle, 2);
+    lv_style_set_border_color(&FXstyle, lv_color_hex(0x563F2A));
+    lv_style_set_text_color(&FXstyle, lv_color_hex(0xFFFFFF));
+    lv_style_set_text_opa(&FXstyle, 255);
+    lv_style_set_text_align(&FXstyle, LV_TEXT_ALIGN_CENTER);
+    lv_style_set_text_font(&FXstyle, &lv_font_montserrat_20);
+    lv_style_set_radius(&FXstyle, 10);
+
+
+
+    ui_CStatus = lv_label_create(ui_Screen1);    
+    lv_obj_add_style(ui_CStatus, &FXstyle, 0);
+    lv_obj_set_width(ui_CStatus, 28);
+    lv_obj_set_height(ui_CStatus, 28);
+    lv_obj_set_x(ui_CStatus, -98);
+    lv_obj_set_y(ui_CStatus, -72);
+    lv_obj_set_align(ui_CStatus, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_CStatus, "C");
+
+    ui_MStatus = lv_label_create(ui_Screen1);    
+    lv_obj_add_style(ui_MStatus, &FXstyle, 0);
+    lv_obj_set_width(ui_MStatus, 28);
+    lv_obj_set_height(ui_MStatus, 28);
+    lv_obj_set_x(ui_MStatus, -98);
+    lv_obj_set_y(ui_MStatus, -40);
+    lv_obj_set_align(ui_MStatus, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_MStatus, "M");
+
+    
+    ui_DStatus = lv_label_create(ui_Screen1);    
+    lv_obj_add_style(ui_DStatus, &FXstyle, 0);
+    lv_obj_set_width(ui_DStatus, 28);
+    lv_obj_set_height(ui_DStatus, 28);
+    lv_obj_set_x(ui_DStatus, -65);
+    lv_obj_set_y(ui_DStatus, -72);
+    lv_obj_set_align(ui_DStatus, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_DStatus, "D");
+
+    ui_RStatus = lv_label_create(ui_Screen1);    
+    lv_obj_add_style(ui_RStatus, &FXstyle, 0);
+    lv_obj_set_width(ui_RStatus, 28);
+    lv_obj_set_height(ui_RStatus, 28);
+    lv_obj_set_x(ui_RStatus, -65);
+    lv_obj_set_y(ui_RStatus, -40);
+    lv_obj_set_align(ui_RStatus, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_RStatus, "R");
+
+
 }
