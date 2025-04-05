@@ -2688,10 +2688,6 @@ static uint8_t update_ui_element(tUIUpdate* update)
 #endif
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH
-
-
-
-
             ESP_LOGI(TAG, "Syncing params to UI");
 
             tTonexParameter* param_ptr;
@@ -2714,8 +2710,6 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             lv_label_set_text(ui_BPM, buf);  
                         } break;
 
-
-
                         case TONEX_PARAM_COMP_ENABLE:
                         {
                             if (param_entry->Value)
@@ -2727,6 +2721,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 lv_obj_set_style_border_color(ui_CStatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
                             }
                         } break;
+
                         case TONEX_PARAM_MODULATION_ENABLE:
                         {
                             if (param_entry->Value)
@@ -2738,6 +2733,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 lv_obj_set_style_border_color(ui_MStatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
                             }
                         } break;
+
                         case TONEX_PARAM_DELAY_ENABLE:
                         {
                             if (param_entry->Value)
@@ -2767,9 +2763,6 @@ static uint8_t update_ui_element(tUIUpdate* update)
                     tonex_params_release_locked_access();
                 }               
             }
-
-
-
 #endif
         } break;
 

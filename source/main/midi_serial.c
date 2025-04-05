@@ -58,7 +58,7 @@ static uint8_t midi_serial_channel = 0;
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void midi_serial_uart_rx_purge(void)
+static void __attribute__((unused)) midi_serial_uart_rx_purge(void)
 {
     int length = 0;
     uart_get_buffered_data_len(UART_PORT_NUM, (size_t*)&length);
