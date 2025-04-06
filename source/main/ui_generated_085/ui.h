@@ -20,6 +20,12 @@ extern "C" {
 void ui_Screen1_screen_init(void);
 extern lv_obj_t * ui_Screen1;
 extern lv_obj_t * ui_PresetHeadingLabel;
+extern lv_obj_t * ui_BPMLabel;
+extern lv_obj_t * ui_BPM;
+extern lv_obj_t * ui_CStatus;
+extern lv_obj_t * ui_MStatus;
+extern lv_obj_t * ui_DStatus;
+extern lv_obj_t * ui_RStatus;
 extern lv_obj_t * ui_BottomContainer;
 extern lv_obj_t * ui_PresetHeadingLabel2;
 extern lv_obj_t * ui_TopPanel;

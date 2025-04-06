@@ -13,6 +13,12 @@
 void ui_Screen1_screen_init(void);
 lv_obj_t * ui_Screen1;
 lv_obj_t * ui_PresetHeadingLabel;
+lv_obj_t * ui_BPMLabel;
+lv_obj_t * ui_BPM;
+lv_obj_t * ui_CStatus;
+lv_obj_t * ui_MStatus;
+lv_obj_t * ui_DStatus;
+lv_obj_t * ui_RStatus;
 lv_obj_t * ui_BottomContainer;
 lv_obj_t * ui_PresetHeadingLabel2;
 lv_obj_t * ui_TopPanel;
