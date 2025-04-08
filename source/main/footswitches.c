@@ -281,7 +281,7 @@ static esp_err_t footswitch_read_multiple_offboard(uint16_t* switch_states)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void footswitch_handle_dual_mode(tFootswitchHandler* handler)
+static void __attribute__((unused)) footswitch_handle_dual_mode(tFootswitchHandler* handler)
 {
     uint8_t value;   
 
@@ -378,7 +378,7 @@ static void footswitch_handle_dual_mode(tFootswitchHandler* handler)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void footswitch_handle_banked(tFootswitchHandler* handler, tFootswitchLayoutEntry* layout)
+static void __attribute__((unused)) footswitch_handle_banked(tFootswitchHandler* handler, tFootswitchLayoutEntry* layout)
 {
     uint16_t binary_val = 0;    
     uint16_t loop;
@@ -486,7 +486,7 @@ static void footswitch_handle_banked(tFootswitchHandler* handler, tFootswitchLay
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void footswitch_handle_quad_binary(tFootswitchHandler* handler)
+static void __attribute__((unused)) footswitch_handle_quad_binary(tFootswitchHandler* handler)
 {
     uint8_t value;
     uint8_t binary_val = 0;    
@@ -666,8 +666,8 @@ static void footswitch_handle_efects(tFootswitchHandler* handler)
 *****************************************************************************/
 void footswitch_task(void *arg)
 {       
-    uint8_t value;
-    uint32_t reset_timer = 0;
+    __attribute__((unused)) uint8_t value;
+    __attribute__((unused)) uint32_t reset_timer = 0;
 
     ESP_LOGI(TAG, "Footswitch task start");
 
@@ -751,8 +751,11 @@ void footswitch_task(void *arg)
         // did we find an IO expander on boot?
         if (FootswitchControl.io_expander_ok)
         {
-            // handle external footswitches as banked
-            footswitch_handle_banked(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_EXTERNAL_PRESETS], (tFootswitchLayoutEntry*)&FootswitchLayouts[FootswitchControl.external_switch_mode]);
+            if (FootswitchControl.external_switch_mode != FOOTSWITCH_LAYOUT_DISABLED)
+            {
+                // handle external footswitches as banked
+                footswitch_handle_banked(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_EXTERNAL_PRESETS], (tFootswitchLayoutEntry*)&FootswitchLayouts[FootswitchControl.external_switch_mode]);
+            }
 
             // handle effects switching
             footswitch_handle_efects(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_EXTERNAL_EFFECTS]);

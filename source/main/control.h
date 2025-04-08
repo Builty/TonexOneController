@@ -178,7 +178,10 @@ enum FootswitchLayouts
     FOOTSWITCH_LAYOUT_2X5B,               // 2 rows of 5 switches, bank via last 2
     FOOTSWITCH_LAYOUT_2X6A,               // 2 rows of 6 switches, bank via 1+2 and 5+6
     FOOTSWITCH_LAYOUT_2X6B,               // 2 rows of 6 switches, bank via last 2
-    FOOTSWITCH_LAYOUT_LAST
+    //todo FOOTSWITCH_LAYOUT_1X2,                // next/previous
+    //todo FOOTSWITCH_LAYOUT_1X4_BINARY,        // 4 bit binary 
+    FOOTSWITCH_LAYOUT_LAST,
+    FOOTSWITCH_LAYOUT_DISABLED = 0xFF
 };
 
 enum IOExpanderPins

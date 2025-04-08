@@ -1243,11 +1243,14 @@ static uint8_t LoadUserData(void)
         save_needed = 1;
     }
 
-    if (ControlData.ConfigData.ExternalFootswitchPresetLayout >= FOOTSWITCH_LAYOUT_LAST)
+    if (ControlData.ConfigData.ExternalFootswitchPresetLayout != FOOTSWITCH_LAYOUT_DISABLED)
     {
-        ESP_LOGW(TAG, "Config External Footswitch preset layout invalid");
-        ControlData.ConfigData.ExternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
-        save_needed = 1;
+        if (ControlData.ConfigData.ExternalFootswitchPresetLayout >= FOOTSWITCH_LAYOUT_LAST) 
+        {
+            ESP_LOGW(TAG, "Config External Footswitch preset layout invalid");
+            ControlData.ConfigData.ExternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
+            save_needed = 1;
+        }
     }
 
     if (save_needed)
