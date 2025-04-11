@@ -512,12 +512,12 @@ static uint8_t process_control_command(tControlMessage* message)
             // debug
             //ESP_LOGI(TAG, "Tap Tempo %d %d", (int)current_time, (int)delta);
 
-            // BPM can range from 60 to 240 bpm: 1 second maximum to 250 msec minimum between beats
+            // BPM can range from 40 to 240 bpm: 1.5 second2 maximum to 250 msec minimum between beats
             
             // check time since last tap
-            if (delta > 1000)
+            if (delta > 1500)
             {
-                // less than 60 bpm, save time and wait for another trigger
+                // less than 40 bpm, save time and wait for another trigger
                 ControlData.TapTempo.LastTime = current_time;
             }
             else 
@@ -531,16 +531,12 @@ static uint8_t process_control_command(tControlMessage* message)
                 // calculate bpm (60,000 is 60 seconds in msec)
                 bpm = 60000.0f / (float)delta;
 
-                // check if the bpm has changed significantly from its current value
-                if (fabs(bpm - ControlData.TapTempo.BPM) > 25.0f)
-                {
-                    ControlData.TapTempo.BPM = bpm;
+                ControlData.TapTempo.BPM = bpm;
 
-                    ESP_LOGI(TAG, "Tap Tempo BPM = %d", (int)bpm);
+                ESP_LOGI(TAG, "Tap Tempo BPM = %d", (int)bpm);
 
-                    // update pedal
-                    usb_modify_parameter(TONEX_GLOBAL_BPM, ControlData.TapTempo.BPM);
-                }
+                // update pedal
+                usb_modify_parameter(TONEX_GLOBAL_BPM, ControlData.TapTempo.BPM);
 
                 // save time for next trigger
                 ControlData.TapTempo.LastTime = current_time;
