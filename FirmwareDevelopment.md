@@ -24,8 +24,8 @@ Use the Menu Config system to select which components of the Controller you wish
 
 There are also a few settings that need changing between the Waveshare board with display and the Zero without a display, mainly due to the headless board having 4 MB flash versus 8MB on the display board:
 ### Partition Table
-- Display board: "custom partition table csv"
-- No Display board: "Factory app, two OTA definitions"
+- Waveshare Zero: "partitions_zero.csv"
+- All others: "partitions.csv"
 
 ### SPI RAM config
 Mode of SPI RAM chip in use:
@@ -37,7 +37,7 @@ Flash Spi Mode:
 - Display board: "QIO" (Quad mode)
 - No Display board: "DIO" (Dual mode)
 
-Flash Size:
+### Flash Size:
 - Display board: "8MB"
 - No Display board: "4MB"
 
