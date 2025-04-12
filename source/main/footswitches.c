@@ -90,6 +90,7 @@ typedef struct
     uint8_t onboard_switch_mode;   
     uint8_t external_switch_mode;
     tExternalFootswitchEffectHandler ExternalFootswitchEffectHandler[MAX_EXTERNAL_EFFECT_FOOTSWITCHES];
+    tExternalFootswitchEffectHandler InternalFootswitchEffectHandler[MAX_INTERNAL_EFFECT_FOOTSWITCHES];
 } tFootswitchControl;
 
 typedef struct
@@ -668,6 +669,7 @@ void footswitch_task(void *arg)
 {       
     __attribute__((unused)) uint8_t value;
     __attribute__((unused)) uint32_t reset_timer = 0;
+    uint8_t configs;
 
     ESP_LOGI(TAG, "Footswitch task start");
 
@@ -686,28 +688,23 @@ void footswitch_task(void *arg)
     FootswitchControl.external_switch_mode = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_PRESET_LAYOUT);
 
     // load config for external effect buttons
-    FootswitchControl.ExternalFootswitchEffectHandler[0].config.Switch = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT1_SW);
-    FootswitchControl.ExternalFootswitchEffectHandler[0].config.CC = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT1_CC);
-    FootswitchControl.ExternalFootswitchEffectHandler[0].config.Value_1 = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT1_VAL1);
-    FootswitchControl.ExternalFootswitchEffectHandler[0].config.Value_2 = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT1_VAL2);
-    FootswitchControl.ExternalFootswitchEffectHandler[1].config.Switch = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT2_SW);
-    FootswitchControl.ExternalFootswitchEffectHandler[1].config.CC = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT2_CC);
-    FootswitchControl.ExternalFootswitchEffectHandler[1].config.Value_1 = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT2_VAL1);
-    FootswitchControl.ExternalFootswitchEffectHandler[1].config.Value_2 =control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT2_VAL2);
-    FootswitchControl.ExternalFootswitchEffectHandler[2].config.Switch = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT3_SW);
-    FootswitchControl.ExternalFootswitchEffectHandler[2].config.CC = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT3_CC);
-    FootswitchControl.ExternalFootswitchEffectHandler[2].config.Value_1 =control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT3_VAL1);
-    FootswitchControl.ExternalFootswitchEffectHandler[2].config.Value_2 =control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT3_VAL2);
-    FootswitchControl.ExternalFootswitchEffectHandler[3].config.Switch = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT4_SW);
-    FootswitchControl.ExternalFootswitchEffectHandler[3].config.CC = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT4_CC);
-    FootswitchControl.ExternalFootswitchEffectHandler[3].config.Value_1 =control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT4_VAL1);
-    FootswitchControl.ExternalFootswitchEffectHandler[3].config.Value_2 =control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT4_VAL2);
-    FootswitchControl.ExternalFootswitchEffectHandler[4].config.Switch = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT5_SW);
-    FootswitchControl.ExternalFootswitchEffectHandler[4].config.CC = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT5_CC);
-    FootswitchControl.ExternalFootswitchEffectHandler[4].config.Value_1 = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT5_VAL1);
-    FootswitchControl.ExternalFootswitchEffectHandler[4].config.Value_2 =control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT5_VAL2);
+    for (configs = 0; configs < MAX_EXTERNAL_EFFECT_FOOTSWITCHES; configs++)
+    {
+        FootswitchControl.ExternalFootswitchEffectHandler[configs].config.Switch = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT1_SW + (configs * 4));
+        FootswitchControl.ExternalFootswitchEffectHandler[configs].config.CC = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT1_CC + (configs * 4));
+        FootswitchControl.ExternalFootswitchEffectHandler[configs].config.Value_1 = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT1_VAL1 + (configs * 4));
+        FootswitchControl.ExternalFootswitchEffectHandler[configs].config.Value_2 = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT1_VAL2 + (configs * 4));
+    }
 
-
+    // load config for internal effect buttons
+    for (configs = 0; configs < MAX_INTERNAL_EFFECT_FOOTSWITCHES; configs++)
+    {
+        FootswitchControl.InternalFootswitchEffectHandler[configs].config.Switch = control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT1_SW + (configs * 4));
+        FootswitchControl.InternalFootswitchEffectHandler[configs].config.CC = control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT1_CC + (configs * 4));
+        FootswitchControl.InternalFootswitchEffectHandler[configs].config.Value_1 = control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT1_VAL1 + (configs * 4));
+        FootswitchControl.InternalFootswitchEffectHandler[configs].config.Value_2 = control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT1_VAL2 + (configs * 4));
+    }
+    
     // setup handler for onboard IO footswitches
     FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD].footswitch_single_reader = &footswitch_read_single_onboard;
     FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD].footswitch_multiple_reader = &footswitch_read_multiple_onboard;
