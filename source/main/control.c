@@ -1546,11 +1546,14 @@ static uint8_t LoadUserData(void)
         save_needed = 1;
     }
 
-    if (ControlData.ConfigData.FootswitchMode >= FOOTSWITCH_MODE_LAST)
+    if (ControlData.ConfigData.FootswitchMode != FOOTSWITCH_LAYOUT_DISABLED)
     {
-        ESP_LOGW(TAG, "Config Footswitch mode invalid");
-        ControlData.ConfigData.FootswitchMode = FOOTSWITCH_MODE_DUAL_UP_DOWN;
-        save_needed = 1;
+        if (ControlData.ConfigData.FootswitchMode >= FOOTSWITCH_LAYOUT_LAST)
+        {
+            ESP_LOGW(TAG, "Config Footswitch mode invalid");
+            ControlData.ConfigData.FootswitchMode = FOOTSWITCH_LAYOUT_1X2;
+            save_needed = 1;
+        }
     }
 
     if (ControlData.ConfigData.ExternalFootswitchPresetLayout != FOOTSWITCH_LAYOUT_DISABLED)
@@ -1559,6 +1562,16 @@ static uint8_t LoadUserData(void)
         {
             ESP_LOGW(TAG, "Config External Footswitch preset layout invalid");
             ControlData.ConfigData.ExternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
+            save_needed = 1;
+        }
+    }
+
+    if (ControlData.ConfigData.InternalFootswitchPresetLayout != FOOTSWITCH_LAYOUT_DISABLED)
+    {
+        if (ControlData.ConfigData.InternalFootswitchPresetLayout >= FOOTSWITCH_LAYOUT_LAST) 
+        {
+            ESP_LOGW(TAG, "Config Internal Footswitch preset layout invalid");
+            ControlData.ConfigData.InternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
             save_needed = 1;
         }
     }
@@ -1594,6 +1607,14 @@ static uint8_t LoadUserData(void)
         ESP_LOGI(TAG, "Config Ext Footsw Effect %d Val 2: %d", (int)loop, (int)ControlData.ConfigData.ExternalFootswitchEffectConfig[loop].Value_2);
     }
     
+    for (uint8_t loop = 0; loop < MAX_INTERNAL_EFFECT_FOOTSWITCHES; loop++)
+    {
+        ESP_LOGI(TAG, "Config Int Footsw Effect %d Switch: %d", (int)loop, (int)ControlData.ConfigData.InternalFootswitchEffectConfig[loop].Switch);
+        ESP_LOGI(TAG, "Config Int Footsw Effect %d CC: %d", (int)loop, (int)ControlData.ConfigData.InternalFootswitchEffectConfig[loop].CC);
+        ESP_LOGI(TAG, "Config Int Footsw Effect %d Val 1: %d", (int)loop, (int)ControlData.ConfigData.InternalFootswitchEffectConfig[loop].Value_1);
+        ESP_LOGI(TAG, "Config Int Footsw Effect %d Val 2: %d", (int)loop, (int)ControlData.ConfigData.InternalFootswitchEffectConfig[loop].Value_2);
+    }
+
     // status    
     return result;
 }
@@ -1614,7 +1635,7 @@ void control_set_default_config(void)
     ControlData.ConfigData.GeneralDoublePressToggleBypass = 0;
     ControlData.ConfigData.MidiSerialEnable = 0;
     ControlData.ConfigData.MidiChannel = 1;
-    ControlData.ConfigData.FootswitchMode = FOOTSWITCH_MODE_DUAL_UP_DOWN;
+    ControlData.ConfigData.FootswitchMode = FOOTSWITCH_LAYOUT_1X2;
     ControlData.ConfigData.EnableBTmidiCC = 0;
     memset((void*)ControlData.ConfigData.BTClientCustomName, 0, sizeof(ControlData.ConfigData.BTClientCustomName));
     ControlData.ConfigData.WiFiMode = WIFI_MODE_ACCESS_POINT_TIMED;
@@ -1625,11 +1646,18 @@ void control_set_default_config(void)
     ControlData.ConfigData.GeneralScreenRotation = SCREEN_ROTATION_0;
     ControlData.ConfigData.ExternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
     memset((void*)ControlData.ConfigData.ExternalFootswitchEffectConfig, 0, sizeof(ControlData.ConfigData.ExternalFootswitchEffectConfig));
+    memset((void*)ControlData.ConfigData.InternalFootswitchEffectConfig, 0, sizeof(ControlData.ConfigData.InternalFootswitchEffectConfig));
 
     // default to no switches configured
     for (uint8_t loop = 0; loop < MAX_EXTERNAL_EFFECT_FOOTSWITCHES; loop++)
     {
         ControlData.ConfigData.ExternalFootswitchEffectConfig[loop].Switch = SWITCH_NOT_USED;
+    }
+
+    // default to no switches configured
+    for (uint8_t loop = 0; loop < MAX_INTERNAL_EFFECT_FOOTSWITCHES; loop++)
+    {
+        ControlData.ConfigData.InternalFootswitchEffectConfig[loop].Switch = SWITCH_NOT_USED;
     }
 }
 

@@ -157,14 +157,6 @@ enum BluetoothModes
     BT_MODE_PERIPHERAL,
 };
 
-enum FootswitchModes
-{
-    FOOTSWITCH_MODE_DUAL_UP_DOWN,       // next/previous
-    FOOTSWITCH_MODE_QUAD_BANKED,        // like Mvave Choc with bank select from 1+2 and 3+4
-    FOOTSWITCH_MODE_QUAD_BINARY,        // direct binary selection from 4 switches
-    FOOTSWITCH_MODE_LAST
-};
-
 enum WiFiModes
 {
     WIFI_MODE_ACCESS_POINT_TIMED,       // access point for 1 minute on boot
@@ -192,6 +184,7 @@ enum WiFiTxPower
 
 enum FootswitchLayouts
 {
+    FOOTSWITCH_LAYOUT_1X2,                // next/previous
     FOOTSWITCH_LAYOUT_1X3,                // 1 row of 3 switches, bank via 1+2 and 2+3
     FOOTSWITCH_LAYOUT_1X4,                // 1 row of 4 switches, bank via 1+2 and 3+4
     FOOTSWITCH_LAYOUT_1X5A,               // 1 row of 5 switches, bank via 1+2 and 4+5
@@ -206,8 +199,7 @@ enum FootswitchLayouts
     FOOTSWITCH_LAYOUT_2X5B,               // 2 rows of 5 switches, bank via last 2
     FOOTSWITCH_LAYOUT_2X6A,               // 2 rows of 6 switches, bank via 1+2 and 5+6
     FOOTSWITCH_LAYOUT_2X6B,               // 2 rows of 6 switches, bank via last 2
-    //todo FOOTSWITCH_LAYOUT_1X2,                // next/previous
-    //todo FOOTSWITCH_LAYOUT_1X4_BINARY,        // 4 bit binary 
+    FOOTSWITCH_LAYOUT_1X4_BINARY,         // 4 bit binary 
     FOOTSWITCH_LAYOUT_LAST,
     FOOTSWITCH_LAYOUT_DISABLED = 0xFF
 };

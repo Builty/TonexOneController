@@ -694,7 +694,6 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
             return ESP_OK;
         } break;
 
-
         case 88: 
         {
             // bpm

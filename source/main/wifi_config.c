@@ -852,6 +852,9 @@ static esp_err_t ws_handler(httpd_req_t *req)
                             control_set_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT1_VAL2, int_val);
                         }
 
+                        // pause a little to allow control task a chance to process    
+                        vTaskDelay(pdMS_TO_TICKS(250));   
+
                         if (json_obj_get_int(&pWebConfig->jctx, "INTFS_ES2_SW", &int_val) == OS_SUCCESS) 
                         {
                             control_set_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT2_SW, int_val);

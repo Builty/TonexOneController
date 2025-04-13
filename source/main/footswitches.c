@@ -47,7 +47,7 @@ limitations under the License.
 
 #define FOOTSWITCH_TASK_STACK_SIZE          (3 * 1024)
 #define FOOTSWITCH_SAMPLE_COUNT             5       // 20 msec per sample
-#define BUTTON_FACTORY_RESET_TIME           500    // * 20 msec = 10 secs
+#define BUTTON_FACTORY_RESET_TIME           400    // * approx 20 msec
 
 enum FootswitchStates
 {
@@ -58,7 +58,8 @@ enum FootswitchStates
 
 enum FootswitchHandlers
 {
-    FOOTSWITCH_HANDLER_ONBOARD,
+    FOOTSWITCH_HANDLER_ONBOARD_PRESETS,
+    FOOTSWITCH_HANDLER_ONBOARD_EFFECTS,
     FOOTSWITCH_HANDLER_EXTERNAL_PRESETS,
     FOOTSWITCH_HANDLER_EXTERNAL_EFFECTS,
     FOOTSWITCH_HANDLER_MAX
@@ -81,7 +82,7 @@ typedef struct
 {
     uint8_t toggle;
     tExternalFootswitchEffectConfig config;
-} tExternalFootswitchEffectHandler;
+} tFootswitchEffectHandler;
 
 typedef struct
 {
@@ -89,8 +90,8 @@ typedef struct
     uint8_t io_expander_ok;
     uint8_t onboard_switch_mode;   
     uint8_t external_switch_mode;
-    tExternalFootswitchEffectHandler ExternalFootswitchEffectHandler[MAX_EXTERNAL_EFFECT_FOOTSWITCHES];
-    tExternalFootswitchEffectHandler InternalFootswitchEffectHandler[MAX_INTERNAL_EFFECT_FOOTSWITCHES];
+    tFootswitchEffectHandler ExternalFootswitchEffectHandler[MAX_EXTERNAL_EFFECT_FOOTSWITCHES];
+    tFootswitchEffectHandler OnboardFootswitchEffectHandler[MAX_INTERNAL_EFFECT_FOOTSWITCHES];
 } tFootswitchControl;
 
 typedef struct
@@ -107,7 +108,8 @@ static i2c_port_t i2cnum;
 
 static const __attribute__((unused)) tFootswitchLayoutEntry FootswitchLayouts[FOOTSWITCH_LAYOUT_LAST] = 
 {
-    //tot  ppb  bdm     bum
+    //tot  ppb  bd mask   bu mask
+    {2,    2,   0x0000,   0x0000},            // FOOTSWITCH_LAYOUT_1X2
     {3,    3,   0x0003,   0x0006},            // FOOTSWITCH_LAYOUT_1X3
     {4,    4,   0x0003,   0x000C},            // FOOTSWITCH_LAYOUT_1X4
     {5,    5,   0x0003,   0x0018},            // FOOTSWITCH_LAYOUT_1X5A
@@ -122,6 +124,7 @@ static const __attribute__((unused)) tFootswitchLayoutEntry FootswitchLayouts[FO
     {10,   8,   0x0100,   0x0200},            // FOOTSWITCH_LAYOUT_2X5B
     {12,   12,  0x0003,   0x0030},            // FOOTSWITCH_LAYOUT_2X6A
     {12,   10,  0x0400,   0x0800},            // FOOTSWITCH_LAYOUT_2X6B
+    {4,    4,   0x0000,   0x0000},            // FOOTSWITCH_LAYOUT_1X4_BINARY
 };
 
 /****************************************************************************
@@ -134,19 +137,52 @@ static const __attribute__((unused)) tFootswitchLayoutEntry FootswitchLayouts[FO
 static esp_err_t footswitch_read_single_onboard(uint8_t number, uint8_t* switch_state)
 {
     esp_err_t result = ESP_FAIL;
+    int8_t button_index;
+
+    // map abstract switch index to physical IO
+    switch (number)
+    {
+        case 0:
+        default:
+        {
+            button_index = FOOTSWITCH_1;
+        } break;
+
+        case 1:
+        {
+            button_index = FOOTSWITCH_2;
+        } break;
+
+        case 2:
+        {
+            button_index = FOOTSWITCH_3;
+        } break;
+
+        case 3:
+        {
+            button_index = FOOTSWITCH_4;
+        } break;
+    }
+
+    if (button_index == -1)
+    {
+        // not configured
+        *switch_state = 0;
+        return ESP_OK;
+    }
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
     // display board uses onboard I2C IO expander
     uint8_t value;
 
-    if (CH422G_read_input(number, &value) == ESP_OK)
+    if (CH422G_read_input((uint8_t)button_index, &value) == ESP_OK)
     {
         result = ESP_OK;
         *switch_state = (value == 0);
     }
 #else
     // other boards can use direct IO pin
-    *switch_state = (gpio_get_level(number) == 0);
+    *switch_state = (gpio_get_level((uint8_t)button_index) == 0);
 
     result = ESP_OK;
 #endif
@@ -292,7 +328,7 @@ static void __attribute__((unused)) footswitch_handle_dual_mode(tFootswitchHandl
         default:
         {
             // read footswitches
-            if (handler->footswitch_single_reader(FOOTSWITCH_1, &value) == ESP_OK) 
+            if (handler->footswitch_single_reader(0, &value) == ESP_OK) 
             {
                 if (value == 1)
                 {
@@ -309,7 +345,7 @@ static void __attribute__((unused)) footswitch_handle_dual_mode(tFootswitchHandl
 
             if (handler->state == FOOTSWITCH_IDLE)
             {
-                if (handler->footswitch_single_reader(FOOTSWITCH_2, &value) == ESP_OK)
+                if (handler->footswitch_single_reader(1, &value) == ESP_OK)
                 {
                     if (value == 1)
                     {
@@ -329,7 +365,7 @@ static void __attribute__((unused)) footswitch_handle_dual_mode(tFootswitchHandl
         case FOOTSWITCH_WAIT_RELEASE_1:
         {
             // read footswitch 1
-            if (handler->footswitch_single_reader(FOOTSWITCH_1, &value) == ESP_OK)
+            if (handler->footswitch_single_reader(0, &value) == ESP_OK)
             {
                 if (value == 0)
                 {
@@ -351,7 +387,7 @@ static void __attribute__((unused)) footswitch_handle_dual_mode(tFootswitchHandl
         case FOOTSWITCH_WAIT_RELEASE_2:
         {
             // read footswitch 2
-            if (handler->footswitch_single_reader(FOOTSWITCH_2, &value) == ESP_OK)
+            if (handler->footswitch_single_reader(1, &value) == ESP_OK)
             {
                 if (value == 0)
                 {
@@ -493,25 +529,25 @@ static void __attribute__((unused)) footswitch_handle_quad_binary(tFootswitchHan
     uint8_t binary_val = 0;    
 
     // read all 4 switches (and swap so 1 is pressed)
-    handler->footswitch_single_reader(FOOTSWITCH_1, &value);
+    handler->footswitch_single_reader(0, &value);
     if (value == 1)
     {
         binary_val |= 1;
     }
 
-    handler->footswitch_single_reader(FOOTSWITCH_2, &value);
+    handler->footswitch_single_reader(1, &value);
     if (value == 1)
     {
         binary_val |= 2;
     }
 
-    handler->footswitch_single_reader(FOOTSWITCH_3, &value);
+    handler->footswitch_single_reader(2, &value);
     if (value == 1)
     {
         binary_val |= 4;
     }
 
-    handler->footswitch_single_reader(FOOTSWITCH_4, &value);
+    handler->footswitch_single_reader(3, &value);
     if (value == 1)
     {
         binary_val |= 8;
@@ -539,7 +575,7 @@ static void __attribute__((unused)) footswitch_handle_quad_binary(tFootswitchHan
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void footswitch_handle_efects(tFootswitchHandler* handler)
+static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEffectHandler* fx_handler, uint8_t max_configs)
 {
     uint8_t loop; 
     uint8_t value;
@@ -554,18 +590,18 @@ static void footswitch_handle_efects(tFootswitchHandler* handler)
          case FOOTSWITCH_IDLE:
          default:
          {
-            for (loop = 0; loop < MAX_EXTERNAL_EFFECT_FOOTSWITCHES; loop++)    
+            for (loop = 0; loop < max_configs; loop++)    
             {
                 // is this switch configured?
-                if (FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Switch != SWITCH_NOT_USED)
-                {
+                if (fx_handler[loop].config.Switch != SWITCH_NOT_USED)
+                {                  
                     // check if switch is pressed
-                    if (handler->footswitch_single_reader(FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Switch, &value) == ESP_OK)
+                    if (handler->footswitch_single_reader(fx_handler[loop].config.Switch, &value) == ESP_OK)
                     {
                         if (value == 1)
                         {
                             // get the parameter that corresponds to this Midi control change value
-                            param = midi_helper_get_param_for_change_num(FootswitchControl.ExternalFootswitchEffectHandler[loop].config.CC);
+                            param = midi_helper_get_param_for_change_num(fx_handler[loop].config.CC);
                             param_handled = 0;
 
                             if (param != TONEX_UNKNOWN)
@@ -606,32 +642,32 @@ static void footswitch_handle_efects(tFootswitchHandler* handler)
                                     tonex_params_release_locked_access();
 
                                     // not a boolean, use local toggle variable
-                                    if (FootswitchControl.ExternalFootswitchEffectHandler[loop].toggle == 0)
+                                    if (fx_handler[loop].toggle == 0)
                                     {
                                         // send first value
-                                        midi_helper_adjust_param_via_midi(FootswitchControl.ExternalFootswitchEffectHandler[loop].config.CC, FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Value_1);
+                                        midi_helper_adjust_param_via_midi(fx_handler[loop].config.CC, fx_handler[loop].config.Value_1);
     
-                                        ESP_LOGI(TAG, "Footswitch Param change (1). Switch: %d. CC:%d. Value:%d", (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Switch, 
-                                                                                                                (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.CC, 
-                                                                                                                (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Value_1);
+                                        ESP_LOGI(TAG, "Footswitch Param change (1). Switch: %d. CC:%d. Value:%d", (int)fx_handler[loop].config.Switch, 
+                                                                                                                (int)fx_handler[loop].config.CC, 
+                                                                                                                (int)fx_handler[loop].config.Value_1);
                                     }
                                     else
                                     {
                                         // send second value
-                                        midi_helper_adjust_param_via_midi(FootswitchControl.ExternalFootswitchEffectHandler[loop].config.CC, FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Value_2);
+                                        midi_helper_adjust_param_via_midi(fx_handler[loop].config.CC, fx_handler[loop].config.Value_2);
     
-                                        ESP_LOGI(TAG, "Footswitch Param change (2). Switch: %d. CC:%d. Value:%d", (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Switch, 
-                                                                                                                (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.CC, 
-                                                                                                                (int)FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Value_2);
+                                        ESP_LOGI(TAG, "Footswitch Param change (2). Switch: %d. CC:%d. Value:%d", (int)fx_handler[loop].config.Switch, 
+                                                                                                                (int)fx_handler[loop].config.CC, 
+                                                                                                                (int)fx_handler[loop].config.Value_2);
                                     }
     
                                     // flip toggle state
-                                    FootswitchControl.ExternalFootswitchEffectHandler[loop].toggle = !FootswitchControl.ExternalFootswitchEffectHandler[loop].toggle;
+                                    fx_handler[loop].toggle = !fx_handler[loop].toggle;
                                 }   
                             }
 
                             // save the switch index
-                            handler->index_pending = FootswitchControl.ExternalFootswitchEffectHandler[loop].config.Switch;
+                            handler->index_pending = fx_handler[loop].config.Switch;
                             handler->state = FOOTSWITCH_WAIT_RELEASE_1;
                             break;
                         }
@@ -678,7 +714,7 @@ void footswitch_task(void *arg)
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
     // 4.3B doesn't have enough IO, only supports dual mode
-    FootswitchControl.onboard_switch_mode = FOOTSWITCH_MODE_DUAL_UP_DOWN;
+    FootswitchControl.onboard_switch_mode = FOOTSWITCH_LAYOUT_1X2;
 #else
     // others, get the currently configured mode from web config
     FootswitchControl.onboard_switch_mode = control_get_config_item_int(CONFIG_ITEM_FOOTSWITCH_MODE);
@@ -699,15 +735,25 @@ void footswitch_task(void *arg)
     // load config for internal effect buttons
     for (configs = 0; configs < MAX_INTERNAL_EFFECT_FOOTSWITCHES; configs++)
     {
-        FootswitchControl.InternalFootswitchEffectHandler[configs].config.Switch = control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT1_SW + (configs * 4));
-        FootswitchControl.InternalFootswitchEffectHandler[configs].config.CC = control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT1_CC + (configs * 4));
-        FootswitchControl.InternalFootswitchEffectHandler[configs].config.Value_1 = control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT1_VAL1 + (configs * 4));
-        FootswitchControl.InternalFootswitchEffectHandler[configs].config.Value_2 = control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT1_VAL2 + (configs * 4));
+        FootswitchControl.OnboardFootswitchEffectHandler[configs].config.Switch = control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT1_SW + (configs * 4));
+        FootswitchControl.OnboardFootswitchEffectHandler[configs].config.CC = control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT1_CC + (configs * 4));
+        FootswitchControl.OnboardFootswitchEffectHandler[configs].config.Value_1 = control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT1_VAL1 + (configs * 4));
+        FootswitchControl.OnboardFootswitchEffectHandler[configs].config.Value_2 = control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT1_VAL2 + (configs * 4));
+
+        // debug
+        //ESP_LOGI(TAG, "Config Internal Footswitch %d, %d, %d, %d, %d", (int)configs, 
+        //                                                            (int)FootswitchControl.OnboardFootswitchEffectHandler[configs].config.Switch,
+        //                                                            (int)FootswitchControl.OnboardFootswitchEffectHandler[configs].config.CC,
+        //                                                            (int)FootswitchControl.OnboardFootswitchEffectHandler[configs].config.Value_1,
+        //                                                            (int)FootswitchControl.OnboardFootswitchEffectHandler[configs].config.Value_2);
     }
     
     // setup handler for onboard IO footswitches
-    FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD].footswitch_single_reader = &footswitch_read_single_onboard;
-    FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD].footswitch_multiple_reader = &footswitch_read_multiple_onboard;
+    FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD_PRESETS].footswitch_single_reader = &footswitch_read_single_onboard;
+    FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD_PRESETS].footswitch_multiple_reader = &footswitch_read_multiple_onboard;
+
+    FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD_EFFECTS].footswitch_single_reader = &footswitch_read_single_onboard;
+    FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD_EFFECTS].footswitch_multiple_reader = &footswitch_read_multiple_onboard;
 
     // setup handler for external IO Expander footswitches
     FootswitchControl.Handlers[FOOTSWITCH_HANDLER_EXTERNAL_PRESETS].footswitch_single_reader = &footswitch_read_single_offboard;
@@ -724,49 +770,95 @@ void footswitch_task(void *arg)
         // handle onboard IO foot switches (direct GPIO and IO expander on main PCB)
         switch (FootswitchControl.onboard_switch_mode) 
         {
-            case FOOTSWITCH_MODE_DUAL_UP_DOWN:
-            default:
+            case FOOTSWITCH_LAYOUT_1X2:
             {
                 // run dual mode next/previous
-                footswitch_handle_dual_mode(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD]);
+                footswitch_handle_dual_mode(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD_PRESETS]);
             } break;
 
-            case FOOTSWITCH_MODE_QUAD_BANKED:
+            case FOOTSWITCH_LAYOUT_1X3: // fallthrough
+            case FOOTSWITCH_LAYOUT_1X4:
             {
-                // run 4 switch with bank up/down
-                footswitch_handle_banked(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD], (tFootswitchLayoutEntry*)&FootswitchLayouts[FOOTSWITCH_LAYOUT_1X4]);
+                // run bankedswitches
+                footswitch_handle_banked(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD_PRESETS], (tFootswitchLayoutEntry*)&FootswitchLayouts[FootswitchControl.onboard_switch_mode]);
             } break;
 
-            case FOOTSWITCH_MODE_QUAD_BINARY:
+            case FOOTSWITCH_LAYOUT_1X4_BINARY:
             {
                 // run 4 switch binary mode
-                footswitch_handle_quad_binary(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD]);
+                footswitch_handle_quad_binary(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD_PRESETS]);
+            } break;
+
+            case FOOTSWITCH_LAYOUT_DISABLED:
+            default:
+            {
+                // nothing to do
             } break;
         }
+
+        // handle effects switching
+        footswitch_handle_effects(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD_EFFECTS], FootswitchControl.OnboardFootswitchEffectHandler, MAX_INTERNAL_EFFECT_FOOTSWITCHES);
 #endif 
 
         // did we find an IO expander on boot?
         if (FootswitchControl.io_expander_ok)
         {
-            if (FootswitchControl.external_switch_mode != FOOTSWITCH_LAYOUT_DISABLED)
+            switch (FootswitchControl.external_switch_mode) 
             {
-                // handle external footswitches as banked
-                footswitch_handle_banked(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_EXTERNAL_PRESETS], (tFootswitchLayoutEntry*)&FootswitchLayouts[FootswitchControl.external_switch_mode]);
-            }
+                case FOOTSWITCH_LAYOUT_1X2:
+                {
+                    // run dual mode next/previous
+                    footswitch_handle_dual_mode(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_EXTERNAL_PRESETS]);
+                } break;
 
+                case FOOTSWITCH_LAYOUT_1X4_BINARY:
+                {
+                    // run 4 switch binary mode
+                    footswitch_handle_quad_binary(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_EXTERNAL_PRESETS]);
+                } break;
+
+                case FOOTSWITCH_LAYOUT_1X3:   // fallthrough
+                case FOOTSWITCH_LAYOUT_1X4:   // fallthrough
+                case FOOTSWITCH_LAYOUT_1X5A:  // fallthrough
+                case FOOTSWITCH_LAYOUT_1X5B:  // fallthrough
+                case FOOTSWITCH_LAYOUT_1X6A:  // fallthrough
+                case FOOTSWITCH_LAYOUT_1X6B:  // fallthrough
+                case FOOTSWITCH_LAYOUT_1X7A:  // fallthrough
+                case FOOTSWITCH_LAYOUT_1X7B:  // fallthrough
+                case FOOTSWITCH_LAYOUT_2X3:   // fallthrough
+                case FOOTSWITCH_LAYOUT_2X4:   // fallthrough
+                case FOOTSWITCH_LAYOUT_2X5A:  // fallthrough
+                case FOOTSWITCH_LAYOUT_2X5B:  // fallthrough
+                case FOOTSWITCH_LAYOUT_2X6A:  // fallthrough
+                case FOOTSWITCH_LAYOUT_2X6B:
+                {
+                    // handle external footswitches as banked
+                    footswitch_handle_banked(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_EXTERNAL_PRESETS], (tFootswitchLayoutEntry*)&FootswitchLayouts[FootswitchControl.external_switch_mode]);
+                } break;
+          
+                case FOOTSWITCH_LAYOUT_DISABLED:
+                default:
+                {
+                    // nothing to do
+                } break;
+            }
+                    
             // handle effects switching
-            footswitch_handle_efects(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_EXTERNAL_EFFECTS]);
+            footswitch_handle_effects(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_EXTERNAL_EFFECTS], FootswitchControl.ExternalFootswitchEffectHandler, MAX_EXTERNAL_EFFECT_FOOTSWITCHES);
         }
 
 #if !CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY        
         // check for button held for data reset
         if (FOOTSWITCH_1 != -1)
         {
-            if (footswitch_read_single_onboard(FOOTSWITCH_1, &value) == ESP_OK)
+            if (footswitch_read_single_onboard(0, &value) == ESP_OK)
             {
                 if (value == 1)
                 {        
                     reset_timer++;
+
+                    // debug
+                    //ESP_LOGI(TAG, "Reset timer: %d", (int)reset_timer);  
 
                     if (reset_timer > BUTTON_FACTORY_RESET_TIME)
                     {
