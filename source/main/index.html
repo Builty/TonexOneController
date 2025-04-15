@@ -208,7 +208,7 @@
           display: block;
           background-color: inherit;
           color: #C0C0C0;
-          padding: 10px 10px;
+          padding: 10px 5px;
           width: 100%;
           border: none;
           outline: none;
@@ -237,6 +237,17 @@
 
         /* Style the buttons inside the tab */
         .fxtablink {
+          color: #C0C0C0;
+          padding: 10px 10px;
+        }
+
+        .ifxtabcontent {         
+          padding: 0px 6px;
+          border-left: none;
+        }
+
+        /* Style the buttons inside the tab */
+        .ifxtablink {
           color: #C0C0C0;
           padding: 10px 10px;
         }
@@ -651,6 +662,7 @@
             document.getElementById("defaultOpen").click();
             
             document.getElementById("defaultFX").click();
+            document.getElementById("defaultIFX").click();
 
             initWebSocket();
             pageTimer = setInterval("pageTimerEvent();", 750);
@@ -1503,8 +1515,7 @@
                     setParamLabel("custombt", data['BT_CUST_NAME']);
                     configureParamSwitch("togglebypass", data['TOGGLE_BYPASS']);
                     configureParamSwitch("midienabled", data['S_MIDI_EN']);
-                    configureParamSelect("midichannel", data['S_MIDI_CH']);
-                    configureParamSelect("footmode", data['FOOTSW_MODE']);
+                    configureParamSelect("midichannel", data['S_MIDI_CH']);                    
                     configureParamSwitch("btmidicc", data['BT_MIDI_CC']);
                     configureParamSelect("wifimode", data['WIFI_MODE']);                    
                     configureParamSelect("wifitxpower", data['WIFI_POWER']);                
@@ -1545,6 +1556,51 @@
                     extFSChanged("extfx5");
                     setExtFSValue("extfx5v1", data['EXTFS_ES5_V1']);
                     setExtFSValue("extfx5v2", data['EXTFS_ES5_V2']);
+
+                    configureParamSelect("extfx6sw", data['EXTFS_ES6_SW']);                    
+                    setParamValue("extfx6cc", data['EXTFS_ES6_CC']);
+                    extFSChanged("extfx6");
+                    setExtFSValue("extfx6v1", data['EXTFS_ES6_V1']);
+                    setExtFSValue("extfx6v2", data['EXTFS_ES6_V2']);
+
+                    configureParamSelect("extfx7sw", data['EXTFS_ES7_SW']);
+                    setParamValue("extfx7cc", data['EXTFS_ES7_CC']);
+                    extFSChanged("extfx7");
+                    setExtFSValue("extfx7v1", data['EXTFS_ES7_V1']);
+                    setExtFSValue("extfx7v2", data['EXTFS_ES7_V2']);
+
+                    configureParamSelect("extfx8sw", data['EXTFS_ES8_SW']);
+                    setParamValue("extfx8cc", data['EXTFS_ES8_CC']);
+                    extFSChanged("extfx8");
+                    setExtFSValue("extfx8v1", data['EXTFS_ES8_V1']);
+                    setExtFSValue("extfx8v2", data['EXTFS_ES8_V2']);
+
+                    configureParamSelect("intfslay", data['FOOTSW_MODE']);
+
+                    configureParamSelect("intfx1sw", data['INTFS_ES1_SW']);
+                    setParamValue("intfx1cc", data['INTFS_ES1_CC']);
+                    extFSChanged("intfx1");
+                    setExtFSValue("intfx1v1", data['INTFS_ES1_V1']);
+                    setExtFSValue("intfx1v2", data['INTFS_ES1_V2']);
+
+                    configureParamSelect("intfx2sw", data['INTFS_ES2_SW']);
+                    setParamValue("intfx2cc", data['INTFS_ES2_CC']);
+                    extFSChanged("intfx2");
+                    setExtFSValue("intfx2v1", data['INTFS_ES2_V1']);
+                    setExtFSValue("intfx2v2", data['INTFS_ES2_V2']);
+
+                    configureParamSelect("intfx3sw", data['INTFS_ES3_SW']);
+                    setParamValue("intfx3cc", data['INTFS_ES3_CC']);
+                    extFSChanged("intfx3");
+                    setExtFSValue("intfx3v1", data['INTFS_ES3_V1']);
+                    setExtFSValue("intfx3v2", data['INTFS_ES3_V2']);
+
+                    configureParamSelect("intfx4sw", data['INTFS_ES4_SW']);
+                    setParamValue("intfx4cc", data['INTFS_ES4_CC']);
+                    extFSChanged("intfx4");
+                    setExtFSValue("intfx4v1", data['INTFS_ES4_V1']);
+                    setExtFSValue("intfx4v2", data['INTFS_ES4_V2']);
+                    
                     break;   
                 
                 case 'GETPRESET':
@@ -1580,6 +1636,22 @@
                 tabcontent[i].style.display = "none";
             }
             tablinks = document.getElementsByClassName("fxtablink");
+            
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        function openIFX(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("ifxtabcontent");
+            
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("ifxtablink");
             
             for (i = 0; i < tablinks.length; i++) {
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
@@ -1628,7 +1700,7 @@
                 var midienableden = midienabled ? 1 : 0;
                 
                 var midichannel = document.getElementById("midichannel").value;
-                var footmode = document.getElementById("footmode").value;
+                var footmode = document.getElementById("intfslay").value;
                 
                 var btmidicc = document.getElementById("btmidicc").checked;
                 var btmidiccen = btmidicc ? 1 : 0;
@@ -1660,6 +1732,42 @@
                 var extfx5cc = document.getElementById("extfx5cc").value;  
                 var extfx5v1 = getExtFSValue("5", "1");
                 var extfx5v2 = getExtFSValue("5", "2");
+
+                var extfx6sw = document.getElementById("extfx6sw").value;  
+                var extfx6cc = document.getElementById("extfx6cc").value;  
+                var extfx6v1 = document.getElementById("extfx6v1").value;  
+                var extfx6v2 = document.getElementById("extfx6v2").value;  
+                
+                var extfx7sw = document.getElementById("extfx7sw").value;  
+                var extfx7cc = document.getElementById("extfx7cc").value;  
+                var extfx7v1 = document.getElementById("extfx7v1").value;  
+                var extfx7v2 = document.getElementById("extfx7v2").value;  
+                
+                var extfx8sw = document.getElementById("extfx8sw").value;  
+                var extfx8cc = document.getElementById("extfx8cc").value;  
+                var extfx8v1 = document.getElementById("extfx8v1").value;  
+                var extfx8v2 = document.getElementById("extfx8v2").value;  
+
+
+                var intfx1sw = document.getElementById("intfx1sw").value;  
+                var intfx1cc = document.getElementById("intfx1cc").value;  
+                var intfx1v1 = document.getElementById("intfx1v1").value;  
+                var intfx1v2 = document.getElementById("intfx1v2").value;  
+
+                var intfx2sw = document.getElementById("intfx2sw").value;  
+                var intfx2cc = document.getElementById("intfx2cc").value;  
+                var intfx2v1 = document.getElementById("intfx2v1").value;  
+                var intfx2v2 = document.getElementById("intfx2v2").value;  
+
+                var intfx3sw = document.getElementById("intfx3sw").value;  
+                var intfx3cc = document.getElementById("intfx3cc").value;  
+                var intfx3v1 = document.getElementById("intfx3v1").value;  
+                var intfx3v2 = document.getElementById("intfx3v2").value;  
+
+                var intfx4sw = document.getElementById("intfx4sw").value;  
+                var intfx4cc = document.getElementById("intfx4cc").value;  
+                var intfx4v1 = document.getElementById("intfx4v1").value;  
+                var intfx4v2 = document.getElementById("intfx4v2").value;  
 
                 sendWS({"CMD": "SETCONFIG", 
                         "BT_MODE": parseInt(btmode),
@@ -1693,7 +1801,35 @@
                         "EXTFS_ES5_SW": parseInt(extfx5sw),
                         "EXTFS_ES5_CC": parseInt(extfx5cc),
                         "EXTFS_ES5_V1": parseInt(extfx5v1),
-                        "EXTFS_ES5_V2": parseInt(extfx5v2)
+                        "EXTFS_ES5_V2": parseInt(extfx5v2),
+                        "EXTFS_ES6_SW": parseInt(extfx6sw),
+                        "EXTFS_ES6_CC": parseInt(extfx6cc),
+                        "EXTFS_ES6_V1": parseInt(extfx6v1),
+                        "EXTFS_ES6_V2": parseInt(extfx6v2),
+                        "EXTFS_ES7_SW": parseInt(extfx7sw),
+                        "EXTFS_ES7_CC": parseInt(extfx7cc),
+                        "EXTFS_ES7_V1": parseInt(extfx7v1),
+                        "EXTFS_ES7_V2": parseInt(extfx7v2),
+                        "EXTFS_ES8_SW": parseInt(extfx8sw),
+                        "EXTFS_ES8_CC": parseInt(extfx8cc),
+                        "EXTFS_ES8_V1": parseInt(extfx8v1),
+                        "EXTFS_ES8_V2": parseInt(extfx8v2),
+                        "INTFS_ES1_SW": parseInt(intfx1sw),
+                        "INTFS_ES1_CC": parseInt(intfx1cc),
+                        "INTFS_ES1_V1": parseInt(intfx1v1),
+                        "INTFS_ES1_V2": parseInt(intfx1v2),
+                        "INTFS_ES2_SW": parseInt(intfx2sw),
+                        "INTFS_ES2_CC": parseInt(intfx2cc),
+                        "INTFS_ES2_V1": parseInt(intfx2v1),
+                        "INTFS_ES2_V2": parseInt(intfx2v2),
+                        "INTFS_ES3_SW": parseInt(intfx3sw),
+                        "INTFS_ES3_CC": parseInt(intfx3cc),
+                        "INTFS_ES3_V1": parseInt(intfx3v1),
+                        "INTFS_ES3_V2": parseInt(intfx3v2),
+                        "INTFS_ES4_SW": parseInt(intfx4sw),
+                        "INTFS_ES4_CC": parseInt(intfx4cc),
+                        "INTFS_ES4_V1": parseInt(intfx4v1),
+                        "INTFS_ES4_V2": parseInt(intfx4v2),
                     });  
       
                 setToast('Settings saved.<br>Rebooting now');
@@ -2559,12 +2695,131 @@
         <h5 class="selected_text">Internal Footswitches</h5>
             <p class="lead">                         
                 <div class="container">
-                    <label class="form-check-label" for="footmode">Footswitch</label>
-                    <select class="form-select select_style" id="footmode">
-                        <option value="0" class="style6" selected>Dual Next/Previous</option>
-                        <option value="1" class="style6">Quad Banked (not 4.3B)</option>
-                        <option value="2" class="style6">Quad Binary (not 4.3B)</option>     
+                    <label class="form-check-label" for="intfslay">Preset Switch Layout</label>
+                    <select class="form-select select_style" id="intfslay">
+                        <option value="255" class="style6">Disabled</option>
+                        <option value="0" class="style6">1x2 Next/Previous</option>
+                        <option value="1" class="style6">1x3</option>
+                        <option value="2" class="style6" Selected>1x4</option>
+                        <option value="15" class="style6">1x4 Binary</option>     
                     </select>            
+                </div>
+                <br> 
+                <br> 
+                <div class="fxtab btn-group" role="group">
+                    <button class="ifxtablink" id="defaultIFX" onclick="openIFX(event, 'IFX1')">FX1</button>
+                    <button class="ifxtablink" onclick="openIFX(event, 'IFX2')">FX2</button>
+                    <button class="ifxtablink" onclick="openIFX(event, 'IFX3')">FX3</button>
+                    <button class="ifxtablink" onclick="openIFX(event, 'IFX4')">FX4</button>
+                </div>
+                <br> 
+                <div id="IFX1" class="ifxtabcontent">
+                    <div class="container">
+                        <label class="form-check-label" for="intfx1sw">Foot Switch Number</label>
+                        <select class="form-select select_style" id="intfx1sw">
+                            <option value="255" class="style6" Selected>Disabled</option>
+                            <option value="0" class="style6">1</option>
+                            <option value="1" class="style6">2</option>     
+                            <option value="2" class="style6">3</option>     
+                            <option value="3" class="style6">4</option>     
+                        </select>                           
+                    </div> 
+                    <br>                 
+                    <div class="container">
+                        <label class="form-check-label" for="intfx1cc">Control Change Number</label>
+                        <input type="number" id="intfx1cc" name="intfx1cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="intfx1v1">Midi Value 1</label>
+                        <input type="number" id="intfx1v1" name="intfx1v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="intfx1v2">Midi Value 2</label>
+                        <input type="number" id="intfx1v2" name="intfx1v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                    </div>
+                </div>
+                <div id="IFX2" class="ifxtabcontent">
+                    <div class="container">
+                        <label class="form-check-label" for="intfx2sw">Foot Switch Number</label>
+                        <select class="form-select select_style" id="intfx2sw">
+                            <option value="255" class="style6" Selected>Disabled</option>
+                            <option value="0" class="style6">1</option>
+                            <option value="1" class="style6">2</option>     
+                            <option value="2" class="style6">3</option>     
+                            <option value="3" class="style6">4</option>     
+                        </select>                           
+                    </div> 
+                    <br>                 
+                    <div class="container">
+                        <label class="form-check-label" for="intfx2cc">Control Change Number</label>
+                        <input type="number" id="intfx2cc" name="intfx2cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="intfx2v1">Midi Value 1</label>
+                        <input type="number" id="intfx2v1" name="intfx2v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="intfx2v2">Midi Value 2</label>
+                        <input type="number" id="intfx2v2" name="intfx2v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                    </div>
+                </div>
+                <div id="IFX3" class="ifxtabcontent">
+                    <div class="container">
+                        <label class="form-check-label" for="intfx3sw">Foot Switch Number</label>
+                        <select class="form-select select_style" id="intfx3sw">
+                            <option value="255" class="style6" Selected>Disabled</option>
+                            <option value="0" class="style6">1</option>
+                            <option value="1" class="style6">2</option>     
+                            <option value="2" class="style6">3</option>     
+                            <option value="3" class="style6">4</option>     
+                        </select>                           
+                    </div> 
+                    <br>                 
+                    <div class="container">
+                        <label class="form-check-label" for="intfx3cc">Control Change Number</label>
+                        <input type="number" id="intfx3cc" name="intfx3cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="intfx3v1">Midi Value 1</label>
+                        <input type="number" id="intfx3v1" name="intfx3v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="intfx3v2">Midi Value 2</label>
+                        <input type="number" id="intfx3v2" name="intfx3v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                    </div>
+                </div>
+                <div id="IFX4" class="ifxtabcontent">
+                    <div class="container">
+                        <label class="form-check-label" for="intfx4sw">Foot Switch Number</label>
+                        <select class="form-select select_style" id="intfx4sw">
+                            <option value="255" class="style6" Selected>Disabled</option>
+                            <option value="0" class="style6">1</option>
+                            <option value="1" class="style6">2</option>     
+                            <option value="2" class="style6">3</option>     
+                            <option value="3" class="style6">4</option>     
+                        </select>                           
+                    </div> 
+                    <br>                 
+                    <div class="container">
+                        <label class="form-check-label" for="intfx4cc">Control Change Number</label>
+                        <input type="number" id="intfx4cc" name="intfx4cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="intfx4v1">Midi Value 1</label>
+                        <input type="number" id="intfx4v1" name="intfx4v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="intfx4v2">Midi Value 2</label>
+                        <input type="number" id="intfx4v2" name="intfx4v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                    </div>
                 </div>
                 <br>
                 <br>
@@ -2583,20 +2838,22 @@
                     <label class="form-check-label" for="extfslay">Preset Switch Layout</label>
                     <select class="form-select select_style" id="extfslay">
                         <option value="255" class="style6">Disabled</option>
-                        <option value="0" class="style6">1x3</option>
-                        <option value="1" class="style6" Selected>1x4</option>
-                        <option value="2" class="style6">1x5A</option>     
-                        <option value="3" class="style6">1x5B</option>     
-                        <option value="4" class="style6">1x6A</option>     
-                        <option value="5" class="style6">1x6B</option>     
-                        <option value="6" class="style6">1x7A</option>     
-                        <option value="7" class="style6">1x7B</option>     
-                        <option value="8" class="style6">2x3</option>     
-                        <option value="9" class="style6">2x4</option>     
-                        <option value="10" class="style6">2x5A</option>     
-                        <option value="11" class="style6">2x5B</option>     
-                        <option value="12" class="style6">2x6A</option>     
-                        <option value="13" class="style6">2x6B</option>     
+                        <option value="0" class="style6">1x2 Next/Previous</option>
+                        <option value="1" class="style6">1x3</option>
+                        <option value="2" class="style6" Selected>1x4</option>
+                        <option value="3" class="style6">1x5A</option>     
+                        <option value="4" class="style6">1x5B</option>     
+                        <option value="5" class="style6">1x6A</option>     
+                        <option value="6" class="style6">1x6B</option>     
+                        <option value="7" class="style6">1x7A</option>     
+                        <option value="8" class="style6">1x7B</option>     
+                        <option value="9" class="style6">2x3</option>     
+                        <option value="10" class="style6">2x4</option>     
+                        <option value="11" class="style6">2x5A</option>     
+                        <option value="12" class="style6">2x5B</option>     
+                        <option value="13" class="style6">2x6A</option>     
+                        <option value="14" class="style6">2x6B</option>     
+                        <option value="15" class="style6">1x4 Binary</option>     
                     </select>                           
                 </div>
                 <br> 
@@ -2607,6 +2864,9 @@
                     <button class="fxtablink" onclick="openFX(event, 'FX3')">FX3</button>
                     <button class="fxtablink" onclick="openFX(event, 'FX4')">FX4</button>
                     <button class="fxtablink" onclick="openFX(event, 'FX5')">FX5</button>
+                    <button class="fxtablink" onclick="openFX(event, 'FX6')">FX6</button>
+                    <button class="fxtablink" onclick="openFX(event, 'FX7')">FX7</button>
+                    <button class="fxtablink" onclick="openFX(event, 'FX8')">FX8</button>
                 </div>
                 <br> 
                 <div id="FX1" class="fxtabcontent">
@@ -2837,6 +3097,123 @@
                         <input type="range" id="extfx5v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
                         <select class="form-select select_style" id="extfx5v2_s" name="extfx5v2_s">
                         </select>
+                    </div>
+                </div>
+                <div id="FX6" class="fxtabcontent">
+                    <div class="container">
+                        <label class="form-check-label" for="extfx6sw">Foot Switch Number</label>
+                        <select class="form-select select_style" id="extfx6sw">
+                            <option value="255" class="style6" Selected>Disabled</option>
+                            <option value="0" class="style6">1</option>
+                            <option value="1" class="style6">2</option>     
+                            <option value="2" class="style6">3</option>     
+                            <option value="3" class="style6">4</option>     
+                            <option value="4" class="style6">5</option>     
+                            <option value="5" class="style6">6</option>     
+                            <option value="6" class="style6">7</option>     
+                            <option value="7" class="style6">8</option>  
+                            <option value="8" class="style6">9</option>
+                            <option value="9" class="style6">10</option>     
+                            <option value="10" class="style6">11</option>     
+                            <option value="11" class="style6">12</option>     
+                            <option value="12" class="style6">13</option>     
+                            <option value="13" class="style6">14</option>     
+                            <option value="14" class="style6">15</option>     
+                            <option value="15" class="style6">16</option>        
+                        </select>                           
+                    </div> 
+                    <br>                 
+                    <div class="container">
+                        <label class="form-check-label" for="extfx6cc">Control Change Number</label>
+                        <input type="number" id="extfx6cc" name="extfx6cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="extfx6v1">Midi Value 1</label>
+                        <input type="number" id="extfx6v1" name="extfx1v6" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="extfx6v2">Midi Value 2</label>
+                        <input type="number" id="extfx6v2" name="extfx6v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                    </div>
+                </div>
+                <div id="FX7" class="fxtabcontent">
+                    <div class="container">
+                        <label class="form-check-label" for="extfx7sw">Foot Switch Number</label>
+                        <select class="form-select select_style" id="extfx7sw">
+                            <option value="255" class="style6" Selected>Disabled</option>
+                            <option value="0" class="style6">1</option>
+                            <option value="1" class="style6">2</option>     
+                            <option value="2" class="style6">3</option>     
+                            <option value="3" class="style6">4</option>     
+                            <option value="4" class="style6">5</option>     
+                            <option value="5" class="style6">6</option>     
+                            <option value="6" class="style6">7</option>     
+                            <option value="7" class="style6">8</option>  
+                            <option value="8" class="style6">9</option>
+                            <option value="9" class="style6">10</option>     
+                            <option value="10" class="style6">11</option>     
+                            <option value="11" class="style6">12</option>     
+                            <option value="12" class="style6">13</option>     
+                            <option value="13" class="style6">14</option>     
+                            <option value="14" class="style6">15</option>     
+                            <option value="15" class="style6">16</option>        
+                        </select>                           
+                    </div> 
+                    <br>                 
+                    <div class="container">
+                        <label class="form-check-label" for="extfx7cc">Control Change Number</label>
+                        <input type="number" id="extfx7cc" name="extfx7cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="extfx7v1">Midi Value 1</label>
+                        <input type="number" id="extfx7v1" name="extfx7v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="extfx7v2">Midi Value 2</label>
+                        <input type="number" id="extfx7v2" name="extfx7v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                    </div>
+                </div>
+                <div id="FX8" class="fxtabcontent">
+                    <div class="container">
+                        <label class="form-check-label" for="extfx8sw">Foot Switch Number</label>
+                        <select class="form-select select_style" id="extfx8sw">
+                            <option value="255" class="style6" Selected>Disabled</option>
+                            <option value="0" class="style6">1</option>
+                            <option value="1" class="style6">2</option>     
+                            <option value="2" class="style6">3</option>     
+                            <option value="3" class="style6">4</option>     
+                            <option value="4" class="style6">5</option>     
+                            <option value="5" class="style6">6</option>     
+                            <option value="6" class="style6">7</option>     
+                            <option value="7" class="style6">8</option>  
+                            <option value="8" class="style6">9</option>
+                            <option value="9" class="style6">10</option>     
+                            <option value="10" class="style6">11</option>     
+                            <option value="11" class="style6">12</option>     
+                            <option value="12" class="style6">13</option>     
+                            <option value="13" class="style6">14</option>     
+                            <option value="14" class="style6">15</option>     
+                            <option value="15" class="style6">16</option>        
+                        </select>                           
+                    </div> 
+                    <br>                 
+                    <div class="container">
+                        <label class="form-check-label" for="extfx8cc">Control Change Number</label>
+                        <input type="number" id="extfx8cc" name="extfx8cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="extfx8v1">Midi Value 1</label>
+                        <input type="number" id="extfx8v1" name="extfx8v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="extfx8v2">Midi Value 2</label>
+                        <input type="number" id="extfx8v2" name="extfx8v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
                     </div>
                 </div>
                 <br>

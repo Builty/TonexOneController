@@ -694,7 +694,6 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
             return ESP_OK;
         } break;
 
-
         case 88: 
         {
             // bpm
@@ -857,6 +856,14 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
             value = tonex_params_clamp_value(param, value);
         } break;
      
+        // below items not supported on bigger Tonex pedal, custom for this controller
+        case 116: 
+        {
+            // input trim
+            param = TONEX_GLOBAL_INPUT_TRIM;            
+            value = midi_helper_scale_midi_to_float(param, midi_value);
+        } break;
+
         default:
         {
             ESP_LOGW(TAG, "Unsupported Midi change number %d", change_num);
@@ -1296,12 +1303,18 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
 
         case 86: 
         {
-            //preset down
+            // preset down
+            control_request_preset_down();
+
+            // don't set any return param, as this one is already handled and its not a parameter
         } break;
 
         case 87:
         {
             //preset up
+            control_request_preset_up();
+
+            // don't set any return param, as this one is already handled and its not a parameter
         } break;
 
         case 88: 
@@ -1406,6 +1419,12 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
         {
             param = TONEX_PARAM_VIR_BLEND;
         } break;
+
+         // below items not supported on bigger Tonex pedal, custom for this controller
+         case 116: 
+         {
+             param = TONEX_GLOBAL_INPUT_TRIM;            
+         } break;
     }
 
     return param;
