@@ -679,6 +679,7 @@
             delayBlink();
             modulationAnimate();
             populateExternalFootswitches();
+            populateInternalFootswitches();
         }
 
         function pageTimerEvent(){
@@ -1735,39 +1736,39 @@
 
                 var extfx6sw = document.getElementById("extfx6sw").value;  
                 var extfx6cc = document.getElementById("extfx6cc").value;  
-                var extfx6v1 = document.getElementById("extfx6v1").value;  
-                var extfx6v2 = document.getElementById("extfx6v2").value;  
+                var extfx6v1 = getExtFSValue("6", "1");
+                var extfx6v2 = getExtFSValue("6", "2");
                 
                 var extfx7sw = document.getElementById("extfx7sw").value;  
                 var extfx7cc = document.getElementById("extfx7cc").value;  
-                var extfx7v1 = document.getElementById("extfx7v1").value;  
-                var extfx7v2 = document.getElementById("extfx7v2").value;  
+                var extfx7v1 = getExtFSValue("7", "1");
+                var extfx7v2 = getExtFSValue("7", "2");
                 
                 var extfx8sw = document.getElementById("extfx8sw").value;  
                 var extfx8cc = document.getElementById("extfx8cc").value;  
-                var extfx8v1 = document.getElementById("extfx8v1").value;  
-                var extfx8v2 = document.getElementById("extfx8v2").value;  
+                var extfx8v1 = getExtFSValue("8", "1");
+                var extfx8v2 = getExtFSValue("8", "2");
 
 
                 var intfx1sw = document.getElementById("intfx1sw").value;  
                 var intfx1cc = document.getElementById("intfx1cc").value;  
-                var intfx1v1 = document.getElementById("intfx1v1").value;  
-                var intfx1v2 = document.getElementById("intfx1v2").value;  
+                var intfx1v1 = getIntFSValue("1", "1");
+                var intfx1v2 = getIntFSValue("1", "2");
 
                 var intfx2sw = document.getElementById("intfx2sw").value;  
                 var intfx2cc = document.getElementById("intfx2cc").value;  
-                var intfx2v1 = document.getElementById("intfx2v1").value;  
-                var intfx2v2 = document.getElementById("intfx2v2").value;  
+                var intfx2v1 = getIntFSValue("2", "1");
+                var intfx2v2 = getIntFSValue("2", "2");
 
                 var intfx3sw = document.getElementById("intfx3sw").value;  
                 var intfx3cc = document.getElementById("intfx3cc").value;  
-                var intfx3v1 = document.getElementById("intfx3v1").value;  
-                var intfx3v2 = document.getElementById("intfx3v2").value;  
+                var intfx3v1 = getIntFSValue("3", "1");
+                var intfx3v2 = getIntFSValue("3", "2");
 
                 var intfx4sw = document.getElementById("intfx4sw").value;  
                 var intfx4cc = document.getElementById("intfx4cc").value;  
-                var intfx4v1 = document.getElementById("intfx4v1").value;  
-                var intfx4v2 = document.getElementById("intfx4v2").value;  
+                var intfx4v1 = getIntFSValue("4", "1"); 
+                var intfx4v2 = getIntFSValue("4", "2");
 
                 sendWS({"CMD": "SETCONFIG", 
                         "BT_MODE": parseInt(btmode),
@@ -2021,7 +2022,7 @@
         // External footswitch control
 
         function populateExternalFootswitches() {
-            for (i=1; i<=5; i++) {
+            for (i=1; i<=8; i++) {
                 var select = document.getElementById(`extfx${i}cc`);
                 var optgroup = null;
 
@@ -2128,6 +2129,52 @@
                     break;
                 case "CHOICE":
                     return document.getElementById(`extfx${fs}v${value}_s`).value;
+            }
+        }
+
+        function populateInternalFootswitches() {
+            for (i=1; i<=4; i++) {
+                var select = document.getElementById(`intfx${i}cc`);
+                var optgroup = null;
+
+                for (const [key, value] of midiControlChangeAssociations) {
+                    if (typeof key === "string") {
+                        optgroup = document.createElement("optgroup");
+                        optgroup.label = key;
+
+                        select.appendChild(optgroup);
+                    } else {
+                        var option = document.createElement("option");
+                        option.value = key;
+                        option.text = value.param;
+
+                        if (optgroup != null) {
+                            optgroup.appendChild(option);
+                        } else {
+                            select.appendChild(option);
+                        }
+                    }
+                }
+            }
+        }
+
+        function getIntFSValue(fs, value) {
+            var intfxcc = document.getElementById(`intfx${fs}cc`).value;
+            var association = midiControlChangeAssociations.get(parseInt(intfxcc));
+
+            switch (association.value.type) {
+                case "RANGE":
+                    return document.getElementById(`intfx${fs}v${value}`).value;
+                case "TOGGLE":
+                    switch (value) {
+                        case "1":
+                            return 0;
+                        case "2":
+                            return 1;
+                    }
+                    break;
+                case "CHOICE":
+                    return document.getElementById(`intfx${fs}v${value}_s`).value;
             }
         }
     </script>
@@ -2727,17 +2774,23 @@
                     <br>                 
                     <div class="container">
                         <label class="form-check-label" for="intfx1cc">Control Change Number</label>
-                        <input type="number" id="intfx1cc" name="intfx1cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                        <select class="form-select select_style" id="intfx1cc" name="intfx1cc" onchange="extFSChanged('intfx1')">
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="intfx1v1">Midi Value 1</label>
-                        <input type="number" id="intfx1v1" name="intfx1v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="intfx1v1" name="intfx1v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="intfx1v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="intfx1v1_s" name="intfx1v1_s">
+                        </select>
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="intfx1v2">Midi Value 2</label>
-                        <input type="number" id="intfx1v2" name="intfx1v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="intfx1v2" name="intfx1v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="intfx1v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="intfx1v2_s" name="intfx1v2_s">
+                        </select>
                     </div>
                 </div>
                 <div id="IFX2" class="ifxtabcontent">
@@ -2754,17 +2807,22 @@
                     <br>                 
                     <div class="container">
                         <label class="form-check-label" for="intfx2cc">Control Change Number</label>
-                        <input type="number" id="intfx2cc" name="intfx2cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                        <select class="form-select select_style" id="intfx2cc" name="intfx2cc" onchange="extFSChanged('intfx2')">
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="intfx2v1">Midi Value 1</label>
-                        <input type="number" id="intfx2v1" name="intfx2v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="intfx2v1" name="intfx2v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="intfx2v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="intfx2v1_s" name="intfx2v1_s">
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="intfx2v2">Midi Value 2</label>
-                        <input type="number" id="intfx2v2" name="intfx2v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="intfx2v2" name="intfx2v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="intfx2v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="intfx2v2_s" name="intfx2v2_s">
+                        </select>
                     </div>
                 </div>
                 <div id="IFX3" class="ifxtabcontent">
@@ -2781,17 +2839,22 @@
                     <br>                 
                     <div class="container">
                         <label class="form-check-label" for="intfx3cc">Control Change Number</label>
-                        <input type="number" id="intfx3cc" name="intfx3cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                        <select class="form-select select_style" id="intfx3cc" name="intfx3cc" onchange="extFSChanged('intfx3')">
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="intfx3v1">Midi Value 1</label>
-                        <input type="number" id="intfx3v1" name="intfx3v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="intfx3v1" name="intfx3v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="intfx3v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="intfx3v1_s" name="intfx3v1_s">
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="intfx3v2">Midi Value 2</label>
-                        <input type="number" id="intfx3v2" name="intfx3v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="intfx3v2" name="intfx3v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="intfx3v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="intfx3v2_s" name="intfx3v2_s">
+                        </select>
                     </div>
                 </div>
                 <div id="IFX4" class="ifxtabcontent">
@@ -2808,17 +2871,23 @@
                     <br>                 
                     <div class="container">
                         <label class="form-check-label" for="intfx4cc">Control Change Number</label>
-                        <input type="number" id="intfx4cc" name="intfx4cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                        <select class="form-select select_style" id="intfx4cc" name="intfx4cc" onchange="extFSChanged('intfx4')">
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="intfx4v1">Midi Value 1</label>
-                        <input type="number" id="intfx4v1" name="intfx4v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="intfx4v1" name="intfx4v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="intfx4v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="intfx4v1_s" name="intfx4v1_s">
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="intfx4v2">Midi Value 2</label>
-                        <input type="number" id="intfx4v2" name="intfx4v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="intfx4v2" name="intfx4v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="intfx4v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="intfx4v2_s" name="intfx4v2_s">
+                        </select>
+
                     </div>
                 </div>
                 <br>
@@ -3125,17 +3194,23 @@
                     <br>                 
                     <div class="container">
                         <label class="form-check-label" for="extfx6cc">Control Change Number</label>
-                        <input type="number" id="extfx6cc" name="extfx6cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                        <select class="form-select select_style" id="extfx6cc" name="extfx6cc" onchange="extFSChanged('extfx6')">
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx6v1">Midi Value 1</label>
-                        <input type="number" id="extfx6v1" name="extfx1v6" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx6v1" name="extfx1v6" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx6v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx6v1_s" name="extfx6v1_s">
+                        </select>
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx6v2">Midi Value 2</label>
-                        <input type="number" id="extfx6v2" name="extfx6v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx6v2" name="extfx6v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx6v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx6v2_s" name="extfx6v2_s">
+                        </select>
                     </div>
                 </div>
                 <div id="FX7" class="fxtabcontent">
@@ -3164,17 +3239,23 @@
                     <br>                 
                     <div class="container">
                         <label class="form-check-label" for="extfx7cc">Control Change Number</label>
-                        <input type="number" id="extfx7cc" name="extfx7cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                        <select class="form-select select_style" id="extfx7cc" name="extfx7cc" onchange="extFSChanged('extfx7')">
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx7v1">Midi Value 1</label>
-                        <input type="number" id="extfx7v1" name="extfx7v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx7v1" name="extfx7v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx7v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx7v1_s" name="extfx7v1_s">
+                        </select>
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx7v2">Midi Value 2</label>
-                        <input type="number" id="extfx7v2" name="extfx7v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx7v2" name="extfx1v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx7v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx7v2_s" name="extfx7v2_s">
+                        </select>
                     </div>
                 </div>
                 <div id="FX8" class="fxtabcontent">
@@ -3203,17 +3284,23 @@
                     <br>                 
                     <div class="container">
                         <label class="form-check-label" for="extfx8cc">Control Change Number</label>
-                        <input type="number" id="extfx8cc" name="extfx8cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                        <select class="form-select select_style" id="extfx8cc" name="extfx8cc" onchange="extFSChanged('extfx8')">
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx8v1">Midi Value 1</label>
-                        <input type="number" id="extfx8v1" name="extfx8v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx8v1" name="extfx8v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx8v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx8v1_s" name="extfx8v1_s">
+                        </select>
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx8v2">Midi Value 2</label>
-                        <input type="number" id="extfx8v2" name="extfx8v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx8v2" name="extfx1v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx8v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx8v2_s" name="extfx8v2_s">
+                        </select>
                     </div>
                 </div>
                 <br>
