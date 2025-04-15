@@ -477,6 +477,180 @@
         const TONEX_GLOBAL_TEMPO_SOURCE = 113;
         const TONEX_GLOBAL_TUNING_REFERENCE = 114;
 
+        
+        // External Footswitch midi associations
+        const midiControlChangeAssociations = new Map();
+
+        // MAIN
+        midiControlChangeAssociations.set("MAIN", null);
+        midiControlChangeAssociations.set(102, { param: "GAIN", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(103, { param: "VOLUME", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(104, { param: "MODEL MIX", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(23, { param: "BASS", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(24, { param: "BASS HZ", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(25, { param: "MID", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(26, { param: "MID Q", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(27, { param: "MID HZ", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(28, { param: "TREBLE", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(29, { param: "TREBLE HZ", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(30, { param: "EQ POSITION", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(106, { param: "PRESENCE", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(107, { param: "DEPTH", value: { type: "RANGE" } })
+
+        // GATE
+        midiControlChangeAssociations.set("GATE", null);
+        midiControlChangeAssociations.set(14, { param: "GATE POWER", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(15, { param: "GATE THRESHOLD", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(16, { param: "GATE RELEASE", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(17, { param: "GATE DEPTH", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(13, { param: "GATE POSITION", value: { type: "CHOICE", values: { 0: "FIRST", 127: "POST AMP" } } })
+
+        // COMP
+        midiControlChangeAssociations.set("COMP", null);
+        midiControlChangeAssociations.set(18, { param: "COMP POWER", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(19, { param: "COMP THRESHOLD", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(20, { param: "COMP GAIN", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(21, { param: "COMP ATTACK", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(22, { param: "COMP POSITION", value: { type: "CHOICE", values: { 0: "PRE AMP", 127: "POST AMP" } } })
+        
+        // VIR
+        midiControlChangeAssociations.set("VIR", null);
+        midiControlChangeAssociations.set(108, { param: "VIR RESO", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(109, { param: "VIR MIC 1", value: { type: "CHOICE", values: { 0: "COND", 1: "DYN", 2: "RBN" } } })
+        midiControlChangeAssociations.set(110, { param: "VIR MIC 1 X", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(111, { param: "VIR MIC 1 Z", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(112, { param: "VIR MIC 2", value: { type: "CHOICE", values: { 0: "COND", 1: "DYN", 2: "RBN" } } })
+        midiControlChangeAssociations.set(113, { param: "VIR MIC 2 X", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(114, { param: "VIR MIC 2 Z", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(115, { param: "VIR BLEND", value: { type: "RANGE" } })
+
+        // MOD
+        midiControlChangeAssociations.set("MOD", null);
+        midiControlChangeAssociations.set(32, { param: "MOD POWER", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(33, { param: "MOD TYPE", value: { type: "CHOICE", values: { 0: "CHORUS", 1: "TREMOLO", 2: "PHASER", 3: "FLANGER", 4: "ROTARY" } } })
+        midiControlChangeAssociations.set(31, { param: "MOD POSITION", value: { type: "CHOICE", values: { 0: "PRE AMP", 127: "POST AMP" } } })
+
+        // MOD / CHORUS
+        midiControlChangeAssociations.set("MOD / CHORUS", null);
+        midiControlChangeAssociations.set(34, { param: "MOD CHORUS SYNC", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(35, { param: "MOD CHORUS RATE (TIMESIGN)", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(36, { param: "MOD CHORUS DEPTH", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(37, { param: "MOD CHORUS LEVEL", value: { type: "RANGE" } })
+
+        // MOD / TREMOLO
+        midiControlChangeAssociations.set("MOD / TREMOLO", null);
+        midiControlChangeAssociations.set(38, { param: "MOD TREMOLO SYNC", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(39, { param: "MOD TREMOLO RATE (TIMESIGN)", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(40, { param: "MOD TREMOLO SHAPE", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(41, { param: "MOD TREMOLO SPREAD", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(42, { param: "MOD TREMOLO LEVEL", value: { type: "RANGE" } })
+
+        // MOD / TREMOLO
+        midiControlChangeAssociations.set("MOD / TREMOLO", null);
+        midiControlChangeAssociations.set(43, { param: "MOD PHASER SYNC", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(44, { param: "MOD PHASER RATE (TIMESIGN)", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(45, { param: "MOD PHASER DEPTH", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(46, { param: "MOD PHASER LEVEL", value: { type: "RANGE" } })
+
+        // MOD / FLANGER
+        midiControlChangeAssociations.set("MOD / FLANGER", null);
+        midiControlChangeAssociations.set(47, { param: "MOD FLANGER SYNC", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(48, { param: "MOD FLANGER RATE (TIMESIGN)", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(49, { param: "MOD FLANGER DEPTH", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(50, { param: "MOD FLANGER FEEDBACK", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(51, { param: "MOD FLANGER LEVEL", value: { type: "RANGE" } })
+
+        // MOD / ROTARY
+        midiControlChangeAssociations.set("MOD / ROTARY", null);
+        midiControlChangeAssociations.set(52, { param: "MOD ROTARY SYNC", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(53, { param: "MOD ROTARY SPEED (TIMESIGN)", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(54, { param: "MOD ROTARY RADIUS", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(55, { param: "MOD ROTARY SPREAD", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(56, { param: "MOD ROTARY LEVEL", value: { type: "RANGE" } })
+
+        // DELAY
+        midiControlChangeAssociations.set("DELAY", null);
+        midiControlChangeAssociations.set(2, { param: "DELAY POWER", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(3, { param: "DELAY TYPE", value: { type: "CHOICE", values: { 0: "DIGITAL", 1: "TAPE" } } })
+        midiControlChangeAssociations.set(1, { param: "DELAY POSITION", value: { type: "CHOICE", values: { 0: "PRE AMP", 127: "POST AMP" } } })
+
+        // DELAY / DIGITAL
+        midiControlChangeAssociations.set("DELAY / DIGITAL", null);
+        midiControlChangeAssociations.set(4, { param: "DELAY DIGITAL SYNC", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(5, { param: "DELAY DIGITAL TIME (TIMESIGN)", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(6, { param: "DELAY DIGITAL FEEDBACK", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(7, { param: "DELAY DIGITAL MODE", value: { type: "CHOICE", values: { 0: "NORMAL", 64: "PING.PONG" } } })
+        midiControlChangeAssociations.set(8, { param: "DELAY DIGITAL MIX", value: { type: "RANGE" } })
+
+        // DELAY / TAPE
+        midiControlChangeAssociations.set("DELAY / TAPE", null);
+        midiControlChangeAssociations.set(91, { param: "DELAY TAPE SYNC", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(92, { param: "DELAY TAPE TIME (TIMESIGN)", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(93, { param: "DELAY TAPE FEEDBACK", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(94, { param: "DELAY TAPE MODE", value: { type: "CHOICE", values: { 0: "NORMAL", 64: "PING.PONG" } } })
+        midiControlChangeAssociations.set(95, { param: "DELAY TAPE MIX", value: { type: "RANGE" } })
+
+        // REVERB
+        midiControlChangeAssociations.set("DELAY / TAPE", null);
+        midiControlChangeAssociations.set(75, { param: "REVERB POWER", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(85, { param: "REVERB TYPE", value: { type: "CHOICE", values: { 0: "SPRING 1", 1: "SPRING 2", 2: "SPRING 3", 3: "SPRING 4", 4: "ROOM", 5: "PLATE" } } })
+        midiControlChangeAssociations.set(84, { param: "REVERB POSITION", value: { type: "CHOICE", values: { 0: "POST AMP", 127: "LAST" } } })
+
+        // REVERB / SPRING 1
+        midiControlChangeAssociations.set("REVERB / SPRING 1", null);
+        midiControlChangeAssociations.set(59, { param: "REVERB SPRING 1 TIME", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(60, { param: "REVERB SPRING 1 PRE.DELAY", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(61, { param: "REVERB SPRING 1 COLOR", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(62, { param: "REVERB SPRING 1 MIX", value: { type: "RANGE" } })
+
+        // REVERB / SPRING 2
+        midiControlChangeAssociations.set("REVERB / SPRING 2", null);
+        midiControlChangeAssociations.set(63, { param: "REVERB SPRING 2 TIME", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(64, { param: "REVERB SPRING 2 PRE.DELAY", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(65, { param: "REVERB SPRING 2 COLOR", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(66, { param: "REVERB SPRING 2 MIX", value: { type: "RANGE" } })
+
+        // REVERB / SPRING 3
+        midiControlChangeAssociations.set("REVERB / SPRING 3", null);
+        midiControlChangeAssociations.set(67, { param: "REVERB SPRING 3 TIME", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(68, { param: "REVERB SPRING 3 PRE.DELAY", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(69, { param: "REVERB SPRING 3 COLOR", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(70, { param: "REVERB SPRING 3 MIX", value: { type: "RANGE" } })
+
+        // REVERB / SPRING 4
+        midiControlChangeAssociations.set("REVERB / SPRING 4", null);
+        midiControlChangeAssociations.set(80, { param: "REVERB SPRING 4 TIME", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(81, { param: "REVERB SPRING 4 PRE.DELAY", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(82, { param: "REVERB SPRING 4 COLOR", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(83, { param: "REVERB SPRING 4 MIX", value: { type: "RANGE" } })
+
+        // REVERB / ROOM
+        midiControlChangeAssociations.set("REVERB / ROOM", null);
+        midiControlChangeAssociations.set(71, { param: "REVERB ROOM TIME", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(72, { param: "REVERB ROOM PRE.DELAY", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(73, { param: "REVERB ROOM COLOR", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(74, { param: "REVERB ROOM MIX", value: { type: "RANGE" } })
+
+        // REVERB / PLATE
+        midiControlChangeAssociations.set("REVERB / PLATE", null);
+        midiControlChangeAssociations.set(76, { param: "REVERB PLATE TIME", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(77, { param: "REVERB PLATE PRE.DELAY", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(78, { param: "REVERB PLATE COLOR", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(79, { param: "REVERB PLATE MIX", value: { type: "RANGE" } })
+
+        // GLOBAL
+        midiControlChangeAssociations.set("GLOBAL", null);
+        midiControlChangeAssociations.set(12, { param: "PRESET ON/OFF", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(11, { param: "EXPRESSION PEDAL", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(0, { param: "MIDI PATCH BANK", value: { type: "CHOICE", values: { 0: "000", 1: "001" } } })
+        midiControlChangeAssociations.set(86, { param: "PRESET DOWN", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(87, { param: "PRESET UP", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(88, { param: "BPM", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(89, { param: "BANK DOWN", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(90, { param: "BANK UP", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(9, { param: "TUNER", value: { type: "TOGGLE" } })
+        midiControlChangeAssociations.set(10, { param: "TAP TEMPO", value: { type: "TOGGLE" } })
+
         // tap tempo
         let globalTapTempo = new TapTempo();
 
@@ -495,7 +669,7 @@
 
    			inputs = document.getElementsByTagName('input');
 			for (i = 0; i < inputs.length; i++) {
-				if (inputs[i].type == "range") {
+				if (inputs[i].type == "range" && inputs[i].oninput == null) {
 					inputs[i].oninput = function(e){showValue(e.target);};
 				}
             }
@@ -504,6 +678,7 @@
             bpmBlink();
             delayBlink();
             modulationAnimate();
+            populateExternalFootswitches();
         }
 
         function pageTimerEvent(){
@@ -1354,65 +1529,77 @@
                                         
                     configureParamSelect("extfx1sw", data['EXTFS_ES1_SW']);
                     setParamValue("extfx1cc", data['EXTFS_ES1_CC']);
-                    setParamValue("extfx1v1", data['EXTFS_ES1_V1']);
-                    setParamValue("extfx1v2", data['EXTFS_ES1_V2']);
+                    extFSChanged("extfx1");
+                    setExtFSValue("extfx1v1", data['EXTFS_ES1_V1']);
+                    setExtFSValue("extfx1v2", data['EXTFS_ES1_V2']);
 
                     configureParamSelect("extfx2sw", data['EXTFS_ES2_SW']);
                     setParamValue("extfx2cc", data['EXTFS_ES2_CC']);
-                    setParamValue("extfx2v1", data['EXTFS_ES2_V1']);
-                    setParamValue("extfx2v2", data['EXTFS_ES2_V2']);
+                    extFSChanged("extfx2");
+                    setExtFSValue("extfx2v1", data['EXTFS_ES2_V1']);
+                    setExtFSValue("extfx2v2", data['EXTFS_ES2_V2']);
 
                     configureParamSelect("extfx3sw", data['EXTFS_ES3_SW']);
                     setParamValue("extfx3cc", data['EXTFS_ES3_CC']);
-                    setParamValue("extfx3v1", data['EXTFS_ES3_V1']);
-                    setParamValue("extfx3v2", data['EXTFS_ES3_V2']);
+                    extFSChanged("extfx3");
+                    setExtFSValue("extfx3v1", data['EXTFS_ES3_V1']);
+                    setExtFSValue("extfx3v2", data['EXTFS_ES3_V2']);
 
                     configureParamSelect("extfx4sw", data['EXTFS_ES4_SW']);
                     setParamValue("extfx4cc", data['EXTFS_ES4_CC']);
-                    setParamValue("extfx4v1", data['EXTFS_ES4_V1']);
-                    setParamValue("extfx4v2", data['EXTFS_ES4_V2']);
+                    extFSChanged("extfx4");
+                    setExtFSValue("extfx4v1", data['EXTFS_ES4_V1']);
+                    setExtFSValue("extfx4v2", data['EXTFS_ES4_V2']);
 
                     configureParamSelect("extfx5sw", data['EXTFS_ES5_SW']);
                     setParamValue("extfx5cc", data['EXTFS_ES5_CC']);
-                    setParamValue("extfx5v1", data['EXTFS_ES5_V1']);
-                    setParamValue("extfx5v2", data['EXTFS_ES5_V2']);
+                    extFSChanged("extfx5");
+                    setExtFSValue("extfx5v1", data['EXTFS_ES5_V1']);
+                    setExtFSValue("extfx5v2", data['EXTFS_ES5_V2']);
 
-                    configureParamSelect("extfx6sw", data['EXTFS_ES6_SW']);
+                    configureParamSelect("extfx6sw", data['EXTFS_ES6_SW']);                    
                     setParamValue("extfx6cc", data['EXTFS_ES6_CC']);
-                    setParamValue("extfx6v1", data['EXTFS_ES6_V1']);
-                    setParamValue("extfx6v2", data['EXTFS_ES6_V2']);
+                    extFSChanged("extfx6");
+                    setExtFSValue("extfx6v1", data['EXTFS_ES6_V1']);
+                    setExtFSValue("extfx6v2", data['EXTFS_ES6_V2']);
 
                     configureParamSelect("extfx7sw", data['EXTFS_ES7_SW']);
                     setParamValue("extfx7cc", data['EXTFS_ES7_CC']);
-                    setParamValue("extfx7v1", data['EXTFS_ES7_V1']);
-                    setParamValue("extfx7v2", data['EXTFS_ES7_V2']);
+                    extFSChanged("extfx7");
+                    setExtFSValue("extfx7v1", data['EXTFS_ES7_V1']);
+                    setExtFSValue("extfx7v2", data['EXTFS_ES7_V2']);
 
                     configureParamSelect("extfx8sw", data['EXTFS_ES8_SW']);
                     setParamValue("extfx8cc", data['EXTFS_ES8_CC']);
-                    setParamValue("extfx8v1", data['EXTFS_ES8_V1']);
-                    setParamValue("extfx8v2", data['EXTFS_ES8_V2']);
+                    extFSChanged("extfx8");
+                    setExtFSValue("extfx8v1", data['EXTFS_ES8_V1']);
+                    setExtFSValue("extfx8v2", data['EXTFS_ES8_V2']);
 
                     configureParamSelect("intfslay", data['FOOTSW_MODE']);
 
                     configureParamSelect("intfx1sw", data['INTFS_ES1_SW']);
                     setParamValue("intfx1cc", data['INTFS_ES1_CC']);
-                    setParamValue("intfx1v1", data['INTFS_ES1_V1']);
-                    setParamValue("intfx1v2", data['INTFS_ES1_V2']);
+                    extFSChanged("intfx1");
+                    setExtFSValue("intfx1v1", data['INTFS_ES1_V1']);
+                    setExtFSValue("intfx1v2", data['INTFS_ES1_V2']);
 
                     configureParamSelect("intfx2sw", data['INTFS_ES2_SW']);
                     setParamValue("intfx2cc", data['INTFS_ES2_CC']);
-                    setParamValue("intfx2v1", data['INTFS_ES2_V1']);
-                    setParamValue("intfx2v2", data['INTFS_ES2_V2']);
+                    extFSChanged("intfx2");
+                    setExtFSValue("intfx2v1", data['INTFS_ES2_V1']);
+                    setExtFSValue("intfx2v2", data['INTFS_ES2_V2']);
 
                     configureParamSelect("intfx3sw", data['INTFS_ES3_SW']);
                     setParamValue("intfx3cc", data['INTFS_ES3_CC']);
-                    setParamValue("intfx3v1", data['INTFS_ES3_V1']);
-                    setParamValue("intfx3v2", data['INTFS_ES3_V2']);
+                    extFSChanged("intfx3");
+                    setExtFSValue("intfx3v1", data['INTFS_ES3_V1']);
+                    setExtFSValue("intfx3v2", data['INTFS_ES3_V2']);
 
                     configureParamSelect("intfx4sw", data['INTFS_ES4_SW']);
                     setParamValue("intfx4cc", data['INTFS_ES4_CC']);
-                    setParamValue("intfx4v1", data['INTFS_ES4_V1']);
-                    setParamValue("intfx4v2", data['INTFS_ES4_V2']);
+                    extFSChanged("intfx4");
+                    setExtFSValue("intfx4v1", data['INTFS_ES4_V1']);
+                    setExtFSValue("intfx4v2", data['INTFS_ES4_V2']);
                     
                     break;   
                 
@@ -1523,28 +1710,28 @@
 
                 var extfx1sw = document.getElementById("extfx1sw").value;  
                 var extfx1cc = document.getElementById("extfx1cc").value;  
-                var extfx1v1 = document.getElementById("extfx1v1").value;  
-                var extfx1v2 = document.getElementById("extfx1v2").value;  
+                var extfx1v1 = getExtFSValue("1", "1");
+                var extfx1v2 = getExtFSValue("1", "2");
 
                 var extfx2sw = document.getElementById("extfx2sw").value;  
                 var extfx2cc = document.getElementById("extfx2cc").value;  
-                var extfx2v1 = document.getElementById("extfx2v1").value;  
-                var extfx2v2 = document.getElementById("extfx2v2").value;  
+                var extfx2v1 = getExtFSValue("2", "1");
+                var extfx2v2 = getExtFSValue("2", "2");
 
                 var extfx3sw = document.getElementById("extfx3sw").value;  
                 var extfx3cc = document.getElementById("extfx3cc").value;  
-                var extfx3v1 = document.getElementById("extfx3v1").value;  
-                var extfx3v2 = document.getElementById("extfx3v2").value;  
+                var extfx3v1 = getExtFSValue("3", "1");
+                var extfx3v2 = getExtFSValue("3", "2");
 
                 var extfx4sw = document.getElementById("extfx4sw").value;  
                 var extfx4cc = document.getElementById("extfx4cc").value;  
-                var extfx4v1 = document.getElementById("extfx4v1").value;  
-                var extfx4v2 = document.getElementById("extfx4v2").value;  
+                var extfx4v1 = getExtFSValue("4", "1");
+                var extfx4v2 = getExtFSValue("4", "2");
 
                 var extfx5sw = document.getElementById("extfx5sw").value;  
                 var extfx5cc = document.getElementById("extfx5cc").value;  
-                var extfx5v1 = document.getElementById("extfx5v1").value;  
-                var extfx5v2 = document.getElementById("extfx5v2").value;  
+                var extfx5v1 = getExtFSValue("5", "1");
+                var extfx5v2 = getExtFSValue("5", "2");
 
                 var extfx6sw = document.getElementById("extfx6sw").value;  
                 var extfx6cc = document.getElementById("extfx6cc").value;  
@@ -1704,8 +1891,15 @@
             let s = document.querySelector(`label[for="${e.id}"]`);
             let t = s.innerText;
             let i = t.indexOf(":");
-            if (i>0) s.innerText = t.substr(0, i);
+            if (i>0) {
+                s.innerText = t.substr(0, i);
+            }
             s.innerText += " : " + parseFloat(e.value);
+            
+            let unit = s.getAttribute("unit");
+            if (unit != null) {
+                s.innerText += unit;
+            }
 		}
      
         // Tap tempo
@@ -1823,6 +2017,119 @@
                 modulationAnimate();
             }, 100);
         }
+        
+        // External footswitch control
+
+        function populateExternalFootswitches() {
+            for (i=1; i<=5; i++) {
+                var select = document.getElementById(`extfx${i}cc`);
+                var optgroup = null;
+
+                for (const [key, value] of midiControlChangeAssociations) {
+                    if (typeof key === "string") {
+                        optgroup = document.createElement("optgroup");
+                        optgroup.label = key;
+
+                        select.appendChild(optgroup);
+                    } else {
+                        var option = document.createElement("option");
+                        option.value = key;
+                        option.text = value.param;
+
+                        if (optgroup != null) {
+                            optgroup.appendChild(option);
+                        } else {
+                            select.appendChild(option);
+                        }
+                    }
+                }
+            }
+        }
+
+        function extFSChanged(fx) {
+            var controlChange = document.getElementById(`${fx}cc`);
+            var association = midiControlChangeAssociations.get(parseInt(controlChange.value));
+
+            var number1 = document.getElementById(`${fx}v1`);
+            var number2 = document.getElementById(`${fx}v2`);
+            var range1 = document.getElementById(`${fx}v1_r`);
+            var range2 = document.getElementById(`${fx}v2_r`);
+            var select1 = document.getElementById(`${fx}v1_s`);
+            var select2 = document.getElementById(`${fx}v2_s`);
+            
+            switch (association.value.type) {
+                case "RANGE":
+                    number1.parentElement.style.display = "block";
+                    number2.parentElement.style.display = "block";
+                    number1.style.display = "block";
+                    number2.style.display = "block";
+                    range1.style.display = "block";
+                    range2.style.display = "block";
+                    select1.style.display = "none";
+                    select2.style.display = "none";
+                    break;
+                case "TOGGLE":
+                    number1.parentElement.style.display = "none";
+                    number2.parentElement.style.display = "none";
+                    break;
+                case "CHOICE":
+                    number1.parentElement.style.display = "block";
+                    number2.parentElement.style.display = "block";
+                    number1.style.display = "none";
+                    number2.style.display = "none";
+                    range1.style.display = "none";
+                    range2.style.display = "none";
+                    select1.style.display = "block";
+                    select2.style.display = "block";
+                    break;
+            }
+
+            if (association.value.type == "CHOICE") {
+                select1.innerHTML = null
+                select2.innerHTML = null
+
+                for (const key in association.value.values) {
+                    var value = association.value.values[key];
+
+                    var option1 = document.createElement("option");
+                    option1.value = key;
+                    option1.text = value;
+                    select1.appendChild(option1);
+
+                    var option2 = document.createElement("option");
+                    option2.value = key;
+                    option2.text = value;
+                    select2.appendChild(option2);
+                }
+            }
+        }
+
+        function setExtFSValue(objname, value) {
+            document.getElementById(objname).value = value;
+            document.getElementById(`${objname}_r`).value = value;
+            document.getElementById(`${objname}_s`).value = value;
+        }
+
+
+        function getExtFSValue(fs, value) {
+            var extfxcc = document.getElementById(`extfx${fs}cc`).value;
+            var association = midiControlChangeAssociations.get(parseInt(extfxcc));
+
+            switch (association.value.type) {
+                case "RANGE":
+                    return document.getElementById(`extfx${fs}v${value}`).value;
+                case "TOGGLE":
+                    switch (value) {
+                        case "1":
+                            return 0;
+                        case "2":
+                            return 1;
+                    }
+                    break;
+                case "CHOICE":
+                    return document.getElementById(`extfx${fs}v${value}_s`).value;
+            }
+        }
     </script>
         
     <nav class="navbar navbar-dark bg-dark">
@@ -1894,15 +2201,15 @@
                 </div>    
                 <br>
                 <div class="container">
-                    <label for="ng_thresh" class="form-label">Threshold</label>
+                    <label for="ng_thresh" class="form-label" unit="dB">Threshold</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="ng_thresh">
                 </div>
                 <div class="container">
-                    <label for="ng_release" class="form-label">Release</label>
+                    <label for="ng_release" class="form-label" unit="ms">Release</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="ng_release">
                 </div>
                 <div class="container">
-                    <label for="ng_depth" class="form-label">Depth</label>
+                    <label for="ng_depth" class="form-label" unit="dB">Depth</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="ng_depth">
                 </div>
             </p>
@@ -1931,15 +2238,15 @@
                 </div>    
                 <br>
                 <div class="container">
-                    <label for="cp_thresh" class="form-label">Threshold</label>
+                    <label for="cp_thresh" class="form-label" unit="dB">Threshold</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="cp_thresh">
                 </div>
                 <div class="container">
-                    <label for="cp_attack" class="form-label">Attack</label>
+                    <label for="cp_attack" class="form-label" unit="ms">Attack</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="cp_attack">
                 </div>
                 <div class="container">
-                    <label for="cp_gain" class="form-label">Gain</label>
+                    <label for="cp_gain" class="form-label" unit="dB">Gain</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="cp_gain">
                 </div>
             </p>
@@ -1971,7 +2278,7 @@
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="eq_bass">
                 </div>
                 <div class="container">
-                    <label for="eq_bassf" class="form-label">Bass Freq</label>
+                    <label for="eq_bassf" class="form-label" unit="Hz">Bass Freq</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="eq_bassf">
                 </div>
                 <div class="container">
@@ -1979,7 +2286,7 @@
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="eq_mid">
                 </div>
                 <div class="container">
-                    <label for="eq_midf" class="form-label">Mid Freq</label>
+                    <label for="eq_midf" class="form-label" unit="Hz">Mid Freq</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="eq_midf">
                 </div>
                 <div class="container">
@@ -1991,7 +2298,7 @@
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="eq_treble">
                 </div>
                 <div class="container">
-                    <label for="eq_treblef" class="form-label">Treble Freq</label>
+                    <label for="eq_treblef" class="form-label" unit="Hz">Treble Freq</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="eq_treblef">
                 </div>
             </p>
@@ -2032,15 +2339,15 @@
                 </div>
                 <br>
                 <div class="container">
-                    <label for="rv_mix" class="form-label">Mix</label>
+                    <label for="rv_mix" class="form-label" unit="%">Mix</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="rv_mix">
                 </div>
                 <div class="container">
-                    <label for="rv_time" class="form-label">Time</label>
+                    <label for="rv_time" class="form-label" unit="ms">Time</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="rv_time">
                 </div>
                 <div class="container">
-                    <label for="rv_predelay" class="form-label">Pre-Delay</label>
+                    <label for="rv_predelay" class="form-label" unit="ms">Pre-Delay</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="rv_predelay">
                 </div>
                 <div class="container">
@@ -2175,7 +2482,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col">
-                            <label for="dl_time" class="form-label">Time</label>
+                            <label for="dl_time" class="form-label" unit="ms">Time</label>
                         </div>
                         <div class="col">
                             <div id="dl_indicator" class="dl-indicator user-select-none"></div>
@@ -2184,11 +2491,11 @@
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="dl_time">
                 </div>
                 <div class="container">
-                    <label for="dl_feedback" class="form-label">Feedback</label>
+                    <label for="dl_feedback" class="form-label" unit="%">Feedback</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="dl_feedback">
                 </div>
                 <div class="container">
-                    <label for="dl_mix" class="form-label">Mix</label>
+                    <label for="dl_mix" class="form-label" unit="%">Mix</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="dl_mix">
                 </div>
             </p>
@@ -2228,7 +2535,7 @@
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="am_volume">
                 </div>
                 <div class="container">
-                    <label for="am_mix" class="form-label">Mix</label>
+                    <label for="am_mix" class="form-label" unit="%">Mix</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="am_mix">
                 </div>
 
@@ -2276,11 +2583,11 @@
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="gb_bpm">
                 </div>
                 <div class="container">
-                    <label for="gb_trim" class="form-label">Input Trim</label>
+                    <label for="gb_trim" class="form-label" unit="dB">Input Trim</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="gb_trim">
                 </div>
                 <div class="container">
-                    <label for="gb_tref" class="form-label">Tuning Reference</label>
+                    <label for="gb_tref" class="form-label" unit="Hz">Tuning Reference</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="gb_tref">
                 </div>
             </p>
@@ -2583,22 +2890,29 @@
                             <option value="13" class="style6">14</option>     
                             <option value="14" class="style6">15</option>     
                             <option value="15" class="style6">16</option>        
-                        </select>                           
-                    </div> 
-                    <br>                 
+                        </select>
+                    </div>
+                    <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx1cc">Control Change Number</label>
-                        <input type="number" id="extfx1cc" name="extfx1cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                        <select class="form-select select_style" id="extfx1cc" name="extfx1cc" onchange="extFSChanged('extfx1')">
+                        </select>
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx1v1">Midi Value 1</label>
-                        <input type="number" id="extfx1v1" name="extfx1v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx1v1" name="extfx1v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx1v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx1v1_s" name="extfx1v1_s">
+                        </select>
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx1v2">Midi Value 2</label>
-                        <input type="number" id="extfx1v2" name="extfx1v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx1v2" name="extfx1v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx1v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx1v2_s" name="extfx1v2_s">
+                        </select>
                     </div>
                 </div>
                 <div id="FX2" class="fxtabcontent">
@@ -2623,21 +2937,28 @@
                             <option value="14" class="style6">15</option>     
                             <option value="15" class="style6">16</option>        
                         </select>                           
-                    </div> 
-                    <br>                 
+                    </div>
+                    <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx2cc">Control Change Number</label>
-                        <input type="number" id="extfx2cc" name="extfx2cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                        <select class="form-select select_style" id="extfx2cc" name="extfx2cc" onchange="extFSChanged('extfx2')">
+                        </select>
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx2v1">Midi Value 1</label>
-                        <input type="number" id="extfx2v1" name="extfx2v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx2v1" name="extfx2v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx2v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx2v1_s" name="extfx2v1_s">
+                        </select>
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx2v2">Midi Value 2</label>
-                        <input type="number" id="extfx2v2" name="extfx2v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx2v2" name="extfx2v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx2v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx2v2_s" name="extfx2v2_s">
+                        </select>
                     </div>
                 </div>
                 <div id="FX3" class="fxtabcontent">
@@ -2662,21 +2983,28 @@
                             <option value="14" class="style6">15</option>     
                             <option value="15" class="style6">16</option>        
                         </select>                           
-                    </div> 
-                    <br>                 
+                    </div>
+                    <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx3cc">Control Change Number</label>
-                        <input type="number" id="extfx3cc" name="extfx3cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                        <select class="form-select select_style" id="extfx3cc" name="extfx3cc" onchange="extFSChanged('extfx3')">
+                        </select>
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx3v1">Midi Value 1</label>
-                        <input type="number" id="extfx3v1" name="extfx3v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx3v1" name="extfx3v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx3v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx3v1_s" name="extfx3v1_s">
+                        </select>
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx3v2">Midi Value 2</label>
-                        <input type="number" id="extfx3v2" name="extfx3v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx3v2" name="extfx3v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx3v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx3v2_s" name="extfx3v2_s">
+                        </select>
                     </div>
                 </div>
                 <div id="FX4" class="fxtabcontent">
@@ -2701,21 +3029,28 @@
                             <option value="14" class="style6">15</option>     
                             <option value="15" class="style6">16</option>        
                         </select>                           
-                    </div> 
-                    <br>                 
+                    </div>
+                    <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx4cc">Control Change Number</label>
-                        <input type="number" id="extfx4cc" name="extfx4cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                        <select class="form-select select_style" id="extfx4cc" name="extfx4cc" onchange="extFSChanged('extfx4')">
+                        </select>
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx4v1">Midi Value 1</label>
-                        <input type="number" id="extfx4v1" name="extfx4v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx4v1" name="extfx4v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx4v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx4v1_s" name="extfx4v1_s">
+                        </select>
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx4v2">Midi Value 2</label>
-                        <input type="number" id="extfx4v2" name="extfx4v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx4v2" name="extfx4v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx4v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx4v2_s" name="extfx4v2_s">
+                        </select>
                     </div>
                 </div>
                 <div id="FX5" class="fxtabcontent">
@@ -2740,21 +3075,28 @@
                             <option value="14" class="style6">15</option>     
                             <option value="15" class="style6">16</option>        
                         </select>                           
-                    </div> 
-                    <br>                 
+                    </div>
+                    <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx5cc">Control Change Number</label>
-                        <input type="number" id="extfx5cc" name="extfx5cc" class="form-control text_entry_style" maxlength="3" size="3" value="0">                
+                        <select class="form-select select_style" id="extfx5cc" name="extfx5cc" onchange="extFSChanged('extfx5')">
+                        </select>
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx5v1">Midi Value 1</label>
-                        <input type="number" id="extfx5v1" name="extfx5v1" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx5v1" name="extfx5v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx5v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx5v1_s" name="extfx5v1_s">
+                        </select>
                     </div>
                     <br>
                     <div class="container">
                         <label class="form-check-label" for="extfx5v2">Midi Value 2</label>
-                        <input type="number" id="extfx5v2" name="extfx5v2" class="form-control text_entry_style" maxlength="3" size="3" value="0">
+                        <input type="number" id="extfx5v2" name="extfx5v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                        <input type="range" id="extfx5v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                        <select class="form-select select_style" id="extfx5v2_s" name="extfx5v2_s">
+                        </select>
                     </div>
                 </div>
                 <div id="FX6" class="fxtabcontent">
