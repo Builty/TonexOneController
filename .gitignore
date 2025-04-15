@@ -1,0 +1,6 @@
+# macOS folder attributes
+.DS_Store
+
+# ignore SquareLine Studio files
+ui_design/backup
+ui_design/cache

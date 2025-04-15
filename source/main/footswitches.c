@@ -453,6 +453,7 @@ static void __attribute__((unused)) footswitch_handle_banked(tFootswitchHandler*
                         // bank down
                         handler->current_bank--;   
                         ESP_LOGI(TAG, "Footswitch banked down %d", handler->current_bank);
+                        control_request_bank_index(handler->current_bank);
                     }
 
                     handler->state = FOOTSWITCH_WAIT_RELEASE_1;
@@ -460,11 +461,12 @@ static void __attribute__((unused)) footswitch_handle_banked(tFootswitchHandler*
                 // check if bank up is pressed
                 else if (binary_val == layout->bank_up_switch_mask)
                 {
-                    if (handler->current_bank < (MAX_PRESETS / layout->presets_per_bank))
+                    if ((handler->current_bank + 1) * layout->presets_per_bank < MAX_PRESETS)
                     {
                         // bank up
                         handler->current_bank++;
                         ESP_LOGI(TAG, "Footswitch banked up %d", handler->current_bank);
+                        control_request_bank_index(handler->current_bank);
                     }
 
                     handler->state = FOOTSWITCH_WAIT_RELEASE_1;

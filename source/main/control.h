@@ -242,6 +242,7 @@ typedef struct __attribute__ ((packed))
 void control_request_preset_up(void);
 void control_request_preset_down(void);
 void control_request_preset_index(uint8_t index);
+void control_request_bank_index(uint8_t index);
 void control_set_usb_status(uint32_t status);
 void control_set_bt_status(uint32_t status);
 void control_set_wifi_status(uint32_t status);
