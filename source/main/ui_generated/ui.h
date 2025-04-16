@@ -10,314 +10,316 @@
 extern "C" {
 #endif
 
-    #include "lvgl.h"
+#include "lvgl.h"
 
 #include "ui_helpers.h"
 #include "ui_events.h"
 
+
 // SCREEN: ui_Screen1
 void ui_Screen1_screen_init(void);
-extern lv_obj_t *ui_Screen1;
-extern lv_obj_t *ui_BottomPanel;
-void ui_event_PreviousContainer( lv_event_t * e);
-extern lv_obj_t *ui_PreviousContainer;
-void ui_event_PreviousButton( lv_event_t * e);
-extern lv_obj_t *ui_PreviousButton;
-void ui_event_NextContainer( lv_event_t * e);
-extern lv_obj_t *ui_NextContainer;
-void ui_event_NextButton( lv_event_t * e);
-extern lv_obj_t *ui_NextButton;
-void ui_event_IconGate( lv_event_t * e);
-extern lv_obj_t *ui_IconGate;
-void ui_event_IconAmp( lv_event_t * e);
-extern lv_obj_t *ui_IconAmp;
-void ui_event_IconCab( lv_event_t * e);
-extern lv_obj_t *ui_IconCab;
-void ui_event_IconComp( lv_event_t * e);
-extern lv_obj_t *ui_IconComp;
-void ui_event_IconMod( lv_event_t * e);
-extern lv_obj_t *ui_IconMod;
-void ui_event_IconDelay( lv_event_t * e);
-extern lv_obj_t *ui_IconDelay;
-void ui_event_IconReverb( lv_event_t * e);
-extern lv_obj_t *ui_IconReverb;
-void ui_event_SettingsImage( lv_event_t * e);
-extern lv_obj_t *ui_SettingsImage;
-extern lv_obj_t *ui_TopPanel;
-extern lv_obj_t *ui_IKLogo;
-extern lv_obj_t *ui_BTStatusConn;
-void ui_event_BTStatusDisconn( lv_event_t * e);
-extern lv_obj_t *ui_BTStatusDisconn;
-extern lv_obj_t *ui_USBStatusOK;
-extern lv_obj_t *ui_USBStatusFail;
-extern lv_obj_t *ui_WiFiStatusConn;
-extern lv_obj_t *ui_WiFiStatusDisconn;
-extern lv_obj_t *ui_ProjectHeadingLabel;
-extern lv_obj_t *ui_Skins;
-extern lv_obj_t *ui_SkinImage;
-void ui_event_PresetHeadingLabel( lv_event_t * e);
-extern lv_obj_t *ui_PresetHeadingLabel;
-extern lv_obj_t *ui_BankTitleLabel;
-extern lv_obj_t *ui_BankValueLabel;
-extern lv_obj_t *ui_BPMTitleLabel;
-extern lv_obj_t *ui_BPMValueLabel;
-extern lv_obj_t *ui_BPMIndicator;
-void ui_event_PresetDetailsTextArea( lv_event_t * e);
-extern lv_obj_t *ui_PresetDetailsTextArea;
-void ui_event_LeftArrow( lv_event_t * e);
-extern lv_obj_t *ui_LeftArrow;
-void ui_event_RightArrow( lv_event_t * e);
-extern lv_obj_t *ui_RightArrow;
-void ui_event_EntryKeyboard( lv_event_t * e);
-extern lv_obj_t *ui_EntryKeyboard;
-void ui_event_OKTick( lv_event_t * e);
-extern lv_obj_t *ui_OKTick;
+extern lv_obj_t * ui_Screen1;
+extern lv_obj_t * ui_BottomPanel;
+void ui_event_PreviousContainer(lv_event_t * e);
+extern lv_obj_t * ui_PreviousContainer;
+void ui_event_PreviousButton(lv_event_t * e);
+extern lv_obj_t * ui_PreviousButton;
+void ui_event_NextContainer(lv_event_t * e);
+extern lv_obj_t * ui_NextContainer;
+void ui_event_NextButton(lv_event_t * e);
+extern lv_obj_t * ui_NextButton;
+void ui_event_IconGate(lv_event_t * e);
+extern lv_obj_t * ui_IconGate;
+void ui_event_IconAmp(lv_event_t * e);
+extern lv_obj_t * ui_IconAmp;
+void ui_event_IconCab(lv_event_t * e);
+extern lv_obj_t * ui_IconCab;
+void ui_event_IconComp(lv_event_t * e);
+extern lv_obj_t * ui_IconComp;
+void ui_event_IconMod(lv_event_t * e);
+extern lv_obj_t * ui_IconMod;
+void ui_event_IconDelay(lv_event_t * e);
+extern lv_obj_t * ui_IconDelay;
+void ui_event_IconReverb(lv_event_t * e);
+extern lv_obj_t * ui_IconReverb;
+void ui_event_SettingsImage(lv_event_t * e);
+extern lv_obj_t * ui_SettingsImage;
+extern lv_obj_t * ui_TopPanel;
+extern lv_obj_t * ui_IKLogo;
+extern lv_obj_t * ui_BTStatusConn;
+void ui_event_BTStatusDisconn(lv_event_t * e);
+extern lv_obj_t * ui_BTStatusDisconn;
+extern lv_obj_t * ui_USBStatusOK;
+extern lv_obj_t * ui_USBStatusFail;
+extern lv_obj_t * ui_WiFiStatusConn;
+extern lv_obj_t * ui_WiFiStatusDisconn;
+extern lv_obj_t * ui_ProjectHeadingLabel;
+extern lv_obj_t * ui_Skins;
+extern lv_obj_t * ui_SkinImage;
+void ui_event_PresetHeadingLabel(lv_event_t * e);
+extern lv_obj_t * ui_PresetHeadingLabel;
+extern lv_obj_t * ui_BankTitleLabel;
+extern lv_obj_t * ui_BankValueLabel;
+extern lv_obj_t * ui_BPMTitleLabel;
+extern lv_obj_t * ui_BPMValueLabel;
+extern lv_obj_t * ui_BPMIndicator;
+void ui_event_PresetDetailsTextArea(lv_event_t * e);
+extern lv_obj_t * ui_PresetDetailsTextArea;
+void ui_event_LeftArrow(lv_event_t * e);
+extern lv_obj_t * ui_LeftArrow;
+void ui_event_RightArrow(lv_event_t * e);
+extern lv_obj_t * ui_RightArrow;
+void ui_event_EntryKeyboard(lv_event_t * e);
+extern lv_obj_t * ui_EntryKeyboard;
+void ui_event_OKTick(lv_event_t * e);
+extern lv_obj_t * ui_OKTick;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_Settings
 void ui_Settings_screen_init(void);
-extern lv_obj_t *ui_Settings;
-extern lv_obj_t *ui_SettingsTabview;
-extern lv_obj_t *ui_NoiseGateTab;
-extern lv_obj_t *ui_NoiseGateEnableLabel;
-void ui_event_NoiseGateSwitch( lv_event_t * e);
-extern lv_obj_t *ui_NoiseGateSwitch;
-void ui_event_NoiseGatePostSwitch( lv_event_t * e);
-extern lv_obj_t *ui_NoiseGatePostSwitch;
-extern lv_obj_t *ui_NoiseGatePostLabel;
-extern lv_obj_t *ui_NoiseGateThresholdLabel;
-void ui_event_NoiseGateThresholdSlider( lv_event_t * e);
-extern lv_obj_t *ui_NoiseGateThresholdSlider;
-extern lv_obj_t *ui_NoiseGateReleaseLabel;
-void ui_event_NoiseGateReleaseSlider( lv_event_t * e);
-extern lv_obj_t *ui_NoiseGateReleaseSlider;
-extern lv_obj_t *ui_NoiseGateDepthLabel;
-void ui_event_NoiseGateDepthSlider( lv_event_t * e);
-extern lv_obj_t *ui_NoiseGateDepthSlider;
-extern lv_obj_t *ui_CompressorTab;
-extern lv_obj_t *ui_CompressorEnableLabel;
-void ui_event_CompressorEnableSwitch( lv_event_t * e);
-extern lv_obj_t *ui_CompressorEnableSwitch;
-extern lv_obj_t *ui_CompressorPostLabel;
-void ui_event_CompressorPostSwitch( lv_event_t * e);
-extern lv_obj_t *ui_CompressorPostSwitch;
-extern lv_obj_t *ui_CompressorThresholdLabel;
-void ui_event_CompressorThresholdSlider( lv_event_t * e);
-extern lv_obj_t *ui_CompressorThresholdSlider;
-extern lv_obj_t *ui_CompressorAttackLabel;
-void ui_event_CompresorAttackSlider( lv_event_t * e);
-extern lv_obj_t *ui_CompresorAttackSlider;
-extern lv_obj_t *ui_CompressorGateLabel;
-void ui_event_CompressorGainSlider( lv_event_t * e);
-extern lv_obj_t *ui_CompressorGainSlider;
-extern lv_obj_t *ui_EQTab;
-extern lv_obj_t *ui_EQPostLabel;
-void ui_event_EQPostSwitch( lv_event_t * e);
-extern lv_obj_t *ui_EQPostSwitch;
-extern lv_obj_t *ui_EQBassLabel;
-void ui_event_EQBassSlider( lv_event_t * e);
-extern lv_obj_t *ui_EQBassSlider;
-extern lv_obj_t *ui_EQMidLabel;
-void ui_event_EQMidSlider( lv_event_t * e);
-extern lv_obj_t *ui_EQMidSlider;
-extern lv_obj_t *ui_EQMidQLabel;
-void ui_event_EQMidQSlider( lv_event_t * e);
-extern lv_obj_t *ui_EQMidQSlider;
-extern lv_obj_t *ui_EQTrebleLabel;
-void ui_event_EQTrebleSlider( lv_event_t * e);
-extern lv_obj_t *ui_EQTrebleSlider;
-extern lv_obj_t *ui_ReverbPage;
-extern lv_obj_t *ui_ReverbEnableLabel;
-void ui_event_ReverbEnableSwitch( lv_event_t * e);
-extern lv_obj_t *ui_ReverbEnableSwitch;
-extern lv_obj_t *ui_ReverbPostLabel;
-void ui_event_ReverbPostSwitch( lv_event_t * e);
-extern lv_obj_t *ui_ReverbPostSwitch;
-extern lv_obj_t *ui_ReverbModelLabel;
-void ui_event_ReverbModelDropdown( lv_event_t * e);
-extern lv_obj_t *ui_ReverbModelDropdown;
-extern lv_obj_t *ui_ReverbMixLabel;
-void ui_event_ReverbMixSlider( lv_event_t * e);
-extern lv_obj_t *ui_ReverbMixSlider;
-extern lv_obj_t *ui_ReverbTimeLabel;
-void ui_event_ReverbTimeSlider( lv_event_t * e);
-extern lv_obj_t *ui_ReverbTimeSlider;
-extern lv_obj_t *ui_ReverbPredelayLabel;
-void ui_event_ReverbPredelaySlider( lv_event_t * e);
-extern lv_obj_t *ui_ReverbPredelaySlider;
-extern lv_obj_t *ui_ReverbColorLabel;
-void ui_event_ReverbColorSlider( lv_event_t * e);
-extern lv_obj_t *ui_ReverbColorSlider;
-extern lv_obj_t *ui_Modulation;
-extern lv_obj_t *ui_ModulationEnableLabel;
-void ui_event_ModulationEnableSwitch( lv_event_t * e);
-extern lv_obj_t *ui_ModulationEnableSwitch;
-extern lv_obj_t *ui_ModulationPostLabel;
-void ui_event_ModulationPostSwitch( lv_event_t * e);
-extern lv_obj_t *ui_ModulationPostSwitch;
-extern lv_obj_t *ui_ModulationModelLabel;
-void ui_event_ModulationModelDropdown( lv_event_t * e);
-extern lv_obj_t *ui_ModulationModelDropdown;
-extern lv_obj_t *ui_ModulationSyncLabel;
-void ui_event_ModulationSyncSwitch( lv_event_t * e);
-extern lv_obj_t *ui_ModulationSyncSwitch;
-extern lv_obj_t *ui_ModulationParam1Label;
-void ui_event_ModulationParam1Slider( lv_event_t * e);
-extern lv_obj_t *ui_ModulationParam1Slider;
-extern lv_obj_t *ui_ModulationParam2Label;
-void ui_event_ModulationParam2Slider( lv_event_t * e);
-extern lv_obj_t *ui_ModulationParam2Slider;
-extern lv_obj_t *ui_ModulationParam3Label;
-void ui_event_ModulationParam3Slider( lv_event_t * e);
-extern lv_obj_t *ui_ModulationParam3Slider;
-extern lv_obj_t *ui_ModulationParam4Label;
-void ui_event_ModulationParam4Slider( lv_event_t * e);
-extern lv_obj_t *ui_ModulationParam4Slider;
-extern lv_obj_t *ui_Delay;
-void ui_event_DelayEnableSwitch( lv_event_t * e);
-extern lv_obj_t *ui_DelayEnableSwitch;
-extern lv_obj_t *ui_DelayEnableLabel;
-void ui_event_DelayPostSwitch( lv_event_t * e);
-extern lv_obj_t *ui_DelayPostSwitch;
-extern lv_obj_t *ui_DelayPostLabel;
-extern lv_obj_t *ui_DelayModelLabel;
-void ui_event_DelayModelDropdown( lv_event_t * e);
-extern lv_obj_t *ui_DelayModelDropdown;
-extern lv_obj_t *ui_DelaySyncLabel;
-void ui_event_DelaySyncSwitch( lv_event_t * e);
-extern lv_obj_t *ui_DelaySyncSwitch;
-extern lv_obj_t *ui_DelayPingPongLabel;
-void ui_event_DelayPingPongSwitch( lv_event_t * e);
-extern lv_obj_t *ui_DelayPingPongSwitch;
-extern lv_obj_t *ui_DelayTSLabel;
-void ui_event_DelayTSSlider( lv_event_t * e);
-extern lv_obj_t *ui_DelayTSSlider;
-extern lv_obj_t *ui_DelayFeedbackLabel;
-void ui_event_DelayFeedbackSlider( lv_event_t * e);
-extern lv_obj_t *ui_DelayFeedbackSlider;
-extern lv_obj_t *ui_DelayMixLabel;
-void ui_event_DelayMixSlider( lv_event_t * e);
-extern lv_obj_t *ui_DelayMixSlider;
-extern lv_obj_t *ui_Amplifier;
-void ui_event_AmpEnableSwitch( lv_event_t * e);
-extern lv_obj_t *ui_AmpEnableSwitch;
-extern lv_obj_t *ui_AmpEnableLabel;
-extern lv_obj_t *ui_AmpCabLabel;
-void ui_event_CabinetModeDropdown( lv_event_t * e);
-extern lv_obj_t *ui_CabinetModeDropdown;
-extern lv_obj_t *ui_AmplifierGainLabel;
-void ui_event_AmplifierGainSlider( lv_event_t * e);
-extern lv_obj_t *ui_AmplifierGainSlider;
-extern lv_obj_t *ui_AmplifierVolumeLabel;
-void ui_event_AmplifierVolumeSlider( lv_event_t * e);
-extern lv_obj_t *ui_AmplifierVolumeSlider;
-extern lv_obj_t *ui_AmplifierPresenseLabel;
-void ui_event_AmplifierPresenseSlider( lv_event_t * e);
-extern lv_obj_t *ui_AmplifierPresenseSlider;
-extern lv_obj_t *ui_AmplifierDepthLabel;
-void ui_event_AmplifierDepthSlider( lv_event_t * e);
-extern lv_obj_t *ui_AmplifierDepthSlider;
-extern lv_obj_t *ui_Global;
-extern lv_obj_t *ui_CabBypassLabel;
-void ui_event_CabBypassSwitch( lv_event_t * e);
-extern lv_obj_t *ui_CabBypassSwitch;
-extern lv_obj_t *ui_TempoSourceLabel;
-void ui_event_TempoSourceSwitch( lv_event_t * e);
-extern lv_obj_t *ui_TempoSourceSwitch;
-extern lv_obj_t *ui_BPMLabel;
-void ui_event_BPMSlider( lv_event_t * e);
-extern lv_obj_t *ui_BPMSlider;
-extern lv_obj_t *ui_InputTrimLabel;
-void ui_event_InputTrimSlider( lv_event_t * e);
-extern lv_obj_t *ui_InputTrimSlider;
-extern lv_obj_t *ui_TuningReferenceLabel;
-void ui_event_TuningReferenceSlider( lv_event_t * e);
-extern lv_obj_t *ui_TuningReferenceSlider;
-void ui_event_CloseImage( lv_event_t * e);
-extern lv_obj_t *ui_CloseImage;
+extern lv_obj_t * ui_Settings;
+extern lv_obj_t * ui_SettingsTabview;
+extern lv_obj_t * ui_NoiseGateTab;
+extern lv_obj_t * ui_NoiseGateEnableLabel;
+void ui_event_NoiseGateSwitch(lv_event_t * e);
+extern lv_obj_t * ui_NoiseGateSwitch;
+void ui_event_NoiseGatePostSwitch(lv_event_t * e);
+extern lv_obj_t * ui_NoiseGatePostSwitch;
+extern lv_obj_t * ui_NoiseGatePostLabel;
+extern lv_obj_t * ui_NoiseGateThresholdLabel;
+void ui_event_NoiseGateThresholdSlider(lv_event_t * e);
+extern lv_obj_t * ui_NoiseGateThresholdSlider;
+extern lv_obj_t * ui_NoiseGateReleaseLabel;
+void ui_event_NoiseGateReleaseSlider(lv_event_t * e);
+extern lv_obj_t * ui_NoiseGateReleaseSlider;
+extern lv_obj_t * ui_NoiseGateDepthLabel;
+void ui_event_NoiseGateDepthSlider(lv_event_t * e);
+extern lv_obj_t * ui_NoiseGateDepthSlider;
+extern lv_obj_t * ui_CompressorTab;
+extern lv_obj_t * ui_CompressorEnableLabel;
+void ui_event_CompressorEnableSwitch(lv_event_t * e);
+extern lv_obj_t * ui_CompressorEnableSwitch;
+extern lv_obj_t * ui_CompressorPostLabel;
+void ui_event_CompressorPostSwitch(lv_event_t * e);
+extern lv_obj_t * ui_CompressorPostSwitch;
+extern lv_obj_t * ui_CompressorThresholdLabel;
+void ui_event_CompressorThresholdSlider(lv_event_t * e);
+extern lv_obj_t * ui_CompressorThresholdSlider;
+extern lv_obj_t * ui_CompressorAttackLabel;
+void ui_event_CompresorAttackSlider(lv_event_t * e);
+extern lv_obj_t * ui_CompresorAttackSlider;
+extern lv_obj_t * ui_CompressorGateLabel;
+void ui_event_CompressorGainSlider(lv_event_t * e);
+extern lv_obj_t * ui_CompressorGainSlider;
+extern lv_obj_t * ui_EQTab;
+extern lv_obj_t * ui_EQPostLabel;
+void ui_event_EQPostSwitch(lv_event_t * e);
+extern lv_obj_t * ui_EQPostSwitch;
+extern lv_obj_t * ui_EQBassLabel;
+void ui_event_EQBassSlider(lv_event_t * e);
+extern lv_obj_t * ui_EQBassSlider;
+extern lv_obj_t * ui_EQMidLabel;
+void ui_event_EQMidSlider(lv_event_t * e);
+extern lv_obj_t * ui_EQMidSlider;
+extern lv_obj_t * ui_EQMidQLabel;
+void ui_event_EQMidQSlider(lv_event_t * e);
+extern lv_obj_t * ui_EQMidQSlider;
+extern lv_obj_t * ui_EQTrebleLabel;
+void ui_event_EQTrebleSlider(lv_event_t * e);
+extern lv_obj_t * ui_EQTrebleSlider;
+extern lv_obj_t * ui_ReverbPage;
+extern lv_obj_t * ui_ReverbEnableLabel;
+void ui_event_ReverbEnableSwitch(lv_event_t * e);
+extern lv_obj_t * ui_ReverbEnableSwitch;
+extern lv_obj_t * ui_ReverbPostLabel;
+void ui_event_ReverbPostSwitch(lv_event_t * e);
+extern lv_obj_t * ui_ReverbPostSwitch;
+extern lv_obj_t * ui_ReverbModelLabel;
+void ui_event_ReverbModelDropdown(lv_event_t * e);
+extern lv_obj_t * ui_ReverbModelDropdown;
+extern lv_obj_t * ui_ReverbMixLabel;
+void ui_event_ReverbMixSlider(lv_event_t * e);
+extern lv_obj_t * ui_ReverbMixSlider;
+extern lv_obj_t * ui_ReverbTimeLabel;
+void ui_event_ReverbTimeSlider(lv_event_t * e);
+extern lv_obj_t * ui_ReverbTimeSlider;
+extern lv_obj_t * ui_ReverbPredelayLabel;
+void ui_event_ReverbPredelaySlider(lv_event_t * e);
+extern lv_obj_t * ui_ReverbPredelaySlider;
+extern lv_obj_t * ui_ReverbColorLabel;
+void ui_event_ReverbColorSlider(lv_event_t * e);
+extern lv_obj_t * ui_ReverbColorSlider;
+extern lv_obj_t * ui_Modulation;
+extern lv_obj_t * ui_ModulationEnableLabel;
+void ui_event_ModulationEnableSwitch(lv_event_t * e);
+extern lv_obj_t * ui_ModulationEnableSwitch;
+extern lv_obj_t * ui_ModulationPostLabel;
+void ui_event_ModulationPostSwitch(lv_event_t * e);
+extern lv_obj_t * ui_ModulationPostSwitch;
+extern lv_obj_t * ui_ModulationModelLabel;
+void ui_event_ModulationModelDropdown(lv_event_t * e);
+extern lv_obj_t * ui_ModulationModelDropdown;
+extern lv_obj_t * ui_ModulationSyncLabel;
+void ui_event_ModulationSyncSwitch(lv_event_t * e);
+extern lv_obj_t * ui_ModulationSyncSwitch;
+extern lv_obj_t * ui_ModulationParam1Label;
+void ui_event_ModulationParam1Slider(lv_event_t * e);
+extern lv_obj_t * ui_ModulationParam1Slider;
+extern lv_obj_t * ui_ModulationParam2Label;
+void ui_event_ModulationParam2Slider(lv_event_t * e);
+extern lv_obj_t * ui_ModulationParam2Slider;
+extern lv_obj_t * ui_ModulationParam3Label;
+void ui_event_ModulationParam3Slider(lv_event_t * e);
+extern lv_obj_t * ui_ModulationParam3Slider;
+extern lv_obj_t * ui_ModulationParam4Label;
+void ui_event_ModulationParam4Slider(lv_event_t * e);
+extern lv_obj_t * ui_ModulationParam4Slider;
+extern lv_obj_t * ui_Delay;
+void ui_event_DelayEnableSwitch(lv_event_t * e);
+extern lv_obj_t * ui_DelayEnableSwitch;
+extern lv_obj_t * ui_DelayEnableLabel;
+void ui_event_DelayPostSwitch(lv_event_t * e);
+extern lv_obj_t * ui_DelayPostSwitch;
+extern lv_obj_t * ui_DelayPostLabel;
+extern lv_obj_t * ui_DelayModelLabel;
+void ui_event_DelayModelDropdown(lv_event_t * e);
+extern lv_obj_t * ui_DelayModelDropdown;
+extern lv_obj_t * ui_DelaySyncLabel;
+void ui_event_DelaySyncSwitch(lv_event_t * e);
+extern lv_obj_t * ui_DelaySyncSwitch;
+extern lv_obj_t * ui_DelayPingPongLabel;
+void ui_event_DelayPingPongSwitch(lv_event_t * e);
+extern lv_obj_t * ui_DelayPingPongSwitch;
+extern lv_obj_t * ui_DelayTSLabel;
+void ui_event_DelayTSSlider(lv_event_t * e);
+extern lv_obj_t * ui_DelayTSSlider;
+extern lv_obj_t * ui_DelayFeedbackLabel;
+void ui_event_DelayFeedbackSlider(lv_event_t * e);
+extern lv_obj_t * ui_DelayFeedbackSlider;
+extern lv_obj_t * ui_DelayMixLabel;
+void ui_event_DelayMixSlider(lv_event_t * e);
+extern lv_obj_t * ui_DelayMixSlider;
+extern lv_obj_t * ui_Amplifier;
+void ui_event_AmpEnableSwitch(lv_event_t * e);
+extern lv_obj_t * ui_AmpEnableSwitch;
+extern lv_obj_t * ui_AmpEnableLabel;
+extern lv_obj_t * ui_AmpCabLabel;
+void ui_event_CabinetModeDropdown(lv_event_t * e);
+extern lv_obj_t * ui_CabinetModeDropdown;
+extern lv_obj_t * ui_AmplifierGainLabel;
+void ui_event_AmplifierGainSlider(lv_event_t * e);
+extern lv_obj_t * ui_AmplifierGainSlider;
+extern lv_obj_t * ui_AmplifierVolumeLabel;
+void ui_event_AmplifierVolumeSlider(lv_event_t * e);
+extern lv_obj_t * ui_AmplifierVolumeSlider;
+extern lv_obj_t * ui_AmplifierPresenseLabel;
+void ui_event_AmplifierPresenseSlider(lv_event_t * e);
+extern lv_obj_t * ui_AmplifierPresenseSlider;
+extern lv_obj_t * ui_AmplifierDepthLabel;
+void ui_event_AmplifierDepthSlider(lv_event_t * e);
+extern lv_obj_t * ui_AmplifierDepthSlider;
+extern lv_obj_t * ui_Global;
+extern lv_obj_t * ui_CabBypassLabel;
+void ui_event_CabBypassSwitch(lv_event_t * e);
+extern lv_obj_t * ui_CabBypassSwitch;
+extern lv_obj_t * ui_TempoSourceLabel;
+void ui_event_TempoSourceSwitch(lv_event_t * e);
+extern lv_obj_t * ui_TempoSourceSwitch;
+extern lv_obj_t * ui_BPMLabel;
+void ui_event_BPMSlider(lv_event_t * e);
+extern lv_obj_t * ui_BPMSlider;
+extern lv_obj_t * ui_InputTrimLabel;
+void ui_event_InputTrimSlider(lv_event_t * e);
+extern lv_obj_t * ui_InputTrimSlider;
+extern lv_obj_t * ui_TuningReferenceLabel;
+void ui_event_TuningReferenceSlider(lv_event_t * e);
+extern lv_obj_t * ui_TuningReferenceSlider;
+void ui_event_CloseImage(lv_event_t * e);
+extern lv_obj_t * ui_CloseImage;
 // CUSTOM VARIABLES
 
 // EVENTS
-extern lv_obj_t *ui____initial_actions0;
+
+extern lv_obj_t * ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
-LV_IMG_DECLARE( ui_img_previous_png);   // assets/previous.png
-LV_IMG_DECLARE( ui_img_previous_down_png);   // assets/previous_down.png
-LV_IMG_DECLARE( ui_img_next_png);   // assets/next.png
-LV_IMG_DECLARE( ui_img_next_down_png);   // assets/next_down.png
-LV_IMG_DECLARE( ui_img_effect_icon_gate_off_png);   // assets/effect_icon_gate_off.png
-LV_IMG_DECLARE( ui_img_effect_icon_amp_off_png);   // assets/effect_icon_amp_off.png
-LV_IMG_DECLARE( ui_img_effect_icon_cab_off_png);   // assets/effect_icon_cab_off.png
-LV_IMG_DECLARE( ui_img_effect_icon_comp_off_png);   // assets/effect_icon_comp_off.png
-LV_IMG_DECLARE( ui_img_effect_icon_mod_off_png);   // assets/effect_icon_mod_off.png
-LV_IMG_DECLARE( ui_img_effect_icon_delay_off_png);   // assets/effect_icon_delay_off.png
-LV_IMG_DECLARE( ui_img_effect_icon_reverb_off_png);   // assets/effect_icon_reverb_off.png
-LV_IMG_DECLARE( ui_img_settings_png);   // assets/settings.png
-LV_IMG_DECLARE( ui_img_smythbuilt_png);   // assets/smythbuilt.png
-LV_IMG_DECLARE( ui_img_bt_conn_png);   // assets/bt_conn.png
-LV_IMG_DECLARE( ui_img_bt_disconn_png);   // assets/bt_disconn.png
-LV_IMG_DECLARE( ui_img_usb_ok_png);   // assets/usb_ok.png
-LV_IMG_DECLARE( ui_img_usb_fail_png);   // assets/usb_fail.png
-LV_IMG_DECLARE( ui_img_wifi_conn_png);   // assets/wifi_conn.png
-LV_IMG_DECLARE( ui_img_wifi_disconn_png);   // assets/wifi_disconn.png
-LV_IMG_DECLARE( ui_img_skin_jcm800_png);   // assets/skin_jcm800.png
-LV_IMG_DECLARE( ui_img_arrow_left_png);   // assets/arrow_left.png
-LV_IMG_DECLARE( ui_img_arrow_right_png);   // assets/arrow_right.png
-LV_IMG_DECLARE( ui_img_tick_png);   // assets/tick.png
-LV_IMG_DECLARE( ui_img_effect_icon_amp_on_png);   // assets/effect_icon_amp_on.png
-LV_IMG_DECLARE( ui_img_effect_icon_cab_on_png);   // assets/effect_icon_cab_on.png
-LV_IMG_DECLARE( ui_img_effect_icon_comp_on_png);   // assets/effect_icon_comp_on.png
-LV_IMG_DECLARE( ui_img_effect_icon_delay_on_png);   // assets/effect_icon_delay_on.png
-LV_IMG_DECLARE( ui_img_effect_icon_gate_on_png);   // assets/effect_icon_gate_on.png
-LV_IMG_DECLARE( ui_img_effect_icon_mod_on_png);   // assets/effect_icon_mod_on.png
-LV_IMG_DECLARE( ui_img_effect_icon_reverb_on_png);   // assets/effect_icon_reverb_on.png
-LV_IMG_DECLARE( ui_img_pskin_arion_png);   // assets/pskin_arion.png
-LV_IMG_DECLARE( ui_img_pskin_bigmuff_png);   // assets/pskin_bigmuff.png
-LV_IMG_DECLARE( ui_img_pskin_darkglass_png);   // assets/pskin_darkglass.png
-LV_IMG_DECLARE( ui_img_pskin_dod_png);   // assets/pskin_dod.png
-LV_IMG_DECLARE( ui_img_pskin_ehx_png);   // assets/pskin_ehx.png
-LV_IMG_DECLARE( ui_img_pskin_fender_png);   // assets/pskin_fender.png
-LV_IMG_DECLARE( ui_img_pskin_fulltone_png);   // assets/pskin_fulltone.png
-LV_IMG_DECLARE( ui_img_pskin_fzs_png);   // assets/pskin_fzs.png
-LV_IMG_DECLARE( ui_img_pskin_jhs_png);   // assets/pskin_jhs.png
-LV_IMG_DECLARE( ui_img_pskin_klon_png);   // assets/pskin_klon.png
-LV_IMG_DECLARE( ui_img_pskin_landgraf_png);   // assets/pskin_landgraf.png
-LV_IMG_DECLARE( ui_img_pskin_mxr_png);   // assets/pskin_mxr.png
-LV_IMG_DECLARE( ui_img_pskin_mxr2_png);   // assets/pskin_mxr2.png
-LV_IMG_DECLARE( ui_img_pskin_od1_png);   // assets/pskin_od1.png
-LV_IMG_DECLARE( ui_img_pskin_plimsoul_png);   // assets/pskin_plimsoul.png
-LV_IMG_DECLARE( ui_img_pskin_rogermayer_png);   // assets/pskin_rogermayer.png
-LV_IMG_DECLARE( ui_img_pskin_seymour_png);   // assets/pskin_seymour.png
-LV_IMG_DECLARE( ui_img_pskin_strymon_png);   // assets/pskin_strymon.png
-LV_IMG_DECLARE( ui_img_pskin_trex_png);   // assets/pskin_trex.png
-LV_IMG_DECLARE( ui_img_pskin_tubescreamer_png);   // assets/pskin_tubescreamer.png
-LV_IMG_DECLARE( ui_img_pskin_wampler_png);   // assets/pskin_wampler.png
-LV_IMG_DECLARE( ui_img_pskin_zvex_png);   // assets/pskin_zvex.png
-LV_IMG_DECLARE( ui_img_skin_2001rb_png);   // assets/skin_2001rb.png
-LV_IMG_DECLARE( ui_img_skin_2020_png);   // assets/skin_2020.png
-LV_IMG_DECLARE( ui_img_skin_5150_png);   // assets/skin_5150.png
-LV_IMG_DECLARE( ui_img_skin_ac30_png);   // assets/skin_ac30.png
-LV_IMG_DECLARE( ui_img_skin_b18n_png);   // assets/skin_b18n.png
-LV_IMG_DECLARE( ui_img_skin_bluesdeluxe_png);   // assets/skin_bluesdeluxe.png
-LV_IMG_DECLARE( ui_img_skin_deville_png);   // assets/skin_deville.png
-LV_IMG_DECLARE( ui_img_skin_diezel_png);   // assets/skin_diezel.png
-LV_IMG_DECLARE( ui_img_skin_dualrectifier_png);   // assets/skin_dualrectifier.png
-LV_IMG_DECLARE( ui_img_skin_dumble_png);   // assets/skin_dumble.png
-LV_IMG_DECLARE( ui_img_skin_evh5150_png);   // assets/skin_evh5150.png
-LV_IMG_DECLARE( ui_img_skin_goldfinger_png);   // assets/skin_goldfinger.png
-LV_IMG_DECLARE( ui_img_skin_invader_png);   // assets/skin_invader.png
-LV_IMG_DECLARE( ui_img_skin_jazzchorus_png);   // assets/skin_jazzchorus.png
-LV_IMG_DECLARE( ui_img_skin_jetcity_png);   // assets/skin_jetcity.png
-LV_IMG_DECLARE( ui_img_skin_maverick_png);   // assets/skin_maverick.png
-LV_IMG_DECLARE( ui_img_skin_mk3_png);   // assets/skin_mk3.png
-LV_IMG_DECLARE( ui_img_skin_or50_png);   // assets/skin_or50.png
-LV_IMG_DECLARE( ui_img_skin_pinktaco_png);   // assets/skin_pinktaco.png
-LV_IMG_DECLARE( ui_img_skin_powerball_png);   // assets/skin_powerball.png
-LV_IMG_DECLARE( ui_img_skin_princeton_png);   // assets/skin_princeton.png
-LV_IMG_DECLARE( ui_img_skin_superbass_png);   // assets/skin_superbass.png
-LV_IMG_DECLARE( ui_img_skin_supro50_png);   // assets/skin_supro50.png
-LV_IMG_DECLARE( ui_img_skin_svtcl_png);   // assets/skin_svtcl.png
-LV_IMG_DECLARE( ui_img_skin_twinreverb_png);   // assets/skin_twinreverb.png
+LV_IMG_DECLARE(ui_img_previous_png);    // assets/previous.png
+LV_IMG_DECLARE(ui_img_previous_down_png);    // assets/previous_down.png
+LV_IMG_DECLARE(ui_img_next_png);    // assets/next.png
+LV_IMG_DECLARE(ui_img_next_down_png);    // assets/next_down.png
+LV_IMG_DECLARE(ui_img_effect_icon_gate_off_png);    // assets/effect_icon_gate_off.png
+LV_IMG_DECLARE(ui_img_effect_icon_amp_off_png);    // assets/effect_icon_amp_off.png
+LV_IMG_DECLARE(ui_img_effect_icon_cab_off_png);    // assets/effect_icon_cab_off.png
+LV_IMG_DECLARE(ui_img_effect_icon_comp_off_png);    // assets/effect_icon_comp_off.png
+LV_IMG_DECLARE(ui_img_effect_icon_mod_off_png);    // assets/effect_icon_mod_off.png
+LV_IMG_DECLARE(ui_img_effect_icon_delay_off_png);    // assets/effect_icon_delay_off.png
+LV_IMG_DECLARE(ui_img_effect_icon_reverb_off_png);    // assets/effect_icon_reverb_off.png
+LV_IMG_DECLARE(ui_img_settings_png);    // assets/settings.png
+LV_IMG_DECLARE(ui_img_smythbuilt_png);    // assets/smythbuilt.png
+LV_IMG_DECLARE(ui_img_bt_conn_png);    // assets/bt_conn.png
+LV_IMG_DECLARE(ui_img_bt_disconn_png);    // assets/bt_disconn.png
+LV_IMG_DECLARE(ui_img_usb_ok_png);    // assets/usb_ok.png
+LV_IMG_DECLARE(ui_img_usb_fail_png);    // assets/usb_fail.png
+LV_IMG_DECLARE(ui_img_wifi_conn_png);    // assets/wifi_conn.png
+LV_IMG_DECLARE(ui_img_wifi_disconn_png);    // assets/wifi_disconn.png
+LV_IMG_DECLARE(ui_img_skin_jcm800_png);    // assets/skin_jcm800.png
+LV_IMG_DECLARE(ui_img_arrow_left_png);    // assets/arrow_left.png
+LV_IMG_DECLARE(ui_img_arrow_right_png);    // assets/arrow_right.png
+LV_IMG_DECLARE(ui_img_tick_png);    // assets/tick.png
+LV_IMG_DECLARE(ui_img_effect_icon_amp_on_png);    // assets/effect_icon_amp_on.png
+LV_IMG_DECLARE(ui_img_effect_icon_cab_on_png);    // assets/effect_icon_cab_on.png
+LV_IMG_DECLARE(ui_img_effect_icon_comp_on_png);    // assets/effect_icon_comp_on.png
+LV_IMG_DECLARE(ui_img_effect_icon_delay_on_png);    // assets/effect_icon_delay_on.png
+LV_IMG_DECLARE(ui_img_effect_icon_gate_on_png);    // assets/effect_icon_gate_on.png
+LV_IMG_DECLARE(ui_img_effect_icon_mod_on_png);    // assets/effect_icon_mod_on.png
+LV_IMG_DECLARE(ui_img_effect_icon_reverb_on_png);    // assets/effect_icon_reverb_on.png
+LV_IMG_DECLARE(ui_img_pskin_arion_png);    // assets/pskin_arion.png
+LV_IMG_DECLARE(ui_img_pskin_bigmuff_png);    // assets/pskin_bigmuff.png
+LV_IMG_DECLARE(ui_img_pskin_darkglass_png);    // assets/pskin_darkglass.png
+LV_IMG_DECLARE(ui_img_pskin_dod_png);    // assets/pskin_dod.png
+LV_IMG_DECLARE(ui_img_pskin_ehx_png);    // assets/pskin_ehx.png
+LV_IMG_DECLARE(ui_img_pskin_fender_png);    // assets/pskin_fender.png
+LV_IMG_DECLARE(ui_img_pskin_fulltone_png);    // assets/pskin_fulltone.png
+LV_IMG_DECLARE(ui_img_pskin_fzs_png);    // assets/pskin_fzs.png
+LV_IMG_DECLARE(ui_img_pskin_jhs_png);    // assets/pskin_jhs.png
+LV_IMG_DECLARE(ui_img_pskin_klon_png);    // assets/pskin_klon.png
+LV_IMG_DECLARE(ui_img_pskin_landgraf_png);    // assets/pskin_landgraf.png
+LV_IMG_DECLARE(ui_img_pskin_mxr_png);    // assets/pskin_mxr.png
+LV_IMG_DECLARE(ui_img_pskin_mxr2_png);    // assets/pskin_mxr2.png
+LV_IMG_DECLARE(ui_img_pskin_od1_png);    // assets/pskin_od1.png
+LV_IMG_DECLARE(ui_img_pskin_plimsoul_png);    // assets/pskin_plimsoul.png
+LV_IMG_DECLARE(ui_img_pskin_rogermayer_png);    // assets/pskin_rogermayer.png
+LV_IMG_DECLARE(ui_img_pskin_seymour_png);    // assets/pskin_seymour.png
+LV_IMG_DECLARE(ui_img_pskin_strymon_png);    // assets/pskin_strymon.png
+LV_IMG_DECLARE(ui_img_pskin_trex_png);    // assets/pskin_trex.png
+LV_IMG_DECLARE(ui_img_pskin_tubescreamer_png);    // assets/pskin_tubescreamer.png
+LV_IMG_DECLARE(ui_img_pskin_wampler_png);    // assets/pskin_wampler.png
+LV_IMG_DECLARE(ui_img_pskin_zvex_png);    // assets/pskin_zvex.png
+LV_IMG_DECLARE(ui_img_skin_2001rb_png);    // assets/skin_2001rb.png
+LV_IMG_DECLARE(ui_img_skin_2020_png);    // assets/skin_2020.png
+LV_IMG_DECLARE(ui_img_skin_5150_png);    // assets/skin_5150.png
+LV_IMG_DECLARE(ui_img_skin_ac30_png);    // assets/skin_ac30.png
+LV_IMG_DECLARE(ui_img_skin_b18n_png);    // assets/skin_b18n.png
+LV_IMG_DECLARE(ui_img_skin_bluesdeluxe_png);    // assets/skin_bluesdeluxe.png
+LV_IMG_DECLARE(ui_img_skin_deville_png);    // assets/skin_deville.png
+LV_IMG_DECLARE(ui_img_skin_diezel_png);    // assets/skin_diezel.png
+LV_IMG_DECLARE(ui_img_skin_dualrectifier_png);    // assets/skin_dualrectifier.png
+LV_IMG_DECLARE(ui_img_skin_dumble_png);    // assets/skin_dumble.png
+LV_IMG_DECLARE(ui_img_skin_evh5150_png);    // assets/skin_evh5150.png
+LV_IMG_DECLARE(ui_img_skin_goldfinger_png);    // assets/skin_goldfinger.png
+LV_IMG_DECLARE(ui_img_skin_invader_png);    // assets/skin_invader.png
+LV_IMG_DECLARE(ui_img_skin_jazzchorus_png);    // assets/skin_jazzchorus.png
+LV_IMG_DECLARE(ui_img_skin_jetcity_png);    // assets/skin_jetcity.png
+LV_IMG_DECLARE(ui_img_skin_maverick_png);    // assets/skin_maverick.png
+LV_IMG_DECLARE(ui_img_skin_mk3_png);    // assets/skin_mk3.png
+LV_IMG_DECLARE(ui_img_skin_or50_png);    // assets/skin_or50.png
+LV_IMG_DECLARE(ui_img_skin_pinktaco_png);    // assets/skin_pinktaco.png
+LV_IMG_DECLARE(ui_img_skin_powerball_png);    // assets/skin_powerball.png
+LV_IMG_DECLARE(ui_img_skin_princeton_png);    // assets/skin_princeton.png
+LV_IMG_DECLARE(ui_img_skin_superbass_png);    // assets/skin_superbass.png
+LV_IMG_DECLARE(ui_img_skin_supro50_png);    // assets/skin_supro50.png
+LV_IMG_DECLARE(ui_img_skin_svtcl_png);    // assets/skin_svtcl.png
+LV_IMG_DECLARE(ui_img_skin_twinreverb_png);    // assets/skin_twinreverb.png
 
 // UI INIT
 void ui_init(void);
