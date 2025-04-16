@@ -87,7 +87,9 @@ static const char *TAG = "app_display";
     #else
     #define DISPLAY_LCD_NUM_FB             1
     #endif // CONFIG_DISPLAY_DOUBLE_FB
-  
+    
+    static lv_anim_t *ui_BPMAnimation = NULL;
+    void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration);
 #endif
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH
@@ -140,6 +142,7 @@ enum UIElements
     UI_ELEMENT_BT_STATUS,
     UI_ELEMENT_WIFI_STATUS,
     UI_ELEMENT_PRESET_NAME,
+    UI_ELEMENT_BANK_INDEX,
     UI_ELEMENT_AMP_SKIN,
     UI_ELEMENT_PRESET_DESCRIPTION,
     UI_ELEMENT_PARAMETERS
@@ -1237,6 +1240,29 @@ void UI_SetPresetLabel(char* text)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+void UI_SetBankIndex(uint16_t index)
+{
+    tUIUpdate ui_update;
+
+    // build command
+    ui_update.ElementID = UI_ELEMENT_BANK_INDEX;
+    ui_update.Action = UI_ACTION_SET_STATE;
+    ui_update.Value = index;
+
+    // send to queue
+    if (xQueueSend(ui_update_queue, (void*)&ui_update, 0) != pdPASS)
+    {
+        ESP_LOGE(TAG, "UI Update queue send failed!");            
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void UI_SetAmpSkin(uint16_t index)
 {
     tUIUpdate ui_update;
@@ -1602,6 +1628,13 @@ static uint8_t update_ui_element(tUIUpdate* update)
         case UI_ELEMENT_PRESET_NAME:
         {
             element_1 = ui_PresetHeadingLabel;
+        } break;
+
+        case UI_ELEMENT_BANK_INDEX:
+        {
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
+            element_1 = ui_BankValueLabel;
+#endif
         } break;
 
         case UI_ELEMENT_AMP_SKIN:
@@ -2666,7 +2699,12 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         case TONEX_GLOBAL_BPM:
                         {
                             lv_slider_set_range(ui_BPMSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_BPMSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                            lv_slider_set_value(ui_BPMSlider, round(param_entry->Value), LV_ANIM_OFF); 
+
+                            char buf[128];
+                            sprintf(buf, "%d", (int)round(param_entry->Value));
+                            lv_label_set_text(ui_BPMValueLabel, buf);
+                            ui_BPMAnimate(ui_BPMIndicator, 1000 * 60 / param_entry->Value);
                         } break;
 
                         case TONEX_GLOBAL_INPUT_TRIM:
@@ -2834,6 +2872,13 @@ static uint8_t update_ui_element(tUIUpdate* update)
                 // set skin
                 lv_img_set_src(ui_SkinImage, ui_get_skin_image(update->Value));
             }
+            else if (element_1 == ui_BankValueLabel)
+            {
+                // set Bank index
+                char buf[128];
+                sprintf(buf, "%d", (int)round(update->Value) + 1);
+                lv_label_set_text(ui_BankValueLabel, buf);
+            }
 #endif            
         } break;
 
@@ -2887,6 +2932,42 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
     return 1;
 }
+
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
+void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration)
+{
+    if (ui_BPMAnimation != NULL) {
+        if (ui_BPMAnimation->time == duration) {
+            // same BPM, no need to reset animation
+            return;
+        }
+        // could not get this to work, using `lv_anim_del_all` since it's the only animation for now
+        // lv_anim_del(ui_BPMAnimation->var, NULL);
+        lv_anim_del_all();
+    }
+
+    ui_anim_user_data_t *PropertyAnimation_0_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
+    PropertyAnimation_0_user_data->target = TargetObject;
+    PropertyAnimation_0_user_data->val = -1;
+    lv_anim_t PropertyAnimation_0;
+    lv_anim_init(&PropertyAnimation_0);
+    lv_anim_set_time(&PropertyAnimation_0, duration);
+    lv_anim_set_user_data(&PropertyAnimation_0, PropertyAnimation_0_user_data);
+    lv_anim_set_custom_exec_cb(&PropertyAnimation_0, _ui_anim_callback_set_opacity);
+    lv_anim_set_values(&PropertyAnimation_0, 255, 0);
+    lv_anim_set_path_cb(&PropertyAnimation_0, lv_anim_path_ease_in_out);
+    lv_anim_set_delay(&PropertyAnimation_0, 0);
+    lv_anim_set_deleted_cb(&PropertyAnimation_0, _ui_anim_callback_free_user_data);
+    lv_anim_set_playback_time(&PropertyAnimation_0, 0);
+    lv_anim_set_playback_delay(&PropertyAnimation_0, 0);
+    lv_anim_set_repeat_count(&PropertyAnimation_0, LV_ANIM_REPEAT_INFINITE);
+    lv_anim_set_repeat_delay(&PropertyAnimation_0, 0);
+    lv_anim_set_early_apply(&PropertyAnimation_0, true);
+    lv_anim_set_get_value_cb(&PropertyAnimation_0, &_ui_anim_callback_get_opacity);
+    lv_anim_start(&PropertyAnimation_0);
+    ui_BPMAnimation = &PropertyAnimation_0;
+}
+#endif
 
 /****************************************************************************
 * NAME:        

@@ -56,6 +56,7 @@ enum CommandEvents
     EVENT_PRESET_DOWN,
     EVENT_PRESET_UP,
     EVENT_PRESET_INDEX,
+    EVENT_BANK_INDEX,
     EVENT_SET_PRESET_DETAILS,
     EVENT_SET_USB_STATUS,
     EVENT_SET_BT_STATUS,
@@ -190,6 +191,14 @@ static uint8_t process_control_command(tControlMessage* message)
                 // send message to USB
                 usb_set_preset(message->Value);
             }
+        } break;
+
+        case EVENT_BANK_INDEX:
+        {
+#if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
+            // update UI
+            UI_SetBankIndex(message->Value);
+#endif
         } break;
 
         case EVENT_SET_PRESET_DETAILS:
@@ -783,6 +792,29 @@ void control_request_preset_index(uint8_t index)
     if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
     {
         ESP_LOGE(TAG, "control_request_preset_index queue send failed!");            
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void control_request_bank_index(uint8_t index)
+{
+    tControlMessage message;
+
+    ESP_LOGI(TAG, "control_request_bank_index %d", index);
+
+    message.Event = EVENT_BANK_INDEX;
+    message.Value = index;
+
+    // send to queue
+    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    {
+        ESP_LOGE(TAG, "control_request_bank_index queue send failed!");            
     }
 }
 
