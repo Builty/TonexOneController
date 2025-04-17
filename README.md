@@ -95,6 +95,28 @@ For more information about the firmware development and customisation, refer to 
 - https://github.com/vit3k/tonex_controller for great work on reverse engineering the Tonex One USB protocol
 
 ## Firmware Release Notes <a name="release_notes"></a>
+V1.0.9.2 (beta):
+- Added support for Tuning reference (4.3B UI, web config, and Midi)
+- Added support for Input trim via Midi
+- Improved latency in serial Midi 
+- Fixed bug where Access Point mode would disable itself after client disconnect
+- User contribution from Mateusz: tap tempo button and indicator, and tempo indicators for modulation and delay, in web config 
+- User contribution from Mateusz: web config meta data to allow iOS to save the page as a web app
+- User contribution from Jamkid: added bpm indicator and effect status icons to Waveshare 1.69"
+- User contribution from Bakatasche: ported bpm and effect status change above to Atom S3R 
+- Fixed issue where tempo bpm was limited to 60 bpm instead of 40. Also removed the deadband to make it more accurate
+- User contribution from Mateusz: added units to web config range items
+- Fixed issue where Midi values 86/87 for preset next/previous didn't work 
+- User contribution from Mateusz: added Bank and BPM indicators to 4.3B UI 
+- User contribution from Mateusz: Changed footswitch FX CC indexes to use descriptive names, and also to contextually adjust the Value 1 and Value 2 display
+- Fixed bug where external footswitch FX toggling, for values that are not boolean, didn't take into account the current value of the parameter when toggling
+- Increased maximum external FX switches from 5 to 8
+- Added more footswitch preset layouts to external switches. 1x2, 1x4 binary, disabled etc 
+- Added support for switching effects from the onboard footswitches 
+- Standardised preset switching layouts for external and internal (onboard) foot switches
+- NOTE: due to the preset switching changes, it maybe be necessary to set your desired configuration again
+
+
 V1.0.8.2:
 - Changes to make the controller work with the latest Tonex editor release
 - Fixed memory leak in web config that would eventually lead to malfunction
