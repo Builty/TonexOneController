@@ -581,7 +581,6 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
 {
     uint8_t loop; 
     uint8_t value;
-    uint8_t param_handled;
     uint16_t param;
     float new_value;
     tTonexParameter* param_ptr;
@@ -604,68 +603,56 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
                         {
                             // get the parameter that corresponds to this Midi control change value
                             param = midi_helper_get_param_for_change_num(fx_handler[loop].config.CC);
-                            param_handled = 0;
+
+                            ESP_LOGI(TAG, "Footswitch FX pressed. Index %d. Param %d", (int)loop, (int)param);
 
                             if (param != TONEX_UNKNOWN)
                             {
-                                // check if its a param or other special case
-                                if (param < TONEX_PARAM_LAST)
+                                // get the current value of the parameter
+                                if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
                                 {
-                                    // get the current value of the parameter
-                                    if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
+                                    // is the parameter a boolean type?
+                                    if ((param_ptr[param].Min == 0) && (param_ptr[param].Max == 1))
                                     {
-                                        // is the parameter a boolean type?
-                                        if ((param_ptr[param].Min == 0) && (param_ptr[param].Max == 1))
+                                        // toggle the current value
+                                        if (param_ptr[param].Value == 0)
                                         {
-                                            // toggle the current value
-                                            if (param_ptr[param].Value == 0)
-                                            {
-                                                new_value = 1;
-                                            }
-                                            else
-                                            {
-                                                new_value = 0;
-                                            }
-
-                                            ESP_LOGI(TAG, "Footswitch Param change to %d", (int)new_value);
-
-                                            // change the parameter
-                                            usb_modify_parameter(param, new_value);   
-                                            
-                                            param_handled = 1;
+                                            new_value = 1;
+                                        }
+                                        else
+                                        {
+                                            new_value = 0;
                                         }
 
                                         tonex_params_release_locked_access();
-                                    }
-                                }
-                                     
-                                if (!param_handled)
-                                {
-                                    tonex_params_release_locked_access();
-
-                                    // not a boolean, use local toggle variable
-                                    if (fx_handler[loop].toggle == 0)
-                                    {
-                                        // send first value
-                                        midi_helper_adjust_param_via_midi(fx_handler[loop].config.CC, fx_handler[loop].config.Value_1);
-    
-                                        ESP_LOGI(TAG, "Footswitch Param change (1). Switch: %d. CC:%d. Value:%d", (int)fx_handler[loop].config.Switch, 
-                                                                                                                (int)fx_handler[loop].config.CC, 
-                                                                                                                (int)fx_handler[loop].config.Value_1);
+                                        usb_modify_parameter(param, new_value);
                                     }
                                     else
                                     {
-                                        // send second value
-                                        midi_helper_adjust_param_via_midi(fx_handler[loop].config.CC, fx_handler[loop].config.Value_2);
-    
-                                        ESP_LOGI(TAG, "Footswitch Param change (2). Switch: %d. CC:%d. Value:%d", (int)fx_handler[loop].config.Switch, 
-                                                                                                                (int)fx_handler[loop].config.CC, 
-                                                                                                                (int)fx_handler[loop].config.Value_2);
-                                    }
-    
-                                    // flip toggle state
-                                    fx_handler[loop].toggle = !fx_handler[loop].toggle;
-                                }   
+                                        // save current value before we release the locked access
+                                        float current_param_value = param_ptr[param].Value;
+
+                                        // release access now as midi helper needs the mutex
+                                        tonex_params_release_locked_access();
+
+                                        // flip between value 1 and value 2
+                                        // get value 1 (Midi 0..127) scaled back to a float to it can be compared with the current param value (a float)
+                                        float value_1 = midi_helper_scale_midi_to_float(param, fx_handler[loop].config.Value_1);
+
+                                        if (current_param_value == value_1)
+                                        {
+                                            new_value = fx_handler[loop].config.Value_2;
+                                        }
+                                        else
+                                        {
+                                            new_value = fx_handler[loop].config.Value_1;
+                                        }
+
+                                        midi_helper_adjust_param_via_midi(fx_handler[loop].config.CC, new_value);      
+                                    }                                    
+
+                                    ESP_LOGI(TAG, "Footswitch FX Param %d changed to %d", (int)param, (int)new_value);                                                                       
+                                }
                             }
 
                             // save the switch index

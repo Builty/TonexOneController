@@ -47,7 +47,7 @@ static const char *TAG = "app_midi_helper";
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static float midi_helper_scale_midi_to_float(uint16_t param_index, uint8_t midi_value)
+float midi_helper_scale_midi_to_float(uint16_t param_index, uint8_t midi_value)
 {
     float min;
     float max;
@@ -862,6 +862,28 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
             // input trim
             param = TONEX_GLOBAL_INPUT_TRIM;            
             value = midi_helper_scale_midi_to_float(param, midi_value);
+            value = tonex_params_clamp_value(param, value);
+        } break;
+
+        case 117: 
+        {
+            param = TONEX_GLOBAL_CABSIM_BYPASS;
+            value = midi_helper_boolean_midi_to_float(midi_value);
+            value = tonex_params_clamp_value(param, value);
+        } break;
+        
+        case 118:
+        {
+            param = TONEX_GLOBAL_TEMPO_SOURCE;
+            value = midi_helper_boolean_midi_to_float(midi_value);
+            value = tonex_params_clamp_value(param, value);
+        } break;
+
+        case 119:
+        {
+            param = TONEX_GLOBAL_TUNING_REFERENCE;
+            value = midi_helper_scale_midi_to_float(param, midi_value);
+            value = tonex_params_clamp_value(param, value);
         } break;
 
         default:
@@ -1424,6 +1446,21 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
          case 116: 
          {
              param = TONEX_GLOBAL_INPUT_TRIM;            
+         } break;
+
+         case 117: 
+         {
+             param = TONEX_GLOBAL_CABSIM_BYPASS;
+         } break;
+         
+         case 118:
+         {
+             param = TONEX_GLOBAL_TEMPO_SOURCE;
+         } break;
+ 
+         case 119:
+         {
+             param = TONEX_GLOBAL_TUNING_REFERENCE;
          } break;
     }
 
