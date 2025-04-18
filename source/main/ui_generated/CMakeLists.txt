@@ -33,6 +33,11 @@ SET(SOURCES screens/ui_Screen1.c
     images/ui_img_effect_icon_delay_on_png.c
     images/ui_img_effect_icon_gate_on_png.c
     images/ui_img_effect_icon_mod_on_png.c
+    images/ui_img_effect_icon_mod_on_chorus_png.c
+    images/ui_img_effect_icon_mod_on_flanger_png.c
+    images/ui_img_effect_icon_mod_on_phaser_png.c
+    images/ui_img_effect_icon_mod_on_rotary_png.c
+    images/ui_img_effect_icon_mod_on_tremolo_png.c
     images/ui_img_effect_icon_reverb_on_png.c
     images/ui_img_pskin_arion_png.c
     images/ui_img_pskin_bigmuff_png.c

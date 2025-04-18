@@ -2184,7 +2184,40 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_entry->Value)
                             {
                                 lv_obj_add_state(ui_ModulationEnableSwitch, LV_STATE_CHECKED);
-                                lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_on_png);
+
+                                // show enabled icon with letter to indicate the type
+                                switch ((int)param_ptr[TONEX_PARAM_MODULATION_MODEL].Value)
+                                {
+                                    case TONEX_MODULATION_CHORUS:
+                                    {
+                                        lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_on_chorus_png);
+                                    } break;
+
+                                    case TONEX_MODULATION_TREMOLO:
+                                    {
+                                        lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_on_tremolo_png);
+                                    } break;
+
+                                    case TONEX_MODULATION_PHASER:
+                                    {
+                                        lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_on_phaser_png);
+                                    } break;
+
+                                    case TONEX_MODULATION_FLANGER:
+                                    {
+                                        lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_on_flanger_png);
+                                    } break;
+
+                                    case TONEX_MODULATION_ROTARY:
+                                    {
+                                        lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_on_rotary_png);
+                                    } break;
+
+                                    default:
+                                    {
+                                        lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_on_png);
+                                    } break;
+                                }
                             }
                             else
                             {

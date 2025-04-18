@@ -272,6 +272,11 @@ LV_IMG_DECLARE(ui_img_effect_icon_comp_on_png);    // assets/effect_icon_comp_on
 LV_IMG_DECLARE(ui_img_effect_icon_delay_on_png);    // assets/effect_icon_delay_on.png
 LV_IMG_DECLARE(ui_img_effect_icon_gate_on_png);    // assets/effect_icon_gate_on.png
 LV_IMG_DECLARE(ui_img_effect_icon_mod_on_png);    // assets/effect_icon_mod_on.png
+LV_IMG_DECLARE(ui_img_effect_icon_mod_on_chorus_png);    // assets/effect_icon_mod_on_chorus.png
+LV_IMG_DECLARE(ui_img_effect_icon_mod_on_flanger_png);    // assets/effect_icon_mod_on_flanger.png
+LV_IMG_DECLARE(ui_img_effect_icon_mod_on_phaser_png);    // assets/effect_icon_mod_on_phaser.png
+LV_IMG_DECLARE(ui_img_effect_icon_mod_on_rotary_png);    // assets/effect_icon_mod_on_rotary.png
+LV_IMG_DECLARE(ui_img_effect_icon_mod_on_tremolo_png);    // assets/effect_icon_mod_on_tremolo.png
 LV_IMG_DECLARE(ui_img_effect_icon_reverb_on_png);    // assets/effect_icon_reverb_on.png
 LV_IMG_DECLARE(ui_img_pskin_arion_png);    // assets/pskin_arion.png
 LV_IMG_DECLARE(ui_img_pskin_bigmuff_png);    // assets/pskin_bigmuff.png
