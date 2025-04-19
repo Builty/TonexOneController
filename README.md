@@ -111,6 +111,7 @@ V1.0.9.2 (beta):
 - User contribution from Mateusz: Changed footswitch FX CC indexes to use descriptive names, and also to contextually adjust the Value 1 and Value 2 display
 - Fixed bug where external footswitch FX toggling, for values that are not boolean, didn't take into account the current value of the parameter when toggling
 - Increased maximum external FX switches from 5 to 8
+- Added letters to 4.3B effect icons, to show which model is enabled (Modulation, Delay, Reverb)
 - Added more footswitch preset layouts to external switches. 1x2, 1x4 binary, disabled etc 
 - Added support for switching effects from the onboard footswitches 
 - Standardised preset switching layouts for external and internal (onboard) foot switches

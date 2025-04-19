@@ -270,6 +270,8 @@ LV_IMG_DECLARE(ui_img_effect_icon_amp_on_png);    // assets/effect_icon_amp_on.p
 LV_IMG_DECLARE(ui_img_effect_icon_cab_on_png);    // assets/effect_icon_cab_on.png
 LV_IMG_DECLARE(ui_img_effect_icon_comp_on_png);    // assets/effect_icon_comp_on.png
 LV_IMG_DECLARE(ui_img_effect_icon_delay_on_png);    // assets/effect_icon_delay_on.png
+LV_IMG_DECLARE(ui_img_effect_icon_delay_on_d_png);    // assets/effect_icon_delay_on_d.png
+LV_IMG_DECLARE(ui_img_effect_icon_delay_on_t_png);    // assets/effect_icon_delay_on_t.png
 LV_IMG_DECLARE(ui_img_effect_icon_gate_on_png);    // assets/effect_icon_gate_on.png
 LV_IMG_DECLARE(ui_img_effect_icon_mod_on_png);    // assets/effect_icon_mod_on.png
 LV_IMG_DECLARE(ui_img_effect_icon_mod_on_chorus_png);    // assets/effect_icon_mod_on_chorus.png
@@ -278,6 +280,12 @@ LV_IMG_DECLARE(ui_img_effect_icon_mod_on_phaser_png);    // assets/effect_icon_m
 LV_IMG_DECLARE(ui_img_effect_icon_mod_on_rotary_png);    // assets/effect_icon_mod_on_rotary.png
 LV_IMG_DECLARE(ui_img_effect_icon_mod_on_tremolo_png);    // assets/effect_icon_mod_on_tremolo.png
 LV_IMG_DECLARE(ui_img_effect_icon_reverb_on_png);    // assets/effect_icon_reverb_on.png
+LV_IMG_DECLARE(ui_img_effect_icon_reverb_on_p_png);    // assets/effect_icon_reverb_on_p.png
+LV_IMG_DECLARE(ui_img_effect_icon_reverb_on_r_png);    // assets/effect_icon_reverb_on_r.png
+LV_IMG_DECLARE(ui_img_effect_icon_reverb_on_s1_png);    // assets/effect_icon_reverb_on_s1.png
+LV_IMG_DECLARE(ui_img_effect_icon_reverb_on_s2_png);    // assets/effect_icon_reverb_on_s2.png
+LV_IMG_DECLARE(ui_img_effect_icon_reverb_on_s3_png);    // assets/effect_icon_reverb_on_s3.png
+LV_IMG_DECLARE(ui_img_effect_icon_reverb_on_s4_png);    // assets/effect_icon_reverb_on_s4.png
 LV_IMG_DECLARE(ui_img_pskin_arion_png);    // assets/pskin_arion.png
 LV_IMG_DECLARE(ui_img_pskin_bigmuff_png);    // assets/pskin_bigmuff.png
 LV_IMG_DECLARE(ui_img_pskin_darkglass_png);    // assets/pskin_darkglass.png

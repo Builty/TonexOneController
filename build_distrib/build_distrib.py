@@ -9,7 +9,7 @@ from zipfile import ZipFile
 dirname = Path.cwd()
 
 # set version
-version = '1.0.9.2_beta_1'
+version = '1.0.9.2_beta_2'
 
 def delete_files_in_folder(directory):
     for filename in os.listdir(directory):

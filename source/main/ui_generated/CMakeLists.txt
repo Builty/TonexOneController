@@ -31,6 +31,8 @@ SET(SOURCES screens/ui_Screen1.c
     images/ui_img_effect_icon_cab_on_png.c
     images/ui_img_effect_icon_comp_on_png.c
     images/ui_img_effect_icon_delay_on_png.c
+    images/ui_img_effect_icon_delay_on_d_png.c
+    images/ui_img_effect_icon_delay_on_t_png.c
     images/ui_img_effect_icon_gate_on_png.c
     images/ui_img_effect_icon_mod_on_png.c
     images/ui_img_effect_icon_mod_on_chorus_png.c
@@ -39,6 +41,12 @@ SET(SOURCES screens/ui_Screen1.c
     images/ui_img_effect_icon_mod_on_rotary_png.c
     images/ui_img_effect_icon_mod_on_tremolo_png.c
     images/ui_img_effect_icon_reverb_on_png.c
+    images/ui_img_effect_icon_reverb_on_p_png.c
+    images/ui_img_effect_icon_reverb_on_r_png.c
+    images/ui_img_effect_icon_reverb_on_s1_png.c
+    images/ui_img_effect_icon_reverb_on_s2_png.c
+    images/ui_img_effect_icon_reverb_on_s3_png.c
+    images/ui_img_effect_icon_reverb_on_s4_png.c
     images/ui_img_pskin_arion_png.c
     images/ui_img_pskin_bigmuff_png.c
     images/ui_img_pskin_darkglass_png.c

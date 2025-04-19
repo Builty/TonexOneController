@@ -17,6 +17,7 @@ limitations under the License.
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -639,7 +640,14 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
                                         // get value 1 (Midi 0..127) scaled back to a float to it can be compared with the current param value (a float)
                                         float value_1 = midi_helper_scale_midi_to_float(param, fx_handler[loop].config.Value_1);
 
-                                        if (current_param_value == value_1)
+                                        // note here: scaling Midi to float may result in rounding errors. This check is to make sure
+                                        // we can find the current value without missing it due to slight difference
+                                        float param_diff = fabs(current_param_value - value_1);
+
+                                        // debug
+                                        //ESP_LOGI(TAG, "Footswitch FX Param difference %f", param_diff);    
+
+                                        if (param_diff < 0.1f)
                                         {
                                             new_value = fx_handler[loop].config.Value_2;
                                         }
@@ -661,6 +669,7 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
                             break;
                         }
                     }
+                    vTaskDelay(1);
                 }
             }
         } break;

@@ -1937,7 +1937,45 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_entry->Value)
                             {
                                 lv_obj_add_state(ui_ReverbEnableSwitch, LV_STATE_CHECKED);
-                                lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_png);
+
+                                // show enabled icon with letter to indicate the type
+                                switch ((int)param_ptr[TONEX_PARAM_REVERB_MODEL].Value)
+                                {
+                                    case TONEX_REVERB_SPRING_1:
+                                    {
+                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_s1_png);
+                                    } break;
+
+                                    case TONEX_REVERB_SPRING_2:
+                                    {
+                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_s2_png);
+                                    } break;
+
+                                    case TONEX_REVERB_SPRING_3:
+                                    {
+                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_s3_png);
+                                    } break;
+
+                                    case TONEX_REVERB_SPRING_4:
+                                    {
+                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_s4_png);
+                                    } break;
+
+                                    case TONEX_REVERB_ROOM:
+                                    {
+                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_r_png);
+                                    } break;
+
+                                    case TONEX_REVERB_PLATE:
+                                    {
+                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_p_png);
+                                    } break;
+
+                                    default:
+                                    {
+                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_png);
+                                    } break;
+                                }
                             }
                             else
                             {
@@ -2567,7 +2605,25 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_entry->Value)
                             {
                                 lv_obj_add_state(ui_DelayEnableSwitch, LV_STATE_CHECKED);
-                                lv_img_set_src(ui_IconDelay, (lv_obj_t*)&ui_img_effect_icon_delay_on_png);
+
+                                 // show enabled icon with letter to indicate the type
+                                 switch ((int)param_ptr[TONEX_PARAM_DELAY_MODEL].Value)
+                                 {
+                                     case TONEX_DELAY_DIGITAL:
+                                     {
+                                         lv_img_set_src(ui_IconDelay, (lv_obj_t*)&ui_img_effect_icon_delay_on_d_png);
+                                     } break;
+ 
+                                     case TONEX_DELAY_TAPE:
+                                     {
+                                         lv_img_set_src(ui_IconDelay, (lv_obj_t*)&ui_img_effect_icon_delay_on_t_png);
+                                     } break;
+ 
+                                     default:
+                                     {
+                                         lv_img_set_src(ui_IconDelay, (lv_obj_t*)&ui_img_effect_icon_delay_on_png);
+                                     } break;
+                                 }
                             }
                             else
                             {
