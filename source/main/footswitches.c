@@ -613,7 +613,7 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
                                 if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
                                 {
                                     // is the parameter a boolean type?
-                                    if ((param_ptr[param].Min == 0) && (param_ptr[param].Max == 1))
+                                    if (param_ptr[param].Type == TONEX_PARAM_TYPE_SWITCH)
                                     {
                                         // toggle the current value
                                         if (param_ptr[param].Value == 0)
@@ -628,7 +628,27 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
                                         tonex_params_release_locked_access();
                                         usb_modify_parameter(param, new_value);
                                     }
-                                    else
+                                    else if (param_ptr[param].Type == TONEX_PARAM_TYPE_SELECT)
+                                    {
+                                        // save current value before we release the locked access
+                                        // select params are really integers saved as floats
+                                        uint8_t current_select_val = (uint8_t)param_ptr[param].Value;
+
+                                        // release access now as midi helper needs the mutex
+                                        tonex_params_release_locked_access();
+
+                                        if (current_select_val == fx_handler[loop].config.Value_1)
+                                        {
+                                            new_value = (float)fx_handler[loop].config.Value_2;
+                                        }
+                                        else
+                                        {
+                                            new_value = (float)fx_handler[loop].config.Value_1;
+                                        }
+
+                                        midi_helper_adjust_param_via_midi(fx_handler[loop].config.CC, new_value);     
+                                    }
+                                    else if (param_ptr[param].Type == TONEX_PARAM_TYPE_RANGE)
                                     {
                                         // save current value before we release the locked access
                                         float current_param_value = param_ptr[param].Value;
@@ -657,7 +677,12 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
                                         }
 
                                         midi_helper_adjust_param_via_midi(fx_handler[loop].config.CC, new_value);      
-                                    }                                    
+                                    } 
+                                    else
+                                    {
+                                        ESP_LOGI(TAG, "Footswitch FX Unknown param type");
+                                        new_value = 0.0f;
+                                    }                                  
 
                                     ESP_LOGI(TAG, "Footswitch FX Param %d changed to %d", (int)param, (int)new_value);                                                                       
                                 }

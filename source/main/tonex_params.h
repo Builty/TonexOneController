@@ -31,7 +31,15 @@ typedef struct
     float Min;
     float Max;
     char Name[MAX_PARAM_NAME];
+    uint8_t Type;
 } tTonexParameter;
+
+enum ParamTypes
+{
+    TONEX_PARAM_TYPE_SWITCH,        // on/off
+    TONEX_PARAM_TYPE_SELECT,        // 0,1,2,3 etc
+    TONEX_PARAM_TYPE_RANGE          // floating point range
+};
 
 enum TonexReverbModels
 {
