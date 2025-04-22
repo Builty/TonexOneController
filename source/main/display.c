@@ -502,6 +502,49 @@ void toggle_effect_reverb(lv_event_t * e)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+void show_settings_tab(lv_event_t * e)
+{
+	lv_obj_t* target = lv_event_get_current_target(e);
+
+    if (target == ui_IconGate)
+    {
+        // show gate settings
+        lv_tabview_set_act(ui_SettingsTabview, 0, LV_ANIM_OFF);
+    }
+    else if ((target == ui_IconAmp) || (target == ui_IconCab))
+    {
+        // show amp settings
+        lv_tabview_set_act(ui_SettingsTabview, 6, LV_ANIM_OFF);
+    }
+    else if (target == ui_IconComp)
+    {
+        // show comnpressor settings
+        lv_tabview_set_act(ui_SettingsTabview, 1, LV_ANIM_OFF);
+    }
+    else if (target == ui_IconMod)
+    {
+        // show modulation settings
+        lv_tabview_set_act(ui_SettingsTabview, 4, LV_ANIM_OFF);
+    }
+    else if (target == ui_IconDelay)
+    {
+        // show delay settings
+        lv_tabview_set_act(ui_SettingsTabview, 5, LV_ANIM_OFF);
+    }
+    else if (target == ui_IconReverb)
+    {
+        // show reverb settings
+        lv_tabview_set_act(ui_SettingsTabview, 3, LV_ANIM_OFF);
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void AmpSkinPrevious(lv_event_t * e)
 {
     control_set_skin_previous();

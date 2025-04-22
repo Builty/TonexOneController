@@ -134,7 +134,7 @@ V1.0.8.2:
 - fixed issue where some web params would be displayed as rounded to the nearest integer
 - set Direct Monitoring automatically to the right setting
 - New method of preset sync on boot that no longer changes any preset assignments
-
+- For the 4.3B, added ability to long-press on the effect icons, to jump straight to the config for that effect 
 
 V1.0.7.2:
 - New WiFi options, now allowing connection to other access points.

@@ -1023,7 +1023,7 @@
                     "disabled": false,
                     "nid": 1000803,
                     "strtype": "_event/EventHandler",
-                    "strval": "CLICKED",
+                    "strval": "SHORT_CLICKED",
                     "childs": [
                       {
                         "nid": 1000804,
@@ -1074,6 +1074,120 @@
                           },
                           {
                             "nid": 1000812,
+                            "strtype": "CALL FUNCTION/Dont_export_function",
+                            "strval": "False",
+                            "InheritedType": 2
+                          }
+                        ],
+                        "InheritedType": 10
+                      }
+                    ],
+                    "InheritedType": 4
+                  },
+                  {
+                    "disabled": false,
+                    "nid": 1001060,
+                    "strtype": "_event/EventHandler",
+                    "strval": "LONG_PRESSED",
+                    "childs": [
+                      {
+                        "nid": 1001061,
+                        "strtype": "_event/name",
+                        "strval": "LongPress",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001062,
+                        "strtype": "_event/condition_C",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001063,
+                        "strtype": "_event/condition_P",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001064,
+                        "strtype": "_event/action",
+                        "strval": "CHANGE SCREEN",
+                        "childs": [
+                          {
+                            "nid": 1001065,
+                            "strtype": "CHANGE SCREEN/Name",
+                            "strval": "CHANGE SCREEN",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001066,
+                            "strtype": "CHANGE SCREEN/Call",
+                            "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001067,
+                            "strtype": "CHANGE SCREEN/CallC",
+                            "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001068,
+                            "strtype": "CHANGE SCREEN/Screen_to",
+                            "strval": "GUID84659640-518959S555203361",
+                            "InheritedType": 9
+                          },
+                          {
+                            "nid": 1001069,
+                            "strtype": "CHANGE SCREEN/Fade_mode",
+                            "strval": "NONE",
+                            "InheritedType": 3
+                          },
+                          {
+                            "nid": 1001070,
+                            "strtype": "CHANGE SCREEN/Speed",
+                            "integer": 500,
+                            "InheritedType": 6
+                          },
+                          {
+                            "nid": 1001071,
+                            "strtype": "CHANGE SCREEN/Delay",
+                            "InheritedType": 6
+                          }
+                        ],
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001072,
+                        "strtype": "_event/action",
+                        "strval": "CALL FUNCTION",
+                        "childs": [
+                          {
+                            "nid": 1001073,
+                            "strtype": "CALL FUNCTION/Name",
+                            "strval": "CALL FUNCTION",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001074,
+                            "strtype": "CALL FUNCTION/Call",
+                            "strval": "<{Function_name}>( event_struct )",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001075,
+                            "strtype": "CALL FUNCTION/CallC",
+                            "strval": "<{Function_name}>( e );",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001076,
+                            "strtype": "CALL FUNCTION/Function_name",
+                            "strval": "show_settings_tab",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001077,
                             "strtype": "CALL FUNCTION/Dont_export_function",
                             "strval": "False",
                             "InheritedType": 2
@@ -1244,7 +1358,7 @@
                     "disabled": false,
                     "nid": 1000813,
                     "strtype": "_event/EventHandler",
-                    "strval": "CLICKED",
+                    "strval": "SHORT_CLICKED",
                     "childs": [
                       {
                         "nid": 1000814,
@@ -1295,6 +1409,120 @@
                           },
                           {
                             "nid": 1000822,
+                            "strtype": "CALL FUNCTION/Dont_export_function",
+                            "strval": "False",
+                            "InheritedType": 2
+                          }
+                        ],
+                        "InheritedType": 10
+                      }
+                    ],
+                    "InheritedType": 4
+                  },
+                  {
+                    "disabled": false,
+                    "nid": 1001078,
+                    "strtype": "_event/EventHandler",
+                    "strval": "LONG_PRESSED",
+                    "childs": [
+                      {
+                        "nid": 1001079,
+                        "strtype": "_event/name",
+                        "strval": "LongPress",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001080,
+                        "strtype": "_event/condition_C",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001081,
+                        "strtype": "_event/condition_P",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001082,
+                        "strtype": "_event/action",
+                        "strval": "CHANGE SCREEN",
+                        "childs": [
+                          {
+                            "nid": 1001083,
+                            "strtype": "CHANGE SCREEN/Name",
+                            "strval": "CHANGE SCREEN",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001084,
+                            "strtype": "CHANGE SCREEN/Call",
+                            "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001085,
+                            "strtype": "CHANGE SCREEN/CallC",
+                            "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001086,
+                            "strtype": "CHANGE SCREEN/Screen_to",
+                            "strval": "GUID84659640-518959S555203361",
+                            "InheritedType": 9
+                          },
+                          {
+                            "nid": 1001087,
+                            "strtype": "CHANGE SCREEN/Fade_mode",
+                            "strval": "NONE",
+                            "InheritedType": 3
+                          },
+                          {
+                            "nid": 1001088,
+                            "strtype": "CHANGE SCREEN/Speed",
+                            "integer": 500,
+                            "InheritedType": 6
+                          },
+                          {
+                            "nid": 1001089,
+                            "strtype": "CHANGE SCREEN/Delay",
+                            "InheritedType": 6
+                          }
+                        ],
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001090,
+                        "strtype": "_event/action",
+                        "strval": "CALL FUNCTION",
+                        "childs": [
+                          {
+                            "nid": 1001091,
+                            "strtype": "CALL FUNCTION/Name",
+                            "strval": "CALL FUNCTION",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001092,
+                            "strtype": "CALL FUNCTION/Call",
+                            "strval": "<{Function_name}>( event_struct )",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001093,
+                            "strtype": "CALL FUNCTION/CallC",
+                            "strval": "<{Function_name}>( e );",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001094,
+                            "strtype": "CALL FUNCTION/Function_name",
+                            "strval": "show_settings_tab",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001095,
                             "strtype": "CALL FUNCTION/Dont_export_function",
                             "strval": "False",
                             "InheritedType": 2
@@ -1465,7 +1693,7 @@
                     "disabled": false,
                     "nid": 1000829,
                     "strtype": "_event/EventHandler",
-                    "strval": "CLICKED",
+                    "strval": "SHORT_CLICKED",
                     "childs": [
                       {
                         "nid": 1000830,
@@ -1516,6 +1744,120 @@
                           },
                           {
                             "nid": 1000838,
+                            "strtype": "CALL FUNCTION/Dont_export_function",
+                            "strval": "False",
+                            "InheritedType": 2
+                          }
+                        ],
+                        "InheritedType": 10
+                      }
+                    ],
+                    "InheritedType": 4
+                  },
+                  {
+                    "disabled": false,
+                    "nid": 1001096,
+                    "strtype": "_event/EventHandler",
+                    "strval": "LONG_PRESSED",
+                    "childs": [
+                      {
+                        "nid": 1001097,
+                        "strtype": "_event/name",
+                        "strval": "LongPress",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001098,
+                        "strtype": "_event/condition_C",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001099,
+                        "strtype": "_event/condition_P",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001100,
+                        "strtype": "_event/action",
+                        "strval": "CHANGE SCREEN",
+                        "childs": [
+                          {
+                            "nid": 1001101,
+                            "strtype": "CHANGE SCREEN/Name",
+                            "strval": "CHANGE SCREEN",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001102,
+                            "strtype": "CHANGE SCREEN/Call",
+                            "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001103,
+                            "strtype": "CHANGE SCREEN/CallC",
+                            "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001104,
+                            "strtype": "CHANGE SCREEN/Screen_to",
+                            "strval": "GUID84659640-518959S555203361",
+                            "InheritedType": 9
+                          },
+                          {
+                            "nid": 1001105,
+                            "strtype": "CHANGE SCREEN/Fade_mode",
+                            "strval": "NONE",
+                            "InheritedType": 3
+                          },
+                          {
+                            "nid": 1001106,
+                            "strtype": "CHANGE SCREEN/Speed",
+                            "integer": 500,
+                            "InheritedType": 6
+                          },
+                          {
+                            "nid": 1001107,
+                            "strtype": "CHANGE SCREEN/Delay",
+                            "InheritedType": 6
+                          }
+                        ],
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001108,
+                        "strtype": "_event/action",
+                        "strval": "CALL FUNCTION",
+                        "childs": [
+                          {
+                            "nid": 1001109,
+                            "strtype": "CALL FUNCTION/Name",
+                            "strval": "CALL FUNCTION",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001110,
+                            "strtype": "CALL FUNCTION/Call",
+                            "strval": "<{Function_name}>( event_struct )",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001111,
+                            "strtype": "CALL FUNCTION/CallC",
+                            "strval": "<{Function_name}>( e );",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001112,
+                            "strtype": "CALL FUNCTION/Function_name",
+                            "strval": "show_settings_tab",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001113,
                             "strtype": "CALL FUNCTION/Dont_export_function",
                             "strval": "False",
                             "InheritedType": 2
@@ -1686,7 +2028,7 @@
                     "disabled": false,
                     "nid": 1000845,
                     "strtype": "_event/EventHandler",
-                    "strval": "CLICKED",
+                    "strval": "SHORT_CLICKED",
                     "childs": [
                       {
                         "nid": 1000846,
@@ -1737,6 +2079,121 @@
                           },
                           {
                             "nid": 1000854,
+                            "strtype": "CALL FUNCTION/Dont_export_function",
+                            "strval": "False",
+                            "InheritedType": 2
+                          }
+                        ],
+                        "InheritedType": 10
+                      }
+                    ],
+                    "InheritedType": 4
+                  },
+                  {
+                    "disabled": false,
+                    "nid": 1001114,
+                    "flags": 1048576,
+                    "strtype": "_event/EventHandler",
+                    "strval": "LONG_PRESSED",
+                    "childs": [
+                      {
+                        "nid": 1001115,
+                        "strtype": "_event/name",
+                        "strval": "LongPress",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001116,
+                        "strtype": "_event/condition_C",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001117,
+                        "strtype": "_event/condition_P",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001118,
+                        "strtype": "_event/action",
+                        "strval": "CHANGE SCREEN",
+                        "childs": [
+                          {
+                            "nid": 1001119,
+                            "strtype": "CHANGE SCREEN/Name",
+                            "strval": "CHANGE SCREEN",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001120,
+                            "strtype": "CHANGE SCREEN/Call",
+                            "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001121,
+                            "strtype": "CHANGE SCREEN/CallC",
+                            "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001122,
+                            "strtype": "CHANGE SCREEN/Screen_to",
+                            "strval": "GUID84659640-518959S555203361",
+                            "InheritedType": 9
+                          },
+                          {
+                            "nid": 1001123,
+                            "strtype": "CHANGE SCREEN/Fade_mode",
+                            "strval": "NONE",
+                            "InheritedType": 3
+                          },
+                          {
+                            "nid": 1001124,
+                            "strtype": "CHANGE SCREEN/Speed",
+                            "integer": 500,
+                            "InheritedType": 6
+                          },
+                          {
+                            "nid": 1001125,
+                            "strtype": "CHANGE SCREEN/Delay",
+                            "InheritedType": 6
+                          }
+                        ],
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001126,
+                        "strtype": "_event/action",
+                        "strval": "CALL FUNCTION",
+                        "childs": [
+                          {
+                            "nid": 1001127,
+                            "strtype": "CALL FUNCTION/Name",
+                            "strval": "CALL FUNCTION",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001128,
+                            "strtype": "CALL FUNCTION/Call",
+                            "strval": "<{Function_name}>( event_struct )",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001129,
+                            "strtype": "CALL FUNCTION/CallC",
+                            "strval": "<{Function_name}>( e );",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001130,
+                            "strtype": "CALL FUNCTION/Function_name",
+                            "strval": "show_settings_tab",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001131,
                             "strtype": "CALL FUNCTION/Dont_export_function",
                             "strval": "False",
                             "InheritedType": 2
@@ -1908,7 +2365,7 @@
                     "disabled": false,
                     "nid": 1000861,
                     "strtype": "_event/EventHandler",
-                    "strval": "CLICKED",
+                    "strval": "SHORT_CLICKED",
                     "childs": [
                       {
                         "nid": 1000862,
@@ -1959,6 +2416,121 @@
                           },
                           {
                             "nid": 1000870,
+                            "strtype": "CALL FUNCTION/Dont_export_function",
+                            "strval": "False",
+                            "InheritedType": 2
+                          }
+                        ],
+                        "InheritedType": 10
+                      }
+                    ],
+                    "InheritedType": 4
+                  },
+                  {
+                    "disabled": false,
+                    "nid": 1001132,
+                    "flags": 1048576,
+                    "strtype": "_event/EventHandler",
+                    "strval": "LONG_PRESSED",
+                    "childs": [
+                      {
+                        "nid": 1001133,
+                        "strtype": "_event/name",
+                        "strval": "LongPress",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001134,
+                        "strtype": "_event/condition_C",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001135,
+                        "strtype": "_event/condition_P",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001136,
+                        "strtype": "_event/action",
+                        "strval": "CHANGE SCREEN",
+                        "childs": [
+                          {
+                            "nid": 1001137,
+                            "strtype": "CHANGE SCREEN/Name",
+                            "strval": "CHANGE SCREEN",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001138,
+                            "strtype": "CHANGE SCREEN/Call",
+                            "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001139,
+                            "strtype": "CHANGE SCREEN/CallC",
+                            "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001140,
+                            "strtype": "CHANGE SCREEN/Screen_to",
+                            "strval": "GUID84659640-518959S555203361",
+                            "InheritedType": 9
+                          },
+                          {
+                            "nid": 1001141,
+                            "strtype": "CHANGE SCREEN/Fade_mode",
+                            "strval": "NONE",
+                            "InheritedType": 3
+                          },
+                          {
+                            "nid": 1001142,
+                            "strtype": "CHANGE SCREEN/Speed",
+                            "integer": 500,
+                            "InheritedType": 6
+                          },
+                          {
+                            "nid": 1001143,
+                            "strtype": "CHANGE SCREEN/Delay",
+                            "InheritedType": 6
+                          }
+                        ],
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001144,
+                        "strtype": "_event/action",
+                        "strval": "CALL FUNCTION",
+                        "childs": [
+                          {
+                            "nid": 1001145,
+                            "strtype": "CALL FUNCTION/Name",
+                            "strval": "CALL FUNCTION",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001146,
+                            "strtype": "CALL FUNCTION/Call",
+                            "strval": "<{Function_name}>( event_struct )",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001147,
+                            "strtype": "CALL FUNCTION/CallC",
+                            "strval": "<{Function_name}>( e );",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001148,
+                            "strtype": "CALL FUNCTION/Function_name",
+                            "strval": "show_settings_tab",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001149,
                             "strtype": "CALL FUNCTION/Dont_export_function",
                             "strval": "False",
                             "InheritedType": 2
@@ -2129,7 +2701,7 @@
                     "disabled": false,
                     "nid": 1000877,
                     "strtype": "_event/EventHandler",
-                    "strval": "CLICKED",
+                    "strval": "SHORT_CLICKED",
                     "childs": [
                       {
                         "nid": 1000878,
@@ -2180,6 +2752,120 @@
                           },
                           {
                             "nid": 1000886,
+                            "strtype": "CALL FUNCTION/Dont_export_function",
+                            "strval": "False",
+                            "InheritedType": 2
+                          }
+                        ],
+                        "InheritedType": 10
+                      }
+                    ],
+                    "InheritedType": 4
+                  },
+                  {
+                    "disabled": false,
+                    "nid": 1001150,
+                    "strtype": "_event/EventHandler",
+                    "strval": "LONG_PRESSED",
+                    "childs": [
+                      {
+                        "nid": 1001151,
+                        "strtype": "_event/name",
+                        "strval": "LongPress",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001152,
+                        "strtype": "_event/condition_C",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001153,
+                        "strtype": "_event/condition_P",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001154,
+                        "strtype": "_event/action",
+                        "strval": "CHANGE SCREEN",
+                        "childs": [
+                          {
+                            "nid": 1001155,
+                            "strtype": "CHANGE SCREEN/Name",
+                            "strval": "CHANGE SCREEN",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001156,
+                            "strtype": "CHANGE SCREEN/Call",
+                            "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001157,
+                            "strtype": "CHANGE SCREEN/CallC",
+                            "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001158,
+                            "strtype": "CHANGE SCREEN/Screen_to",
+                            "strval": "GUID84659640-518959S555203361",
+                            "InheritedType": 9
+                          },
+                          {
+                            "nid": 1001159,
+                            "strtype": "CHANGE SCREEN/Fade_mode",
+                            "strval": "NONE",
+                            "InheritedType": 3
+                          },
+                          {
+                            "nid": 1001160,
+                            "strtype": "CHANGE SCREEN/Speed",
+                            "integer": 500,
+                            "InheritedType": 6
+                          },
+                          {
+                            "nid": 1001161,
+                            "strtype": "CHANGE SCREEN/Delay",
+                            "InheritedType": 6
+                          }
+                        ],
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001162,
+                        "strtype": "_event/action",
+                        "strval": "CALL FUNCTION",
+                        "childs": [
+                          {
+                            "nid": 1001163,
+                            "strtype": "CALL FUNCTION/Name",
+                            "strval": "CALL FUNCTION",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001164,
+                            "strtype": "CALL FUNCTION/Call",
+                            "strval": "<{Function_name}>( event_struct )",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001165,
+                            "strtype": "CALL FUNCTION/CallC",
+                            "strval": "<{Function_name}>( e );",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001166,
+                            "strtype": "CALL FUNCTION/Function_name",
+                            "strval": "show_settings_tab",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001167,
                             "strtype": "CALL FUNCTION/Dont_export_function",
                             "strval": "False",
                             "InheritedType": 2
@@ -2350,7 +3036,7 @@
                     "disabled": false,
                     "nid": 1000893,
                     "strtype": "_event/EventHandler",
-                    "strval": "CLICKED",
+                    "strval": "SHORT_CLICKED",
                     "childs": [
                       {
                         "nid": 1000894,
@@ -2401,6 +3087,120 @@
                           },
                           {
                             "nid": 1000902,
+                            "strtype": "CALL FUNCTION/Dont_export_function",
+                            "strval": "False",
+                            "InheritedType": 2
+                          }
+                        ],
+                        "InheritedType": 10
+                      }
+                    ],
+                    "InheritedType": 4
+                  },
+                  {
+                    "disabled": false,
+                    "nid": 1001168,
+                    "strtype": "_event/EventHandler",
+                    "strval": "LONG_PRESSED",
+                    "childs": [
+                      {
+                        "nid": 1001169,
+                        "strtype": "_event/name",
+                        "strval": "LongPress",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001170,
+                        "strtype": "_event/condition_C",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001171,
+                        "strtype": "_event/condition_P",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001172,
+                        "strtype": "_event/action",
+                        "strval": "CHANGE SCREEN",
+                        "childs": [
+                          {
+                            "nid": 1001173,
+                            "strtype": "CHANGE SCREEN/Name",
+                            "strval": "CHANGE SCREEN",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001174,
+                            "strtype": "CHANGE SCREEN/Call",
+                            "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001175,
+                            "strtype": "CHANGE SCREEN/CallC",
+                            "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001176,
+                            "strtype": "CHANGE SCREEN/Screen_to",
+                            "strval": "GUID84659640-518959S555203361",
+                            "InheritedType": 9
+                          },
+                          {
+                            "nid": 1001177,
+                            "strtype": "CHANGE SCREEN/Fade_mode",
+                            "strval": "NONE",
+                            "InheritedType": 3
+                          },
+                          {
+                            "nid": 1001178,
+                            "strtype": "CHANGE SCREEN/Speed",
+                            "integer": 500,
+                            "InheritedType": 6
+                          },
+                          {
+                            "nid": 1001179,
+                            "strtype": "CHANGE SCREEN/Delay",
+                            "InheritedType": 6
+                          }
+                        ],
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 1001180,
+                        "strtype": "_event/action",
+                        "strval": "CALL FUNCTION",
+                        "childs": [
+                          {
+                            "nid": 1001181,
+                            "strtype": "CALL FUNCTION/Name",
+                            "strval": "CALL FUNCTION",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001182,
+                            "strtype": "CALL FUNCTION/Call",
+                            "strval": "<{Function_name}>( event_struct )",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001183,
+                            "strtype": "CALL FUNCTION/CallC",
+                            "strval": "<{Function_name}>( e );",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001184,
+                            "strtype": "CALL FUNCTION/Function_name",
+                            "strval": "show_settings_tab",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1001185,
                             "strtype": "CALL FUNCTION/Dont_export_function",
                             "strval": "False",
                             "InheritedType": 2
@@ -10409,7 +11209,6 @@
                   },
                   {
                     "nid": 1000026,
-                    "flags": 1048576,
                     "strtype": "TABPAGE/States",
                     "InheritedType": 1
                   },
@@ -31931,7 +32730,7 @@
     "uiExportFolderPath": "D:\\projects\\TonexController\\TonexOneController\\source\\main\\ui_generated",
     "projectExportFolderPath": "D:\\projects\\TonexController\\TonexOneController\\source\\main\\ui_generated",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 622,
+    "backup_cnt": 627,
     "autosave_cnt": 0,
     "group_color_cnt": 0,
     "lvgl_version": "8.3.11",
@@ -31948,7 +32747,7 @@
     "drive_fatfs_path": "",
     "naming": "Name",
     "naming_force_lowercase": false,
-    "nidcnt": 1001052,
+    "nidcnt": 1001186,
     "BitDepth": 16,
     "Name": "Tonex_Controller"
   }

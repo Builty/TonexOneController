@@ -89,3 +89,13 @@ void toggle_effect_reverb(lv_event_t * e)
 {
 	// Your code here
 }
+
+void show_settings_tab_gate(lv_event_t * e)
+{
+	// Your code here
+}
+
+void show_settings_tab(lv_event_t * e)
+{
+	// Your code here
+}

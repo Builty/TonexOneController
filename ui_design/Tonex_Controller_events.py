@@ -66,3 +66,7 @@ def toggle_effect_delay(event_struct):
 def toggle_effect_reverb(event_struct):
     return
 
+
+def show_settings_tab(event_struct):
+    return
+
