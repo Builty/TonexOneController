@@ -95,7 +95,7 @@ For more information about the firmware development and customisation, refer to 
 - https://github.com/vit3k/tonex_controller for great work on reverse engineering the Tonex One USB protocol
 
 ## Firmware Release Notes <a name="release_notes"></a>
-V1.0.9.2 (beta):
+V1.0.9.2:
 - Added support for Tuning reference (4.3B UI, web config, and Midi)
 - Added support for Input trim via Midi
 - Improved latency in serial Midi 
