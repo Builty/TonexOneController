@@ -8,6 +8,7 @@ SET(SOURCES screens/ui_Screen1.c
     images/ui_img_previous_down_png.c
     images/ui_img_next_png.c
     images/ui_img_next_down_png.c
+    images/ui_img_effect_icon_eq_png.c
     images/ui_img_effect_icon_gate_off_png.c
     images/ui_img_effect_icon_amp_off_png.c
     images/ui_img_effect_icon_cab_off_png.c

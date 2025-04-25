@@ -99,3 +99,13 @@ void show_settings_tab(lv_event_t * e)
 {
 	// Your code here
 }
+
+void UI_RefreshParameterValues(lv_event_t * e)
+{
+	// Your code here
+}
+
+void UI_SettingsTabChanged(lv_event_t * e)
+{
+	// Your code here
+}

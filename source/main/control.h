@@ -182,6 +182,19 @@ enum WiFiTxPower
     WIFI_TX_POWER_100
 };
 
+enum ConfigTabs43B
+{
+    CONFIG_TAB_GATE,
+    CONFIG_TAB_COMPRESSOR,
+    CONFIG_TAB_EQ,
+    CONFIG_TAB_REVERB,
+    CONFIG_TAB_MODULATION,
+    CONFIG_TAB_DELAY,
+    CONFIG_TAB_AMPLIFIER,
+    CONFIG_TAB_GLOBAL,
+    CONFIG_TAB_EXIT
+};
+
 enum FootswitchLayouts
 {
     FOOTSWITCH_LAYOUT_1X2,                // next/previous
