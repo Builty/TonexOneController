@@ -47,6 +47,7 @@ limitations under the License.
 #include "usb_comms.h"
 #include "task_priorities.h"
 #include "tonex_params.h"
+#include "usb_tonex_one.h"
 
 #define WIFI_CONFIG_TASK_STACK_SIZE   (3 * 1024)
 
@@ -80,6 +81,7 @@ static void wifi_build_preset_json(void);
 enum WiFivents
 {
     EVENT_SYNC_PARAMS,
+    EVENT_SYNC_PRESET_NAME,
     EVENT_SYNC_PRESET,
     EVENT_SYNC_CONFIG
 };
@@ -102,10 +104,11 @@ typedef struct
     jparse_ctx_t jctx;
     json_gen_str_t jstr;
     httpd_ws_frame_t ws_rsp;
-    char PresetName[MAX_TEXT_LENGTH];
+    char PresetNames[MAX_PRESETS_DEFAULT][MAX_TEXT_LENGTH];
     uint16_t PresetIndex;
     uint8_t ParamsChanged : 1;
     uint8_t PresetChanged : 1;
+    int8_t PresetNameChanged;
     uint8_t ConfigChanged : 1;
     char wifi_ssid[MAX_WIFI_SSID_PW];
     char wifi_password[MAX_WIFI_SSID_PW];
@@ -159,10 +162,20 @@ static uint8_t process_wifi_command(tWiFiMessage* message)
             pWebConfig->ParamsChanged = 1;
         } break;
 
+        case EVENT_SYNC_PRESET_NAME:
+        {
+            // save preset details
+            memcpy((void*)pWebConfig->PresetNames[message->Value], (void*)message->Text, MAX_TEXT_LENGTH - 1);
+
+            // send to all web sockets clients
+            //ws_send_all_clients(&http_server, &send_preset_async);
+
+            pWebConfig->PresetNameChanged = message->Value;
+        } break;
+
         case EVENT_SYNC_PRESET:
         {
             // save preset details
-            memcpy((void*)pWebConfig->PresetName, (void*)message->Text, MAX_TEXT_LENGTH - 1);
             pWebConfig->PresetIndex = message->Value;
 
             // send to all web sockets clients
@@ -204,13 +217,22 @@ void wifi_request_sync(uint8_t type, void* arg1, void* arg2)
             message.Event = EVENT_SYNC_PARAMS;
         } break;
 
+        case WIFI_SYNC_TYPE_PRESET_NAME:
+        {
+            message.Event = EVENT_SYNC_PRESET_NAME;
+
+            // get preset name
+            sprintf(message.Text, "%d: ", *(int*)arg2 + 1);
+            strncat(message.Text, arg1, MAX_TEXT_LENGTH - 1);
+
+            // get preset index
+            message.Value = *(uint32_t*)arg2;
+        } break;
+
         case WIFI_SYNC_TYPE_PRESET:
         {
             message.Event = EVENT_SYNC_PRESET;
-
-            // get preset name
-            memcpy((void*)message.Text, arg1, MAX_TEXT_LENGTH - 1);
-
+            
             // get preset index
             message.Value = *(uint32_t*)arg2;
         } break;
@@ -422,6 +444,26 @@ static void wifi_build_config_json(void)
     json_gen_obj_set_int(&pWebConfig->jstr, "INTFS_ES4_V1", control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT4_VAL1));
     json_gen_obj_set_int(&pWebConfig->jstr, "INTFS_ES4_V2", control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT4_VAL2));
 
+    json_gen_push_array(&pWebConfig->jstr, "PRESET_COLORS");
+    for (uint8_t preset_index = 0; preset_index < MAX_PRESETS; preset_index++)
+    {
+        uint32_t preset_color;
+        if (tonex_params_colors_get_color(preset_index, &preset_color) == ESP_OK)
+        {
+            char color[8];
+            snprintf(color, 8, "#%06X", (unsigned int)preset_color);
+            json_gen_arr_set_string(&pWebConfig->jstr, color);
+        }
+    }
+    json_gen_pop_array(&pWebConfig->jstr);
+    
+    json_gen_push_array(&pWebConfig->jstr, "PRESET_ORDER");
+    for (uint8_t index = 0; index < MAX_PRESETS; index++)
+    {
+        json_gen_arr_set_int(&pWebConfig->jstr, control_get_preset_order()[index]);
+    }
+    json_gen_pop_array(&pWebConfig->jstr);
+
     // add the }
     json_gen_end_object(&pWebConfig->jstr);
 
@@ -450,8 +492,45 @@ static void wifi_build_preset_json(void)
     json_gen_obj_set_string(&pWebConfig->jstr, "CMD", "GETPRESET");
 
     // add preset details
-    json_gen_obj_set_string(&pWebConfig->jstr, "NAME", pWebConfig->PresetName);
     json_gen_obj_set_int(&pWebConfig->jstr, "INDEX", pWebConfig->PresetIndex);
+
+    // add the }
+    json_gen_end_object(&pWebConfig->jstr);
+
+    // end generation
+    json_gen_str_end(&pWebConfig->jstr);
+
+    //debug ESP_LOGI(TAG, "Json: %s", pWebConfig->TempBuffer);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      none
+* NOTES:       none
+****************************************************************************/
+static void wifi_build_preset_names_json(uint8_t* presetIndexes, uint8_t indexCount)
+{
+    // init generation of json response
+    json_gen_str_start(&pWebConfig->jstr, pWebConfig->TempBuffer, MAX_TEMP_BUFFER, NULL, NULL);
+
+    // start json object, adds {
+    json_gen_start_object(&pWebConfig->jstr);
+
+    // add response
+    json_gen_obj_set_string(&pWebConfig->jstr, "CMD", "GETPRESETNAMES");
+
+    // add preset details
+    json_gen_push_object(&pWebConfig->jstr, "PRESET_NAMES");
+    for (uint8_t i = 0; i < indexCount; i++)
+    {
+        uint8_t preset_index = presetIndexes[i];
+        char preset_index_string[5];
+        sprintf(preset_index_string, "%d", preset_index);
+        json_gen_obj_set_string(&pWebConfig->jstr, preset_index_string, pWebConfig->PresetNames[preset_index]);
+    }
+    json_gen_pop_object(&pWebConfig->jstr);
 
     // add the }
     json_gen_end_object(&pWebConfig->jstr);
@@ -594,6 +673,18 @@ static esp_err_t ws_handler(httpd_req_t *req)
 
                         // build json response
                         wifi_build_preset_json();
+                        
+                        // build packet and send
+                        build_send_ws_response_packet(req, pWebConfig->TempBuffer);
+                    }
+                    else if (strcmp(str_val, "GETPRESETNAMES") == 0)
+                    {
+                        // send current preset details
+                        ESP_LOGI(TAG, "Preset names request");
+
+                        // build json response
+                        uint8_t presetIndexes[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
+                        wifi_build_preset_names_json(presetIndexes, 20);
                         
                         // build packet and send
                         build_send_ws_response_packet(req, pWebConfig->TempBuffer);
@@ -1013,6 +1104,21 @@ static esp_err_t ws_handler(httpd_req_t *req)
 
                             pWebConfig->PresetChanged = 0;
                         }
+    
+                        if (pWebConfig->PresetNameChanged >= 0)
+                        {
+                            // send current preset
+                            ESP_LOGI(TAG, "Preset name update");
+
+                            // build json response
+                            uint8_t presetIndexes[] = {pWebConfig->PresetNameChanged};
+                            wifi_build_preset_names_json(presetIndexes, 1);
+                        
+                            // build packet and send
+                            build_send_ws_response_packet(req, pWebConfig->TempBuffer);
+
+                            pWebConfig->PresetNameChanged = -1;
+                        }
              
                         if (pWebConfig->ConfigChanged)
                         {
@@ -1027,7 +1133,29 @@ static esp_err_t ws_handler(httpd_req_t *req)
 
                             pWebConfig->ConfigChanged = 0;
                         }
-                    }                    
+                    }
+                    else if (strcmp(str_val, "SETPRESETORDER") == 0)
+                    {
+                        // set preset
+                        ESP_LOGI(TAG, "Preset Order Set");
+
+                        int preset_order_count;
+
+                        if (json_obj_get_array(&pWebConfig->jctx, "PRESET_ORDER", &preset_order_count) == OS_SUCCESS)
+                        {
+                            if (preset_order_count == MAX_PRESETS)
+                            {
+                                uint8_t preset_order[MAX_PRESETS];
+                                for (uint8_t i = 0; i < MAX_PRESETS; i++) {
+                                    int value;
+                                    json_arr_get_int(&pWebConfig->jctx, i, &value);
+                                    preset_order[i] = value;
+                                }
+                                control_set_preset_order(preset_order);
+                                control_save_user_data(0);
+                            }
+                        }
+                    }               
                 }
 
                 json_parse_end(&pWebConfig->jctx);
@@ -1494,7 +1622,8 @@ static void wifi_config_task(void *arg)
     // init mem
     memset((void*)pWebConfig, 0, sizeof(tWebConfigData));
     pWebConfig->PresetIndex = 0;
-    sprintf(pWebConfig->PresetName, "1");
+    pWebConfig->PresetNameChanged = -1;
+    sprintf(pWebConfig->PresetNames[0], "1");
 
     // check wifi mode
     switch (wifi_mode)    

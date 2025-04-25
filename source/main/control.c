@@ -48,7 +48,6 @@ limitations under the License.
 #define NVS_USERDATA_NAME                   "userdata"        
 
 #define MAX_TEXT_LENGTH                     128
-#define MAX_PRESETS_DEFAULT                 20
 #define MAX_BT_CUSTOM_NAME                  25                 
 
 enum CommandEvents
@@ -57,6 +56,7 @@ enum CommandEvents
     EVENT_PRESET_UP,
     EVENT_PRESET_INDEX,
     EVENT_BANK_INDEX,
+    EVENT_SET_PRESET_NAME,
     EVENT_SET_PRESET_DETAILS,
     EVENT_SET_USB_STATUS,
     EVENT_SET_BT_STATUS,
@@ -125,6 +125,9 @@ typedef struct __attribute__ ((packed))
     // internal footswitches
     uint8_t InternalFootswitchPresetLayout;
     tExternalFootswitchEffectConfig InternalFootswitchEffectConfig[MAX_INTERNAL_EFFECT_FOOTSWITCHES];
+
+    // preset order mapping
+    uint8_t PresetOrder[MAX_PRESETS_DEFAULT];
 } tConfigData;
 
 typedef struct
@@ -137,7 +140,7 @@ typedef struct
 typedef struct 
 {
     uint32_t PresetIndex;                        // 0-based index
-    char PresetName[MAX_TEXT_LENGTH];
+    char PresetNames[MAX_PRESETS_DEFAULT][MAX_TEXT_LENGTH];
     uint32_t USBStatus;
     uint32_t BTStatus;
     uint32_t WiFiStatus;
@@ -149,6 +152,9 @@ static const char *TAG = "app_control";
 static QueueHandle_t control_input_queue;
 static tControlData ControlData;
 
+#if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
+static uint8_t PresetIndexForOrderValue(uint8_t value);
+#endif
 static uint8_t SaveUserData(void);
 static uint8_t LoadUserData(void);
 
@@ -170,8 +176,13 @@ static uint8_t process_control_command(tControlMessage* message)
         {
             if (ControlData.USBStatus != 0)
             {
-                // send message to USB
-                usb_previous_preset();
+                if (ControlData.PresetIndex > 0)
+                {
+                    uint8_t preset = ControlData.ConfigData.PresetOrder[ControlData.PresetIndex - 1];
+                    
+                    // send message to USB
+                    usb_set_preset(preset);
+                }
             }
         } break;
 
@@ -179,8 +190,13 @@ static uint8_t process_control_command(tControlMessage* message)
         {
             if (ControlData.USBStatus != 0)
             {
-                // send message to USB
-                usb_next_preset();
+                if (ControlData.PresetIndex < MAX_PRESETS_DEFAULT - 1)
+                {
+                    uint8_t preset = ControlData.ConfigData.PresetOrder[ControlData.PresetIndex + 1];
+                    
+                    // send message to USB
+                    usb_set_preset(preset);
+                }
             }
         } break;
 
@@ -188,8 +204,10 @@ static uint8_t process_control_command(tControlMessage* message)
         {
             if (ControlData.USBStatus != 0)
             {
+                uint8_t preset = ControlData.ConfigData.PresetOrder[message->Value];
+
                 // send message to USB
-                usb_set_preset(message->Value);
+                usb_set_preset(preset);
             }
         } break;
 
@@ -201,22 +219,31 @@ static uint8_t process_control_command(tControlMessage* message)
 #endif
         } break;
 
+        case EVENT_SET_PRESET_NAME:
+        {
+            memcpy((void*)ControlData.PresetNames[message->Value], (void*)message->Text, MAX_TEXT_LENGTH);
+            ControlData.PresetNames[message->Value][MAX_TEXT_LENGTH - 1] = 0;
+
+            // update web UI
+            wifi_request_sync(WIFI_SYNC_TYPE_PRESET_NAME, (void*)ControlData.PresetNames[message->Value], (void*)&message->Value);
+        } break;
+
         case EVENT_SET_PRESET_DETAILS:
         {
             ControlData.PresetIndex = message->Value;
 
-            memcpy((void*)ControlData.PresetName, (void*)message->Text, MAX_TEXT_LENGTH);
-            ControlData.PresetName[MAX_TEXT_LENGTH - 1] = 0;
+            memcpy((void*)ControlData.PresetNames[message->Value], (void*)message->Text, MAX_TEXT_LENGTH);
+            ControlData.PresetNames[message->Value][MAX_TEXT_LENGTH - 1] = 0;
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
             // update UI
-            UI_SetPresetLabel(ControlData.PresetName);
+            UI_SetPresetLabel(PresetIndexForOrderValue(message->Value), ControlData.PresetNames[message->Value]);
             UI_SetAmpSkin(ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex);
             UI_SetPresetDescription(ControlData.ConfigData.UserData[ControlData.PresetIndex].PresetDescription);
 #endif
 
             // update web UI
-            wifi_request_sync(WIFI_SYNC_TYPE_PRESET, (void*)ControlData.PresetName, (void*)&ControlData.PresetIndex);
+            wifi_request_sync(WIFI_SYNC_TYPE_PRESET, NULL, (void*)&ControlData.PresetIndex);
         } break;
 
         case EVENT_SET_USB_STATUS:
@@ -825,6 +852,30 @@ void control_request_bank_index(uint8_t index)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+void control_sync_preset_name(uint16_t index, char* name)
+{
+    tControlMessage message;
+
+    ESP_LOGI(TAG, "control_sync_preset_details");            
+
+    message.Event = EVENT_SET_PRESET_NAME;
+    message.Value = index;
+    strncpy(message.Text, name, MAX_TEXT_LENGTH - 1);
+
+    // send to queue
+    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    {
+        ESP_LOGE(TAG, "control_sync_preset_name queue send failed!");            
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void control_sync_preset_details(uint16_t index, char* name)
 {
     tControlMessage message;
@@ -833,8 +884,7 @@ void control_sync_preset_details(uint16_t index, char* name)
 
     message.Event = EVENT_SET_PRESET_DETAILS;
     message.Value = index;
-    sprintf(message.Text, "%d: ", (int)index + 1);
-    strncat(message.Text, name, MAX_TEXT_LENGTH - 1);
+    strncpy(message.Text, name, MAX_TEXT_LENGTH - 1);
 
     // send to queue
     if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
@@ -1429,6 +1479,38 @@ void control_get_config_item_string(uint32_t item, char* name)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+void control_set_preset_order(uint8_t order[MAX_PRESETS_DEFAULT])
+{
+    for (uint8_t index = 0; index < MAX_PRESETS_DEFAULT; index++)
+    {
+        ControlData.ConfigData.PresetOrder[index] = order[index];
+    }
+
+#if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
+    // update UI
+    UI_SetPresetLabel(PresetIndexForOrderValue(ControlData.PresetIndex), ControlData.PresetNames[ControlData.PresetIndex]);
+#endif
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+uint8_t* control_get_preset_order(void)
+{
+    return ControlData.ConfigData.PresetOrder;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void control_set_skin_next(void)
 {
     if (ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex < (SKIN_MAX - 1))
@@ -1454,6 +1536,27 @@ void control_set_skin_previous(void)
         control_set_amp_skin_index(ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex);
     }
 }
+
+#if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      none
+* NOTES:       none
+****************************************************************************/
+static uint8_t PresetIndexForOrderValue(uint8_t value)
+{
+    for (uint8_t i = 0; i < MAX_PRESETS_DEFAULT; i++)
+    {
+        if (ControlData.ConfigData.PresetOrder[i] == value)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+#endif
 
 /****************************************************************************
 * NAME:        
@@ -1690,6 +1793,11 @@ void control_set_default_config(void)
     for (uint8_t loop = 0; loop < MAX_INTERNAL_EFFECT_FOOTSWITCHES; loop++)
     {
         ControlData.ConfigData.InternalFootswitchEffectConfig[loop].Switch = SWITCH_NOT_USED;
+    }
+
+    for (uint8_t loop = 0; loop < MAX_PRESETS_DEFAULT; loop++)
+    {
+        ControlData.ConfigData.PresetOrder[loop] = loop;
     }
 }
 

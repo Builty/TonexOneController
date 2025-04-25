@@ -181,6 +181,63 @@ static tTonexParameter TonexParameters[TONEX_GLOBAL_LAST] =
     {440,    415,    465,  "TUNEREF", TONEX_PARAM_TYPE_RANGE},              // TONEX_GLOBAL_TUNING_REFERENCE
 };
 
+static tTonexPresetColor TonexPresetColors[MAX_PRESETS] = {
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00}
+};
+
+typedef struct {
+    uint32_t rawColor;
+    uint32_t realColor;
+} tTonexPresetColorMapping;
+
+#define COLORS_COUNT 21
+
+const tTonexPresetColorMapping TonexColorMap[COLORS_COUNT] = {
+    {0xFF0000, 0xff0619}, // red
+    {0xFF3F00, 0xe75116}, // orange
+    {0x9FFF00, 0xffe12a}, // yellow
+    {0x00FF00, 0x00f642}, // green
+    {0x0FFF2F, 0x00fbcd}, // cyan
+    {0x00FFFF, 0x009dfc}, // azure
+    {0x0000FF, 0x0044fb}, // blue
+    {0x2F00FF, 0x6c64fb}, // purple
+    {0xFF00FF, 0x845083}, // magenta
+    {0xBFBFBF, 0xff8bfc}, // pink
+    {0x110000, 0x871218}, // dark red
+    {0x111100, 0x7a3616}, // dark orange
+    {0x112200, 0x85771c}, // dark yellow
+    {0x001100, 0x05802d}, // dark green
+    {0x002206, 0x00826e}, // dark cyan
+    {0x001919, 0x005882}, // dark azure
+    {0x000011, 0x002e82}, // dark blue
+    {0x050011, 0x433e82}, // dark purple
+    {0x0A000A, 0x851a6b}, // dark magenta
+    {0x0B0B0B, 0x845083}, // dark pink
+    {0x000000, 0x595959}, // grey
+};
+
+static uint8_t *_presetData;
+static uint16_t _presetDataLength = 0;
+
 /****************************************************************************
 * NAME:        
 * DESCRIPTION: 
@@ -319,6 +376,65 @@ esp_err_t __attribute__((unused)) tonex_dump_parameters(void)
     else
     {
         ESP_LOGE(TAG, "tonex_dump_parameters Mutex timeout!");   
+    }
+
+    return ESP_FAIL;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+esp_err_t tonex_params_colors_get_locked_access(tTonexPresetColor** color_ptr)
+{
+    // take mutex
+    if (xSemaphoreTake(ParamMutex, pdMS_TO_TICKS(PARAM_MUTEX_TIMEOUT)) == pdTRUE)
+    {
+        *color_ptr = TonexPresetColors;
+        return ESP_OK;
+    }
+    else
+    {
+        ESP_LOGE(TAG, "tonex_params_colors_get_locked_access Mutex timeout!");
+    }
+
+    return ESP_FAIL;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+esp_err_t tonex_params_colors_get_color(uint16_t preset_index, uint32_t* preset_color)
+{
+    // take mutex
+    if (xSemaphoreTake(ParamMutex, pdMS_TO_TICKS(PARAM_MUTEX_TIMEOUT)) == pdTRUE)
+    {
+        tTonexPresetColor color = TonexPresetColors[preset_index];
+        *preset_color = (color.red << 16) | (color.green << 8) | color.blue;
+
+        for (uint8_t index = 0; index < COLORS_COUNT; index++) {
+            tTonexPresetColorMapping mapping = TonexColorMap[index];
+            if (mapping.rawColor == *preset_color) {
+                *preset_color = mapping.realColor;
+                break;
+            }
+        }
+
+        // release mutex
+        xSemaphoreGive(ParamMutex);
+
+        return ESP_OK;
+    }
+    else
+    {
+        ESP_LOGE(TAG, "tonex_params_colors_get_color Mutex timeout!");
     }
 
     return ESP_FAIL;

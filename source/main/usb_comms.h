@@ -29,8 +29,6 @@ extern "C" {
 enum USB_Commands
 {
     USB_COMMAND_SET_PRESET,
-    USB_COMMAND_NEXT_PRESET,
-    USB_COMMAND_PREVIOUS_PRESET,
     USB_COMMAND_MODIFY_PARAMETER
 };
 
@@ -53,8 +51,6 @@ void init_usb_comms(void);
 
 // thread safe public API
 void usb_set_preset(uint32_t preset);
-void usb_next_preset(void);
-void usb_previous_preset(void);
 void usb_modify_parameter(uint16_t index, float value);
 
 #ifdef __cplusplus
