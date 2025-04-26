@@ -2386,55 +2386,6 @@
                         "InheritedType": 10
                       },
                       {
-                        "nid": 1001118,
-                        "strtype": "_event/action",
-                        "strval": "CHANGE SCREEN",
-                        "childs": [
-                          {
-                            "nid": 1001119,
-                            "strtype": "CHANGE SCREEN/Name",
-                            "strval": "CHANGE SCREEN",
-                            "InheritedType": 10
-                          },
-                          {
-                            "nid": 1001120,
-                            "strtype": "CHANGE SCREEN/Call",
-                            "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
-                            "InheritedType": 10
-                          },
-                          {
-                            "nid": 1001121,
-                            "strtype": "CHANGE SCREEN/CallC",
-                            "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
-                            "InheritedType": 10
-                          },
-                          {
-                            "nid": 1001122,
-                            "strtype": "CHANGE SCREEN/Screen_to",
-                            "strval": "GUID34694937-485534S8694115",
-                            "InheritedType": 9
-                          },
-                          {
-                            "nid": 1001123,
-                            "strtype": "CHANGE SCREEN/Fade_mode",
-                            "strval": "NONE",
-                            "InheritedType": 3
-                          },
-                          {
-                            "nid": 1001124,
-                            "strtype": "CHANGE SCREEN/Speed",
-                            "integer": 500,
-                            "InheritedType": 6
-                          },
-                          {
-                            "nid": 1001125,
-                            "strtype": "CHANGE SCREEN/Delay",
-                            "InheritedType": 6
-                          }
-                        ],
-                        "InheritedType": 10
-                      },
-                      {
                         "nid": 1001126,
                         "strtype": "_event/action",
                         "strval": "CALL FUNCTION",
@@ -20754,8 +20705,7 @@
                 "InheritedType": 4
               }
             ],
-            "saved_objtypeKey": "TABVIEW",
-            "tree_closed": true
+            "saved_objtypeKey": "TABVIEW"
           },
           {
             "guid": "GUID72729488-485586S9994115",

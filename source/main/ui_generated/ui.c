@@ -254,7 +254,6 @@ void ui_event_IconComp(lv_event_t * e)
         toggle_effect_comp(e);
     }
     if(event_code == LV_EVENT_LONG_PRESSED) {
-        _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
         show_settings_tab(e);
     }
 }

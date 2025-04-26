@@ -541,6 +541,13 @@ void show_settings_tab(lv_event_t * e)
         // show reverb settings
         lv_tabview_set_act(ui_SettingsTabview, 3, LV_ANIM_OFF);
     }
+
+    //xxx slow here
+    // load the settings screen
+    _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Settings_screen_init);
+
+    // update the UI to match the tab
+    UI_RefreshParameterValues();
 }
 
 /****************************************************************************
@@ -686,15 +693,27 @@ void ParameterChanged(lv_event_t * e)
             }
             else if (obj == ui_Slider2)
             {
-                usb_modify_parameter(TONEX_PARAM_EQ_MID, lv_slider_get_value(obj));
+                usb_modify_parameter(TONEX_PARAM_EQ_BASS_FREQ, lv_slider_get_value(obj));
             }
             else if (obj == ui_Slider3)
             {
-                usb_modify_parameter(TONEX_PARAM_EQ_MIDQ, lv_slider_get_value(obj));
+                usb_modify_parameter(TONEX_PARAM_EQ_MID, lv_slider_get_value(obj));
             }
             else if (obj == ui_Slider4)
             {
+                usb_modify_parameter(TONEX_PARAM_EQ_MID_FREQ, lv_slider_get_value(obj));
+            }
+            else if (obj == ui_Slider5)
+            {
+                usb_modify_parameter(TONEX_PARAM_EQ_MIDQ, lv_slider_get_value(obj));
+            }
+            else if (obj == ui_Slider6)
+            {
                 usb_modify_parameter(TONEX_PARAM_EQ_TREBLE, lv_slider_get_value(obj));
+            }
+            else if (obj == ui_Slider7)
+            {
+                usb_modify_parameter(TONEX_PARAM_EQ_TREBLE_FREQ, lv_slider_get_value(obj));
             }
         } break;
 
@@ -1393,12 +1412,15 @@ void UI_SettingsTabChanged(lv_event_t* e)
     if (lv_tabview_get_tab_act(ui_SettingsTabview) == CONFIG_TAB_EXIT)
     {
         // back to main screen
+        ESP_LOGI(TAG, "UI_SettingsTabChanged load home screen");            
+
         lv_tabview_set_act(ui_SettingsTabview, 0, LV_ANIM_OFF);
         _ui_screen_change(&ui_Screen1, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen1_screen_init);
     }
     else
     {
         // update UI
+        ESP_LOGI(TAG, "UI_SettingsTabChanged refresh param values");            
         UI_RefreshParameterValues();
     }
 }
@@ -1916,12 +1938,24 @@ static uint8_t update_ui_element(tUIUpdate* update)
                     lv_img_set_src(ui_IconAmp, (lv_obj_t*)&ui_img_effect_icon_amp_off_png);
                 }
 
+                // cabinet enable
+                param_entry = &param_ptr[TONEX_PARAM_CABINET_TYPE];
+                if (param_entry->Value == TONEX_CABINET_DISABLED)
+                {
+                    lv_img_set_src(ui_IconCab, (lv_obj_t*)&ui_img_effect_icon_cab_off_png);
+                }
+                else
+                {
+                    lv_img_set_src(ui_IconCab, (lv_obj_t*)&ui_img_effect_icon_cab_on_png);
+                }
 
                 // now check what config tab we are on and render the UI
                 switch (lv_tabview_get_tab_act(ui_SettingsTabview))
                 {
                     case CONFIG_TAB_GATE:
                     {
+                        ESP_LOGI(TAG, "Param tab Gate");
+
                         // set labels
                         lv_label_set_text(ui_Switch1Label, "Enable");
                         lv_label_set_text(ui_Switch2Label, "Post");
@@ -1989,6 +2023,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                     case CONFIG_TAB_COMPRESSOR:
                     {
+                        ESP_LOGI(TAG, "Param tab Comp");
+
                         // set labels
                         lv_label_set_text(ui_Switch1Label, "Enable");
                         lv_label_set_text(ui_Switch2Label, "Post");
@@ -2056,6 +2092,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                     case CONFIG_TAB_EQ:
                     {
+                        ESP_LOGI(TAG, "Param tab EQ");
+
                         // set labels
                         lv_label_set_text(ui_Switch1Label, "Post");
                         lv_label_set_text(ui_Slider1Label, "Bass");
@@ -2143,6 +2181,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                     case CONFIG_TAB_REVERB:
                     {
+                        ESP_LOGI(TAG, "Param tab Reverb");
+
                         // set labels
                         lv_label_set_text(ui_Switch1Label, "Enable");
                         lv_label_set_text(ui_Switch2Label, "Post");
@@ -2362,6 +2402,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                     case CONFIG_TAB_MODULATION:
                     {
+                        ESP_LOGI(TAG, "Param tab Modulation");
+
                         // set labels
                         lv_label_set_text(ui_Switch1Label, "Enable");
                         lv_label_set_text(ui_Switch2Label, "Post");
@@ -2663,6 +2705,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                     case CONFIG_TAB_DELAY:
                     {
+                        ESP_LOGI(TAG, "Param tab Delay");
+
                         // set labels
                         lv_label_set_text(ui_Switch1Label, "Enable");
                         lv_label_set_text(ui_Switch2Label, "Post");
@@ -2715,7 +2759,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         lv_dropdown_set_options(ui_Select1, "Digital\nTape");
                         lv_dropdown_set_selected(ui_Select1, param_entry->Value);
 
-                        switch ((int)param_entry)
+                        switch ((int)param_entry->Value)
                         {
                             case TONEX_DELAY_DIGITAL:
                             {
@@ -2821,6 +2865,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                     case CONFIG_TAB_AMPLIFIER:
                     {
+                        ESP_LOGI(TAG, "Param tab Amp");
+
                         // set labels
                         lv_label_set_text(ui_Switch1Label, "Amp");
                         lv_label_set_text(ui_Slider1Label, "Gain");
@@ -2905,6 +2951,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                     case CONFIG_TAB_GLOBAL:
                     {
+                        ESP_LOGI(TAG, "Param tab Global");
+
                         // set labels
                         lv_label_set_text(ui_Switch1Label, "Cab Bypass");
                         lv_label_set_text(ui_Switch2Label, "Tempo");
