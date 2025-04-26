@@ -48,28 +48,28 @@ SET(SOURCES screens/ui_Screen1.c
     images/ui_img_effect_icon_reverb_on_s2_png.c
     images/ui_img_effect_icon_reverb_on_s3_png.c
     images/ui_img_effect_icon_reverb_on_s4_png.c
-    images/ui_img_pskin_arion_png.c
     images/ui_img_pskin_bigmuff_png.c
-    images/ui_img_pskin_darkglass_png.c
-    images/ui_img_pskin_dod_png.c
-    images/ui_img_pskin_ehx_png.c
-    images/ui_img_pskin_fender_png.c
-    images/ui_img_pskin_fulltone_png.c
-    images/ui_img_pskin_fzs_png.c
-    images/ui_img_pskin_jhs_png.c
-    images/ui_img_pskin_klon_png.c
-    images/ui_img_pskin_landgraf_png.c
-    images/ui_img_pskin_mxr_png.c
-    images/ui_img_pskin_mxr2_png.c
-    images/ui_img_pskin_od1_png.c
-    images/ui_img_pskin_plimsoul_png.c
-    images/ui_img_pskin_rogermayer_png.c
-    images/ui_img_pskin_seymour_png.c
-    images/ui_img_pskin_strymon_png.c
-    images/ui_img_pskin_trex_png.c
-    images/ui_img_pskin_tubescreamer_png.c
-    images/ui_img_pskin_wampler_png.c
-    images/ui_img_pskin_zvex_png.c
+    images/ui_img_pskin_bossblack_png.c
+    images/ui_img_pskin_bosssilver_png.c
+    images/ui_img_pskin_bossyellow_png.c
+    images/ui_img_pskin_fuzzred_png.c
+    images/ui_img_pskin_fuzzsilver_png.c
+    images/ui_img_pskin_ibanezblue_png.c
+    images/ui_img_pskin_ibanezdarkblue_png.c
+    images/ui_img_pskin_ibanezgreen_png.c
+    images/ui_img_pskin_ibanezred_png.c
+    images/ui_img_pskin_klongold_png.c
+    images/ui_img_pskin_lifepedal_png.c
+    images/ui_img_pskin_morningglory_png.c
+    images/ui_img_pskin_mxrdoubleblack_png.c
+    images/ui_img_pskin_mxrdoublered_png.c
+    images/ui_img_pskin_mxrsingleblack_png.c
+    images/ui_img_pskin_mxrsinglegold_png.c
+    images/ui_img_pskin_mxrsinglegreen_png.c
+    images/ui_img_pskin_mxrsingleorange_png.c
+    images/ui_img_pskin_mxrsinglewhite_png.c
+    images/ui_img_pskin_mxrsingleyellow_png.c
+    images/ui_img_pskin_ratyellow_png.c
     images/ui_img_skin_5150_png.c
     images/ui_img_skin_ac30_png.c
     images/ui_img_skin_ampegchrome_png.c

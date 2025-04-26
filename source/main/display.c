@@ -1534,114 +1534,114 @@ static lv_obj_t* ui_get_skin_image(uint16_t index)
 
 #if CONFIG_TONEX_CONTROLLER_SKINS_PEDAL
         // pedals
-        case PEDAL_SKIN_ARION:
-        {
-            result = (lv_obj_t*)&ui_img_pskin_arion_png;
-        } break;
-
         case PEDAL_SKIN_BIGMUFF:
         {
             result = (lv_obj_t*)&ui_img_pskin_bigmuff_png;
         } break;
 
-        case PEDAL_SKIN_DARKGLASS:
+        case PEDAL_SKIN_BOSSBLACK:
         {
-            result = (lv_obj_t*)&ui_img_pskin_darkglass_png;
+            result = (lv_obj_t*)&ui_img_pskin_bossblack_png;
         } break;
 
-        case PEDAL_SKIN_DOD:
+        case PEDAL_SKIN_BOSSSILVER:
         {
-            result = (lv_obj_t*)&ui_img_pskin_dod_png;
+            result = (lv_obj_t*)&ui_img_pskin_bosssilver_png;
         } break;
 
-        case PEDAL_SKIN_EHX:
+        case PEDAL_SKIN_BOSSYELLOW:
         {
-            result = (lv_obj_t*)&ui_img_pskin_ehx_png;
+            result = (lv_obj_t*)&ui_img_pskin_bossyellow_png;
         } break;
 
-        case PEDAL_SKIN_FENDER:
+        case PEDAL_SKIN_FUZZRED:
         {
-            result = (lv_obj_t*)&ui_img_pskin_fender_png;
+            result = (lv_obj_t*)&ui_img_pskin_fuzzred_png;
         } break;
 
-        case PEDAL_SKIN_FULLTONE:
+        case PEDAL_SKIN_FUZZSILVER:
         {
-            result = (lv_obj_t*)&ui_img_pskin_fulltone_png;
+            result = (lv_obj_t*)&ui_img_pskin_fuzzsilver_png;
         } break;
 
-        case PEDAL_SKIN_FZS:
+        case PEDAL_SKIN_IBANEZBLUE:
         {
-            result = (lv_obj_t*)&ui_img_pskin_fzs_png;
+            result = (lv_obj_t*)&ui_img_pskin_ibanezblue_png;
         } break;
 
-        case PEDAL_SKIN_JHS:
+        case PEDAL_SKIN_IBANEZDARKBLUE:
         {
-            result = (lv_obj_t*)&ui_img_pskin_jhs_png;
+            result = (lv_obj_t*)&ui_img_pskin_ibanezdarkblue_png;
         } break;
 
-        case PEDAL_SKIN_KLON:
+        case PEDAL_SKIN_IBANEZGREEN:
         {
-            result = (lv_obj_t*)&ui_img_pskin_klon_png;
+            result = (lv_obj_t*)&ui_img_pskin_ibanezgreen_png;
         } break;
 
-        case PEDAL_SKIN_LANDGRAF:
+        case PEDAL_SKIN_IBANEZRED:
         {
-            result = (lv_obj_t*)&ui_img_pskin_landgraf_png;
+            result = (lv_obj_t*)&ui_img_pskin_ibanezred_png;
         } break;
 
-        case PEDAL_SKIN_MXR:
+        case PEDAL_SKIN_KLONGOLD:
         {
-            result = (lv_obj_t*)&ui_img_pskin_mxr_png;
+            result = (lv_obj_t*)&ui_img_pskin_klongold_png;
         } break;
 
-        case PEDAL_SKIN_MXR2:
+        case PEDAL_SKIN_LIFEPEDAL:
         {
-            result = (lv_obj_t*)&ui_img_pskin_mxr2_png;
+            result = (lv_obj_t*)&ui_img_pskin_lifepedal_png;
         } break;
 
-        case PEDAL_SKIN_OD1:
+        case PEDAL_SKIN_MORNINGGLORY:
         {
-            result = (lv_obj_t*)&ui_img_pskin_od1_png;
+            result = (lv_obj_t*)&ui_img_pskin_morningglory_png;
         } break;
 
-        case PEDAL_SKIN_PLIMSOUL:
+        case PEDAL_SKIN_MXRDOUBLEBLACK:
         {
-            result = (lv_obj_t*)&ui_img_pskin_plimsoul_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrdoubleblack_png;
         } break;
 
-        case PEDAL_SKIN_ROGERMAYER:
+        case PEDAL_SKIN_MXRDOUBLERED:
         {
-            result = (lv_obj_t*)&ui_img_pskin_rogermayer_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrdoublered_png;
         } break;
 
-        case PEDAL_SKIN_SEYMOUR:
+        case PEDAL_SKIN_MXRSINGLEBLACK:
         {
-            result = (lv_obj_t*)&ui_img_pskin_seymour_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrsingleblack_png;
         } break;
 
-        case PEDAL_SKIN_STRYMON:
+        case PEDAL_SKIN_MXRSINGLEGOLD:
         {
-            result = (lv_obj_t*)&ui_img_pskin_strymon_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrsinglegold_png;
         } break;
 
-        case PEDAL_SKIN_TREX:
+        case PEDAL_SKIN_MXRSINGLEGREEN:
         {
-            result = (lv_obj_t*)&ui_img_pskin_trex_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrsinglegreen_png;
         } break;
 
-        case PEDAL_SKIN_TUBESCREAMER:
+        case PEDAL_SKIN_MXRSINGLEORANGE:
         {
-            result = (lv_obj_t*)&ui_img_pskin_tubescreamer_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrsingleorange_png;
         } break;
 
-        case PEDAL_SKIN_WAMPLER:
+        case PEDAL_SKIN_MXRSINGLEWHITE:
         {
-            result = (lv_obj_t*)&ui_img_pskin_wampler_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrsinglewhite_png;
         } break;
 
-        case PEDAL_SKIN_ZVEX:
+        case PEDAL_SKIN_MXRSINGLEYELLOW:
         {
-            result = (lv_obj_t*)&ui_img_pskin_zvex_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrsingleyellow_png;
+        } break;
+
+        case PEDAL_SKIN_RATYELLOW:
+        {
+            result = (lv_obj_t*)&ui_img_pskin_ratyellow_png;
         } break;
 #endif //CONFIG_TONEX_CONTROLLER_SKINS_PEDAL
 
