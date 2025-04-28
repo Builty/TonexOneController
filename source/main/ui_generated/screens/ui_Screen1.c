@@ -65,7 +65,7 @@ void ui_Screen1_screen_init(void)
     lv_img_set_src(ui_IconEQ, &ui_img_effect_icon_eq_png);
     lv_obj_set_width(ui_IconEQ, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_IconEQ, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_IconEQ, -266);
+    lv_obj_set_x(ui_IconEQ, -275);
     lv_obj_set_y(ui_IconEQ, 0);
     lv_obj_set_align(ui_IconEQ, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_IconEQ, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags

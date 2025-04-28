@@ -192,7 +192,6 @@ enum ConfigTabs43B
     CONFIG_TAB_DELAY,
     CONFIG_TAB_AMPLIFIER,
     CONFIG_TAB_GLOBAL,
-    CONFIG_TAB_EXIT
 };
 
 enum FootswitchLayouts

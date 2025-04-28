@@ -12,8 +12,8 @@ extern "C" {
 
 void PreviousClicked(lv_event_t * e);
 void NextClicked(lv_event_t * e);
-void show_settings_tab(lv_event_t * e);
 void toggle_effect_gate(lv_event_t * e);
+void show_settings_tab(lv_event_t * e);
 void toggle_effect_amp(lv_event_t * e);
 void toggle_effect_cab(lv_event_t * e);
 void toggle_effect_comp(lv_event_t * e);
@@ -26,7 +26,6 @@ void AmpSkinNext(lv_event_t * e);
 void PresetDescriptionChanged(lv_event_t * e);
 void SaveUserDataRequest(lv_event_t * e);
 void ParameterChanged(lv_event_t * e);
-void UI_SettingsTabChanged(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/

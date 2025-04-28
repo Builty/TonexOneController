@@ -70,7 +70,3 @@ def toggle_effect_reverb(event_struct):
 def show_settings_tab(event_struct):
     return
 
-
-def UI_SettingsTabChanged(event_struct):
-    return
-
