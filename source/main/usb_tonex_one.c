@@ -1279,6 +1279,11 @@ static esp_err_t usb_tonex_one_process_single_message(uint8_t* data, uint16_t le
                     // flag that we need to do the boot init procedure
                     boot_init_needed = 1;
                     boot_preset_request = 0;
+
+#if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
+                    // show sync message
+                    UI_SetPresetLabel(0, "Syncing....");
+#endif
                 } break;
 
                 case TYPE_STATE_PRESET_DETAILS_FULL:

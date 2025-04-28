@@ -235,9 +235,6 @@ const tTonexPresetColorMapping TonexColorMap[COLORS_COUNT] = {
     {0x000000, 0x595959}, // grey
 };
 
-static uint8_t *_presetData;
-static uint16_t _presetDataLength = 0;
-
 /****************************************************************************
 * NAME:        
 * DESCRIPTION: 
