@@ -506,6 +506,12 @@ void show_settings_tab(lv_event_t * e)
 {
 	lv_obj_t* target = lv_event_get_current_target(e);
 
+    if (ui_Settings == NULL)
+    {
+        // create the screen objects
+        ui_Settings_screen_init();
+    }
+
     if (target == ui_IconEQ)
     {
         // show EQ settings
@@ -542,12 +548,11 @@ void show_settings_tab(lv_event_t * e)
         lv_tabview_set_act(ui_SettingsTabview, 3, LV_ANIM_OFF);
     }
 
-    //xxx slow here
-    // load the settings screen
-    _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Settings_screen_init);
-
-    // update the UI to match the tab
+    // update the UI to match the tab (note: involves a queue send, happens asyncronously)
     UI_RefreshParameterValues();
+
+    // load the settings screen
+    _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Settings_screen_init);   
 }
 
 /****************************************************************************
