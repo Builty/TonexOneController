@@ -20,6 +20,7 @@ limitations under the License.
 enum WiFiSyncTypes
 {
     WIFI_SYNC_TYPE_PARAMS,
+    WIFI_SYNC_TYPE_PRESET_NAME,
     WIFI_SYNC_TYPE_PRESET,
     WIFI_SYNC_TYPE_CONFIG
 };

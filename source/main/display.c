@@ -1265,14 +1265,15 @@ void UI_SetWiFiStatus(uint8_t state)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void UI_SetPresetLabel(char* text)
+void UI_SetPresetLabel(uint16_t index, char* name)
 {
     tUIUpdate ui_update;
 
     // build command
     ui_update.ElementID = UI_ELEMENT_PRESET_NAME;
     ui_update.Action = UI_ACTION_SET_LABEL_TEXT;
-    strncpy(ui_update.Text, text, MAX_UI_TEXT - 1);
+    sprintf(ui_update.Text, "%d: ", (int)index + 1);
+    strncat(ui_update.Text, name, MAX_UI_TEXT - 1);
 
     // send to queue
     if (xQueueSend(ui_update_queue, (void*)&ui_update, 0) != pdPASS)

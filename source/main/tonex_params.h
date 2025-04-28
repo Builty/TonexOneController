@@ -216,12 +216,22 @@ enum TonexParameters
 // special cases for handling effect switches that use Midi but don't change a parameter
 #define TONEX_UNKNOWN           0xFFFF
 
+typedef struct
+{
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
+} tTonexPresetColor;
+
 esp_err_t tonex_params_init(void);
 esp_err_t tonex_params_get_locked_access(tTonexParameter** param_ptr);
 esp_err_t tonex_params_release_locked_access(void);
 esp_err_t tonex_params_get_min_max(uint16_t param_index, float* min, float* max);
 esp_err_t tonex_dump_parameters(void);
 float tonex_params_clamp_value(uint16_t param_index, float value);
+
+esp_err_t tonex_params_colors_get_locked_access(tTonexPresetColor** color_ptr);
+esp_err_t tonex_params_colors_get_color(uint16_t preset_index, uint32_t* preset_color);
 
 #ifdef __cplusplus
 } /*extern "C"*/

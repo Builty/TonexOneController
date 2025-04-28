@@ -73,3 +73,4 @@ if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R)
                             "ui_generated_085/images/ui_img_bt_conn_png.c" "ui_generated_085/images/ui_img_bt_disconn_png.c")
 endif()
 
+target_compile_options(${COMPONENT_LIB} PRIVATE -Werror)

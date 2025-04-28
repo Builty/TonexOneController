@@ -118,6 +118,7 @@ typedef enum Slot
 #define TONEX_STATE_OFFSET_START_STOMP_MODE     19          // 0x00 - off, 0x01 - on
 #define TONEX_STATE_OFFSET_START_CAB_BYPASS     20          // 0x00 - off, 0x01 - on
 #define TONEX_STATE_OFFSET_START_TUNING_MODE    21          // 0x00 - mute, 0x01 - through
+#define TONEX_STATE_OFFSET_START_COLORS         22
 
 #define TONEX_STATE_OFFSET_END_BPM              4          
 #define TONEX_STATE_OFFSET_END_TEMPO_SOURCE     6           // 00 - GLOBAL, 01 - PRESET 
@@ -185,6 +186,7 @@ static uint8_t* TxBuffer;
 static uint8_t* FramedBuffer;
 static QueueHandle_t input_queue;
 static uint8_t boot_init_needed = 0;
+static uint8_t boot_preset_request = 0;
 static volatile tInputBufferEntry* InputBuffers;
 static uint8_t* PreallocatedMemory;
 
@@ -876,6 +878,23 @@ static Status usb_tonex_one_parse_state(uint8_t* unframed, uint16_t length, uint
         tonex_params_release_locked_access();
     }
 
+    tTonexPresetColor* color_ptr;
+    // update preset colors
+    if (tonex_params_colors_get_locked_access(&color_ptr) == ESP_OK)
+    {
+        uint8_t data_offset = TONEX_STATE_OFFSET_START_COLORS;
+        data_offset += 2; // skip `ba 14` list header
+        for (uint16_t preset_index = 0; preset_index < MAX_PRESETS; preset_index++) {
+            data_offset += 2; // skip `b9 03` list header
+
+            color_ptr[preset_index].red = usb_tonex_one_parse_value(TonexData->Message.PedalData.StateData, &data_offset);
+            color_ptr[preset_index].green = usb_tonex_one_parse_value(TonexData->Message.PedalData.StateData, &data_offset);
+            color_ptr[preset_index].blue = usb_tonex_one_parse_value(TonexData->Message.PedalData.StateData, &data_offset);
+        }
+
+        tonex_params_release_locked_access();
+    }
+
     // debug
     //ESP_LOG_BUFFER_HEXDUMP(TAG, TonexData->Message.PedalData.StateData, TonexData->Message.PedalData.StateDataLength, ESP_LOG_INFO);
     //tonex_dump_parameters();
@@ -1190,8 +1209,8 @@ static esp_err_t usb_tonex_one_process_single_message(uint8_t* data, uint16_t le
 
                     if (boot_init_needed)
                     {
-                        // request details of the current preset, so we can update UI
-                        usb_tonex_one_request_preset_details(current_preset, 0);
+                        // start getting preset names
+                        usb_tonex_one_request_preset_details(boot_preset_request, 0);
                         boot_init_needed = 0;
                     }
                     else
@@ -1217,22 +1236,36 @@ static esp_err_t usb_tonex_one_process_single_message(uint8_t* data, uint16_t le
                     }
 
                     current_preset = usb_tonex_one_get_current_active_preset();
-                    ESP_LOGI(TAG, "Received State Update. Current slot: %d. Preset: %d", (int)TonexData->Message.CurrentSlot, (int)current_preset);
-                    
-                    // make sure we are showing the correct preset as active                
-                    control_sync_preset_details(current_preset, preset_name);
 
-                    // read the preset params
-                    usb_tonex_one_parse_preset_parameters(data, length);
+                    if (boot_preset_request < MAX_PRESETS) {
+                        // save preset name 
+                        control_sync_preset_name(boot_preset_request, preset_name);
 
-                    // signal to refresh param UI
-                    UI_RefreshParameterValues();
+                        // get next preset name
+                        boot_preset_request++;
+                        usb_tonex_one_request_preset_details(boot_preset_request, 0);
+                    } else if (boot_preset_request == MAX_PRESETS) {
+                        // all other preset nammes grabbed, get current preset details
+                        boot_preset_request++;
+                        usb_tonex_one_request_preset_details(current_preset, 0);
+                    } else {
+                        ESP_LOGI(TAG, "Received State Update. Current slot: %d. Preset: %d", (int)TonexData->Message.CurrentSlot, (int)current_preset);
+                        
+                        // make sure we are showing the correct preset as active                
+                        control_sync_preset_details(current_preset, preset_name);
 
-                    // update web UI
-                    wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+                        // read the preset params
+                        usb_tonex_one_parse_preset_parameters(data, length);
 
-                    // debug dump parameters
-                    //tonex_dump_parameters();
+                        // signal to refresh param UI
+                        UI_RefreshParameterValues();
+
+                        // update web UI
+                        wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+
+                        // debug dump parameters
+                        //tonex_dump_parameters();
+                    }
                 } break;
 
                 case TYPE_HELLO:
@@ -1245,6 +1278,7 @@ static esp_err_t usb_tonex_one_process_single_message(uint8_t* data, uint16_t le
 
                     // flag that we need to do the boot init procedure
                     boot_init_needed = 1;
+                    boot_preset_request = 0;
                 } break;
 
                 case TYPE_STATE_PRESET_DETAILS_FULL:
@@ -1324,31 +1358,7 @@ void usb_tonex_one_handle(class_driver_t* driver_obj)
                             }
                         }
                     } break;   
-
-                    case USB_COMMAND_NEXT_PRESET:
-                    {
-                        if (TonexData->Message.SlotCPreset < (MAX_PRESETS - 1))
-                        {
-                            // always using Stomp mode C for preset setting
-                            if (usb_tonex_one_set_preset_in_slot(TonexData->Message.SlotCPreset + 1, C, 1) != ESP_OK)
-                            {
-                                // failed return to queue?
-                            }
-                        }
-                    } break;
-
-                    case USB_COMMAND_PREVIOUS_PRESET:
-                    {
-                        if (TonexData->Message.SlotCPreset > 0)
-                        {
-                            // always using Stomp mode C for preset setting
-                            if (usb_tonex_one_set_preset_in_slot(TonexData->Message.SlotCPreset - 1, C, 1) != ESP_OK)
-                            {
-                                // failed return to queue?
-                            }
-                        }
-                    } break;
-
+                    
                     case USB_COMMAND_MODIFY_PARAMETER:
                     {
                         if (message.Payload < TONEX_PARAM_LAST)
