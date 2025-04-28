@@ -255,7 +255,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_clear_flag(ui_Skins, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_SkinImage = lv_img_create(ui_Skins);
-    lv_img_set_src(ui_SkinImage, &ui_img_skin_jcm800_png);
+    lv_img_set_src(ui_SkinImage, &ui_img_skin_jcm_png);
     lv_obj_set_width(ui_SkinImage, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_SkinImage, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_SkinImage, LV_ALIGN_CENTER);

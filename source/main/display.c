@@ -1391,104 +1391,9 @@ static lv_obj_t* ui_get_skin_image(uint16_t index)
     {
 #if CONFIG_TONEX_CONTROLLER_SKINS_AMP        
         // amps
-        case AMP_SKIN_JCM800:
-        {
-            result = (lv_obj_t*)&ui_img_skin_jcm800_png;            
-        } break;
-
-        case AMP_SKIN_TWIN_REVERB:
-        {
-            result = (lv_obj_t*)&ui_img_skin_twinreverb_png;
-        } break;
-
-        case AMP_SKIN_2001RB:
-        {
-            result = (lv_obj_t*)&ui_img_skin_2001rb_png;
-        } break;
-
         case AMP_SKIN_5150:
         {
             result = (lv_obj_t*)&ui_img_skin_5150_png;
-        } break;
-
-        case AMP_SKIN_B18N:
-        {
-            result = (lv_obj_t*)&ui_img_skin_b18n_png;
-        } break;
-
-        case AMP_SKIN_BLUES_DELUXE:
-        {
-            result = (lv_obj_t*)&ui_img_skin_bluesdeluxe_png;
-        } break;
-
-        case AMP_SKIN_DEVILLE:
-        {
-            result = (lv_obj_t*)&ui_img_skin_deville_png;
-        } break;
-
-        case AMP_SKIN_DUAL_RECTIFIER:
-        {
-            result = (lv_obj_t*)&ui_img_skin_dualrectifier_png;
-        } break;
-
-        case AMP_SKIN_GOLD_FINGER:
-        {
-            result = (lv_obj_t*)&ui_img_skin_goldfinger_png;
-        } break;
-
-        case AMP_SKIN_INVADER:
-        {
-            result = (lv_obj_t*)&ui_img_skin_invader_png;
-        } break;
-
-        case AMP_SKIN_JAZZ_CHORUS:
-        {
-            result = (lv_obj_t*)&ui_img_skin_jazzchorus_png;
-        } break;
-
-        case AMP_SKIN_OR_50:
-        {
-            result = (lv_obj_t*)&ui_img_skin_or50_png;
-        } break;
-
-        case AMP_SKIN_POWERBALL:
-        {
-            result = (lv_obj_t*)&ui_img_skin_powerball_png;
-        } break;
-
-        case AMP_SKIN_PRINCETON:
-        {
-            result = (lv_obj_t*)&ui_img_skin_princeton_png;
-        } break;
-
-        case AMP_SKIN_SVTCL:
-        {
-            result = (lv_obj_t*)&ui_img_skin_svtcl_png;
-        } break;
-
-        case AMP_SKIN_MAVERICK:
-        {
-            result = (lv_obj_t*)&ui_img_skin_maverick_png;
-        } break;
-
-        case AMP_SKIN_MK3:
-        {
-            result = (lv_obj_t*)&ui_img_skin_mk3_png;
-        } break;
-
-        case AMP_SKIN_SUPERBASS:
-        {
-            result = (lv_obj_t*)&ui_img_skin_superbass_png;
-        } break;
-
-        case AMP_SKIN_DUMBLE:
-        {
-            result = (lv_obj_t*)&ui_img_skin_dumble_png;
-        } break;
-
-        case AMP_SKIN_JETCITY:
-        {
-            result = (lv_obj_t*)&ui_img_skin_jetcity_png;
         } break;
 
         case AMP_SKIN_AC30:
@@ -1496,148 +1401,253 @@ static lv_obj_t* ui_get_skin_image(uint16_t index)
             result = (lv_obj_t*)&ui_img_skin_ac30_png;
         } break;
 
-        case AMP_SKIN_EVH5150:
+        case AMP_SKIN_AMPEGCHROME:
         {
-            result = (lv_obj_t*)&ui_img_skin_evh5150_png;
+            result = (lv_obj_t*)&ui_img_skin_ampegchrome_png;
         } break;
 
-        case AMP_SKIN_2020:
+        case AMP_SKIN_BA500:
         {
-            result = (lv_obj_t*)&ui_img_skin_2020_png;
-        } break;
-
-        case AMP_SKIN_PINK_TACO:
-        {
-            result = (lv_obj_t*)&ui_img_skin_pinktaco_png;
-        } break;
-
-        case AMP_SKIN_SUPRO_50:
-        {
-            result = (lv_obj_t*)&ui_img_skin_supro50_png;
+            result = (lv_obj_t*)&ui_img_skin_ba500_png;
         } break;
 
         case AMP_SKIN_DIEZEL:
         {
             result = (lv_obj_t*)&ui_img_skin_diezel_png;
         } break;
+
+        case AMP_SKIN_ELEGANTBLUE:
+        {
+            result = (lv_obj_t*)&ui_img_skin_elegantblue_png;
+        } break;
+
+        case AMP_SKIN_EVH:
+        {
+            result = (lv_obj_t*)&ui_img_skin_evh_png;
+        } break;
+
+        case AMP_SKIN_FENDERHOTROD:
+        {
+            result = (lv_obj_t*)&ui_img_skin_fenderhotrod_png;
+        } break;
+
+        case AMP_SKIN_FENDERTWEEDBIG:
+        {
+            result = (lv_obj_t*)&ui_img_skin_fendertweedbig_png;
+        } break;
+
+        case AMP_SKIN_FENDERTWIN:
+        {
+            result = (lv_obj_t*)&ui_img_skin_fendertwin_png;
+        } break;
+
+        case AMP_SKIN_FRIEDMANN:
+        {
+            result = (lv_obj_t*)&ui_img_skin_friedmann_png;
+        } break;
+
+        case AMP_SKIN_JBDUMBLE1:
+        {
+            result = (lv_obj_t*)&ui_img_skin_jbdumble1_png;
+        } break;
+
+        case AMP_SKIN_JCM:
+        {
+            result = (lv_obj_t*)&ui_img_skin_jcm_png;
+        } break;
+
+        case AMP_SKIN_JETCITY:
+        {
+            result = (lv_obj_t*)&ui_img_skin_jetcity_png;
+        } break;
+
+        case AMP_SKIN_JTM:
+        {
+            result = (lv_obj_t*)&ui_img_skin_jtm_png;
+        } break;
+
+        case AMP_SKIN_MESABOOGIEDUAL:
+        {
+            result = (lv_obj_t*)&ui_img_skin_mesaboogiedual_png;
+        } break;
+
+        case AMP_SKIN_MESAMARKV:
+        {
+            result = (lv_obj_t*)&ui_img_skin_mesamarkv_png;
+        } break;
+
+        case AMP_SKIN_MESAMARKWOOD:
+        {
+            result = (lv_obj_t*)&ui_img_skin_mesamarkwood_png;
+        } break;
+
+        case AMP_SKIN_MODERNBLACKPLEXI:
+        {
+            result = (lv_obj_t*)&ui_img_skin_modernblackplexi_png;
+        } break;
+
+        case AMP_SKIN_MODERNWHITEPLEXI:
+        {
+            result = (lv_obj_t*)&ui_img_skin_modernwhiteplexi_png;
+        } break;
+
+        case AMP_SKIN_ORANGEOR120:
+        {
+            result = (lv_obj_t*)&ui_img_skin_orangeor120_png;
+        } break;
+
+        case AMP_SKIN_ROLANDJAZZ:
+        {
+            result = (lv_obj_t*)&ui_img_skin_rolandjazz_png;
+        } break;
+
+        case AMP_SKIN_TONEXAMPBLACK:
+        {
+            result = (lv_obj_t*)&ui_img_skin_tonexampblack_png;
+        } break;
+
+        case AMP_SKIN_TONEXAMPRED:
+        {
+            result = (lv_obj_t*)&ui_img_skin_tonexampred_png;
+        } break;
+
+        case AMP_SKIN_SILVERFACE:
+        {
+            result = (lv_obj_t*)&ui_img_skin_silverface_png;
+        } break;
+
+        case AMP_SKIN_SUPRO:
+        {
+            result = (lv_obj_t*)&ui_img_skin_supro_png;
+        } break;
+
+        case AMP_SKIN_WHITEMODERN:
+        {
+            result = (lv_obj_t*)&ui_img_skin_whitemodern_png;
+        } break;
+
+        case AMP_SKIN_WOODAMP:
+        {
+            result = (lv_obj_t*)&ui_img_skin_woodamp_png;
+        } break;
 #endif  //CONFIG_TONEX_CONTROLLER_SKINS_AMP
 
 #if CONFIG_TONEX_CONTROLLER_SKINS_PEDAL
         // pedals
-        case PEDAL_SKIN_ARION:
-        {
-            result = (lv_obj_t*)&ui_img_pskin_arion_png;
-        } break;
-
         case PEDAL_SKIN_BIGMUFF:
         {
             result = (lv_obj_t*)&ui_img_pskin_bigmuff_png;
         } break;
 
-        case PEDAL_SKIN_DARKGLASS:
+        case PEDAL_SKIN_BOSSBLACK:
         {
-            result = (lv_obj_t*)&ui_img_pskin_darkglass_png;
+            result = (lv_obj_t*)&ui_img_pskin_bossblack_png;
         } break;
 
-        case PEDAL_SKIN_DOD:
+        case PEDAL_SKIN_BOSSSILVER:
         {
-            result = (lv_obj_t*)&ui_img_pskin_dod_png;
+            result = (lv_obj_t*)&ui_img_pskin_bosssilver_png;
         } break;
 
-        case PEDAL_SKIN_EHX:
+        case PEDAL_SKIN_BOSSYELLOW:
         {
-            result = (lv_obj_t*)&ui_img_pskin_ehx_png;
+            result = (lv_obj_t*)&ui_img_pskin_bossyellow_png;
         } break;
 
-        case PEDAL_SKIN_FENDER:
+        case PEDAL_SKIN_FUZZRED:
         {
-            result = (lv_obj_t*)&ui_img_pskin_fender_png;
+            result = (lv_obj_t*)&ui_img_pskin_fuzzred_png;
         } break;
 
-        case PEDAL_SKIN_FULLTONE:
+        case PEDAL_SKIN_FUZZSILVER:
         {
-            result = (lv_obj_t*)&ui_img_pskin_fulltone_png;
+            result = (lv_obj_t*)&ui_img_pskin_fuzzsilver_png;
         } break;
 
-        case PEDAL_SKIN_FZS:
+        case PEDAL_SKIN_IBANEZBLUE:
         {
-            result = (lv_obj_t*)&ui_img_pskin_fzs_png;
+            result = (lv_obj_t*)&ui_img_pskin_ibanezblue_png;
         } break;
 
-        case PEDAL_SKIN_JHS:
+        case PEDAL_SKIN_IBANEZDARKBLUE:
         {
-            result = (lv_obj_t*)&ui_img_pskin_jhs_png;
+            result = (lv_obj_t*)&ui_img_pskin_ibanezdarkblue_png;
         } break;
 
-        case PEDAL_SKIN_KLON:
+        case PEDAL_SKIN_IBANEZGREEN:
         {
-            result = (lv_obj_t*)&ui_img_pskin_klon_png;
+            result = (lv_obj_t*)&ui_img_pskin_ibanezgreen_png;
         } break;
 
-        case PEDAL_SKIN_LANDGRAF:
+        case PEDAL_SKIN_IBANEZRED:
         {
-            result = (lv_obj_t*)&ui_img_pskin_landgraf_png;
+            result = (lv_obj_t*)&ui_img_pskin_ibanezred_png;
         } break;
 
-        case PEDAL_SKIN_MXR:
+        case PEDAL_SKIN_KLONGOLD:
         {
-            result = (lv_obj_t*)&ui_img_pskin_mxr_png;
+            result = (lv_obj_t*)&ui_img_pskin_klongold_png;
         } break;
 
-        case PEDAL_SKIN_MXR2:
+        case PEDAL_SKIN_LIFEPEDAL:
         {
-            result = (lv_obj_t*)&ui_img_pskin_mxr2_png;
+            result = (lv_obj_t*)&ui_img_pskin_lifepedal_png;
         } break;
 
-        case PEDAL_SKIN_OD1:
+        case PEDAL_SKIN_MORNINGGLORY:
         {
-            result = (lv_obj_t*)&ui_img_pskin_od1_png;
+            result = (lv_obj_t*)&ui_img_pskin_morningglory_png;
         } break;
 
-        case PEDAL_SKIN_PLIMSOUL:
+        case PEDAL_SKIN_MXRDOUBLEBLACK:
         {
-            result = (lv_obj_t*)&ui_img_pskin_plimsoul_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrdoubleblack_png;
         } break;
 
-        case PEDAL_SKIN_ROGERMAYER:
+        case PEDAL_SKIN_MXRDOUBLERED:
         {
-            result = (lv_obj_t*)&ui_img_pskin_rogermayer_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrdoublered_png;
         } break;
 
-        case PEDAL_SKIN_SEYMOUR:
+        case PEDAL_SKIN_MXRSINGLEBLACK:
         {
-            result = (lv_obj_t*)&ui_img_pskin_seymour_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrsingleblack_png;
         } break;
 
-        case PEDAL_SKIN_STRYMON:
+        case PEDAL_SKIN_MXRSINGLEGOLD:
         {
-            result = (lv_obj_t*)&ui_img_pskin_strymon_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrsinglegold_png;
         } break;
 
-        case PEDAL_SKIN_TREX:
+        case PEDAL_SKIN_MXRSINGLEGREEN:
         {
-            result = (lv_obj_t*)&ui_img_pskin_trex_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrsinglegreen_png;
         } break;
 
-        case PEDAL_SKIN_TUBESCREAMER:
+        case PEDAL_SKIN_MXRSINGLEORANGE:
         {
-            result = (lv_obj_t*)&ui_img_pskin_tubescreamer_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrsingleorange_png;
         } break;
 
-        case PEDAL_SKIN_WAMPLER:
+        case PEDAL_SKIN_MXRSINGLEWHITE:
         {
-            result = (lv_obj_t*)&ui_img_pskin_wampler_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrsinglewhite_png;
         } break;
 
-        case PEDAL_SKIN_ZVEX:
+        case PEDAL_SKIN_MXRSINGLEYELLOW:
         {
-            result = (lv_obj_t*)&ui_img_pskin_zvex_png;
+            result = (lv_obj_t*)&ui_img_pskin_mxrsingleyellow_png;
+        } break;
+
+        case PEDAL_SKIN_RATYELLOW:
+        {
+            result = (lv_obj_t*)&ui_img_pskin_ratyellow_png;
         } break;
 #endif //CONFIG_TONEX_CONTROLLER_SKINS_PEDAL
 
         default:
         {
-            result = (lv_obj_t*)&ui_img_skin_jcm800_png;            
+            result = (lv_obj_t*)&ui_img_skin_jcm_png;            
         } break;
     }
 

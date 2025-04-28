@@ -24,7 +24,7 @@ SET(SOURCES screens/ui_Screen1.c
     images/ui_img_usb_fail_png.c
     images/ui_img_wifi_conn_png.c
     images/ui_img_wifi_disconn_png.c
-    images/ui_img_skin_jcm800_png.c
+    images/ui_img_skin_jcm_png.c
     images/ui_img_arrow_left_png.c
     images/ui_img_arrow_right_png.c
     images/ui_img_tick_png.c
@@ -48,52 +48,54 @@ SET(SOURCES screens/ui_Screen1.c
     images/ui_img_effect_icon_reverb_on_s2_png.c
     images/ui_img_effect_icon_reverb_on_s3_png.c
     images/ui_img_effect_icon_reverb_on_s4_png.c
-    images/ui_img_pskin_arion_png.c
     images/ui_img_pskin_bigmuff_png.c
-    images/ui_img_pskin_darkglass_png.c
-    images/ui_img_pskin_dod_png.c
-    images/ui_img_pskin_ehx_png.c
-    images/ui_img_pskin_fender_png.c
-    images/ui_img_pskin_fulltone_png.c
-    images/ui_img_pskin_fzs_png.c
-    images/ui_img_pskin_jhs_png.c
-    images/ui_img_pskin_klon_png.c
-    images/ui_img_pskin_landgraf_png.c
-    images/ui_img_pskin_mxr_png.c
-    images/ui_img_pskin_mxr2_png.c
-    images/ui_img_pskin_od1_png.c
-    images/ui_img_pskin_plimsoul_png.c
-    images/ui_img_pskin_rogermayer_png.c
-    images/ui_img_pskin_seymour_png.c
-    images/ui_img_pskin_strymon_png.c
-    images/ui_img_pskin_trex_png.c
-    images/ui_img_pskin_tubescreamer_png.c
-    images/ui_img_pskin_wampler_png.c
-    images/ui_img_pskin_zvex_png.c
-    images/ui_img_skin_2001rb_png.c
-    images/ui_img_skin_2020_png.c
+    images/ui_img_pskin_bossblack_png.c
+    images/ui_img_pskin_bosssilver_png.c
+    images/ui_img_pskin_bossyellow_png.c
+    images/ui_img_pskin_fuzzred_png.c
+    images/ui_img_pskin_fuzzsilver_png.c
+    images/ui_img_pskin_ibanezblue_png.c
+    images/ui_img_pskin_ibanezdarkblue_png.c
+    images/ui_img_pskin_ibanezgreen_png.c
+    images/ui_img_pskin_ibanezred_png.c
+    images/ui_img_pskin_klongold_png.c
+    images/ui_img_pskin_lifepedal_png.c
+    images/ui_img_pskin_morningglory_png.c
+    images/ui_img_pskin_mxrdoubleblack_png.c
+    images/ui_img_pskin_mxrdoublered_png.c
+    images/ui_img_pskin_mxrsingleblack_png.c
+    images/ui_img_pskin_mxrsinglegold_png.c
+    images/ui_img_pskin_mxrsinglegreen_png.c
+    images/ui_img_pskin_mxrsingleorange_png.c
+    images/ui_img_pskin_mxrsinglewhite_png.c
+    images/ui_img_pskin_mxrsingleyellow_png.c
+    images/ui_img_pskin_ratyellow_png.c
     images/ui_img_skin_5150_png.c
     images/ui_img_skin_ac30_png.c
-    images/ui_img_skin_b18n_png.c
-    images/ui_img_skin_bluesdeluxe_png.c
-    images/ui_img_skin_deville_png.c
+    images/ui_img_skin_ampegchrome_png.c
+    images/ui_img_skin_ba500_png.c
     images/ui_img_skin_diezel_png.c
-    images/ui_img_skin_dualrectifier_png.c
-    images/ui_img_skin_dumble_png.c
-    images/ui_img_skin_evh5150_png.c
-    images/ui_img_skin_goldfinger_png.c
-    images/ui_img_skin_invader_png.c
-    images/ui_img_skin_jazzchorus_png.c
+    images/ui_img_skin_elegantblue_png.c
+    images/ui_img_skin_evh_png.c
+    images/ui_img_skin_fenderhotrod_png.c
+    images/ui_img_skin_fendertweedbig_png.c
+    images/ui_img_skin_fendertwin_png.c
+    images/ui_img_skin_friedmann_png.c
+    images/ui_img_skin_jbdumble1_png.c
     images/ui_img_skin_jetcity_png.c
-    images/ui_img_skin_maverick_png.c
-    images/ui_img_skin_mk3_png.c
-    images/ui_img_skin_or50_png.c
-    images/ui_img_skin_pinktaco_png.c
-    images/ui_img_skin_powerball_png.c
-    images/ui_img_skin_princeton_png.c
-    images/ui_img_skin_superbass_png.c
-    images/ui_img_skin_supro50_png.c
-    images/ui_img_skin_svtcl_png.c
-    images/ui_img_skin_twinreverb_png.c)
+    images/ui_img_skin_jtm_png.c
+    images/ui_img_skin_mesaboogiedual_png.c
+    images/ui_img_skin_mesamarkv_png.c
+    images/ui_img_skin_mesamarkwood_png.c
+    images/ui_img_skin_modernblackplexi_png.c
+    images/ui_img_skin_modernwhiteplexi_png.c
+    images/ui_img_skin_orangeor120_png.c
+    images/ui_img_skin_rolandjazz_png.c
+    images/ui_img_skin_silverface_png.c
+    images/ui_img_skin_supro_png.c
+    images/ui_img_skin_tonexampblack_png.c
+    images/ui_img_skin_tonexampred_png.c
+    images/ui_img_skin_whitemodern_png.c
+    images/ui_img_skin_woodamp_png.c)
 
 add_library(ui ${SOURCES})
