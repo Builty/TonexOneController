@@ -870,31 +870,36 @@ void footswitch_task(void *arg)
             footswitch_handle_effects(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_EXTERNAL_EFFECTS], FootswitchControl.ExternalFootswitchEffectHandler, MAX_EXTERNAL_EFFECT_FOOTSWITCHES);
         }
 
-#if !CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY        
-        // check for button held for data reset
-        if (FOOTSWITCH_1 != -1)
+#if !CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY  
+        // Binary footswitch modes always hold button states, so can't check for reset
+        if ((FootswitchControl.onboard_switch_mode != FOOTSWITCH_LAYOUT_1X4_BINARY) && 
+            (FootswitchControl.external_switch_mode != FOOTSWITCH_LAYOUT_1X4_BINARY))
         {
-            if (footswitch_read_single_onboard(0, &value) == ESP_OK)
+            // check for button held for data reset
+            if (FOOTSWITCH_1 != -1)
             {
-                if (value == 1)
-                {        
-                    reset_timer++;
-
-                    // debug
-                    //ESP_LOGI(TAG, "Reset timer: %d", (int)reset_timer);  
-
-                    if (reset_timer > BUTTON_FACTORY_RESET_TIME)
-                    {
-                        ESP_LOGI(TAG, "Config Reset to default");  
-                        control_set_default_config(); 
-
-                        // save and reboot
-                        control_save_user_data(1);
-                    }
-                }
-                else
+                if (footswitch_read_single_onboard(0, &value) == ESP_OK)
                 {
-                    reset_timer = 0;
+                    if (value == 1)
+                    {        
+                        reset_timer++;
+
+                        // debug
+                        //ESP_LOGI(TAG, "Reset timer: %d", (int)reset_timer);  
+
+                        if (reset_timer > BUTTON_FACTORY_RESET_TIME)
+                        {
+                            ESP_LOGI(TAG, "Config Reset to default");  
+                            control_set_default_config(); 
+
+                            // save and reboot
+                            control_save_user_data(1);
+                        }
+                    }
+                    else
+                    {
+                        reset_timer = 0;
+                    }
                 }
             }
         }
