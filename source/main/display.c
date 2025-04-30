@@ -669,19 +669,19 @@ void ParameterChanged(lv_event_t * e)
     }
     else if (obj == ui_EQBassSlider)
     {
-        usb_modify_parameter(TONEX_PARAM_EQ_BASS, lv_slider_get_value(obj));
+        usb_modify_parameter(TONEX_PARAM_EQ_BASS, ((float)lv_slider_get_value(obj))/10.0f);
     }
     else if (obj == ui_EQMidSlider)
     {
-        usb_modify_parameter(TONEX_PARAM_EQ_MID, lv_slider_get_value(obj));
+        usb_modify_parameter(TONEX_PARAM_EQ_MID, ((float)lv_slider_get_value(obj))/10.0f);
     }
     else if (obj == ui_EQMidQSlider)
     {
-        usb_modify_parameter(TONEX_PARAM_EQ_MIDQ, lv_slider_get_value(obj));
+        usb_modify_parameter(TONEX_PARAM_EQ_MIDQ, ((float)lv_slider_get_value(obj))/10.0f);
     }
     else if (obj == ui_EQTrebleSlider)
     {
-        usb_modify_parameter(TONEX_PARAM_EQ_TREBLE, lv_slider_get_value(obj));
+        usb_modify_parameter(TONEX_PARAM_EQ_TREBLE, ((float)lv_slider_get_value(obj))/10.0f);
     }
     else if (obj == ui_ReverbEnableSwitch)
     {
@@ -1108,19 +1108,19 @@ void ParameterChanged(lv_event_t * e)
     } 
     else if (obj == ui_AmplifierGainSlider)
     {
-        usb_modify_parameter(TONEX_PARAM_MODEL_GAIN, lv_slider_get_value(obj));
+        usb_modify_parameter(TONEX_PARAM_MODEL_GAIN, ((float)lv_slider_get_value(obj))/10.0f);
     }
     else if (obj == ui_AmplifierVolumeSlider)
     {
-        usb_modify_parameter(TONEX_PARAM_MODEL_VOLUME, lv_slider_get_value(obj));
+        usb_modify_parameter(TONEX_PARAM_MODEL_VOLUME, ((float)lv_slider_get_value(obj))/10.0f);
     }
     else if (obj == ui_AmplifierPresenseSlider)
     {
-        usb_modify_parameter(TONEX_PARAM_MODEL_PRESENCE, lv_slider_get_value(obj));
+        usb_modify_parameter(TONEX_PARAM_MODEL_PRESENCE, ((float)lv_slider_get_value(obj))/10.0f);
     }
     else if (obj == ui_AmplifierDepthSlider)
     {
-        usb_modify_parameter(TONEX_PARAM_MODEL_DEPTH, lv_slider_get_value(obj));
+        usb_modify_parameter(TONEX_PARAM_MODEL_DEPTH, ((float)lv_slider_get_value(obj))/10.0f);
     }
     else if (obj == ui_BPMSlider)
     {
@@ -1655,6 +1655,88 @@ static lv_obj_t* ui_get_skin_image(uint16_t index)
 }
 #endif 
 
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY 
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void updateIconOrder()
+{
+    bool gatePost = lv_obj_has_state(ui_NoiseGatePostSwitch, LV_STATE_CHECKED);
+    bool compPost = lv_obj_has_state(ui_CompressorPostSwitch, LV_STATE_CHECKED);
+    bool eqPost = lv_obj_has_state(ui_EQPostSwitch, LV_STATE_CHECKED);
+    bool modPost = lv_obj_has_state(ui_ModulationPostSwitch, LV_STATE_CHECKED);
+    bool delayPost = lv_obj_has_state(ui_DelayPostSwitch, LV_STATE_CHECKED);
+    bool revPost = lv_obj_has_state(ui_ReverbPostSwitch, LV_STATE_CHECKED);
+
+    lv_obj_t *icons[8];
+    uint8_t index = 0;
+
+    if (!gatePost)
+    {
+        icons[index++] = ui_IconGate;
+    }
+    if (!compPost)
+    {
+        icons[index++] = ui_IconComp;
+    }
+    if (!modPost)
+    {
+        icons[index++] = ui_IconMod;
+    }
+    if (!delayPost)
+    {
+        icons[index++] = ui_IconDelay;
+    }
+    if (!eqPost)
+    {
+        icons[index++] = ui_IconEQ;
+    }
+    icons[index++] = ui_IconAmp;
+    icons[index++] = ui_IconCab;
+    if (eqPost)
+    {
+        icons[index++] = ui_IconEQ;
+    }
+    if (gatePost)
+    {
+        icons[index++] = ui_IconGate;
+    }
+    if (compPost)
+    {
+        icons[index++] = ui_IconComp;
+    }
+    if (!revPost)
+    {
+        icons[index++] = ui_IconReverb;
+    }
+    if (modPost)
+    {
+        icons[index++] = ui_IconMod;
+    }
+    if (delayPost)
+    {
+        icons[index++] = ui_IconDelay;
+    }
+    if (revPost)
+    {
+        icons[index] = ui_IconReverb;
+    }
+    
+    const int16_t offsets[8] = {-275, -205, -135, -65, 0, 65, 135, 205};
+
+    for (uint8_t i = 0; i<8; i++)
+    {
+        lv_obj_t *icon = icons[i];
+        int16_t offset = offsets[i];
+        lv_obj_set_x(icon, offset);
+    }
+}
+#endif
+
 /****************************************************************************
 * NAME:        
 * DESCRIPTION: 
@@ -1738,6 +1820,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {
                                 lv_obj_clear_state(ui_NoiseGatePostSwitch, LV_STATE_CHECKED);
                             }
+                            updateIconOrder();
                         } break;
 
                         case TONEX_PARAM_NOISE_GATE_ENABLE:
@@ -1782,6 +1865,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {
                                 lv_obj_clear_state(ui_CompressorPostSwitch, LV_STATE_CHECKED);
                             }
+                            updateIconOrder();
                         } break;
 
                         case TONEX_PARAM_COMP_ENABLE:
@@ -1826,12 +1910,13 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {
                                 lv_obj_clear_state(ui_EQPostSwitch, LV_STATE_CHECKED);
                             }
+                            updateIconOrder();
                         } break;
 
                         case TONEX_PARAM_EQ_BASS:
                         {
-                            lv_slider_set_range(ui_EQBassSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_EQBassSlider, round(param_entry->Value), LV_ANIM_OFF);                        
+                            lv_slider_set_range(ui_EQBassSlider, round(param_entry->Min), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(ui_EQBassSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                        
                         } break;
 
                         case TONEX_PARAM_EQ_BASS_FREQ:
@@ -1841,14 +1926,14 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                         case TONEX_PARAM_EQ_MID:
                         {
-                            lv_slider_set_range(ui_EQMidSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_EQMidSlider, round(param_entry->Value), LV_ANIM_OFF);                            
+                            lv_slider_set_range(ui_EQMidSlider, round(param_entry->Min), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(ui_EQMidSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
                         } break;
 
                         case TONEX_PARAM_EQ_MIDQ:
                         {
-                            lv_slider_set_range(ui_EQMidQSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_EQMidQSlider, round(param_entry->Value), LV_ANIM_OFF);                            
+                            lv_slider_set_range(ui_EQMidQSlider, round(param_entry->Min * 10.0f), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(ui_EQMidQSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
                         } break;
 
                         case TONEX_PARAM_EQ_MID_FREQ:
@@ -1858,8 +1943,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                         case TONEX_PARAM_EQ_TREBLE:
                         {                            
-                            lv_slider_set_range(ui_EQTrebleSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_EQTrebleSlider, round(param_entry->Value), LV_ANIM_OFF);
+                            lv_slider_set_range(ui_EQTrebleSlider, round(param_entry->Min), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(ui_EQTrebleSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);
                         } break;
 
                         case TONEX_PARAM_EQ_TREBLE_FREQ:
@@ -1902,14 +1987,14 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                         case TONEX_PARAM_MODEL_GAIN:
                         {
-                            lv_slider_set_range(ui_AmplifierGainSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_AmplifierGainSlider, round(param_entry->Value), LV_ANIM_OFF);                            
+                            lv_slider_set_range(ui_AmplifierGainSlider, round(param_entry->Min), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(ui_AmplifierGainSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
                         } break;
 
                         case TONEX_PARAM_MODEL_VOLUME:
                         {
-                            lv_slider_set_range(ui_AmplifierVolumeSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_AmplifierVolumeSlider, round(param_entry->Value), LV_ANIM_OFF);                            
+                            lv_slider_set_range(ui_AmplifierVolumeSlider, round(param_entry->Min), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(ui_AmplifierVolumeSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
                         } break;
 
                         case TONEX_PARAM_MODEX_MIX:
@@ -1919,8 +2004,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                         case TONEX_PARAM_MODEL_PRESENCE:
                         {                            
-                            lv_slider_set_range(ui_AmplifierPresenseSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_AmplifierPresenseSlider, round(param_entry->Value), LV_ANIM_OFF);
+                            lv_slider_set_range(ui_AmplifierPresenseSlider, round(param_entry->Min), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(ui_AmplifierPresenseSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);
                         } break;
 
                         //case TONEX_PARAM_CABINET_UNKNOWN:
@@ -1935,8 +2020,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                         case TONEX_PARAM_MODEL_DEPTH:
                         {
-                            lv_slider_set_range(ui_AmplifierDepthSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_AmplifierDepthSlider, round(param_entry->Value), LV_ANIM_OFF);
+                            lv_slider_set_range(ui_AmplifierDepthSlider, round(param_entry->Min), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(ui_AmplifierDepthSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);
                         } break;
 
                         case TONEX_PARAM_VIR_RESO:
@@ -1989,6 +2074,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {
                                 lv_obj_clear_state(ui_ReverbPostSwitch, LV_STATE_CHECKED);
                             }
+                            updateIconOrder();
                         } break;
 
                         case TONEX_PARAM_REVERB_ENABLE:
@@ -2026,13 +2112,9 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                     } break;
 
                                     case TONEX_REVERB_PLATE:
-                                    {
-                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_p_png);
-                                    } break;
-
                                     default:
                                     {
-                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_png);
+                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_p_png);
                                     } break;
                                 }
                             }
@@ -2274,6 +2356,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {
                                 lv_obj_clear_state(ui_ModulationPostSwitch, LV_STATE_CHECKED);
                             }
+                            updateIconOrder();
                         } break;
 
                         case TONEX_PARAM_MODULATION_ENABLE:
@@ -2306,13 +2389,9 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                     } break;
 
                                     case TONEX_MODULATION_ROTARY:
-                                    {
-                                        lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_on_rotary_png);
-                                    } break;
-
                                     default:
                                     {
-                                        lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_on_png);
+                                        lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_on_rotary_png);
                                     } break;
                                 }
                             }
@@ -2657,6 +2736,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {
                                 lv_obj_clear_state(ui_DelayPostSwitch, LV_STATE_CHECKED);
                             }
+                            updateIconOrder();
                         } break;
 
                         case TONEX_PARAM_DELAY_ENABLE:
@@ -2674,13 +2754,9 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                      } break;
  
                                      case TONEX_DELAY_TAPE:
-                                     {
-                                         lv_img_set_src(ui_IconDelay, (lv_obj_t*)&ui_img_effect_icon_delay_on_t_png);
-                                     } break;
- 
                                      default:
                                      {
-                                         lv_img_set_src(ui_IconDelay, (lv_obj_t*)&ui_img_effect_icon_delay_on_png);
+                                         lv_img_set_src(ui_IconDelay, (lv_obj_t*)&ui_img_effect_icon_delay_on_t_png);
                                      } break;
                                  }
                             }
