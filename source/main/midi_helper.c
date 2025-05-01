@@ -886,6 +886,19 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
             value = tonex_params_clamp_value(param, value);
         } break;
 
+        case 127: 
+        {
+            // Custom case: use CC to change params.
+            if (midi_value > 19) {
+                ESP_LOGW(TAG, "Unsupported Midi CC 127 value %d", change_num);
+            } else {
+                control_request_preset_index(midi_value);
+            }
+
+            // no param change needed
+            return ESP_OK;
+        } break;
+
         default:
         {
             ESP_LOGW(TAG, "Unsupported Midi change number %d", change_num);
@@ -1462,6 +1475,12 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
          {
              param = TONEX_GLOBAL_TUNING_REFERENCE;
          } break;
+         case 127:
+         {
+            // Need the CC value to use this, so this won't work for
+            // footswitches, and it's kind of irrelevant anyways.
+            ESP_LOGW(TAG, "Unsupported Midi change number %d", change_num);
+         }
     }
 
     return param;
