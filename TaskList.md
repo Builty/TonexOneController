@@ -21,7 +21,6 @@ Use ADC to read expression pedal pot, and have config to assign what quantity it
 
 ##Direct Preset load from footswitch 
 Add ability to load preset X from a footswitch press.<br> 
-Possibly via adding a new Midi CC value where the argument is a preset number.
 
 ## Support for multiple Bluetooth devices 
 Allow at least two simultaneous BT devices to be connected.
