@@ -1978,7 +1978,7 @@
 				showvalueinput(1);
 				document.getElementById("value_input_lbl").innerText = s.innerText.replace(/:.*/, "") ;				
 				if (unit != null) {
-					s.innerText += "("+unit+")";
+					document.getElementById("value_input_lbl").innerText += "("+unit+")";
 				}
 				document.getElementById("value_input_val").value = document.getElementById(tmp_id).value
 				document.getElementById("value_input_val").step = document.getElementById(tmp_id).step;
