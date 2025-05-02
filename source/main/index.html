@@ -342,6 +342,32 @@
             writing-mode: vertical-lr;
             transform: scale(-1);
         }
+
+		#value_input_bg {
+			top: 0;
+			left: 0;
+			position:fixed; 
+			height:100%;
+			width:100%;
+			z_index:0;	
+			background: rgba(0, 0,0, 0.7);
+			display: none;
+		}
+
+		#value_input {
+			color: #ccc;
+			opacity: 1;
+			position:fixed; 
+			background-color: #333;
+			text-align:center;
+			border: 5px solid;
+			position: absolute;
+			top: 40%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			padding: 10px;
+			display: none;
+		}
     </style>
 
     <script>   
@@ -1940,19 +1966,35 @@
         }
 		function showValue(e) {
             let s = document.querySelector(`label[for="${e.id}"]`);
-            let t = s.innerText;
-            let i = t.indexOf(":");
-            if (i>0) {
-                s.innerText = t.substr(0, i);
-            }
+			s.innerText = s.innerText.replace(/ :.*/, "");
             s.innerText += " : " + parseFloat(e.value);
             
             let unit = s.getAttribute("unit");
             if (unit != null) {
                 s.innerText += unit;
             }
+			s.onclick = function(e){
+				let tmp_id = e.target.getAttribute('for');
+				showvalueinput(1);
+				document.getElementById("value_input_lbl").innerText = s.innerText.replace(/:.*/, "") ;				
+				if (unit != null) {
+					s.innerText += "("+unit+")";
+				}
+				document.getElementById("value_input_val").value = document.getElementById(tmp_id).value
+				document.getElementById("value_input_val").step = document.getElementById(tmp_id).step;
+				document.getElementById("value_input_btn").onclick = function() {
+					document.getElementById(tmp_id).value = document.getElementById("value_input_val").value;					
+					document.getElementById(tmp_id).dispatchEvent(new Event('input'));
+					showvalueinput(0);
+				};
+
+			};
 		}
-     
+		
+		function showvalueinput(x) {
+			document.getElementById("value_input_bg").style.display = (x)? "block" : "none";
+			document.getElementById("value_input").style.display = (x)? "block" : "none";
+		}
         // Tap tempo
 
         function TapTempo() {
@@ -2337,8 +2379,9 @@
             sendWS({"CMD": "SETPRESETORDER", 
                         "PRESET_ORDER": presetOrder});
         }
+		
     </script>
-        
+  
     <nav class="navbar navbar-dark bg-dark">
        <label style="margin-left: 10px; font-size: 30px; color:#FB9230;">Tonex One Controller</label>
        <form class="form-inline text-white">
@@ -2368,7 +2411,6 @@
             </div>            
         </form>
     </nav>
-
     <div class="tab" id="MainMenu">
       <button class="tablinks" onclick="openTab(event, 'NoiseGate')" id="defaultOpen">Gate</button>
       <button class="tablinks" onclick="openTab(event, 'Compressor')">Comp</button>
@@ -3791,5 +3833,13 @@
             </div>
         </div>
     </div>
+	    
+	<div id="value_input_bg">
+		<div id="value_input">
+			Set <label id="value_input_lbl"/>placeholder</label> value:<br />
+			<input type="number" id="value_input_val"/><br />
+			<button onclick="showvalueinput(0)">Cancel</button><button id="value_input_btn">Confirm</button>		
+		</div>
+	</div>  
   </body>
 </html>
