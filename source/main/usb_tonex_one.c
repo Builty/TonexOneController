@@ -1215,11 +1215,16 @@ static esp_err_t usb_tonex_one_process_single_message(uint8_t* data, uint16_t le
                     }
                     else
                     {
-                        // signal to refresh param UI with Globals
-                        UI_RefreshParameterValues();
+                        // if we have messages waiting in the queue, it will trigger another
+                        // change that will overwrite this one. Skip the UI refresh to save time
+                        if (uxQueueMessagesWaiting(input_queue) == 0)
+                        {
+                            // signal to refresh param UI with Globals
+                            UI_RefreshParameterValues();
 
-                        // update web UI
-                        wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+                            // update web UI
+                            wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+                        }
                     }
                 } break;
 
@@ -1257,11 +1262,16 @@ static esp_err_t usb_tonex_one_process_single_message(uint8_t* data, uint16_t le
                         // read the preset params
                         usb_tonex_one_parse_preset_parameters(data, length);
 
-                        // signal to refresh param UI
-                        UI_RefreshParameterValues();
+                         // if we have messages waiting in the queue, it will trigger another
+                        // change that will overwrite this one. Skip the UI refresh to save time
+                        if (uxQueueMessagesWaiting(input_queue) == 0)
+                        {
+                            // signal to refresh param UI
+                            UI_RefreshParameterValues();
 
-                        // update web UI
-                        wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+                            // update web UI
+                            wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+                        }
 
                         // debug dump parameters
                         //tonex_dump_parameters();

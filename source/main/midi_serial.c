@@ -101,7 +101,7 @@ static void midi_serial_task(void *arg)
     while (1) 
     {
         // try to read data from UART
-        rx_length = uart_read_bytes(UART_PORT_NUM, midi_serial_buffer, (MIDI_SERIAL_BUFFER_SIZE - 1), pdMS_TO_TICKS(20));
+        rx_length = uart_read_bytes(UART_PORT_NUM, midi_serial_buffer, (MIDI_SERIAL_BUFFER_SIZE - 1), pdMS_TO_TICKS(5));
         
         if (rx_length != 0)
         {
