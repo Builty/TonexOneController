@@ -184,7 +184,7 @@ static void midi_serial_task(void *arg)
             }
 
             // don't hog the CPU
-            vTaskDelay(pdMS_TO_TICKS(5));
+            vTaskDelay(pdMS_TO_TICKS(1));
         }
     }
 }

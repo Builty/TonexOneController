@@ -1319,6 +1319,7 @@ static esp_err_t usb_tonex_one_process_single_message(uint8_t* data, uint16_t le
 void usb_tonex_one_handle(class_driver_t* driver_obj)
 {        
     tUSBMessage message;
+    tUSBMessage next_message;
 
     // check state
     switch (TonexData->TonexState)
@@ -1347,7 +1348,38 @@ void usb_tonex_one_handle(class_driver_t* driver_obj)
             // check for any input messages
             if (xQueueReceive(input_queue, (void*)&message, 0) == pdPASS)
             {
-                ESP_LOGI(TAG, "Got Input message: %d", message.Command);
+                ESP_LOGI(TAG, "Got Input message: %d. Queue: %d", message.Command, uxQueueMessagesWaiting(input_queue));
+
+                // check if the next commands in the input queue would change the same item as this message.
+                // if so, no point in processing as it will be overwritten shortly.
+                while (uxQueueMessagesWaiting(input_queue) != 0)
+                {
+                    // get a copy of the next message without removing it from the queue
+                    if (xQueuePeek(input_queue, (void*)&next_message, 0) == pdPASS)
+                    {
+                        // check what it is
+                        if (((next_message.Command == USB_COMMAND_MODIFY_PARAMETER) && (next_message.Payload == message.Payload))
+                          || (next_message.Command == USB_COMMAND_SET_PRESET)) 
+                        {
+                            // don't send the current mesage. Instead, receive this next one properly and pull it off the queue
+                            // so it can be processed (or overwritten again by another message in the queue still)
+                            xQueueReceive(input_queue, (void*)&message, 0);
+
+                            // debug
+                            //ESP_LOGW(TAG, "Input message consumed");
+                        }
+                        else
+                        {
+                            // this next message is not the same, exit loop and send it
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        // something went wrong with the Peek, don't get stuck in loop
+                        break;
+                    }
+                }
 
                 // process it
                 switch (message.Command)

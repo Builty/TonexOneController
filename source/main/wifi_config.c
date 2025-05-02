@@ -244,7 +244,7 @@ void wifi_request_sync(uint8_t type, void* arg1, void* arg2)
     }
 
     // send to queue
-    if (xQueueSend(wifi_input_queue, (void*)&message, 0) != pdPASS)
+    if (xQueueSend(wifi_input_queue, (void*)&message, 10) != pdPASS)
     {
         ESP_LOGE(TAG, "wifi_request_sync queue send failed!");            
     }
@@ -1703,13 +1703,13 @@ static void wifi_config_task(void *arg)
         }
 
         // check for any input messages
-        if (xQueueReceive(wifi_input_queue, (void*)&message, pdMS_TO_TICKS(20)) == pdPASS)
+        if (xQueueReceive(wifi_input_queue, (void*)&message, pdMS_TO_TICKS(100)) == pdPASS)
         {
             // process it
             process_wifi_command(&message);
         }
 
-		vTaskDelay(pdMS_TO_TICKS(5));
+		vTaskDelay(pdMS_TO_TICKS(1));
 	}
 }
 
