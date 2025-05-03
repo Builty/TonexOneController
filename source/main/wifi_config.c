@@ -372,6 +372,8 @@ static void wifi_build_config_json(void)
     json_gen_obj_set_int(&pWebConfig->jstr, "WIFI_MODE", control_get_config_item_int(CONFIG_ITEM_WIFI_MODE));
     json_gen_obj_set_int(&pWebConfig->jstr, "WIFI_POWER", control_get_config_item_int(CONFIG_ITEM_WIFI_TX_POWER));
     json_gen_obj_set_int(&pWebConfig->jstr, "SCREEN_ROT", control_get_config_item_int(CONFIG_ITEM_SCREEN_ROTATION));
+    json_gen_obj_set_int(&pWebConfig->jstr, "LOOP_AROUND", control_get_config_item_int(CONFIG_ITEM_LOOP_AROUND));
+    json_gen_obj_set_int(&pWebConfig->jstr, "PRESET_SLOT", control_get_config_item_int(CONFIG_ITEM_SAVE_PRESET_TO_SLOT));
 
     control_get_config_item_string(CONFIG_ITEM_WIFI_SSID, str_val);
     json_gen_obj_set_string(&pWebConfig->jstr, "WIFI_SSID", str_val);
@@ -708,6 +710,11 @@ static esp_err_t ws_handler(httpd_req_t *req)
                         {
                             control_set_config_item_int(CONFIG_ITEM_TOGGLE_BYPASS, int_val);
                         }
+
+                        if (json_obj_get_int(&pWebConfig->jctx, "LOOP_AROUND", &int_val) == OS_SUCCESS)
+                        {
+                            control_set_config_item_int(CONFIG_ITEM_LOOP_AROUND, int_val);
+                        }
                         
                         if (json_obj_get_int(&pWebConfig->jctx, "BT_MODE", &int_val) == OS_SUCCESS)
                         {
@@ -750,6 +757,11 @@ static esp_err_t ws_handler(httpd_req_t *req)
                         if (json_obj_get_int(&pWebConfig->jctx, "SCREEN_ROT", &int_val) == OS_SUCCESS)
                         {
                             control_set_config_item_int(CONFIG_ITEM_SCREEN_ROTATION, int_val);
+                        }
+
+                        if (json_obj_get_int(&pWebConfig->jctx, "PRESET_SLOT", &int_val) == OS_SUCCESS)
+                        {
+                            control_set_config_item_int(CONFIG_ITEM_SAVE_PRESET_TO_SLOT, int_val);
                         }
                                     
                         if (json_obj_get_int(&pWebConfig->jctx, "EXTFS_PS_LAYOUT", &int_val) == OS_SUCCESS)
