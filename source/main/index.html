@@ -342,6 +342,32 @@
             writing-mode: vertical-lr;
             transform: scale(-1);
         }
+
+		#value_input_bg {
+			top: 0;
+			left: 0;
+			position:fixed; 
+			height:100%;
+			width:100%;
+			z_index:0;	
+			background: rgba(0, 0,0, 0.7);
+			display: none;
+		}
+
+		#value_input {
+			color: #ccc;
+			opacity: 1;
+			position:fixed; 
+			background-color: #333;
+			text-align:center;
+			border: 5px solid;
+			position: absolute;
+			top: 40%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			padding: 10px;
+			display: none;
+		}
     </style>
 
     <script>   
@@ -1555,7 +1581,6 @@
                     configureParamSwitch("custombte", data['BT_CUST_EN']);
                     setParamLabel("custombt", data['BT_CUST_NAME']);
                     configureParamSwitch("togglebypass", data['TOGGLE_BYPASS']);
-                    configureParamSwitch("looparound", data['LOOP_AROUND']);
                     configureParamSwitch("midienabled", data['S_MIDI_EN']);
                     configureParamSelect("midichannel", data['S_MIDI_CH']);                    
                     configureParamSwitch("btmidicc", data['BT_MIDI_CC']);
@@ -1566,7 +1591,6 @@
                     setParamValue("mdnsname", data['MDNS_NAME']);
 
                     configureParamSelect("screenrot", data['SCREEN_ROT']);
-                    configureParamSelect("presetslot", data['PRESET_SLOT']);
 
                     configureParamSelect("extfslay", data['EXTFS_PS_LAYOUT']);
                                         
@@ -1749,9 +1773,6 @@
                 var togglebypass = document.getElementById("togglebypass").checked;
                 var togglebypassen = togglebypass ? 1 : 0;
 
-                var looparound = document.getElementById("looparound").checked;
-                var looparounden = looparound ? 1 : 0;
-
                 var midienabled = document.getElementById("midienabled").checked;
                 var midienableden = midienabled ? 1 : 0;
                 
@@ -1761,8 +1782,7 @@
                 var btmidicc = document.getElementById("btmidicc").checked;
                 var btmidiccen = btmidicc ? 1 : 0;
                                    
-                var screenrot = document.getElementById("screenrot").value;       
-                var presetslot = document.getElementById("presetslot").value;         
+                var screenrot = document.getElementById("screenrot").value;                
                 var extfslay = document.getElementById("extfslay").value;  
 
                 var extfx1sw = document.getElementById("extfx1sw").value;  
@@ -1833,13 +1853,11 @@
                         "BT_CUST_EN": custombteen,
                         "BT_CUST_NAME": custombt,
                         "TOGGLE_BYPASS": togglebypassen,
-                        "LOOP_AROUND": looparounden,
                         "S_MIDI_EN": midienableden,
                         "S_MIDI_CH": parseInt(midichannel),
                         "FOOTSW_MODE": parseInt(footmode),
                         "BT_MIDI_CC": btmidiccen,
                         "SCREEN_ROT": parseInt(screenrot),
-                        "PRESET_SLOT": parseInt(presetslot),
                         "EXTFS_PS_LAYOUT": parseInt(extfslay),                        
                         "EXTFS_ES1_SW": parseInt(extfx1sw),
                         "EXTFS_ES1_CC": parseInt(extfx1cc),
@@ -1946,21 +1964,35 @@
                         "VALUE": param_value});                        
             }
         }
-		function showValue(e) {
+        function showValue(e) {
             let s = document.querySelector(`label[for="${e.id}"]`);
-            let t = s.innerText;
-            let i = t.indexOf(":");
-            if (i>0) {
-                s.innerText = t.substr(0, i);
-            }
+            s.innerText = s.innerText.replace(/ :.*/, "");
             s.innerText += " : " + parseFloat(e.value);
             
             let unit = s.getAttribute("unit");
             if (unit != null) {
                 s.innerText += unit;
             }
-		}
-     
+            s.onclick = function(e){
+                let tmp_id = e.target.getAttribute('for');
+                let value_input_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('value_input_bg'));
+                value_input_modal.show();            
+                //showvalueinput(1);
+                document.getElementById("value_input_lbl").innerText = s.innerText.replace(/:.*/, "") ;				
+                if (unit != null) {
+                    document.getElementById("value_input_lbl").innerText += "("+unit+")";
+                }
+                document.getElementById("value_input_val").value = document.getElementById(tmp_id).value
+                document.getElementById("value_input_val").step = document.getElementById(tmp_id).step;
+                document.getElementById("value_input_btn").onclick = function() {
+                    document.getElementById(tmp_id).value = document.getElementById("value_input_val").value;					
+                    document.getElementById(tmp_id).dispatchEvent(new Event('input'));
+                    value_input_modal.hide();  
+                };
+
+            };
+        }
+         
         // Tap tempo
 
         function TapTempo() {
@@ -2345,8 +2377,9 @@
             sendWS({"CMD": "SETPRESETORDER", 
                         "PRESET_ORDER": presetOrder});
         }
+		
     </script>
-        
+  
     <nav class="navbar navbar-dark bg-dark">
        <label style="margin-left: 10px; font-size: 30px; color:#FB9230;">Tonex One Controller</label>
        <form class="form-inline text-white">
@@ -2376,7 +2409,6 @@
             </div>            
         </form>
     </nav>
-
     <div class="tab" id="MainMenu">
       <button class="tablinks" onclick="openTab(event, 'NoiseGate')" id="defaultOpen">Gate</button>
       <button class="tablinks" onclick="openTab(event, 'Compressor')">Comp</button>
@@ -3776,23 +3808,6 @@
                     </select>                           
                 </div>
                 <br>
-                <div class="container">
-                    <div class="form-check form-switch">
-                       <input class="form-check-input" type="checkbox" role="switch" value="on" id="looparound">
-                       <label class="form-check-label" for="looparound">Preset and Bank switching loop around</label>
-                    </div> 
-                </div>
-                <br>
-                <div class="container">
-                    <label class="form-check-label" for="presetslot">Changing preset saves to slot:</label>
-                    <select class="form-select select_style" id="presetslot">
-                        <option value="0" class="style6" >Current slot</option>
-                        <option value="1" class="style6">Slot A (Dual mode)</option>
-                        <option value="2" class="style6">Slot B (Dual mode)</option>
-                        <option value="3" class="style6" selected>Slot C (Stomp mode)</option>
-                    </select>                           
-                </div>
-                <br>
                 <br>
                 <div class="container">
                     <button type="button" onclick="saveSettings()" class="btn btn-success">Save and Reboot</button>
@@ -3816,5 +3831,26 @@
             </div>
         </div>
     </div>
+
+	    
+    <div class="modal fade" id="value_input_bg">
+        <div class="modal-dialog  modal-dialog-centered modal-sm">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Set <label id="value_input_lbl"/>placeholder</label> value:</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p><input type="number" id="value_input_val"/></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="value_input_btn">Save changes</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
   </body>
 </html>
