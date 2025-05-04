@@ -564,8 +564,26 @@ static esp_err_t usb_tonex_one_set_preset_in_slot(uint16_t preset, Slot newSlot,
     message[6] = TonexData->Message.PedalData.StateDataLength & 0xFF;
     message[7] = (TonexData->Message.PedalData.StateDataLength >> 8) & 0xFF;
 
-    // force pedal to Stomp mode. 0 here = A/B mode, 1 = stomp mode
-    TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_STOMP_MODE] = 1;      // thanks to Riccardo for finding
+    switch (control_get_config_item_int(CONFIG_ITEM_SAVE_PRESET_TO_SLOT))
+    {
+        // force pedal to A/B or Stomp mode. 0 here = A/B mode, 1 = stomp mode
+        // thanks to Riccardo for finding
+        case SAVE_PRESET_SLOT_A:
+        case SAVE_PRESET_SLOT_B:
+        {
+            TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_STOMP_MODE] = 0;
+        } break;
+
+        case SAVE_PRESET_SLOT_C:
+        {
+            TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_STOMP_MODE] = 1;
+        } break;
+
+        case SAVE_PRESET_SLOT_CURRENT:
+        {
+            // do nothing
+        } break;
+    }
 
     // make sure direct monitoring is on so sound not muted from USB connection
     TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_DIRECT_MONITOR] = 1;
@@ -958,6 +976,42 @@ static uint16_t usb_tonex_one_get_current_active_preset(void)
     }
     
     return result;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static Slot slot_for_saving_preset(void)
+{
+    Slot slot = C;
+    switch (control_get_config_item_int(CONFIG_ITEM_SAVE_PRESET_TO_SLOT))
+    {
+        case SAVE_PRESET_SLOT_CURRENT:
+        {
+            slot = TonexData->Message.CurrentSlot;
+        } break;
+
+        case SAVE_PRESET_SLOT_A:
+        {
+            slot = A;
+        } break;
+
+        case SAVE_PRESET_SLOT_B:
+        {
+            slot = B;
+        } break;
+
+        case SAVE_PRESET_SLOT_C:
+        {
+            slot = C;
+        } break;
+    }
+
+    return slot;
 }
 
 /****************************************************************************
@@ -1398,8 +1452,7 @@ void usb_tonex_one_handle(class_driver_t* driver_obj)
                     {
                         if (message.Payload < MAX_PRESETS)
                         {
-                            // always using Stomp mode C for preset setting
-                            if (usb_tonex_one_set_preset_in_slot(message.Payload, C, 1) != ESP_OK)
+                            if (usb_tonex_one_set_preset_in_slot(message.Payload, slot_for_saving_preset(), 1) != ESP_OK)
                             {
                                 // failed return to queue?
                             }
@@ -1425,7 +1478,7 @@ void usb_tonex_one_handle(class_driver_t* driver_obj)
                             //usb_tonex_one_dump_state(&TonexData->Message.PedalData.TonexStateData);
 
                             // send it by setting the same preset active again, which sends the state data
-                            usb_tonex_one_set_preset_in_slot(TonexData->Message.SlotCPreset, C, 1);
+                            usb_tonex_one_set_preset_in_slot(usb_tonex_one_get_current_active_preset(), slot_for_saving_preset(), 1);
                         }
                         else
                         {

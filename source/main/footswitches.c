@@ -135,6 +135,18 @@ static const __attribute__((unused)) tFootswitchLayoutEntry FootswitchLayouts[FO
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+static uint8_t get_banks_count(tFootswitchLayoutEntry* layout)
+{
+    return ((MAX_PRESETS - 1) / layout->presets_per_bank) + 1;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 static esp_err_t footswitch_read_single_onboard(uint8_t number, uint8_t* switch_state)
 {
     esp_err_t result = ESP_FAIL;
@@ -449,7 +461,16 @@ static void __attribute__((unused)) footswitch_handle_banked(tFootswitchHandler*
                 // check if bank down is pressed
                 if (binary_val == layout->bank_down_switch_mask)
                 {
-                    if (handler->current_bank > 0)
+                    if (control_get_config_item_int(CONFIG_ITEM_LOOP_AROUND))
+                    {
+                        uint8_t banks_count = get_banks_count(layout);
+                        uint8_t newBank = (handler->current_bank > 0) ? (handler->current_bank - 1) : (banks_count - 1);
+                        // bank down
+                        handler->current_bank = newBank;
+                        ESP_LOGI(TAG, "Footswitch banked down %d", handler->current_bank);
+                        control_request_bank_index(handler->current_bank);
+                    }
+                    else if (handler->current_bank > 0)
                     {
                         // bank down
                         handler->current_bank--;   
@@ -462,7 +483,17 @@ static void __attribute__((unused)) footswitch_handle_banked(tFootswitchHandler*
                 // check if bank up is pressed
                 else if (binary_val == layout->bank_up_switch_mask)
                 {
-                    if ((handler->current_bank + 1) * layout->presets_per_bank < MAX_PRESETS)
+                    uint8_t banks_count = get_banks_count(layout);
+
+                    if (control_get_config_item_int(CONFIG_ITEM_LOOP_AROUND))
+                    {
+                        uint8_t newBank = ((handler->current_bank + 1) < banks_count) ? (handler->current_bank + 1) : 0;
+                        // bank up
+                        handler->current_bank = newBank;
+                        ESP_LOGI(TAG, "Footswitch banked up %d", handler->current_bank);
+                        control_request_bank_index(handler->current_bank);
+                    }
+                    else if ((handler->current_bank + 1) < banks_count)
                     {
                         // bank up
                         handler->current_bank++;

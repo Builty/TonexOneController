@@ -106,7 +106,9 @@ typedef struct __attribute__ ((packed))
     // general flags
     uint16_t GeneralDoublePressToggleBypass: 1;
     uint16_t GeneralScreenRotation: 2;
-    uint16_t GeneralSpare: 13;
+    uint16_t GeneralLoopAround: 1;
+    uint16_t GeneralSavePresetToSlot: 2;
+    uint16_t GeneralSpare: 10;
 
     uint8_t FootswitchMode;
     char BTClientCustomName[MAX_BT_CUSTOM_NAME];
@@ -176,7 +178,15 @@ static uint8_t process_control_command(tControlMessage* message)
         {
             if (ControlData.USBStatus != 0)
             {
-                if (ControlData.PresetIndex > 0)
+                if (control_get_config_item_int(CONFIG_ITEM_LOOP_AROUND))
+                {
+                    uint8_t newIndex = (ControlData.PresetIndex > 0) ? (ControlData.PresetIndex - 1) : (MAX_PRESETS_DEFAULT - 1);
+                    uint8_t preset = ControlData.ConfigData.PresetOrder[newIndex];
+
+                    // send message to USB
+                    usb_set_preset(preset);
+                }
+                else if (ControlData.PresetIndex > 0)
                 {
                     uint8_t preset = ControlData.ConfigData.PresetOrder[ControlData.PresetIndex - 1];
                     
@@ -190,7 +200,15 @@ static uint8_t process_control_command(tControlMessage* message)
         {
             if (ControlData.USBStatus != 0)
             {
-                if (ControlData.PresetIndex < MAX_PRESETS_DEFAULT - 1)
+                if (control_get_config_item_int(CONFIG_ITEM_LOOP_AROUND))
+                {
+                    uint8_t newIndex = (ControlData.PresetIndex < (MAX_PRESETS_DEFAULT - 1)) ? (ControlData.PresetIndex + 1) : 0;
+                    uint8_t preset = ControlData.ConfigData.PresetOrder[newIndex];
+                    
+                    // send message to USB
+                    usb_set_preset(preset);
+                }
+                else if (ControlData.PresetIndex < (MAX_PRESETS_DEFAULT - 1))
                 {
                     uint8_t preset = ControlData.ConfigData.PresetOrder[ControlData.PresetIndex + 1];
                     
@@ -351,6 +369,12 @@ static uint8_t process_control_command(tControlMessage* message)
                     ControlData.ConfigData.GeneralDoublePressToggleBypass = (uint8_t)message->Value;
                 } break;
 
+                case CONFIG_ITEM_LOOP_AROUND:
+                {
+                    ESP_LOGI(TAG, "Config set Loop Around %d", (int)message->Value);
+                    ControlData.ConfigData.GeneralLoopAround = (uint8_t)message->Value;
+                } break;
+
                 case CONFIG_ITEM_FOOTSWITCH_MODE:
                 {
                     ESP_LOGI(TAG, "Config set Footswitch Mode %d", (int)message->Value);
@@ -373,6 +397,12 @@ static uint8_t process_control_command(tControlMessage* message)
                 {
                     ESP_LOGI(TAG, "Config set screen rotation %d", (int)message->Value);
                     ControlData.ConfigData.GeneralScreenRotation = (uint8_t)message->Value & 0x03;
+                } break;
+
+                case CONFIG_ITEM_SAVE_PRESET_TO_SLOT:
+                {
+                    ESP_LOGI(TAG, "Config set save preset to slot %d", (int)message->Value);
+                    ControlData.ConfigData.GeneralSavePresetToSlot = (uint8_t)message->Value & 0x03;
                 } break;
 
                 case CONFIG_ITEM_WIFI_TX_POWER:
@@ -1149,6 +1179,11 @@ uint32_t control_get_config_item_int(uint32_t item)
             value = ControlData.ConfigData.GeneralDoublePressToggleBypass;
         } break;
 
+        case CONFIG_ITEM_LOOP_AROUND:
+        {
+            value = ControlData.ConfigData.GeneralLoopAround;
+        } break;
+
         case CONFIG_ITEM_FOOTSWITCH_MODE:
         {
             value = ControlData.ConfigData.FootswitchMode;
@@ -1167,6 +1202,11 @@ uint32_t control_get_config_item_int(uint32_t item)
         case CONFIG_ITEM_SCREEN_ROTATION:
         {
             value = ControlData.ConfigData.GeneralScreenRotation;
+        } break;
+
+        case CONFIG_ITEM_SAVE_PRESET_TO_SLOT:
+        {
+            value = ControlData.ConfigData.GeneralSavePresetToSlot;
         } break;
 
         case CONFIG_ITEM_WIFI_TX_POWER:
@@ -1724,6 +1764,7 @@ static uint8_t LoadUserData(void)
     ESP_LOGI(TAG, "Config Midi enable: %d", (int)ControlData.ConfigData.MidiSerialEnable);
     ESP_LOGI(TAG, "Config Midi channel: %d", (int)ControlData.ConfigData.MidiChannel);
     ESP_LOGI(TAG, "Config Toggle bypass: %d", (int)ControlData.ConfigData.GeneralDoublePressToggleBypass);
+    ESP_LOGI(TAG, "Config Loop around: %d", (int)ControlData.ConfigData.GeneralLoopAround);
     ESP_LOGI(TAG, "Config Footswitch Mode: %d", (int)ControlData.ConfigData.FootswitchMode);
     ESP_LOGI(TAG, "Config EnableBTmidiCC Mode: %d", (int)ControlData.ConfigData.EnableBTmidiCC);
     ESP_LOGI(TAG, "Config WiFi Mode: %d", (int)ControlData.ConfigData.WiFiMode);
@@ -1732,6 +1773,7 @@ static uint8_t LoadUserData(void)
     ESP_LOGI(TAG, "Config MDNS name: %s", ControlData.ConfigData.MDNSName);
     ESP_LOGI(TAG, "Config WiFi TX Power: %d", ControlData.ConfigData.WifiTxPower);
     ESP_LOGI(TAG, "Config Screen Rotation: %d", (int)ControlData.ConfigData.GeneralScreenRotation);
+    ESP_LOGI(TAG, "Config Save preset to slot: %d", (int)ControlData.ConfigData.GeneralSavePresetToSlot);
     ESP_LOGI(TAG, "Config Ext Footsw Prst Layout: %d", (int)ControlData.ConfigData.ExternalFootswitchPresetLayout);
     
     for (uint8_t loop = 0; loop < MAX_EXTERNAL_EFFECT_FOOTSWITCHES; loop++)
@@ -1768,6 +1810,7 @@ void control_set_default_config(void)
     ControlData.ConfigData.BTClientXviveMD1Enable = 1;
     ControlData.ConfigData.BTClientCustomEnable = 0;
     ControlData.ConfigData.GeneralDoublePressToggleBypass = 0;
+    ControlData.ConfigData.GeneralLoopAround = 0;
     ControlData.ConfigData.MidiSerialEnable = 0;
     ControlData.ConfigData.MidiChannel = 1;
     ControlData.ConfigData.FootswitchMode = FOOTSWITCH_LAYOUT_1X2;
@@ -1779,6 +1822,7 @@ void control_set_default_config(void)
     strcpy(ControlData.ConfigData.MDNSName, "tonex");   
     ControlData.ConfigData.WifiTxPower = WIFI_TX_POWER_25;
     ControlData.ConfigData.GeneralScreenRotation = SCREEN_ROTATION_0;
+    ControlData.ConfigData.GeneralSavePresetToSlot = SAVE_PRESET_SLOT_C;
     ControlData.ConfigData.ExternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
     memset((void*)ControlData.ConfigData.ExternalFootswitchEffectConfig, 0, sizeof(ControlData.ConfigData.ExternalFootswitchEffectConfig));
     memset((void*)ControlData.ConfigData.InternalFootswitchEffectConfig, 0, sizeof(ControlData.ConfigData.InternalFootswitchEffectConfig));
