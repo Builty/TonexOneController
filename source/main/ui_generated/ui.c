@@ -156,6 +156,8 @@ lv_obj_t *ui_ModulationSyncSwitch;
 lv_obj_t *ui_ModulationParam1Label;
 void ui_event_ModulationParam1Slider( lv_event_t * e);
 lv_obj_t *ui_ModulationParam1Slider;
+void ui_event_ModulationTSDropdown( lv_event_t * e);
+lv_obj_t *ui_ModulationTSDropdown;
 lv_obj_t *ui_ModulationParam2Label;
 void ui_event_ModulationParam2Slider( lv_event_t * e);
 lv_obj_t *ui_ModulationParam2Slider;
@@ -184,6 +186,8 @@ lv_obj_t *ui_DelayPingPongSwitch;
 lv_obj_t *ui_DelayTSLabel;
 void ui_event_DelayTSSlider( lv_event_t * e);
 lv_obj_t *ui_DelayTSSlider;
+void ui_event_DelayTSDropdown( lv_event_t * e);
+lv_obj_t *ui_DelayTSDropdown;
 lv_obj_t *ui_DelayFeedbackLabel;
 void ui_event_DelayFeedbackSlider( lv_event_t * e);
 lv_obj_t *ui_DelayFeedbackSlider;
@@ -668,6 +672,14 @@ if ( event_code == LV_EVENT_RELEASED) {
 }
 }
 
+void ui_event_ModulationTSDropdown( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+if ( event_code == LV_EVENT_VALUE_CHANGED) {
+      ParameterChanged( e );
+}
+}
+
 void ui_event_ModulationParam2Slider( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 
@@ -736,6 +748,14 @@ void ui_event_DelayTSSlider( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 
 if ( event_code == LV_EVENT_RELEASED) {
+      ParameterChanged( e );
+}
+}
+
+void ui_event_DelayTSDropdown( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+if ( event_code == LV_EVENT_VALUE_CHANGED) {
       ParameterChanged( e );
 }
 }

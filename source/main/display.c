@@ -882,6 +882,36 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }
     }
+    else if (obj == ui_ModulationTSDropdown)
+    {
+        switch (lv_dropdown_get_selected(ui_ModulationModelDropdown))
+        {
+            case TONEX_MODULATION_CHORUS:
+            {
+                usb_modify_parameter(TONEX_PARAM_MODULATION_CHORUS_TS, lv_dropdown_get_selected(obj));
+            } break;
+
+            case TONEX_MODULATION_TREMOLO:
+            {
+                usb_modify_parameter(TONEX_PARAM_MODULATION_TREMOLO_TS, lv_dropdown_get_selected(obj));
+            } break;
+
+            case TONEX_MODULATION_PHASER:
+            {
+                usb_modify_parameter(TONEX_PARAM_MODULATION_PHASER_TS, lv_dropdown_get_selected(obj));
+            } break;
+
+            case TONEX_MODULATION_FLANGER:
+            {
+                usb_modify_parameter(TONEX_PARAM_MODULATION_FLANGER_TS, lv_dropdown_get_selected(obj));
+            } break;
+
+            case TONEX_MODULATION_ROTARY:
+            {
+                usb_modify_parameter(TONEX_PARAM_MODULATION_ROTARY_TS, lv_dropdown_get_selected(obj));
+            } break;
+        }
+    }
     else if (obj == ui_ModulationParam1Slider)
     {
         // check which model is set
@@ -1063,6 +1093,22 @@ void ParameterChanged(lv_event_t * e)
             case TONEX_DELAY_TAPE:
             {
                 usb_modify_parameter(TONEX_PARAM_DELAY_TAPE_TIME, lv_slider_get_value(obj));
+            } break;
+        }
+    }
+    else if (obj == ui_DelayTSDropdown)
+    {
+        // check which model is set
+        switch (lv_dropdown_get_selected(ui_DelayModelDropdown))
+        {
+            case TONEX_DELAY_DIGITAL:
+            {
+                usb_modify_parameter(TONEX_PARAM_DELAY_DIGITAL_TS, lv_dropdown_get_selected(obj));
+            } break;
+
+            case TONEX_DELAY_TAPE:
+            {
+                usb_modify_parameter(TONEX_PARAM_DELAY_TAPE_TS, lv_dropdown_get_selected(obj));
             } break;
         }
     }
@@ -2471,17 +2517,24 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 if (param_entry->Value)
                                 {
                                     lv_obj_add_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
+                                    lv_obj_add_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
                                     lv_obj_clear_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
+                                    lv_obj_clear_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
                                 }                        
                             }
                         } break;
 
                         case TONEX_PARAM_MODULATION_CHORUS_TS:
                         {
-                            // not exposed via UI
+                            if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_CHORUS)
+                            {
+                                lv_dropdown_set_selected(ui_ModulationTSDropdown, param_entry->Value);
+                            }
                         } break;
 
                         case TONEX_PARAM_MODULATION_CHORUS_RATE:
@@ -2518,17 +2571,24 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 if (param_entry->Value)
                                 {
                                     lv_obj_add_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
+                                    lv_obj_add_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
                                     lv_obj_clear_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
+                                    lv_obj_clear_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
                                 }                        
                             }
                         } break;
 
                         case TONEX_PARAM_MODULATION_TREMOLO_TS:
                         {
-                            // not exposed via UI
+                            if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_TREMOLO)
+                            {
+                                lv_dropdown_set_selected(ui_ModulationTSDropdown, param_entry->Value);
+                            }
                         } break;
 
                         case TONEX_PARAM_MODULATION_TREMOLO_RATE:
@@ -2574,17 +2634,24 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 if (param_entry->Value)
                                 {
                                     lv_obj_add_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
+                                    lv_obj_add_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
                                     lv_obj_clear_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
+                                    lv_obj_clear_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
                                 }                        
                             }
                         } break;
 
                         case TONEX_PARAM_MODULATION_PHASER_TS:
                         {
-                            // not exposed via UI
+                            if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_PHASER)
+                            {
+                                lv_dropdown_set_selected(ui_ModulationTSDropdown, param_entry->Value);
+                            }
                         } break;
 
                         case TONEX_PARAM_MODULATION_PHASER_RATE:
@@ -2621,17 +2688,24 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 if (param_entry->Value)
                                 {
                                     lv_obj_add_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
+                                    lv_obj_add_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
                                     lv_obj_clear_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
+                                    lv_obj_clear_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
                                 }                        
                             }
                         } break;
 
                         case TONEX_PARAM_MODULATION_FLANGER_TS:
                         {
-                            // not exposed via UI
+                            if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_FLANGER)
+                            {
+                                lv_dropdown_set_selected(ui_ModulationTSDropdown, param_entry->Value);
+                            }
                         } break;
 
                         case TONEX_PARAM_MODULATION_FLANGER_RATE:
@@ -2677,17 +2751,24 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 if (param_entry->Value)
                                 {
                                     lv_obj_add_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
+                                    lv_obj_add_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
                                     lv_obj_clear_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
+                                    lv_obj_clear_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
                                 }                        
                             }
                         } break;
 
                         case TONEX_PARAM_MODULATION_ROTARY_TS:
                         {
-                            // not exposed via UI
+                            if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_ROTARY)
+                            {
+                                lv_dropdown_set_selected(ui_ModulationTSDropdown, param_entry->Value);
+                            }
                         } break;
 
                         case TONEX_PARAM_MODULATION_ROTARY_SPEED:
@@ -2779,17 +2860,24 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 if (param_entry->Value)
                                 {
                                     lv_obj_add_state(ui_DelaySyncSwitch, LV_STATE_CHECKED);
+                                    lv_obj_add_flag(ui_DelayTSSlider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(ui_DelayTSDropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
                                     lv_obj_clear_state(ui_DelaySyncSwitch, LV_STATE_CHECKED);
+                                    lv_obj_clear_flag(ui_DelayTSSlider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(ui_DelayTSDropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                             }
                         } break;
 
                         case TONEX_PARAM_DELAY_DIGITAL_TS:
                         {
-                            // not exposed via UI
+                            if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_DIGITAL)
+                            {
+                                lv_dropdown_set_selected(ui_DelayTSDropdown, param_entry->Value);
+                            }
                         } break;
 
                         case TONEX_PARAM_DELAY_DIGITAL_TIME:
@@ -2841,17 +2929,24 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 if (param_entry->Value)
                                 {
                                     lv_obj_add_state(ui_DelaySyncSwitch, LV_STATE_CHECKED);
+                                    lv_obj_add_flag(ui_DelayTSSlider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(ui_DelayTSDropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
                                     lv_obj_clear_state(ui_DelaySyncSwitch, LV_STATE_CHECKED);
+                                    lv_obj_clear_flag(ui_DelayTSSlider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(ui_DelayTSDropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                             }
                         } break;
 
                         case TONEX_PARAM_DELAY_TAPE_TS:
                         {
-                            // not exposed via UI   
+                            if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_TAPE)
+                            {
+                                lv_dropdown_set_selected(ui_DelayTSDropdown, param_entry->Value);
+                            }
                         } break;
 
                         case TONEX_PARAM_DELAY_TAPE_TIME:
