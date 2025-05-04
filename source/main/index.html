@@ -865,6 +865,16 @@
             obj.setAttribute("data-indexnumber", param_index);
         }
 
+        function showDelayTimeAndTimesign(sync) {
+            document.getElementById("dl_time").parentElement.style.display = sync == 0 ? "block" : "none";
+            document.getElementById("dl_timesign").parentElement.style.display = sync == 0 ? "none" : "block";
+        }
+
+        function showModTimeAndTimesign(sync) {
+            document.getElementById("mo_param1").parentElement.style.display = sync == 0 ? "block" : "none";
+            document.getElementById("mo_timesign").parentElement.style.display = sync == 0 ? "none" : "block";
+        }
+
         function processReturnCmd(data) {
             switch (data['CMD'])
             {
@@ -1280,11 +1290,16 @@
                             case TONEX_PARAM_MODULATION_CHORUS_SYNC:
                                 if (getSelectValue("mo_model") == TONEX_MODULATION_CHORUS) {
                                     configureParamSwitch("mo_sync", value);   
-                                    setParamData("mo_sync", parseInt(key));                                 
+                                    setParamData("mo_sync", parseInt(key));
+                                    showModTimeAndTimesign(value);
                                 }
                                 break;
 
                             case TONEX_PARAM_MODULATION_CHORUS_TS:
+                                if (getSelectValue("mo_model") == TONEX_MODULATION_CHORUS) {
+                                    configureParamSelect("mo_timesign", value);
+                                    setParamData("mo_timesign", parseInt(key));
+                                }
                                 break;
 
                             case TONEX_PARAM_MODULATION_CHORUS_RATE:
@@ -1312,10 +1327,15 @@
                                 if (getSelectValue("mo_model") == TONEX_MODULATION_TREMOLO) {
                                     configureParamSwitch("mo_sync", value);
                                     setParamData("mo_sync", parseInt(key));
+                                    showModTimeAndTimesign(value);
                                 }
                                 break;
 
                             case TONEX_PARAM_MODULATION_TREMOLO_TS:
+                                if (getSelectValue("mo_model") == TONEX_MODULATION_TREMOLO) {
+                                    configureParamSelect("mo_timesign", value);
+                                    setParamData("mo_timesign", parseInt(key));
+                                }
                                 break;
 
                             case TONEX_PARAM_MODULATION_TREMOLO_RATE:
@@ -1350,10 +1370,15 @@
                                 if (getSelectValue("mo_model") == TONEX_MODULATION_PHASER) {
                                     configureParamSwitch("mo_sync", value);
                                     setParamData("mo_sync", parseInt(key));
+                                    showModTimeAndTimesign(value);
                                 }
                                 break;
 
                             case TONEX_PARAM_MODULATION_PHASER_TS:
+                                if (getSelectValue("mo_model") == TONEX_MODULATION_PHASER) {
+                                    configureParamSelect("mo_timesign", value);
+                                    setParamData("mo_timesign", parseInt(key));
+                                }
                                 break;
 
                             case TONEX_PARAM_MODULATION_PHASER_RATE:
@@ -1381,10 +1406,15 @@
                                 if (getSelectValue("mo_model") == TONEX_MODULATION_FLANGER) {
                                     configureParamSwitch("mo_sync", value);
                                     setParamData("mo_sync", parseInt(key));
+                                    showModTimeAndTimesign(value);
                                 }
                                 break;
 
                             case TONEX_PARAM_MODULATION_FLANGER_TS:
+                                if (getSelectValue("mo_model") == TONEX_MODULATION_FLANGER) {
+                                    configureParamSelect("mo_timesign", value);
+                                    setParamData("mo_timesign", parseInt(key));
+                                }
                                 break;
 
                             case TONEX_PARAM_MODULATION_FLANGER_RATE:
@@ -1419,10 +1449,15 @@
                                 if (getSelectValue("mo_model") == TONEX_MODULATION_ROTARY) {
                                     configureParamSwitch("mo_sync", value);
                                     setParamData("mo_sync", parseInt(key));
+                                    showModTimeAndTimesign(value);
                                 }
                                 break;
 
                             case TONEX_PARAM_MODULATION_ROTARY_TS:
+                                if (getSelectValue("mo_model") == TONEX_MODULATION_ROTARY) {
+                                    configureParamSelect("mo_timesign", value);
+                                    setParamData("mo_timesign", parseInt(key));
+                                }
                                 break;
 
                             case TONEX_PARAM_MODULATION_ROTARY_SPEED:
@@ -1473,10 +1508,15 @@
                                 if (getSelectValue("dl_model") == TONEX_DELAY_DIGITAL) {
                                     configureParamSwitch("dl_sync", value);
                                     setParamData("dl_sync", parseInt(key));
+                                    showDelayTimeAndTimesign(value);
                                 }
                                 break;
 
                             case TONEX_PARAM_DELAY_DIGITAL_TS:
+                                if (getSelectValue("dl_model") == TONEX_DELAY_DIGITAL) {
+                                    configureParamSelect("dl_timesign", value);
+                                    setParamData("dl_timesign", parseInt(key));
+                                }
                                 break;
 
                             case TONEX_PARAM_DELAY_DIGITAL_TIME:
@@ -1511,10 +1551,15 @@
                                 if (getSelectValue("dl_model") == TONEX_DELAY_TAPE) {
                                     configureParamSwitch("dl_sync", value);
                                     setParamData("dl_sync", parseInt(key));
+                                    showDelayTimeAndTimesign(value);
                                 }
                                 break;
                                 
                             case TONEX_PARAM_DELAY_TAPE_TS:
+                                if (getSelectValue("dl_model") == TONEX_DELAY_TAPE) {
+                                    configureParamSelect("dl_timesign", value);
+                                    setParamData("dl_timesign", parseInt(key));
+                                }
                                 break;
 
                             case TONEX_PARAM_DELAY_TAPE_TIME:
@@ -2655,6 +2700,30 @@
                 </div>
                 <br>
                 <div class="container">
+                    <label class="form-check-label" for="mo_timesign">Timesign</label>
+                    <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="mo_timesign">
+                        <option value="0">1/32</option>
+                        <option value="1">1/32 D</option>
+                        <option value="2">1/32 T</option>
+                        <option value="3">1/16</option>
+                        <option value="4">1/16 D</option>
+                        <option value="5">1/16 T</option>
+                        <option value="6">1/8</option>
+                        <option value="7">1/8 D</option>
+                        <option value="8">1/8 T</option>
+                        <option value="9" selected>1/4</option>
+                        <option value="10">1/4 D</option>
+                        <option value="11">1/4 T</option>
+                        <option value="12">1/2</option>
+                        <option value="13">1/2 D</option>
+                        <option value="14">1/2 T</option>
+                        <option value="15">1/1</option>
+                        <option value="16">1/1 D</option>
+                        <option value="17">1/1 T</option>
+                    </select>
+                    <br>
+                </div>
+                <div class="container">
                     <div class="row">
                         <div class="col">
                             <label for="mo_param1" id="mo_param1l" class="form-label">Param1</label>
@@ -2737,6 +2806,30 @@
                         </div>
                     </div>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="dl_time">
+                </div>
+                <div class="container">
+                    <label class="form-check-label" for="dl_timesign">Timesign</label>
+                    <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="dl_timesign">
+                        <option value="0">1/32</option>
+                        <option value="1">1/32 D</option>
+                        <option value="2">1/32 T</option>
+                        <option value="3">1/16</option>
+                        <option value="4">1/16 D</option>
+                        <option value="5">1/16 T</option>
+                        <option value="6">1/8</option>
+                        <option value="7">1/8 D</option>
+                        <option value="8">1/8 T</option>
+                        <option value="9" selected>1/4</option>
+                        <option value="10">1/4 D</option>
+                        <option value="11">1/4 T</option>
+                        <option value="12">1/2</option>
+                        <option value="13">1/2 D</option>
+                        <option value="14">1/2 T</option>
+                        <option value="15">1/1</option>
+                        <option value="16">1/1 D</option>
+                        <option value="17">1/1 T</option>
+                    </select>
+                    <br>
                 </div>
                 <div class="container">
                     <label for="dl_feedback" class="form-label" unit="%">Feedback</label>
