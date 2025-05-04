@@ -753,7 +753,7 @@
             if (SocketConnected === 0) {
                 if (!modal._isShown) {
                     console.log("Not connected");
-                    modal.show();
+                    //modal.show();
                 }
             }
             else {
@@ -1964,37 +1964,35 @@
                         "VALUE": param_value});                        
             }
         }
-		function showValue(e) {
+        function showValue(e) {
             let s = document.querySelector(`label[for="${e.id}"]`);
-			s.innerText = s.innerText.replace(/ :.*/, "");
+            s.innerText = s.innerText.replace(/ :.*/, "");
             s.innerText += " : " + parseFloat(e.value);
             
             let unit = s.getAttribute("unit");
             if (unit != null) {
                 s.innerText += unit;
             }
-			s.onclick = function(e){
-				let tmp_id = e.target.getAttribute('for');
-				showvalueinput(1);
-				document.getElementById("value_input_lbl").innerText = s.innerText.replace(/:.*/, "") ;				
-				if (unit != null) {
-					document.getElementById("value_input_lbl").innerText += "("+unit+")";
-				}
-				document.getElementById("value_input_val").value = document.getElementById(tmp_id).value
-				document.getElementById("value_input_val").step = document.getElementById(tmp_id).step;
-				document.getElementById("value_input_btn").onclick = function() {
-					document.getElementById(tmp_id).value = document.getElementById("value_input_val").value;					
-					document.getElementById(tmp_id).dispatchEvent(new Event('input'));
-					showvalueinput(0);
-				};
+            s.onclick = function(e){
+                let tmp_id = e.target.getAttribute('for');
+                let value_input_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('value_input_bg'));
+                value_input_modal.show();            
+                //showvalueinput(1);
+                document.getElementById("value_input_lbl").innerText = s.innerText.replace(/:.*/, "") ;				
+                if (unit != null) {
+                    document.getElementById("value_input_lbl").innerText += "("+unit+")";
+                }
+                document.getElementById("value_input_val").value = document.getElementById(tmp_id).value
+                document.getElementById("value_input_val").step = document.getElementById(tmp_id).step;
+                document.getElementById("value_input_btn").onclick = function() {
+                    document.getElementById(tmp_id).value = document.getElementById("value_input_val").value;					
+                    document.getElementById(tmp_id).dispatchEvent(new Event('input'));
+                    value_input_modal.hide();  
+                };
 
-			};
-		}
-		
-		function showvalueinput(x) {
-			document.getElementById("value_input_bg").style.display = (x)? "block" : "none";
-			document.getElementById("value_input").style.display = (x)? "block" : "none";
-		}
+            };
+        }
+         
         // Tap tempo
 
         function TapTempo() {
@@ -3833,13 +3831,26 @@
             </div>
         </div>
     </div>
+
 	    
-	<div id="value_input_bg">
-		<div id="value_input">
-			Set <label id="value_input_lbl"/>placeholder</label> value:<br />
-			<input type="number" id="value_input_val"/><br />
-			<button onclick="showvalueinput(0)">Cancel</button><button id="value_input_btn">Confirm</button>		
-		</div>
-	</div>  
+    <div class="modal fade" id="value_input_bg">
+        <div class="modal-dialog  modal-dialog-centered modal-sm">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Set <label id="value_input_lbl"/>placeholder</label> value:</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p><input type="number" id="value_input_val"/></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="value_input_btn">Save changes</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
   </body>
 </html>
