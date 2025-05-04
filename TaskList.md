@@ -1,8 +1,5 @@
 # Tonex One Controller: An open-source controller and display interface for the IK Multimedia Tonex One guitar pedal
 # Task List
-## Midi serial latency
-If a lot of Midi serial messages are sent (e.g. from time stamps) then latency can occur.<br>
-Look at if this is a queue overflow, or appended messages in serial handler, or other.
 
 ## 4.3B Parameter UI
 Add sliders for bass/Mid/Treble frequency, to the 4.3B UI.<br>
@@ -44,11 +41,3 @@ Look at adding USB Midi support once this is complete.
 ## Tonex USB disconect handling
 If the pedal is diosconnected after being connected, the ESP32 needs a reboot in order to allow connection again.
 Review the de-init and init code to allow it to be handled without needing a reboot.
-
-## Delay Sync time divisions
-When sync is enabled on the delay, the Tonex software changes the units of the time adjustment to time divisions,
-e.g. 1/8, 1/4 (which is a fraction of the BPM value.)
-
-Change the web UI (and maybe 4.3B UI also) to allow the setting of these time divisions.
-Possibly via another slider, or possibly just changing the parameter range and display.
-Check the USB comms to see if the actual float value sent is different, or if it is just sent as BPM x division. 
