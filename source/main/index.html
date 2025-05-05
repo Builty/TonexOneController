@@ -1626,6 +1626,7 @@
                     configureParamSwitch("custombte", data['BT_CUST_EN']);
                     setParamLabel("custombt", data['BT_CUST_NAME']);
                     configureParamSwitch("togglebypass", data['TOGGLE_BYPASS']);
+                    configureParamSwitch("looparound", data['LOOP_AROUND']);
                     configureParamSwitch("midienabled", data['S_MIDI_EN']);
                     configureParamSelect("midichannel", data['S_MIDI_CH']);                    
                     configureParamSwitch("btmidicc", data['BT_MIDI_CC']);
@@ -1636,6 +1637,7 @@
                     setParamValue("mdnsname", data['MDNS_NAME']);
 
                     configureParamSelect("screenrot", data['SCREEN_ROT']);
+                    configureParamSelect("presetslot", data['PRESET_SLOT']);
 
                     configureParamSelect("extfslay", data['EXTFS_PS_LAYOUT']);
                                         
@@ -1818,6 +1820,9 @@
                 var togglebypass = document.getElementById("togglebypass").checked;
                 var togglebypassen = togglebypass ? 1 : 0;
 
+                var looparound = document.getElementById("looparound").checked;
+                var looparounden = looparound ? 1 : 0;
+
                 var midienabled = document.getElementById("midienabled").checked;
                 var midienableden = midienabled ? 1 : 0;
                 
@@ -1827,7 +1832,8 @@
                 var btmidicc = document.getElementById("btmidicc").checked;
                 var btmidiccen = btmidicc ? 1 : 0;
                                    
-                var screenrot = document.getElementById("screenrot").value;                
+                var screenrot = document.getElementById("screenrot").value;       
+                var presetslot = document.getElementById("presetslot").value;         
                 var extfslay = document.getElementById("extfslay").value;  
 
                 var extfx1sw = document.getElementById("extfx1sw").value;  
@@ -1898,11 +1904,13 @@
                         "BT_CUST_EN": custombteen,
                         "BT_CUST_NAME": custombt,
                         "TOGGLE_BYPASS": togglebypassen,
+                        "LOOP_AROUND": looparounden,
                         "S_MIDI_EN": midienableden,
                         "S_MIDI_CH": parseInt(midichannel),
                         "FOOTSW_MODE": parseInt(footmode),
                         "BT_MIDI_CC": btmidiccen,
                         "SCREEN_ROT": parseInt(screenrot),
+                        "PRESET_SLOT": parseInt(presetslot),
                         "EXTFS_PS_LAYOUT": parseInt(extfslay),                        
                         "EXTFS_ES1_SW": parseInt(extfx1sw),
                         "EXTFS_ES1_CC": parseInt(extfx1cc),
@@ -3898,6 +3906,23 @@
                     <select class="form-select select_style" id="screenrot">
                         <option value="0" class="style6" selected>0 degrees</option>
                         <option value="1" class="style6">180 degrees</option>
+                    </select>                           
+                </div>
+                <br>
+                <div class="container">
+                    <div class="form-check form-switch">
+                       <input class="form-check-input" type="checkbox" role="switch" value="on" id="looparound">
+                       <label class="form-check-label" for="looparound">Preset and Bank switching loop around</label>
+                    </div> 
+                </div>
+                <br>
+                <div class="container">
+                    <label class="form-check-label" for="presetslot">Changing preset saves to slot:</label>
+                    <select class="form-select select_style" id="presetslot">
+                        <option value="0" class="style6" >Current slot</option>
+                        <option value="1" class="style6">Slot A (Dual mode)</option>
+                        <option value="2" class="style6">Slot B (Dual mode)</option>
+                        <option value="3" class="style6" selected>Slot C (Stomp mode)</option>
                     </select>                           
                 </div>
                 <br>
