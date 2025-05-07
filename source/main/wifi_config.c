@@ -244,7 +244,7 @@ void wifi_request_sync(uint8_t type, void* arg1, void* arg2)
     }
 
     // send to queue
-    if (xQueueSend(wifi_input_queue, (void*)&message, 10) != pdPASS)
+    if (xQueueSend(wifi_input_queue, (void*)&message, 50) != pdPASS)
     {
         ESP_LOGE(TAG, "wifi_request_sync queue send failed!");            
     }
@@ -1735,7 +1735,7 @@ static void wifi_config_task(void *arg)
 void wifi_config_init(void)
 {
      // create queue for commands from other threads
-    wifi_input_queue = xQueueCreate(5, sizeof(tWiFiMessage));
+    wifi_input_queue = xQueueCreate(25, sizeof(tWiFiMessage));
     if (wifi_input_queue == NULL)
     {
         ESP_LOGE(TAG, "Failed to create WiFi input queue!");
