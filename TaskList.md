@@ -16,7 +16,7 @@ Swipe left/right to select next/previous preset.
 ## Expression pedal support. 
 Use ADC to read expression pedal pot, and have config to assign what quantity it adjusts.
 
-##Direct Preset load from footswitch 
+## Direct Preset load from footswitch 
 Add ability to load preset X from a footswitch press.<br> 
 
 ## Support for multiple Bluetooth devices 
@@ -41,3 +41,6 @@ Look at adding USB Midi support once this is complete.
 ## Tonex USB disconect handling
 If the pedal is diosconnected after being connected, the ESP32 needs a reboot in order to allow connection again.
 Review the de-init and init code to allow it to be handled without needing a reboot.
+
+## Bypass Support 
+Add support for toggling Bypass mode, via the web UI. 
