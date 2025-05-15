@@ -1099,11 +1099,10 @@ static void __attribute__((unused)) gattc_profile_a_event_handler(esp_gattc_cb_e
         }
 
         case ESP_GATTC_NOTIFY_EVT:
-            ESP_LOGI(GATTC_TAG, "ESP_GATTC_NOTIFY_EVT, Receive notify value:");
+            ESP_LOGI(GATTC_TAG, "ESP_GATTC_NOTIFY_EVT, Receive notify values. len: %d", (int)p_data->notify.value_len);
             esp_log_buffer_hex(GATTC_TAG, p_data->notify.value, p_data->notify.value_len);
 
-            // check Midi data. Program change Should be ?? ?? 0xC0 XX (XX = preset index, 0-based)
-            // first 2 bytes are header/timestamp bytes, values depend on host. Ignoring them here
+            // check Midi data.
             if (p_data->notify.value_len >= 4)
             {
                 // check channel
@@ -1118,6 +1117,8 @@ static void __attribute__((unused)) gattc_profile_a_event_handler(esp_gattc_cb_e
                     {
                         case 0xC0:
                         {
+                            // Program change Should be ?? ?? 0xC0 XX (XX = preset index, 0-based)
+                            // first 2 bytes are header/timestamp bytes, values depend on host. Ignoring them here
                             // set preset
                             control_request_preset_index(p_data->notify.value[3]);
                         } break;
@@ -1128,10 +1129,18 @@ static void __attribute__((unused)) gattc_profile_a_event_handler(esp_gattc_cb_e
                             // a control change message, which would modify a different parameter
                             if (control_get_config_item_int(CONFIG_ITEM_ENABLE_BT_MIDI_CC))
                             {                        
-                                // control change
-                                uint8_t change_num = p_data->notify.value[3];
-                                uint8_t value = p_data->notify.value[4];
-                                midi_helper_adjust_param_via_midi(change_num, value);
+                                uint8_t change_num;
+                                uint8_t value;
+                                uint8_t index = 3;  // skipping time stamp and message type bytes
+
+                                // control change(s) (can be multiple appended together, 2 bytes each)
+                                uint8_t num_cc_messages = (uint8_t)((p_data->notify.value_len - 3) / 2);
+                                for (uint8_t loop = 0; loop < num_cc_messages; loop++)
+                                {
+                                    change_num = p_data->notify.value[index++];
+                                    value = p_data->notify.value[index++];
+                                    midi_helper_adjust_param_via_midi(change_num, value);
+                                }
                             }
                         } break;
                     }
