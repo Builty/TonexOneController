@@ -1811,7 +1811,13 @@ void control_set_default_config(void)
     ControlData.ConfigData.BTClientCustomEnable = 0;
     ControlData.ConfigData.GeneralDoublePressToggleBypass = 0;
     ControlData.ConfigData.GeneralLoopAround = 0;
-    ControlData.ConfigData.MidiSerialEnable = 0;
+
+#if CONFIG_TONEX_CONTROLLER_DEFAULT_MIDI_ENABLE
+    ControlData.ConfigData.MidiSerialEnable = 1;
+#else
+    ControlData.ConfigData.MidiSerialEnable = 0;    
+#endif    
+
     ControlData.ConfigData.MidiChannel = 1;
     ControlData.ConfigData.FootswitchMode = FOOTSWITCH_LAYOUT_1X2;
     ControlData.ConfigData.EnableBTmidiCC = 0;

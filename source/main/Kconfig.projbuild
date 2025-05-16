@@ -55,6 +55,12 @@ menu "Tonex Controller Configuration"
         default "y"
         help
             Enable this option if the platform has footswitches directly connected to GPIO
+           
+    config TONEX_CONTROLLER_DEFAULT_MIDI_ENABLE
+        bool "Enable Midi by default"
+        default "n"
+        help
+            Sets if Midi (serial) is enabled by default
             
     config EXAMPLE_DOUBLE_FB
         bool "Use double Frame Buffer"
@@ -75,5 +81,5 @@ menu "Tonex Controller Configuration"
         help
             Enable this option, the example will use a pair of semaphores to avoid the tearing effect.
             Note, if the Double Frame Buffer is used, then we can also avoid the tearing effect without the lock.
-            
+                     
 endmenu
