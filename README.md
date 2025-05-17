@@ -95,6 +95,25 @@ For more information about the firmware development and customisation, refer to 
 - https://github.com/vit3k/tonex_controller for great work on reverse engineering the Tonex One USB protocol
 
 ## Firmware Release Notes <a name="release_notes"></a>
+V1.0.10.2 (Beta):
+- User contribution from Mateusz: web config now allows the order of the presets to be remapped. E.g. footswitches 1,2,3,4 could now load presets 10,5,11,20 instead of having to be 1,2,3,4.
+- User contribution from Mateusz: all 20 presets are now read from the Tonex during boot. Web UI preset selection has all names, instead of only being loaded when the preset was selected
+- Platforms with screens show "Syncing" during the above procedure
+- User contribution from Mateusz: 4.3B higher quality amp and pedal skin images, and effect icons
+- User contribution from Mateusz: the effect icons on the 4.3B main screen arrange themselves to match the pre/post order of the effects
+- Added EQ icon to the 4.3B UI, which can be long pressed to jump to the config screen
+- Fixed bug where if preset mode was set to quad binary, it could accidently trigger a configuration reset
+- User contribution from Yike Lu: added Midi CC 127 which can directly load any preset by number
+- Significant performance improvements in the case where multiple serial Midi messages arrive very close together, e.g. when rotating knobs on Midi controllers
+- User contribution from Mateusz: added Loop-around footswitch mode, where a single footswitch can navigate 1,2,3...,19,20,1,2,3.., rolling over from 20 back to 1
+- User contribution from Jamkid: added ability to click on a parameter value in the web UI, to bring up a dialog box that allows direct entry of a value
+- Fixed bug where the 4.3B onboard footswitch disabled mode didn't disable footswitches
+- User contribution from Mateusz: when parameters with Sync (syncronise time to the BPM) have the sync enabled, web and 4.3B parameter values change from slider to a drop down with e.g. 1/8, 1/4 etc
+- Fixed issue where if parameter Sync was enable (as above) then the Midi control of the values didn't function correctly
+- Fixed issue where sending multiple chained Midi CC values over bluetooth, the second value was not processed
+- Added landscape LCD screen build for the Waveshare 1.69". Screen rotates 90 degrees so the USB port is on the bottom (or top if 180 degree rotation option is enabled.)
+- Added 3 new builds, for collaboration with Pirate Midi, who are selling completed controller products. Serial Midi is enabled by default for all.
+
 V1.0.9.2:
 - Added support for Tuning reference (4.3B UI, web config, and Midi)
 - Added support for Input trim via Midi
@@ -115,7 +134,7 @@ V1.0.9.2:
 - Added more footswitch preset layouts to external switches. 1x2, 1x4 binary, disabled etc 
 - Added support for switching effects from the onboard footswitches 
 - Standardised preset switching layouts for external and internal (onboard) foot switches
-- NOTE: due to the preset switching changes, it maybe be necessary to set your desired configuration again
+- NOTE: due to the preset switching changes, it may be necessary to set your desired configuration again
 
 
 V1.0.8.2:
