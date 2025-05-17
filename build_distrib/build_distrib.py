@@ -78,6 +78,10 @@ def build_distribution(template, target_folder, include_ota, out_filename):
 zip_name = 'TonexOneController_V' + version + '_Waveshare_1_69'
 build_distribution('template_cust_partition', 'build_ws169', True, zip_name)
 
+# Build Waveshare 1.69" landscape
+zip_name = 'TonexOneController_V' + version + '_Waveshare_1_69land'
+build_distribution('template_cust_partition', 'build_ws169land', True, zip_name)
+
 # Build Waveshare 1.69" Touch
 zip_name = 'TonexOneController_V' + version + '_Waveshare_1_69_Touch'
 build_distribution('template_cust_partition', 'build_ws169t', True, zip_name)
@@ -113,5 +117,9 @@ build_distribution('template_cust_partition', 'build_piratezero', True, zip_name
 # Build Pirate 1.69" 
 zip_name = 'TonexOneController_V' + version + '_Pirate_1_69'
 build_distribution('template_cust_partition', 'build_pirate169', True, zip_name)
+
+# Build Pirate 1.69" landscape
+zip_name = 'TonexOneController_V' + version + '_Pirate_1_69land'
+build_distribution('template_cust_partition', 'build_pirate169land', True, zip_name)
 
 print('All done')

@@ -25,6 +25,32 @@
       "postFlash": ""
     }
   },
+  "WS169Land": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_ws169land",
+      "sdkconfigDefaults": [
+        "sdkconfig.ws169land",
+        "sdkconfig.defaults"
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws169land"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
   "WS169TOUCH": {
     "build": {
       "compileArgs": [],
@@ -243,6 +269,32 @@
         "sdkconfig.defaults"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_pirate169"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "Pirate169land": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_pirate169land",
+      "sdkconfigDefaults": [
+        "sdkconfig.pirate169land",
+        "sdkconfig.defaults"
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_pirate169land"
     },
     "env": {},
     "flashBaudRate": "",

@@ -47,8 +47,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  -1,
-                  -53
+                  -21,
+                  67
                 ],
                 "InheritedType": 7
               },
@@ -57,7 +57,7 @@
                 "flags": 17,
                 "strtype": "OBJECT/Size",
                 "intarray": [
-                  100,
+                  110,
                   50
                 ],
                 "InheritedType": 7
@@ -169,6 +169,12 @@
                         "strtype": "_style/Text_Font",
                         "strval": "montserrat_48",
                         "InheritedType": 3
+                      },
+                      {
+                        "nid": 10040,
+                        "strtype": "_style/Transform_rotation",
+                        "integer": -900,
+                        "InheritedType": 6
                       }
                     ],
                     "InheritedType": 1
@@ -222,8 +228,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  -8,
-                  -75
+                  -141,
+                  -73
                 ],
                 "InheritedType": 7
               },
@@ -327,6 +333,12 @@
                         "strtype": "_style/Text_Align",
                         "strval": "CENTER",
                         "InheritedType": 3
+                      },
+                      {
+                        "nid": 10040,
+                        "strtype": "_style/Transform_rotation",
+                        "integer": -900,
+                        "InheritedType": 6
                       }
                     ],
                     "InheritedType": 1
@@ -381,8 +393,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  -6,
-                  -45
+                  -113,
+                  -64
                 ],
                 "InheritedType": 7
               },
@@ -492,6 +504,12 @@
                         "strtype": "_style/Text_Font",
                         "strval": "montserrat_30",
                         "InheritedType": 3
+                      },
+                      {
+                        "nid": 10040,
+                        "strtype": "_style/Transform_rotation",
+                        "integer": -900,
+                        "InheritedType": 6
                       }
                     ],
                     "InheritedType": 1
@@ -546,8 +564,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  -101,
-                  -72
+                  -63,
+                  145
                 ],
                 "InheritedType": 7
               },
@@ -691,6 +709,12 @@
                         "strtype": "_style/Border width",
                         "integer": 2,
                         "InheritedType": 6
+                      },
+                      {
+                        "nid": 10040,
+                        "strtype": "_style/Transform_rotation",
+                        "integer": -900,
+                        "InheritedType": 6
                       }
                     ],
                     "InheritedType": 1
@@ -744,8 +768,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  -101,
-                  -40
+                  -30,
+                  145
                 ],
                 "InheritedType": 7
               },
@@ -889,6 +913,12 @@
                         "strtype": "_style/Border width",
                         "integer": 2,
                         "InheritedType": 6
+                      },
+                      {
+                        "nid": 10040,
+                        "strtype": "_style/Transform_rotation",
+                        "integer": -900,
+                        "InheritedType": 6
                       }
                     ],
                     "InheritedType": 1
@@ -942,8 +972,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  -68,
-                  -72
+                  -63,
+                  112
                 ],
                 "InheritedType": 7
               },
@@ -1087,6 +1117,12 @@
                         "strtype": "_style/Border width",
                         "integer": 2,
                         "InheritedType": 6
+                      },
+                      {
+                        "nid": 10040,
+                        "strtype": "_style/Transform_rotation",
+                        "integer": -900,
+                        "InheritedType": 6
                       }
                     ],
                     "InheritedType": 1
@@ -1141,8 +1177,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  -68,
-                  -40
+                  -30,
+                  112
                 ],
                 "InheritedType": 7
               },
@@ -1286,6 +1322,12 @@
                         "strtype": "_style/Border width",
                         "integer": 2,
                         "InheritedType": 6
+                      },
+                      {
+                        "nid": 10040,
+                        "strtype": "_style/Transform_rotation",
+                        "integer": -900,
+                        "InheritedType": 6
                       }
                     ],
                     "InheritedType": 1
@@ -1354,8 +1396,8 @@
                     "flags": 17,
                     "strtype": "OBJECT/Size",
                     "intarray": [
-                      212,
-                      122
+                      245,
+                      110
                     ],
                     "InheritedType": 7
                   },
@@ -1507,8 +1549,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  0,
-                  51
+                  123,
+                  198
                 ],
                 "InheritedType": 7
               },
@@ -1517,8 +1559,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Size",
                 "intarray": [
-                  228,
-                  141
+                  270,
+                  130
                 ],
                 "InheritedType": 7
               },
@@ -1623,6 +1665,12 @@
                         "strtype": "_style/Border width",
                         "integer": 3,
                         "InheritedType": 6
+                      },
+                      {
+                        "nid": 10040,
+                        "strtype": "_style/Transform_rotation",
+                        "integer": -900,
+                        "InheritedType": 6
                       }
                     ],
                     "InheritedType": 1
@@ -1708,7 +1756,7 @@
                     "flags": 17,
                     "strtype": "OBJECT/Position",
                     "intarray": [
-                      87,
+                      104,
                       0
                     ],
                     "InheritedType": 7
@@ -1823,7 +1871,7 @@
                   {
                     "nid": 2079814170,
                     "strtype": "IMAGE/Scale",
-                    "integer": 220,
+                    "integer": 200,
                     "InheritedType": 6
                   },
                   {
@@ -1877,7 +1925,7 @@
                     "flags": 17,
                     "strtype": "OBJECT/Position",
                     "intarray": [
-                      87,
+                      104,
                       0
                     ],
                     "InheritedType": 7
@@ -1986,7 +2034,7 @@
                   {
                     "nid": 2079814170,
                     "strtype": "IMAGE/Scale",
-                    "integer": 220,
+                    "integer": 200,
                     "InheritedType": 6
                   },
                   {
@@ -2040,8 +2088,8 @@
                     "flags": 17,
                     "strtype": "OBJECT/Position",
                     "intarray": [
-                      -67,
-                      4
+                      -70,
+                      1
                     ],
                     "InheritedType": 7
                   },
@@ -2149,7 +2197,7 @@
                   {
                     "nid": -1485417179,
                     "strtype": "IMAGE/Scale",
-                    "integer": 200,
+                    "integer": 180,
                     "InheritedType": 6
                   },
                   {
@@ -2203,8 +2251,8 @@
                     "flags": 17,
                     "strtype": "OBJECT/Position",
                     "intarray": [
-                      44,
-                      -1
+                      59,
+                      0
                     ],
                     "InheritedType": 7
                   },
@@ -2312,7 +2360,7 @@
                   {
                     "nid": -2094421567,
                     "strtype": "IMAGE/Scale",
-                    "integer": 220,
+                    "integer": 200,
                     "InheritedType": 6
                   },
                   {
@@ -2366,8 +2414,8 @@
                     "flags": 17,
                     "strtype": "OBJECT/Position",
                     "intarray": [
-                      44,
-                      -1
+                      59,
+                      0
                     ],
                     "InheritedType": 7
                   },
@@ -2481,7 +2529,7 @@
                   {
                     "nid": -2094421567,
                     "strtype": "IMAGE/Scale",
-                    "integer": 220,
+                    "integer": 200,
                     "InheritedType": 6
                   },
                   {
@@ -2535,8 +2583,8 @@
                     "flags": 17,
                     "strtype": "OBJECT/Position",
                     "intarray": [
-                      9,
-                      -1
+                      19,
+                      0
                     ],
                     "InheritedType": 7
                   },
@@ -2644,7 +2692,7 @@
                   {
                     "nid": -2094421567,
                     "strtype": "IMAGE/Scale",
-                    "integer": 220,
+                    "integer": 200,
                     "InheritedType": 6
                   },
                   {
@@ -2698,8 +2746,8 @@
                     "flags": 17,
                     "strtype": "OBJECT/Position",
                     "intarray": [
-                      9,
-                      -1
+                      19,
+                      0
                     ],
                     "InheritedType": 7
                   },
@@ -2813,7 +2861,7 @@
                   {
                     "nid": -2094421567,
                     "strtype": "IMAGE/Scale",
-                    "integer": 220,
+                    "integer": 200,
                     "InheritedType": 6
                   },
                   {
@@ -2865,8 +2913,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  0,
-                  -117
+                  20,
+                  158
                 ],
                 "InheritedType": 7
               },
@@ -2875,8 +2923,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Size",
                 "intarray": [
-                  240,
-                  48
+                  280,
+                  38
                 ],
                 "InheritedType": 7
               },
@@ -2958,6 +3006,12 @@
                           255
                         ],
                         "InheritedType": 7
+                      },
+                      {
+                        "nid": 10040,
+                        "strtype": "_style/Transform_rotation",
+                        "integer": -900,
+                        "InheritedType": 6
                       }
                     ],
                     "InheritedType": 1
@@ -3141,7 +3195,7 @@
   "animations": [],
   "selected_theme": "Default",
   "info": {
-    "name": "TonexOneController_1.69pj",
+    "name": "TonexOneController_1.69land_pj",
     "depth": 2,
     "width": 240,
     "height": 280,
@@ -3164,10 +3218,10 @@
     "theme_dark": true,
     "theme_color1": 5,
     "theme_color2": 0,
-    "uiExportFolderPath": "D:\\projects\\TonexController\\TonexOneController\\source\\main\\ui_generated_169",
-    "projectExportFolderPath": "D:\\projects\\TonexController\\TonexOneController\\source\\main\\ui_generated_169",
+    "uiExportFolderPath": "D:\\projects\\TonexController\\TonexOneController\\source\\main\\ui_generated_169_land",
+    "projectExportFolderPath": "D:\\projects\\TonexController\\TonexOneController\\source\\main\\ui_generated_169_land",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 43,
+    "backup_cnt": 56,
     "autosave_cnt": 0,
     "group_color_cnt": 0,
     "lvgl_version": "8.3.11",

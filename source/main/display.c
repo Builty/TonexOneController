@@ -3745,6 +3745,7 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
     if (control_get_config_item_int(CONFIG_ITEM_SCREEN_ROTATION) == SCREEN_ROTATION_180)
     {
         disp_drv.rotated = LV_DISP_ROT_180;
+
         // can only do software rotation, with a drop in frame rate
         disp_drv.sw_rotate = 1;
     }

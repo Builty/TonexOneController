@@ -61,6 +61,12 @@ menu "Tonex Controller Configuration"
         default "n"
         help
             Sets if Midi (serial) is enabled by default
+         
+    config TONEX_CONTROLLER_WAVESHARE_169_LANDSCAPE
+        bool "Waveshare 1.69 Landscape screen"
+        default "n"
+        help
+            Sets if the screen on the Waveshare uses Landscape mode with 90/270 degree rotation
             
     config EXAMPLE_DOUBLE_FB
         bool "Use double Frame Buffer"

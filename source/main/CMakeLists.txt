@@ -50,13 +50,24 @@ if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B OR CONFIG_TONEX_CONTR
 endif()
 
 if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH)
-   target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated_169")
+   if(CONFIG_TONEX_CONTROLLER_WAVESHARE_169_LANDSCAPE)
+      target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated_169_land")
 
-   target_sources(${COMPONENT_LIB} PRIVATE "ui_generated_169/ui.c" "ui_generated_169/ui_helpers.c"
-                            "ui_generated_169/images/ui_img_smythbuilt_png.c" "ui_generated_169/screens/ui_Screen1.c" "ui_generated_169/components/ui_comp_hook.c" "ui_generated_169/images/ui_img_usb_fail_png.c"
-                            "ui_generated_169/images/ui_img_usb_ok_png.c"
-                            "ui_generated_169/images/ui_img_wifi_conn_png.c" "ui_generated_169/images/ui_img_wifi_disconn_png.c"
-                            "ui_generated_169/images/ui_img_bt_conn_png.c" "ui_generated_169/images/ui_img_bt_disconn_png.c")
+      target_sources(${COMPONENT_LIB} PRIVATE "ui_generated_169_land/ui.c" "ui_generated_169_land/ui_helpers.c"
+                               "ui_generated_169_land/images/ui_img_smythbuilt_png.c" "ui_generated_169_land/screens/ui_Screen1.c" "ui_generated_169_land/components/ui_comp_hook.c" "ui_generated_169_land/images/ui_img_usb_fail_png.c"
+                               "ui_generated_169_land/images/ui_img_usb_ok_png.c"
+                               "ui_generated_169_land/images/ui_img_wifi_conn_png.c" "ui_generated_169_land/images/ui_img_wifi_disconn_png.c"
+                               "ui_generated_169_land/images/ui_img_bt_conn_png.c" "ui_generated_169_land/images/ui_img_bt_disconn_png.c")
+
+   else()
+      target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated_169")
+
+      target_sources(${COMPONENT_LIB} PRIVATE "ui_generated_169/ui.c" "ui_generated_169/ui_helpers.c"
+                               "ui_generated_169/images/ui_img_smythbuilt_png.c" "ui_generated_169/screens/ui_Screen1.c" "ui_generated_169/components/ui_comp_hook.c" "ui_generated_169/images/ui_img_usb_fail_png.c"
+                               "ui_generated_169/images/ui_img_usb_ok_png.c"
+                               "ui_generated_169/images/ui_img_wifi_conn_png.c" "ui_generated_169/images/ui_img_wifi_disconn_png.c"
+                               "ui_generated_169/images/ui_img_bt_conn_png.c" "ui_generated_169/images/ui_img_bt_disconn_png.c")
+   endif()
 endif()
 
 if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R)
