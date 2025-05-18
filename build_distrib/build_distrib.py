@@ -9,7 +9,7 @@ from zipfile import ZipFile
 dirname = Path.cwd()
 
 # set version
-version = '1.0.10.2_beta_1'
+version = '1.0.10.2_beta_2'
 
 def delete_files_in_folder(directory):
     for filename in os.listdir(directory):
@@ -82,7 +82,7 @@ build_distribution('template_cust_partition', 'build_ws169', True, zip_name)
 zip_name = 'TonexOneController_V' + version + '_Waveshare_1_69land'
 build_distribution('template_cust_partition', 'build_ws169land', True, zip_name)
 
-# Build Waveshare 1.69" Touch
+# Build Waveshare 1.69" Touch`
 zip_name = 'TonexOneController_V' + version + '_Waveshare_1_69_Touch'
 build_distribution('template_cust_partition', 'build_ws169t', True, zip_name)
 
@@ -110,16 +110,16 @@ build_distribution('template_cust_partition', 'build_devkitc_N16R8', True, zip_n
 zip_name = 'TonexOneController_V' + version + '_M5AtomS3R'
 build_distribution('template_cust_partition', 'build_m5atoms3r', True, zip_name)
 
-# Build Pirate Zero
-zip_name = 'TonexOneController_V' + version + '_Pirate_Zero'
+# Build Pirate Midi Polar Pico (Zero)
+zip_name = 'TonexOneController_V' + version + '_PirateMidi_PolarPico'
 build_distribution('template_cust_partition', 'build_piratezero', True, zip_name)
 
-# Build Pirate 1.69" 
-zip_name = 'TonexOneController_V' + version + '_Pirate_1_69'
+# Build Pirate Midi Polar Mini (1.69")
+zip_name = 'TonexOneController_V' + version + '_PirateMidi_PolarMini'
 build_distribution('template_cust_partition', 'build_pirate169', True, zip_name)
 
-# Build Pirate 1.69" landscape
-zip_name = 'TonexOneController_V' + version + '_Pirate_1_69land'
+# Build Pirate Midi Polar Plus (1.69" landscape)
+zip_name = 'TonexOneController_V' + version + '_PirateMidi_PolarPlus'
 build_distribution('template_cust_partition', 'build_pirate169land', True, zip_name)
 
 print('All done')

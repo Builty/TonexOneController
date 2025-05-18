@@ -67,6 +67,12 @@ menu "Tonex Controller Configuration"
         default "n"
         help
             Sets if the screen on the Waveshare uses Landscape mode with 90/270 degree rotation
+
+    config TONEX_CONTROLLER_SCREEN_ROTATION_DEFAULT_180
+        bool "Default 180 degree screen rotation"
+        default "n"
+        help
+            Sets if the screen defaults to 180 degree rotation
             
     config EXAMPLE_DOUBLE_FB
         bool "Use double Frame Buffer"

@@ -1827,7 +1827,13 @@ void control_set_default_config(void)
     strcpy(ControlData.ConfigData.WifiPassword, "12345678");   
     strcpy(ControlData.ConfigData.MDNSName, "tonex");   
     ControlData.ConfigData.WifiTxPower = WIFI_TX_POWER_25;
+
+#if CONFIG_TONEX_CONTROLLER_SCREEN_ROTATION_DEFAULT_180    
+    ControlData.ConfigData.GeneralScreenRotation = SCREEN_ROTATION_180;
+#else
     ControlData.ConfigData.GeneralScreenRotation = SCREEN_ROTATION_0;
+#endif    
+
     ControlData.ConfigData.GeneralSavePresetToSlot = SAVE_PRESET_SLOT_C;
     ControlData.ConfigData.ExternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
     memset((void*)ControlData.ConfigData.ExternalFootswitchEffectConfig, 0, sizeof(ControlData.ConfigData.ExternalFootswitchEffectConfig));
