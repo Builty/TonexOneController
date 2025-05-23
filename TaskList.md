@@ -44,3 +44,7 @@ Review the de-init and init code to allow it to be handled without needing a reb
 
 ## Bypass Support 
 Add support for toggling Bypass mode, via the web UI. 
+
+## Midi Mapping
+Add the ability to map all 127 midi program change values to any preset. 
+
