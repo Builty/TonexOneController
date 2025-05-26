@@ -113,6 +113,7 @@ V1.0.10.2 (Beta):
 - Fixed issue where sending multiple chained Midi CC values over bluetooth, the second value was not processed
 - Added landscape LCD screen build for the Waveshare 1.69". Screen rotates 90 degrees so the USB port is on the bottom (or top if 180 degree rotation option is enabled.)
 - Added 3 new builds, for collaboration with Pirate Midi, who are selling completed controller products. Serial Midi is enabled by default for all.
+- Fixed compatibility issue with the Ampero Control where it would not connect over Bluetooth (thanks to "jjh84" for debugging.)  
 
 V1.0.9.2:
 - Added support for Tuning reference (4.3B UI, web config, and Midi)

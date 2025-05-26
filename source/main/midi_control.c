@@ -1411,7 +1411,7 @@ static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *par
                         for (uint8_t loop = 0; loop < remote_device_names_length; loop++)
                         {       
                             //ESP_LOGI(GATTC_TAG, "Checking for device %s. len: %d %d", remote_device_names[loop], strlen(remote_device_names[loop]), adv_name_len);
-                            if ((strlen(remote_device_names[loop]) == adv_name_len) && (strncmp((char*)adv_name, remote_device_names[loop], adv_name_len)) == 0) 
+                            if (strncmp((char*)adv_name, remote_device_names[loop], adv_name_len) == 0) 
                             {
                                 if (conn_device_a == false) 
                                 {
