@@ -95,7 +95,7 @@ For more information about the firmware development and customisation, refer to 
 - https://github.com/vit3k/tonex_controller for great work on reverse engineering the Tonex One USB protocol
 
 ## Firmware Release Notes <a name="release_notes"></a>
-V1.0.10.2 (Beta):
+V1.0.10.2:
 - User contribution from Mateusz: web config now allows the order of the presets to be remapped. E.g. footswitches 1,2,3,4 could now load presets 10,5,11,20 instead of having to be 1,2,3,4.
 - User contribution from Mateusz: all 20 presets are now read from the Tonex during boot. Web UI preset selection has all names, instead of only being loaded when the preset was selected
 - Platforms with screens show "Syncing" during the above procedure
