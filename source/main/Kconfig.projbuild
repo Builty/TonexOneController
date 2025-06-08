@@ -47,6 +47,12 @@ menu "Tonex Controller Configuration"
         help
             Enable this option if the platform has a display
     
+    config TONEX_CONTROLLER_HAS_TOUCH
+       bool "Touch Screen is used"
+        default "n"
+        help
+            Enable this option if the platform has a touch screen
+
     config TONEX_CONTROLLER_DISPLAY_SMALL
        bool "Small LCD display is used"
         default "n"

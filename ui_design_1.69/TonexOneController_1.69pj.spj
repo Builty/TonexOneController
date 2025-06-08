@@ -3121,6 +3121,136 @@
             "strtype": "SCREEN/Style_scrollbar",
             "strval": "lv.PART.SCROLLBAR, Rectangle, Pad",
             "InheritedType": 11
+          },
+          {
+            "disabled": false,
+            "nid": 1000000,
+            "strtype": "_event/EventHandler",
+            "strval": "GESTURE_RIGHT(GESTURE)",
+            "childs": [
+              {
+                "nid": 1000001,
+                "strtype": "_event/name",
+                "strval": "SwipeRight",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1000002,
+                "strtype": "_event/condition_C",
+                "strval": "",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1000003,
+                "strtype": "_event/condition_P",
+                "strval": "",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1000004,
+                "strtype": "_event/action",
+                "strval": "CALL FUNCTION",
+                "childs": [
+                  {
+                    "nid": 1000005,
+                    "strtype": "CALL FUNCTION/Name",
+                    "strval": "CALL FUNCTION",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000006,
+                    "strtype": "CALL FUNCTION/Call",
+                    "strval": "<{Function_name}>( event_struct )",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000007,
+                    "strtype": "CALL FUNCTION/CallC",
+                    "strval": "<{Function_name}>( e );",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000008,
+                    "strtype": "CALL FUNCTION/Function_name",
+                    "strval": "PreviousClicked",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000009,
+                    "strtype": "CALL FUNCTION/Dont_export_function",
+                    "strval": "False",
+                    "InheritedType": 2
+                  }
+                ],
+                "InheritedType": 10
+              }
+            ],
+            "InheritedType": 4
+          },
+          {
+            "disabled": false,
+            "nid": 1000010,
+            "strtype": "_event/EventHandler",
+            "strval": "GESTURE_LEFT(GESTURE)",
+            "childs": [
+              {
+                "nid": 1000011,
+                "strtype": "_event/name",
+                "strval": "SwipeLeft",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1000012,
+                "strtype": "_event/condition_C",
+                "strval": "",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1000013,
+                "strtype": "_event/condition_P",
+                "strval": "",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1000014,
+                "strtype": "_event/action",
+                "strval": "CALL FUNCTION",
+                "childs": [
+                  {
+                    "nid": 1000015,
+                    "strtype": "CALL FUNCTION/Name",
+                    "strval": "CALL FUNCTION",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000016,
+                    "strtype": "CALL FUNCTION/Call",
+                    "strval": "<{Function_name}>( event_struct )",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000017,
+                    "strtype": "CALL FUNCTION/CallC",
+                    "strval": "<{Function_name}>( e );",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000018,
+                    "strtype": "CALL FUNCTION/Function_name",
+                    "strval": "NextClicked",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000019,
+                    "strtype": "CALL FUNCTION/Dont_export_function",
+                    "strval": "False",
+                    "InheritedType": 2
+                  }
+                ],
+                "InheritedType": 10
+              }
+            ],
+            "InheritedType": 4
           }
         ],
         "saved_objtypeKey": "SCREEN"
@@ -3167,7 +3297,7 @@
     "uiExportFolderPath": "D:\\projects\\TonexController\\TonexOneController\\source\\main\\ui_generated_169",
     "projectExportFolderPath": "D:\\projects\\TonexController\\TonexOneController\\source\\main\\ui_generated_169",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 43,
+    "backup_cnt": 44,
     "autosave_cnt": 0,
     "group_color_cnt": 0,
     "lvgl_version": "8.3.11",
@@ -3184,7 +3314,7 @@
     "drive_fatfs_path": "",
     "naming": "Name",
     "naming_force_lowercase": false,
-    "nidcnt": 0,
+    "nidcnt": 1000020,
     "BitDepth": 16,
     "Name": "TonexOneController_1"
   }

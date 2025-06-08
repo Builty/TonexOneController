@@ -51,6 +51,7 @@ limitations under the License.
 #include "driver/i2c.h"
 #include "soc/lldesc.h"
 #include "esp_lcd_touch_gt911.h"
+#include "esp_lcd_touch_cst816s.h"
 #include "esp_lcd_gc9107.h"
 #include "esp_intr_alloc.h"
 #include "main.h"
@@ -63,7 +64,7 @@ limitations under the License.
 #include "display.h"
 #include "CH422G.h"
 #include "control.h"
-#include "task_priorities.h"
+#include "task_priorities.h" 
 #include "midi_control.h"
 #include "LP5562.h"
 #include "tonex_params.h"
@@ -201,9 +202,8 @@ static SemaphoreHandle_t I2CMutexHandle;
 static SemaphoreHandle_t lvgl_mux = NULL;
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
-    static lv_disp_draw_buf_t disp_buf; // contains internal graphic buffer(s) called draw buffer(s)
-    static lv_disp_drv_t disp_drv;      // contains callback functions
-#endif
+static lv_disp_draw_buf_t disp_buf; // contains internal graphic buffer(s) called draw buffer(s)
+static lv_disp_drv_t disp_drv;      // contains callback functions
 
 /****************************************************************************
 * NAME:        
@@ -240,32 +240,9 @@ bool __attribute__((unused)) display_notify_lvgl_flush_ready(esp_lcd_panel_io_ha
     lv_disp_flush_ready(&disp_drv);
     return false;
 }
+#endif  //CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
-// we use two semaphores to sync the VSYNC event and the LVGL task, to avoid potential tearing effect
-#if CONFIG_DISPLAY_AVOID_TEAR_EFFECT_WITH_SEM
-SemaphoreHandle_t sem_vsync_end;
-SemaphoreHandle_t sem_gui_ready;
-#endif
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-static bool display_on_vsync_event(esp_lcd_panel_handle_t panel, const esp_lcd_rgb_panel_event_data_t *event_data, void *user_data)
-{
-    BaseType_t high_task_awoken = pdFALSE;
-#if CONFIG_DISPLAY_AVOID_TEAR_EFFECT_WITH_SEM
-    if (xSemaphoreTakeFromISR(sem_gui_ready, &high_task_awoken) == pdTRUE) {
-        xSemaphoreGiveFromISR(sem_vsync_end, &high_task_awoken);
-    }
-#endif
-    return high_task_awoken == pdTRUE;
-}
-
+#if CONFIG_TONEX_CONTROLLER_HAS_TOUCH
 /****************************************************************************
 * NAME:        
 * DESCRIPTION: 
@@ -317,7 +294,7 @@ static void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
 void PreviousClicked(lv_event_t * e)
 {
     // called from LVGL 
-    ESP_LOGI(TAG, "UI Previous Clicked");      
+    ESP_LOGI(TAG, "UI Previous Click/Swipe");      
 
     control_request_preset_down();      
 }
@@ -332,9 +309,36 @@ void PreviousClicked(lv_event_t * e)
 void NextClicked(lv_event_t * e)
 {
     // called from LVGL 
-    ESP_LOGI(TAG, "UI Next Clicked");    
+    ESP_LOGI(TAG, "UI Next Click/Swipe");    
 
     control_request_preset_up();        
+}
+
+#endif  //CONFIG_TONEX_CONTROLLER_HAS_TOUCH
+
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
+// we use two semaphores to sync the VSYNC event and the LVGL task, to avoid potential tearing effect
+#if CONFIG_DISPLAY_AVOID_TEAR_EFFECT_WITH_SEM
+SemaphoreHandle_t sem_vsync_end;
+SemaphoreHandle_t sem_gui_ready;
+#endif  //CONFIG_DISPLAY_AVOID_TEAR_EFFECT_WITH_SEM
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static bool display_on_vsync_event(esp_lcd_panel_handle_t panel, const esp_lcd_rgb_panel_event_data_t *event_data, void *user_data)
+{
+    BaseType_t high_task_awoken = pdFALSE;
+#if CONFIG_DISPLAY_AVOID_TEAR_EFFECT_WITH_SEM
+    if (xSemaphoreTakeFromISR(sem_gui_ready, &high_task_awoken) == pdTRUE) {
+        xSemaphoreGiveFromISR(sem_vsync_end, &high_task_awoken);
+    }
+#endif
+    return high_task_awoken == pdTRUE;
 }
 
 /****************************************************************************
@@ -3380,6 +3384,9 @@ void display_task(void *arg)
 *****************************************************************************/
 void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
 {    
+    __attribute__((unused)) uint8_t touch_ok = 0;
+    __attribute__((unused)) esp_err_t ret = ESP_OK;
+
     I2CMutexHandle = I2CMutex;
 
     // create queue for UI updates from other threads
@@ -3392,9 +3399,7 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
     lvgl_mux = xSemaphoreCreateRecursiveMutex();
     assert(lvgl_mux);
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY    
-    uint8_t touch_ok = 0;
-    esp_err_t ret = ESP_OK;
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY        
     gpio_config_t gpio_config_struct;
 
 #if CONFIG_DISPLAY_AVOID_TEAR_EFFECT_WITH_SEM
@@ -3702,6 +3707,70 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
 
     lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(&disp_drv);
 
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH
+    // init touch screen
+    esp_lcd_touch_handle_t tp = NULL;
+    esp_lcd_panel_io_handle_t tp_io_handle = NULL;
+    esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_CST816S_CONFIG();
+    
+    // Touch IO handle
+    if (esp_lcd_new_panel_io_i2c((esp_lcd_i2c_bus_handle_t)I2CNum, &tp_io_config, &tp_io_handle) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Touch IO handle failed!");
+    }
+    
+    esp_lcd_touch_config_t tp_cfg = {
+        .x_max = WAVESHARE_240_280_LCD_H_RES,
+        .y_max = WAVESHARE_240_280_LCD_V_RES,
+        .rst_gpio_num = TOUCH_RESET,
+        .int_gpio_num = TOUCH_INT,
+        .levels = {
+            .reset = 0,
+            .interrupt = 0,
+        },
+        .flags = {
+            .swap_xy = 0,
+            .mirror_x = 1,
+            .mirror_y = 0,
+        },
+    };
+    
+    // Initialize touch
+    ESP_LOGI(TAG, "Initialize touch controller CST816");
+
+    if (xSemaphoreTake(I2CMutexHandle, (TickType_t)10000) == pdTRUE)
+    {
+        ret = esp_lcd_touch_new_i2c_cst816s(tp_io_handle, &tp_cfg, &tp);
+        xSemaphoreGive(I2CMutexHandle);
+    }
+    else
+    {
+        ESP_LOGE(TAG, "Initialize touch mutex timeout");
+    }
+        
+    if (ret == ESP_OK)
+    {
+        ESP_LOGI(TAG, "Touch controller init OK");
+        touch_ok = 1;
+    }
+    else
+    {
+        ESP_LOGW(TAG, "Touch controller init failed %s", esp_err_to_name(ret));
+    }
+
+    if (touch_ok)
+    {
+        static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
+        lv_indev_drv_init(&indev_drv);
+        indev_drv.type = LV_INDEV_TYPE_POINTER;
+        indev_drv.disp = disp;
+        indev_drv.read_cb = display_lvgl_touch_cb;
+        indev_drv.user_data = tp;
+
+        lv_indev_drv_register(&indev_drv);
+    }
+
+#endif  //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH
 #endif //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R

@@ -204,6 +204,10 @@ extern SemaphoreHandle_t I2CMutex_2;
 
     #define WAVESHARE_240_280_BUZZER                  GPIO_NUM_42
 
+    // Touch
+    #define TOUCH_RESET 		GPIO_NUM_13
+    #define TOUCH_INT           GPIO_NUM_14
+
 #elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169
     // I2C bus 1
     #define I2C_MASTER_1_SCL_IO  GPIO_NUM_10       
