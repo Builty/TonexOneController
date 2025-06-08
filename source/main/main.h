@@ -23,7 +23,7 @@ limitations under the License.
 extern "C" {
 #endif
 
-#define APP_VERSION		"1.0.10.2"
+#define APP_VERSION		"1.0.11.2"
 
 #define I2C_MASTER_NUM_1                0          
 #define I2C_MASTER_NUM_2                1          
@@ -323,6 +323,53 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define ATOM3SR_LCD_GPIO_DC             (GPIO_NUM_42)
     #define ATOM3SR_LCD_GPIO_CS             (GPIO_NUM_14)
     // Note LCD Backlight uses led driver on I2C
+    
+#elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3
+    // I2C bus 1
+    #define I2C_MASTER_1_SCL_IO  GPIO_NUM_17       
+    #define I2C_MASTER_1_SDA_IO  GPIO_NUM_18       
+
+    // I2C bus 2
+    #define I2C_MASTER_2_SCL_IO  -1
+    #define I2C_MASTER_2_SDA_IO  -1
+
+    #define EXTERNAL_IO_EXPANDER_BUS       I2C_MASTER_NUM_1
+    #define EXTERNAL_IO_EXPANDER_MUTEX     I2CMutex_1 
+
+    // direct IO pins
+    #define FOOTSWITCH_1		GPIO_NUM_1
+    #define FOOTSWITCH_2		GPIO_NUM_2
+    #define FOOTSWITCH_3		GPIO_NUM_3
+    #define FOOTSWITCH_4		GPIO_NUM_10
+
+    // Midi
+    #define UART_RX_PIN         GPIO_NUM_11 
+    #define UART_TX_PIN         GPIO_NUM_12 
+
+    // leds
+    #define LED_OUTPUT_GPIO_NUM          -1
+
+    // battery power pin
+    #define LG_TDISP_S3_POWERON        GPIO_NUM_15
+
+    // LCD pins
+    #define LG_TDISP_S3_TFT_BL         GPIO_NUM_38
+    #define LG_TDISP_S3_TFT_DATA0      GPIO_NUM_39
+    #define LG_TDISP_S3_TFT_DATA1      GPIO_NUM_40
+    #define LG_TDISP_S3_TFT_DATA2      GPIO_NUM_41
+    #define LG_TDISP_S3_TFT_DATA3      GPIO_NUM_42
+    #define LG_TDISP_S3_TFT_DATA4      GPIO_NUM_45
+    #define LG_TDISP_S3_TFT_DATA5      GPIO_NUM_46
+    #define LG_TDISP_S3_TFT_DATA6      GPIO_NUM_47
+    #define LG_TDISP_S3_TFT_DATA7      GPIO_NUM_48
+    #define LG_TDISP_S3_TFT_RST        GPIO_NUM_5
+    #define LG_TDISP_S3_TFT_CS         GPIO_NUM_6
+    #define LG_TDISP_S3_TFT_DC         GPIO_NUM_7
+    #define LG_TDISP_S3_TFT_WR         GPIO_NUM_8
+    #define LG_TDISP_S3_TFT_RD         GPIO_NUM_9
+
+    #define LG_TDISP_S3_TOUCH_IRQ      GPIO_NUM_16
+    #define LG_TDISP_S3_TOUCH_RST      GPIO_NUM_21
 
 #else
     #error "Unknown hardware platform!"

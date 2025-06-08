@@ -1454,7 +1454,7 @@
                           {
                             "nid": 834306698,
                             "strtype": "_style/Text_Font",
-                            "strval": "montserrat_26",
+                            "strval": "montserrat_30",
                             "InheritedType": 3
                           }
                         ],
@@ -3143,7 +3143,7 @@
   "selected_theme": "Default",
   "info": {
     "name": "TonexOneController_1.9",
-    "depth": 2,
+    "depth": 1,
     "width": 320,
     "height": 170,
     "rotation": 0,

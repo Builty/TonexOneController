@@ -105,83 +105,8 @@ static void midi_serial_task(void *arg)
         
         if (rx_length != 0)
         {
-            // ESP_LOG_BUFFER_HEXDUMP(TAG, data, rx_length, ESP_LOG_INFO);
-            ESP_LOGI(TAG, "Midi Serial Got %d bytes", rx_length);
-
-            for (size_t i = 0; i < rx_length; i++)
-            {
-                // Skip real-time messages (status bytes 0xF8 to 0xFF)
-                if (midi_serial_buffer[i] >= 0xF8)
-                {
-                    continue;
-                }
-
-                // get the channel
-                uint8_t channel = midi_serial_buffer[i] & 0x0F;
-
-                // check the command
-                switch (midi_serial_buffer[i] & 0xF0)
-                {
-                    case 0xC0:
-                    {                        
-                        // Program Change
-                        // Ensure there's a data byte following the status byte
-                        if ((i + 1) < MIDI_SERIAL_BUFFER_SIZE)
-                        {
-                            uint8_t programNumber = midi_serial_buffer[i + 1];
-
-                            if (channel == midi_serial_channel)
-                            {
-                                ESP_LOGI(TAG, "Change to preset %d", programNumber);
-
-                                // change to this preset
-                                control_request_preset_index(programNumber);
-                            }
-                            
-                            // Skip the data byte
-                            i++;
-                        }
-                        else
-                        { 
-                            ESP_LOGW(TAG, "Warning: Incomplete Program Change message at end of buffer");
-                            break;
-                        }   
-                    } break;
-
-                    case  0xB0:
-                    {   
-                        // control change
-                        // Ensure there's a data byte following the status byte
-                        if ((i + 1) < MIDI_SERIAL_BUFFER_SIZE)
-                        {
-                            uint8_t change_num = midi_serial_buffer[i + 1];
-                            uint8_t value = midi_serial_buffer[i + 2];
-
-                            ESP_LOGI(TAG, "Midi CC change num: %d, value: %d", change_num, value);
-
-                            if (channel == midi_serial_channel)
-                            {
-                                midi_helper_adjust_param_via_midi(change_num, value);
-                            }
-                        }
-                        else
-                        { 
-                            ESP_LOGW(TAG, "Warning: Incomplete Control Change message at end of buffer");
-                            break;
-                        }    
-                    } break;        
-                
-                    case 0x80:
-                    {
-                        // This is a status byte for a different type of message
-                        // Skip this message by finding the next status byte or end of buffer
-                        while ((++i < MIDI_SERIAL_BUFFER_SIZE) && !(midi_serial_buffer[i] & 0x80))
-                        {
-                        }
-                        i--; // Decrement i because the for loop will increment it again
-                    } break;
-                }
-            }
+            // process data
+            midi_helper_process_incoming_data(midi_serial_buffer, rx_length, midi_serial_channel, 1);
 
             // don't hog the CPU
             vTaskDelay(pdMS_TO_TICKS(1));
@@ -208,6 +133,19 @@ void midi_serial_init(void)
     {
         midi_serial_channel--;
     }
+
+    // debug code to test data processor
+    //                       header       PC            ts      CC    first       second      third         ts      PC   
+    //uint8_t test_data[] = {0x80, 0x80, 0xC0, 0x00,   0x80,   0xB0, 0x22, 0x7F, 0x43, 0x00, 0x0C, 0x21,   0x80,   0xC0, 0x02};
+    //                       header      PC
+    //uint8_t test_data[] = {0x80, 0x80, 0xC0, 0x03};
+    //                     header      CC
+    //uint8_t test_data[] = {0x80, 0x80, 0xB0, 0x03, 0x00};
+    //                     CC
+    //uint8_t test_data[] = {0xB0, 0x03, 0x00};
+    //                     PC
+    //uint8_t test_data[] = {0xC0, 0x00};
+    //midi_helper_process_incoming_data(test_data, sizeof(test_data), midi_serial_channel, 1);
 
     xTaskCreatePinnedToCore(midi_serial_task, "MIDIS", MIDI_SERIAL_TASK_STACK_SIZE, NULL, MIDI_SERIAL_TASK_PRIORITY, NULL, 1);
 }

@@ -135,7 +135,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_align(ui_PresetHeadingLabel2, LV_ALIGN_CENTER);
     lv_label_set_text(ui_PresetHeadingLabel2, "Preset Name\n");
     lv_obj_set_style_text_align(ui_PresetHeadingLabel2, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_PresetHeadingLabel2, &lv_font_montserrat_26, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_PresetHeadingLabel2, &lv_font_montserrat_30, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_TopPanel = lv_obj_create(ui_Screen1);
     lv_obj_remove_style_all(ui_TopPanel);

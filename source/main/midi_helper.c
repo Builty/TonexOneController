@@ -1780,3 +1780,123 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
 
     return param;
 }
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+uint8_t midi_helper_process_incoming_data(uint8_t* data, uint8_t length, uint8_t midi_channel, uint8_t enable_CC)
+{
+    uint8_t bytes_processed = 0;
+    uint8_t command;
+    uint8_t channel;
+    uint8_t* ptr = data;
+    uint8_t header_found = 0;
+
+    ESP_LOGI(TAG, "Midi incoming data len: %d: ", (int)length);
+    esp_log_buffer_hex(TAG, data, length);
+
+    // make sure we have enough data
+    if (length < 2)
+    {
+        ESP_LOGW(TAG, "Midi incoming wrong length %d", (int)length);
+        return 0;
+    }
+
+    // an optional 1 byte header could be included, with 0b10xxxxxx
+    // in this case, the next byte must also have bit 7 set
+    if (((data[0] & 0x80) != 0) && ((data[0] & 0x40) == 0) && ((data[1] & 0x80) != 0))
+    {
+        // found header, skip it
+        bytes_processed++;
+        ptr++;
+
+        header_found = 1;
+    }
+
+    // loop remaining bytes
+    while (bytes_processed < length)
+    {
+        // if bit 7 is set, it's another timestamp low byte
+        if (header_found && ((*ptr & 0x80) != 0))
+        {
+            // skip timestamp LSB and keep going
+            ptr++;
+            bytes_processed++;
+        }
+
+        // get Midi channel
+        channel = *ptr & 0x0F;
+
+        // get the command
+        command = *ptr & 0xF0;
+
+        //ESP_LOGW(TAG, "Midi incoming command: %02X, channel: %d", command, (int)channel);
+
+        // this status byte is now processed, skip it
+        ptr++;
+        bytes_processed++;
+
+        // check the command
+        switch (command)
+        {
+            case 0xC0:
+            {
+                // Program change Should be 0xC0 XX (XX = preset index, 0-based)
+                if (channel == midi_channel)
+                {
+                    // set preset
+                    control_request_preset_index(*ptr);
+                }
+
+                ptr++;
+                bytes_processed++;
+            } break;
+
+            case 0xB0:
+            {
+                // Control Change message
+                uint8_t change_num = *ptr++;
+                uint8_t value = *ptr++;
+                bytes_processed += 2;
+
+                if (enable_CC && (channel == midi_channel)) 
+                {
+                    midi_helper_adjust_param_via_midi(change_num, value);
+                }
+
+                // control change messages can be multiple appended together, 2 bytes each.
+                while (bytes_processed < length)
+                {
+                    // if MSB bit is set, it's a new timestamp, break out to process in main loop
+                    if ((bytes_processed >= length) || ((*ptr & 0x80) != 0))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        // process next CC
+                        uint8_t change_num = *ptr++;
+                        uint8_t value = *ptr++;
+                        bytes_processed += 2;
+
+                        if (enable_CC && (channel == midi_channel)) 
+                        {
+                            midi_helper_adjust_param_via_midi(change_num, value);
+                        }
+                    }
+                }
+            } break;
+
+            default:
+            {
+                ESP_LOGW(TAG, "Midi incoming unexpected command %02X", (int)command);
+            } break;
+        }
+    }
+
+    return 1;
+}

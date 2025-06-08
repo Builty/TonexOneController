@@ -233,6 +233,32 @@
       "postFlash": ""
     }
   },
+  "LGTDisplayS3": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_lgtdisps3",
+      "sdkconfigDefaults": [
+        "sdkconfig.lgtdisps3",
+        "sdkconfig.defaults"
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_lgtdisps3"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
   "WS43DEVONLY": {
     "build": {
       "compileArgs": [],

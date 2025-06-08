@@ -70,6 +70,16 @@ if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 OR CONFIG_TONEX_CONTR
    endif()
 endif()
 
+if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3)
+   target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated_19")
+
+      target_sources(${COMPONENT_LIB} PRIVATE "ui_generated_19/ui.c" "ui_generated_19/ui_helpers.c"
+                               "ui_generated_19/images/ui_img_smythbuilt_png.c" "ui_generated_19/screens/ui_Screen1.c" "ui_generated_19/components/ui_comp_hook.c" "ui_generated_19/images/ui_img_usb_fail_png.c"
+                               "ui_generated_19/images/ui_img_usb_ok_png.c"
+                               "ui_generated_19/images/ui_img_wifi_conn_png.c" "ui_generated_19/images/ui_img_wifi_disconn_png.c"
+                               "ui_generated_19/images/ui_img_bt_conn_png.c" "ui_generated_19/images/ui_img_bt_disconn_png.c")
+endif()
+
 if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R)
    target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated_085")
 

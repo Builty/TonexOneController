@@ -267,6 +267,12 @@ void app_main(void)
     display_init(I2C_MASTER_NUM_1, I2CMutex_1);
 #endif
 
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3
+    // init GUI
+    ESP_LOGI(TAG, "Init 1.9 display");
+    display_init(I2C_MASTER_NUM_1, I2CMutex_1);
+#endif
+
     // init Footswitches
     ESP_LOGI(TAG, "Init footswitches");
     footswitches_init(EXTERNAL_IO_EXPANDER_BUS, EXTERNAL_IO_EXPANDER_MUTEX);
@@ -295,7 +301,7 @@ void app_main(void)
 
     // init USB
     ESP_LOGI(TAG, "Init USB");
-    init_usb_comms();
+    //test init_usb_comms();
 
     // init WiFi config
     wifi_config_init();
