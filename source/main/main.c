@@ -301,7 +301,7 @@ void app_main(void)
 
     // init USB
     ESP_LOGI(TAG, "Init USB");
-    //test init_usb_comms();
+    init_usb_comms();
 
     // init WiFi config
     wifi_config_init();
