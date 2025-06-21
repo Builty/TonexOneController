@@ -32,7 +32,7 @@ limitations under the License.
 #include "nvs_flash.h"
 #include "sys/param.h"
 #include "esp_log.h"
-#include "driver/i2c.h"
+#include "driver/i2c_master.h"
 #include "main.h"
 #include "CH422G.h"
 #include "control.h"
@@ -41,7 +41,6 @@ limitations under the License.
 #include "usb_comms.h"
 #include "usb_tonex_one.h"
 #include "leds.h"
-#include "driver/i2c.h"
 #include "SX1509.h"
 #include "midi_helper.h"
 #include "tonex_params.h"
@@ -105,7 +104,6 @@ typedef struct
 
 static tFootswitchControl FootswitchControl;
 static SemaphoreHandle_t I2CMutexHandle;
-static i2c_port_t i2cnum;
 
 static const __attribute__((unused)) tFootswitchLayoutEntry FootswitchLayouts[FOOTSWITCH_LAYOUT_LAST] = 
 {
@@ -953,13 +951,12 @@ void footswitch_task(void *arg)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void footswitches_init(i2c_port_t i2c_num, SemaphoreHandle_t I2CMutex)
+void footswitches_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex)
 {	
     memset((void*)&FootswitchControl, 0, sizeof(FootswitchControl));
 
     // save handles
     I2CMutexHandle = I2CMutex;
-	i2cnum = i2c_num;
 
 #if CONFIG_TONEX_CONTROLLER_GPIO_FOOTSWITCHES
     // init GPIO
@@ -974,7 +971,7 @@ void footswitches_init(i2c_port_t i2c_num, SemaphoreHandle_t I2CMutex)
 #endif
 
     // try to init I2C IO expander
-    if (SX1509_Init(i2c_num, I2CMutex) == ESP_OK)
+    if (SX1509_Init(bus_handle, I2CMutex) == ESP_OK)
     {
         ESP_LOGI(TAG, "Found External IO Expander");
 

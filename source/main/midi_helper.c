@@ -1797,7 +1797,7 @@ uint8_t midi_helper_process_incoming_data(uint8_t* data, uint8_t length, uint8_t
     uint8_t header_found = 0;
 
     ESP_LOGI(TAG, "Midi incoming data len: %d: ", (int)length);
-    esp_log_buffer_hex(TAG, data, length);
+    ESP_LOG_BUFFER_HEX(TAG, data, length);
 
     // make sure we have enough data
     if (length < 2)

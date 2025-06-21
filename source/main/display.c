@@ -3429,7 +3429,7 @@ void display_task(void *arg)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
+void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex)
 {    
     __attribute__((unused)) uint8_t touch_ok = 0;
     __attribute__((unused)) esp_err_t ret = ESP_OK;
@@ -3532,6 +3532,7 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
 #endif
 
     esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_GT911_CONFIG();
+    tp_io_config.scl_speed_hz = 400000;
     
     // set Int pin to output temporarily
     gpio_config_struct.pin_bit_mask = (uint64_t)1 << TOUCH_INT;
@@ -3559,7 +3560,7 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
     gpio_config(&gpio_config_struct);
 
     // Touch IO handle
-    if (esp_lcd_new_panel_io_i2c((esp_lcd_i2c_bus_handle_t)I2CNum, &tp_io_config, &tp_io_handle) != ESP_OK)
+    if (esp_lcd_new_panel_io_i2c(bus_handle, &tp_io_config, &tp_io_handle) != ESP_OK)
     {
         ESP_LOGE(TAG, "Touch reset 3 failed!");
     }
@@ -3752,21 +3753,6 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
     lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(&disp_drv);
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH
-    // touch screen won't respond to I2C unless its had a hard reset recently and not in sleep mode
-    /*
-    gpio_config_t gpio_config_struct;
-
-    gpio_config_struct.pin_bit_mask = (uint64_t)1 << TOUCH_RESET;
-    gpio_config_struct.mode = GPIO_MODE_OUTPUT;
-    gpio_config_struct.pull_up_en = GPIO_PULLUP_DISABLE;
-    gpio_config_struct.pull_down_en = GPIO_PULLDOWN_DISABLE;
-    gpio_config_struct.intr_type = GPIO_INTR_DISABLE;
-    gpio_config(&gpio_config_struct);
-    gpio_set_level(TOUCH_RESET, 0);
-    esp_rom_delay_us(200 * 1000);
-    gpio_set_level(TOUCH_RESET, 1);
-    */
-
     // init touch screen    
     const esp_lcd_panel_io_i2c_config_t tp_io_config = {
         .dev_addr = ESP_LCD_TOUCH_IO_I2C_CST816S_ADDRESS, 
@@ -3801,7 +3787,7 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
     };
 
     // Touch IO handle
-    if (esp_lcd_new_panel_io_i2c((esp_lcd_i2c_bus_handle_t)I2CNum, &tp_io_config, &tp_io_handle) != ESP_OK)
+    if (esp_lcd_new_panel_io_i2c(bus_handle, &tp_io_config, &tp_io_handle) != ESP_OK)
     {
         ESP_LOGE(TAG, "Touch IO handle failed!");
     }
@@ -4064,7 +4050,7 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
     };
 
     // Touch IO handle
-    if (esp_lcd_new_panel_io_i2c((esp_lcd_i2c_bus_handle_t)I2CNum, &tp_io_config, &tp_io_handle) != ESP_OK)
+    if (esp_lcd_new_panel_io_i2c(bus_handle, &tp_io_config, &tp_io_handle) != ESP_OK)
     {
         ESP_LOGE(TAG, "Touch IO handle failed!");
     }

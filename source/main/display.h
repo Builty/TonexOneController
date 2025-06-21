@@ -22,7 +22,7 @@ limitations under the License.
 extern "C" {
 #endif
 
-void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex);
+void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex);
 
 // thread-safe API for other tasks to update the UI
 void UI_SetUSBStatus(uint8_t state);

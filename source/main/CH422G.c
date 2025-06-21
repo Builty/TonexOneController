@@ -19,7 +19,7 @@ limitations under the License.
 #include <string.h>
 #include <stdlib.h>
 
-#include "driver/i2c.h"
+#include "driver/i2c_master.h"
 #include "esp_bit_defs.h"
 #include "esp_check.h"
 #include "esp_log.h"
@@ -27,6 +27,7 @@ limitations under the License.
 
 
 #define ESP_IO_EXPANDER_I2C_CH422G_ADDRESS_000    (0x24)
+#define DEVICE_I2C_MASTER_FREQUENCY               400000
 
 // Timeout of each I2C communication 
 #define I2C_TIMEOUT_MS          (10)
@@ -59,8 +60,10 @@ limitations under the License.
 
 typedef struct 
 {
-    i2c_port_t i2c_num;
-    uint32_t i2c_address;
+    i2c_master_dev_handle_t dev_handle_wr_set;
+    i2c_master_dev_handle_t dev_handle_wr_io;
+    i2c_master_dev_handle_t dev_handle_rd_io;
+    i2c_master_dev_handle_t dev_handle_mode;
     
     struct 
     {
@@ -99,7 +102,8 @@ esp_err_t CH422G_enableAllIO_Input(void)
     // WR-SET
     if (xSemaphoreTake(I2CMutexHandle, (TickType_t)100) == pdTRUE)
     {
-        res = i2c_master_write_to_device(ch422g.i2c_num, CH422G_REG_WR_SET, &data, sizeof(data), pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+        res = i2c_master_transmit(ch422g.dev_handle_wr_set, &data, 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+
         if (res == ESP_OK)
         {
             ch422g.regs.wr_set = data;
@@ -157,29 +161,29 @@ esp_err_t CH422G_read_input(uint8_t pin_bit, uint8_t* value)
 esp_err_t CH422G_read_all_input(uint16_t* values)
 {
     uint8_t temp = 0;
-    uint8_t data;
+    uint8_t write_buf;
     esp_err_t res = ESP_FAIL;
     *values = 0;
 
     if (xSemaphoreTake(I2CMutexHandle, (TickType_t)100) == pdTRUE)
     {
         // first set the pins to input mode (can't do separate input/output per pin)
-        data = 0;
-        res = i2c_master_write_to_device(ch422g.i2c_num, CH422G_Mode, &data, 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+        write_buf = 0;
+        res = i2c_master_transmit(ch422g.dev_handle_mode, &write_buf, 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS));
         esp_rom_delay_us(1000);
 
         if (res == ESP_OK)
         {
-            // read pin state
-            res = i2c_master_read_from_device(ch422g.i2c_num, ch422g.i2c_address, &temp, 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+            res = i2c_master_receive(ch422g.dev_handle_mode, &temp, 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS));
 
             if (res == ESP_OK)
             {
-                res = i2c_master_read_from_device(ch422g.i2c_num, CH422G_REG_RD_IO, &temp, 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+                // read pin state
+                res = i2c_master_receive(ch422g.dev_handle_rd_io, &temp, 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS));
 
                 // return to output mode
-                data = CH422G_Mode_IO_OE;
-                res = i2c_master_write_to_device(ch422g.i2c_num, CH422G_Mode, &data, 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+                write_buf = CH422G_Mode_IO_OE;
+                res = i2c_master_transmit(ch422g.dev_handle_mode, &write_buf, 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS));
             }
         }
 
@@ -221,7 +225,7 @@ esp_err_t CH422G_write_output(uint8_t pin_bit, uint8_t value)
     // WR-IO
     if (xSemaphoreTake(I2CMutexHandle, (TickType_t)100) == pdTRUE)
     {
-        res = i2c_master_write_to_device(ch422g.i2c_num, CH422G_REG_WR_IO, &ch422g.regs.wr_io, sizeof(ch422g.regs.wr_io), pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+        res = i2c_master_transmit(ch422g.dev_handle_wr_io, &ch422g.regs.wr_io, sizeof(ch422g.regs.wr_io), pdMS_TO_TICKS(I2C_TIMEOUT_MS));
         
         if (res != ESP_OK)
         {
@@ -272,7 +276,7 @@ esp_err_t CH422G_write_direction(uint8_t pin_bit, uint8_t value)
     // WR-SET
     if (xSemaphoreTake(I2CMutexHandle, (TickType_t)100) == pdTRUE)
     {
-        res = i2c_master_write_to_device(ch422g.i2c_num, CH422G_REG_WR_SET, &data, sizeof(data), pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+        res = i2c_master_transmit(ch422g.dev_handle_wr_set, &data, 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS));
 
         if (res == ESP_OK)
         {
@@ -313,20 +317,20 @@ esp_err_t CH422G_read_direction_reg(uint32_t *value)
 esp_err_t CH422G_set_io_mode(uint8_t output_mode)
 {
     esp_err_t res = ESP_FAIL;
-    uint8_t data;
+    uint8_t write_buf; 
 
     if (output_mode)
     {   
-        data = CH422G_Mode_IO_OE;
+        write_buf = CH422G_Mode_IO_OE;
     }
     else
     {
-        data = 0;
+        write_buf = 0;
     }
 
     if (xSemaphoreTake(I2CMutexHandle, (TickType_t)100) == pdTRUE)
     {
-        res = i2c_master_write_to_device(ch422g.i2c_num, CH422G_Mode, &data, 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+        res = i2c_master_transmit(ch422g.dev_handle_mode, &write_buf, 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS));
 
         xSemaphoreGive(I2CMutexHandle);
     }
@@ -356,16 +360,46 @@ esp_err_t CH422G_reset(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-esp_err_t CH422G_init(i2c_port_t i2c_num, SemaphoreHandle_t I2CMutex)
+esp_err_t CH422G_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex)
 {
     I2CMutexHandle = I2CMutex;
 
-    ch422g.i2c_num = i2c_num;
-    ch422g.i2c_address = ESP_IO_EXPANDER_I2C_CH422G_ADDRESS_000;
     ch422g.config.io_count = IO_COUNT;
 	ch422g.regs.wr_set = REG_WR_SET_DEFAULT_VAL;
     ch422g.regs.wr_oc = REG_WR_OC_DEFAULT_VAL;
     ch422g.regs.wr_io = REG_WR_IO_DEFAULT_VAL;
+
+    // CH422G doesn't use single device address with regs. Uses different device
+    // addresses for each reg, so need to create multiple
+    i2c_device_config_t dev_config_1 = {
+        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+        .device_address = CH422G_REG_WR_SET,
+        .scl_speed_hz = DEVICE_I2C_MASTER_FREQUENCY,
+    };
+    ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_config_1, &ch422g.dev_handle_wr_set));
+
+    i2c_device_config_t dev_config_2 = {
+        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+        .device_address = CH422G_REG_WR_IO,
+        .scl_speed_hz = DEVICE_I2C_MASTER_FREQUENCY,
+    };
+    
+    ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_config_2, &ch422g.dev_handle_wr_io));
+
+    i2c_device_config_t dev_config_3 = {
+        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+        .device_address = CH422G_Mode,
+        .scl_speed_hz = DEVICE_I2C_MASTER_FREQUENCY,
+    };
+    ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_config_3, &ch422g.dev_handle_mode));
+
+    i2c_device_config_t dev_config_4 = {
+        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+        .device_address = CH422G_REG_RD_IO,
+        .scl_speed_hz = DEVICE_I2C_MASTER_FREQUENCY,
+    };
+    ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_config_4, &ch422g.dev_handle_rd_io));
+
 
     // Reset configuration and register status 
     return CH422G_reset();	

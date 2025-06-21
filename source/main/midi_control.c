@@ -864,7 +864,7 @@ static void __attribute__((unused)) gattc_profile_a_event_handler(esp_gattc_cb_e
 
             ESP_LOGI(GATTC_TAG, "ESP_GATTC_OPEN_EVT conn_id %d, if %d, status %d, mtu %d", p_data->open.conn_id, gattc_if, p_data->open.status, p_data->open.mtu);
             ESP_LOGI(GATTC_TAG, "REMOTE BDA:");
-            esp_log_buffer_hex(GATTC_TAG, p_data->open.remote_bda, sizeof(esp_bd_addr_t));
+            ESP_LOG_BUFFER_HEX(GATTC_TAG, p_data->open.remote_bda, sizeof(esp_bd_addr_t));
             
             esp_err_t mtu_ret = esp_ble_gattc_send_mtu_req(gattc_if, p_data->open.conn_id);
             if (mtu_ret)
@@ -1072,7 +1072,7 @@ static void __attribute__((unused)) gattc_profile_a_event_handler(esp_gattc_cb_e
 
         case ESP_GATTC_NOTIFY_EVT:
             ESP_LOGI(GATTC_TAG, "ESP_GATTC_NOTIFY_EVT, Receive notify values. len: %d", (int)p_data->notify.value_len);
-            //esp_log_buffer_hex(GATTC_TAG, p_data->notify.value, p_data->notify.value_len);
+            //ESP_LOG_BUFFER_HEX(GATTC_TAG, p_data->notify.value, p_data->notify.value_len);
 
             // handle Midi data.
             midi_helper_process_incoming_data(p_data->notify.value, p_data->notify.value_len, midi_serial_channel, control_get_config_item_int(CONFIG_ITEM_ENABLE_BT_MIDI_CC));            
@@ -1313,7 +1313,7 @@ static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *par
             switch (scan_result->scan_rst.search_evt) 
             {
             case ESP_GAP_SEARCH_INQ_RES_EVT:
-                //esp_log_buffer_hex(GATTC_TAG, scan_result->scan_rst.bda, 6);
+                //ESP_LOG_BUFFER_HEX(GATTC_TAG, scan_result->scan_rst.bda, 6);
                 //ESP_LOGI(GATTC_TAG, "Searched Adv Data Len %d, Scan Response Len %d", scan_result->scan_rst.adv_data_len, scan_result->scan_rst.scan_rsp_len);
                 adv_name = esp_ble_resolve_adv_data(scan_result->scan_rst.ble_adv, ESP_BLE_AD_TYPE_NAME_CMPL, &adv_name_len);
                 //ESP_LOGI(GATTC_TAG, "Searched Device Name Len %d", adv_name_len);

@@ -19,7 +19,7 @@ limitations under the License.
 #include <string.h>
 #include <stdlib.h>
 
-#include "driver/i2c.h"
+#include "driver/i2c_master.h"
 #include "esp_bit_defs.h"
 #include "esp_check.h"
 #include "esp_log.h"
@@ -27,6 +27,7 @@ limitations under the License.
 
 
 #define LP5562_I2C_ADDR         	0x30
+#define DEVICE_I2C_MASTER_FREQUENCY 400000
 
 // Timeout of each I2C communication 
 #define I2C_TIMEOUT_MS          	(10)
@@ -74,7 +75,7 @@ limitations under the License.
  */
 static const char *TAG = "app_LP5562";
 static SemaphoreHandle_t I2CMutexHandle;
-static i2c_port_t i2cnum;
+static i2c_master_dev_handle_t dev_handle;
 
 /****************************************************************************
 * NAME:        
@@ -93,7 +94,8 @@ static esp_err_t LP5562_write(uint8_t reg, uint8_t val)
 
     if (xSemaphoreTake(I2CMutexHandle, pdMS_TO_TICKS(200)) == pdTRUE)
     {		
-        res = i2c_master_write_to_device(i2cnum, LP5562_I2C_ADDR, buff, sizeof(buff), pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+		res = i2c_master_transmit(dev_handle, buff, sizeof(buff), pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+
         if (res != ESP_OK)
         {
             ESP_LOGE(TAG, "LP5562_write failed");
@@ -118,7 +120,8 @@ static esp_err_t LP5562_read(uint8_t reg, uint8_t* val)
 
 	if (xSemaphoreTake(I2CMutexHandle, pdMS_TO_TICKS(200)) == pdTRUE)
     {		
-        res = i2c_master_write_read_device(i2cnum, LP5562_I2C_ADDR, &reg, sizeof(reg), val, sizeof(val), pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+		res = i2c_master_transmit_receive(dev_handle, &reg, sizeof(reg), val, sizeof(val), pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+
         if (res != ESP_OK)
         {
             ESP_LOGE(TAG, "LP5562_read failed");
@@ -329,13 +332,20 @@ esp_err_t __attribute__((unused)) LP5562_set_pc(uint8_t engine, uint8_t val)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-esp_err_t LP5562_init(i2c_port_t i2c_num, SemaphoreHandle_t I2CMutex)
+esp_err_t LP5562_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex)
 {
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R
 	// save handles
     I2CMutexHandle = I2CMutex;
-	i2cnum = i2c_num;
-    
+	
+    // create device instance
+    i2c_device_config_t dev_config = {
+        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+        .device_address = LP5562_I2C_ADDR,
+        .scl_speed_hz = DEVICE_I2C_MASTER_FREQUENCY,
+    };
+    ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_config, &dev_handle));
+
     LP5562_poweron();    
 #endif
 

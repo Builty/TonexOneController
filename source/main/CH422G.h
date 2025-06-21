@@ -61,7 +61,7 @@ typedef enum
     CH_IO_EXPANDER_OUTPUT,         /*!< Output dircetion */
 } ch_io_expander_dir_t;
 
-esp_err_t CH422G_init(i2c_port_t i2c_num, SemaphoreHandle_t I2CMutex);
+esp_err_t CH422G_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex);
 esp_err_t CH422G_reset(void);
 esp_err_t CH422G_read_input(uint8_t pin_bit, uint8_t* value);
 esp_err_t CH422G_read_all_input(uint16_t* values);
