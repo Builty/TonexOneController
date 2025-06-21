@@ -101,6 +101,10 @@ static void midi_serial_task(void *arg)
     // enable pullup on RX line, to help if pin is floating and Midi serial is enabled
     gpio_pullup_en(UART_RX_PIN);
 
+    // purge any rubbish read during init
+    vTaskDelay(pdMS_TO_TICKS(5));
+    midi_serial_uart_rx_purge();
+
     while (1) 
     {
         // try to read data from UART

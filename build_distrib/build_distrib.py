@@ -110,6 +110,10 @@ build_distribution('template_cust_partition', 'build_devkitc_N16R8', True, zip_n
 zip_name = 'TonexOneController_V' + version + '_M5AtomS3R'
 build_distribution('template_cust_partition', 'build_m5atoms3r', True, zip_name)
 
+# Build Lilygo T-Display S3
+zip_name = 'TonexOneController_V' + version + '_Lilygo_TDisplay_S3'
+build_distribution('template_cust_partition', 'build_lgtdisps3', True, zip_name)
+
 # Build Pirate Midi Polar Pico (Zero)
 zip_name = 'TonexOneController_V' + version + '_PirateMidi_PolarPico'
 build_distribution('template_cust_partition', 'build_piratezero', True, zip_name)
@@ -121,5 +125,9 @@ build_distribution('template_cust_partition', 'build_pirate169', True, zip_name)
 # Build Pirate Midi Polar Plus (1.69" landscape)
 zip_name = 'TonexOneController_V' + version + '_PirateMidi_PolarPlus'
 build_distribution('template_cust_partition', 'build_pirate169land', True, zip_name)
+
+# Build Pirate Midi Polar Max (4.3B) amp skins
+zip_name = 'TonexOneController_V' + version + '_PirateMidi_PolarMax_Amp_Skins'
+build_distribution('template_cust_partition', 'build_pirate43B_as', True, zip_name)
 
 print('All done')
