@@ -19,8 +19,21 @@
 
 #define POINT_NUM_MAX       (1)
 
-#define DATA_START_REG      (0x02)
-#define CHIP_ID_REG         (0xA7)
+#define REG_GESTURE_ID      0x01
+#define REG_FINGER_NUM      0x02
+#define REG_XPOS_H          0x03
+#define REG_XPOS_L          0x04
+#define REG_YPOS_H          0x05
+#define REG_YPOS_L          0x06
+#define REG_CHIP_ID         0xA7
+#define REG_PROJ_ID         0xA8
+#define REG_FW_VERSION      0xA9
+#define REG_FACTORY_ID      0xAA
+#define REG_SLEEP_MODE      0xE5
+#define REG_IRQ_CTL         0xFA
+#define REG_LONG_PRESS_TICK 0xEB
+#define REG_MOTION_MASK     0xEC
+#define REG_DIS_AUTOSLEEP   0xFE
 
 static const char *TAG = "CST816S";
 
@@ -29,6 +42,7 @@ static bool get_xy(esp_lcd_touch_handle_t tp, uint16_t *x, uint16_t *y, uint16_t
 static esp_err_t del(esp_lcd_touch_handle_t tp);
 
 static esp_err_t i2c_read_bytes(esp_lcd_touch_handle_t tp, uint16_t reg, uint8_t *data, uint8_t len);
+static esp_err_t i2c_write_bytes(esp_lcd_touch_handle_t tp, uint16_t reg, uint8_t *data, uint8_t len);
 
 static esp_err_t reset(esp_lcd_touch_handle_t tp);
 static esp_err_t read_id(esp_lcd_touch_handle_t tp);
@@ -83,6 +97,10 @@ esp_err_t esp_lcd_touch_new_i2c_cst816s(const esp_lcd_panel_io_handle_t io, cons
     ESP_GOTO_ON_ERROR(read_id(cst816s), err, TAG, "Read version failed");
     *tp = cst816s;
 
+    /* disable autosleep, as it makes working with device hard (no I2C comms in sleep mode */   
+    uint8_t dis_auto_sleep = 0xFF;    
+    ESP_RETURN_ON_ERROR(i2c_write_bytes(cst816s, REG_DIS_AUTOSLEEP, &dis_auto_sleep, 1), TAG, "Disable autosleep failed");
+
     return ESP_OK;
 err:
     if (cst816s) {
@@ -105,7 +123,7 @@ static esp_err_t read_data(esp_lcd_touch_handle_t tp)
     } data_t;
 
     data_t point;
-    ESP_RETURN_ON_ERROR(i2c_read_bytes(tp, DATA_START_REG, (uint8_t *)&point, sizeof(data_t)), TAG, "I2C read failed");
+    ESP_RETURN_ON_ERROR(i2c_read_bytes(tp, REG_FINGER_NUM, (uint8_t *)&point, sizeof(data_t)), TAG, "I2C read failed");
 
     portENTER_CRITICAL(&tp->data.lock);
     point.num = (point.num > POINT_NUM_MAX ? POINT_NUM_MAX : point.num);
@@ -173,7 +191,7 @@ static esp_err_t reset(esp_lcd_touch_handle_t tp)
 static esp_err_t read_id(esp_lcd_touch_handle_t tp)
 {
     uint8_t id;
-    ESP_RETURN_ON_ERROR(i2c_read_bytes(tp, CHIP_ID_REG, &id, 1), TAG, "I2C read failed");
+    ESP_RETURN_ON_ERROR(i2c_read_bytes(tp, REG_CHIP_ID, &id, 1), TAG, "I2C read failed");
     ESP_LOGI(TAG, "IC id: %d", id);
     return ESP_OK;
 }
@@ -183,4 +201,11 @@ static esp_err_t i2c_read_bytes(esp_lcd_touch_handle_t tp, uint16_t reg, uint8_t
     ESP_RETURN_ON_FALSE(data, ESP_ERR_INVALID_ARG, TAG, "Invalid data");
 
     return esp_lcd_panel_io_rx_param(tp->io, reg, data, len);
+}
+
+static esp_err_t i2c_write_bytes(esp_lcd_touch_handle_t tp, uint16_t reg, uint8_t *data, uint8_t len)
+{
+    ESP_RETURN_ON_FALSE(data, ESP_ERR_INVALID_ARG, TAG, "Invalid data");
+
+    return esp_lcd_panel_io_tx_param(tp->io, reg, data, len);
 }

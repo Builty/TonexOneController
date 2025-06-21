@@ -375,6 +375,10 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define LG_TDISP_S3_TOUCH_IRQ      GPIO_NUM_16
     #define LG_TDISP_S3_TOUCH_RST      GPIO_NUM_21
 
+    // Touch
+    #define TOUCH_RESET 		       LG_TDISP_S3_TOUCH_RST
+    #define TOUCH_INT                  LG_TDISP_S3_TOUCH_IRQ
+
 #else
     #error "Unknown hardware platform!"
 #endif

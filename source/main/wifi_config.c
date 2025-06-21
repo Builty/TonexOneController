@@ -49,7 +49,7 @@ limitations under the License.
 #include "tonex_params.h"
 #include "usb_tonex_one.h"
 
-#define WIFI_CONFIG_TASK_STACK_SIZE   (3 * 1024)
+#define WIFI_CONFIG_TASK_STACK_SIZE   (4 * 1024)
 
 #define ESP_WIFI_SSID           "TonexConfig"
 #define ESP_WIFI_PASS           "12345678"

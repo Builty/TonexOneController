@@ -10,7 +10,6 @@
 
 // SCREEN: ui_Screen1
 void ui_Screen1_screen_init(void);
-void ui_event_Screen1(lv_event_t * e);
 lv_obj_t * ui_Screen1;
 lv_obj_t * ui_PresetHeadingLabel;
 lv_obj_t * ui_BPMLabel;
@@ -29,6 +28,8 @@ lv_obj_t * ui_BTStatusDisconn;
 lv_obj_t * ui_BTStatusConn;
 lv_obj_t * ui_WiFiStatusDisconn;
 lv_obj_t * ui_WiFiStatusConn;
+void ui_event_TouchGestureContainer(lv_event_t * e);
+lv_obj_t * ui_TouchGestureContainer;
 // CUSTOM VARIABLES
 
 // EVENTS
@@ -47,17 +48,17 @@ lv_obj_t * ui____initial_actions0;
 ///////////////////// ANIMATIONS ////////////////////
 
 ///////////////////// FUNCTIONS ////////////////////
-void ui_event_Screen1(lv_event_t * e)
+void ui_event_TouchGestureContainer(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT) {
         lv_indev_wait_release(lv_indev_get_act());
-        PreviousClicked(e);
+        NextClicked(e);
     }
     if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) {
         lv_indev_wait_release(lv_indev_get_act());
-        NextClicked(e);
+        PreviousClicked(e);
     }
 }
 

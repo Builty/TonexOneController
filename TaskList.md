@@ -8,10 +8,11 @@ Add values to sliders that update as the slider is dragged.
 Add units to parameters (db, Hz etc)
 
 ## Waveshare 1.69" touch support. 
-Swipe left/right to select next/previous preset.
+Swipe left/right to select next/previous preset.<br>
+Status: complete, ready to release with next version
 
 ## Global volume support. 
- Need to find how to read the current value. 
+Need to find how to read the current value. 
 
 ## Expression pedal support. 
 Use ADC to read expression pedal pot, and have config to assign what quantity it adjusts.

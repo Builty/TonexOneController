@@ -98,6 +98,9 @@ static void midi_serial_task(void *arg)
     ESP_ERROR_CHECK(uart_param_config(UART_PORT_NUM, &uart_config));
     ESP_ERROR_CHECK(uart_set_pin(UART_PORT_NUM, UART_TX_PIN, UART_RX_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
 
+    // enable pullup on RX line, to help if pin is floating and Midi serial is enabled
+    gpio_pullup_en(UART_RX_PIN);
+
     while (1) 
     {
         // try to read data from UART
@@ -139,12 +142,14 @@ void midi_serial_init(void)
     //uint8_t test_data[] = {0x80, 0x80, 0xC0, 0x00,   0x80,   0xB0, 0x22, 0x7F, 0x43, 0x00, 0x0C, 0x21,   0x80,   0xC0, 0x02};
     //                       header      PC
     //uint8_t test_data[] = {0x80, 0x80, 0xC0, 0x03};
-    //                     header      CC
+    //                      header      CC
     //uint8_t test_data[] = {0x80, 0x80, 0xB0, 0x03, 0x00};
-    //                     CC
+    //                       CC
     //uint8_t test_data[] = {0xB0, 0x03, 0x00};
-    //                     PC
+    //                       PC
     //uint8_t test_data[] = {0xC0, 0x00};
+    //                       PC          CC 
+    //uint8_t test_data[] = {0xC0, 0x00, 0xB0, 116, 64};
     //midi_helper_process_incoming_data(test_data, sizeof(test_data), midi_serial_channel, 1);
 
     xTaskCreatePinnedToCore(midi_serial_task, "MIDIS", MIDI_SERIAL_TASK_STACK_SIZE, NULL, MIDI_SERIAL_TASK_PRIORITY, NULL, 1);

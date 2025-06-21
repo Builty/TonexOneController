@@ -21,6 +21,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_y(ui_PresetHeadingLabel, -53);
     lv_obj_set_align(ui_PresetHeadingLabel, LV_ALIGN_CENTER);
     lv_label_set_text(ui_PresetHeadingLabel, "?\n");
+    lv_obj_clear_flag(ui_PresetHeadingLabel, LV_OBJ_FLAG_GESTURE_BUBBLE);      /// Flags
     lv_obj_set_style_text_color(ui_PresetHeadingLabel, lv_color_hex(0xD1A60C), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_PresetHeadingLabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_align(ui_PresetHeadingLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -33,6 +34,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_y(ui_BPMLabel, -75);
     lv_obj_set_align(ui_BPMLabel, LV_ALIGN_RIGHT_MID);
     lv_label_set_text(ui_BPMLabel, "BPM");
+    lv_obj_clear_flag(ui_BPMLabel, LV_OBJ_FLAG_CLICK_FOCUSABLE);      /// Flags
     lv_obj_set_style_text_align(ui_BPMLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_BPM = lv_label_create(ui_Screen1);
@@ -42,6 +44,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_y(ui_BPM, -45);
     lv_obj_set_align(ui_BPM, LV_ALIGN_RIGHT_MID);
     lv_label_set_text(ui_BPM, "128");
+    lv_obj_clear_flag(ui_BPM, LV_OBJ_FLAG_CLICK_FOCUSABLE);      /// Flags
     lv_obj_set_style_text_align(ui_BPM, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_BPM, &lv_font_montserrat_30, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -52,6 +55,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_y(ui_CStatus, -72);
     lv_obj_set_align(ui_CStatus, LV_ALIGN_CENTER);
     lv_label_set_text(ui_CStatus, "C");
+    lv_obj_clear_flag(ui_CStatus, LV_OBJ_FLAG_CLICK_FOCUSABLE);      /// Flags
     lv_obj_set_style_text_align(ui_CStatus, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_CStatus, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_radius(ui_CStatus, 8, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -68,6 +72,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_y(ui_MStatus, -40);
     lv_obj_set_align(ui_MStatus, LV_ALIGN_CENTER);
     lv_label_set_text(ui_MStatus, "M");
+    lv_obj_clear_flag(ui_MStatus, LV_OBJ_FLAG_CLICK_FOCUSABLE);      /// Flags
     lv_obj_set_style_text_align(ui_MStatus, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_MStatus, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_radius(ui_MStatus, 8, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -84,6 +89,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_y(ui_DStatus, -72);
     lv_obj_set_align(ui_DStatus, LV_ALIGN_CENTER);
     lv_label_set_text(ui_DStatus, "D");
+    lv_obj_clear_flag(ui_DStatus, LV_OBJ_FLAG_CLICK_FOCUSABLE);      /// Flags
     lv_obj_set_style_text_align(ui_DStatus, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_DStatus, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_radius(ui_DStatus, 8, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -100,6 +106,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_y(ui_RStatus, -40);
     lv_obj_set_align(ui_RStatus, LV_ALIGN_CENTER);
     lv_label_set_text(ui_RStatus, "R");
+    lv_obj_clear_flag(ui_RStatus, LV_OBJ_FLAG_CLICK_FOCUSABLE);      /// Flags
     lv_obj_set_style_text_align(ui_RStatus, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_RStatus, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_radius(ui_RStatus, 8, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -116,7 +123,9 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_x(ui_BottomContainer, 0);
     lv_obj_set_y(ui_BottomContainer, 51);
     lv_obj_set_align(ui_BottomContainer, LV_ALIGN_CENTER);
-    lv_obj_clear_flag(ui_BottomContainer, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_clear_flag(ui_BottomContainer,
+                      LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_CLICK_FOCUSABLE | LV_OBJ_FLAG_GESTURE_BUBBLE |
+                      LV_OBJ_FLAG_SCROLLABLE);     /// Flags
     lv_obj_set_style_radius(ui_BottomContainer, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_BottomContainer, lv_color_hex(0x262525), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_BottomContainer, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -134,6 +143,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_y(ui_PresetHeadingLabel2, 0);
     lv_obj_set_align(ui_PresetHeadingLabel2, LV_ALIGN_CENTER);
     lv_label_set_text(ui_PresetHeadingLabel2, "Preset Name\n");
+    lv_obj_clear_flag(ui_PresetHeadingLabel2, LV_OBJ_FLAG_CLICK_FOCUSABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_text_align(ui_PresetHeadingLabel2, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_PresetHeadingLabel2, &lv_font_montserrat_30, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -144,7 +154,8 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_x(ui_TopPanel, 0);
     lv_obj_set_y(ui_TopPanel, -117);
     lv_obj_set_align(ui_TopPanel, LV_ALIGN_CENTER);
-    lv_obj_clear_flag(ui_TopPanel, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_clear_flag(ui_TopPanel, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_CLICK_FOCUSABLE | LV_OBJ_FLAG_GESTURE_BUBBLE |
+                      LV_OBJ_FLAG_SCROLLABLE);     /// Flags
     lv_obj_set_style_bg_color(ui_TopPanel, lv_color_hex(0x2A2A2A), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_TopPanel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -225,6 +236,14 @@ void ui_Screen1_screen_init(void)
     lv_obj_clear_flag(ui_WiFiStatusConn, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_img_set_zoom(ui_WiFiStatusConn, 220);
 
-    lv_obj_add_event_cb(ui_Screen1, ui_event_Screen1, LV_EVENT_ALL, NULL);
+    ui_TouchGestureContainer = lv_obj_create(ui_Screen1);
+    lv_obj_remove_style_all(ui_TouchGestureContainer);
+    lv_obj_set_width(ui_TouchGestureContainer, 240);
+    lv_obj_set_height(ui_TouchGestureContainer, 280);
+    lv_obj_set_align(ui_TouchGestureContainer, LV_ALIGN_CENTER);
+    lv_obj_clear_flag(ui_TouchGestureContainer,
+                      LV_OBJ_FLAG_CLICK_FOCUSABLE | LV_OBJ_FLAG_GESTURE_BUBBLE | LV_OBJ_FLAG_SCROLLABLE);     /// Flags
+
+    lv_obj_add_event_cb(ui_TouchGestureContainer, ui_event_TouchGestureContainer, LV_EVENT_ALL, NULL);
 
 }

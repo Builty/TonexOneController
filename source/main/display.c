@@ -90,6 +90,7 @@ static const char *TAG = "app_display";
     #endif // CONFIG_DISPLAY_DOUBLE_FB
     
     static lv_anim_t *ui_BPMAnimation = NULL;
+    static lv_anim_t PropertyAnimation_0;
     void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration);
 #endif
 
@@ -205,6 +206,13 @@ static SemaphoreHandle_t lvgl_mux = NULL;
 static lv_disp_draw_buf_t disp_buf; // contains internal graphic buffer(s) called draw buffer(s)
 static lv_disp_drv_t disp_drv;      // contains callback functions
 
+#if CONFIG_TONEX_CONTROLLER_HAS_TOUCH
+static esp_lcd_touch_handle_t tp = NULL;
+static esp_lcd_panel_io_handle_t tp_io_handle = NULL;
+static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
+static uint8_t __attribute__((unused)) touch_data_ready_to_read = 0;
+#endif
+
 /****************************************************************************
 * NAME:        
 * DESCRIPTION: 
@@ -243,6 +251,19 @@ bool __attribute__((unused)) display_notify_lvgl_flush_ready(esp_lcd_panel_io_ha
 #endif  //CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
 
 #if CONFIG_TONEX_CONTROLLER_HAS_TOUCH
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void __attribute__((unused)) touch_data_ready(esp_lcd_touch_t *handle)
+{
+    touch_data_ready_to_read = 1;
+}
+
 /****************************************************************************
 * NAME:        
 * DESCRIPTION: 
@@ -257,6 +278,28 @@ static void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
     uint8_t touchpad_cnt = 0;
     bool touchpad_pressed = false;
 
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH
+    // CST816 driver has to set interrupt before data is valid to read
+    if (touch_data_ready_to_read)
+    {
+        if (xSemaphoreTake(I2CMutexHandle, (TickType_t)10) == pdTRUE)
+        {
+            // Read touch controller data
+            esp_lcd_touch_read_data(drv->user_data);
+
+            // Get coordinates 
+            touchpad_pressed = esp_lcd_touch_get_coordinates(drv->user_data, touchpad_x, touchpad_y, NULL, &touchpad_cnt, 1);
+
+            // reset flag
+            touch_data_ready_to_read = 0;
+
+            xSemaphoreGive(I2CMutexHandle);
+        }
+    }
+
+#else
+
+    // poll the driver chip
     if (xSemaphoreTake(I2CMutexHandle, (TickType_t)10) == pdTRUE)
     {
         /* Read touch controller data */
@@ -271,12 +314,16 @@ static void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
     {
         ESP_LOGE(TAG, "Touch cb mutex timeout");
     }
+#endif 
 
     if (touchpad_pressed && touchpad_cnt > 0) 
     {
         data->point.x = touchpad_x[0];
         data->point.y = touchpad_y[0];
         data->state = LV_INDEV_STATE_PR;
+
+        // debug
+        //ESP_LOGI(TAG, "Touch");
     } 
     else 
     {
@@ -3321,7 +3368,7 @@ void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration)
     ui_anim_user_data_t *PropertyAnimation_0_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
     PropertyAnimation_0_user_data->target = TargetObject;
     PropertyAnimation_0_user_data->val = -1;
-    lv_anim_t PropertyAnimation_0;
+    
     lv_anim_init(&PropertyAnimation_0);
     lv_anim_set_time(&PropertyAnimation_0, duration);
     lv_anim_set_user_data(&PropertyAnimation_0, PropertyAnimation_0_user_data);
@@ -3484,8 +3531,6 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
     gpio_set_level(DISPLAY_PIN_NUM_BK_LIGHT, DISPLAY_LCD_BK_LIGHT_ON_LEVEL);
 #endif
 
-    esp_lcd_touch_handle_t tp = NULL;
-    esp_lcd_panel_io_handle_t tp_io_handle = NULL;
     esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_GT911_CONFIG();
     
     // set Int pin to output temporarily
@@ -3608,7 +3653,6 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
     
     if (touch_ok)
     {
-        static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
         lv_indev_drv_init(&indev_drv);
         indev_drv.type = LV_INDEV_TYPE_POINTER;
         indev_drv.disp = disp;
@@ -3708,22 +3752,43 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
     lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(&disp_drv);
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH
-    // init touch screen
-    esp_lcd_touch_handle_t tp = NULL;
-    esp_lcd_panel_io_handle_t tp_io_handle = NULL;
-    esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_CST816S_CONFIG();
+    // touch screen won't respond to I2C unless its had a hard reset recently and not in sleep mode
+    /*
+    gpio_config_t gpio_config_struct;
+
+    gpio_config_struct.pin_bit_mask = (uint64_t)1 << TOUCH_RESET;
+    gpio_config_struct.mode = GPIO_MODE_OUTPUT;
+    gpio_config_struct.pull_up_en = GPIO_PULLUP_DISABLE;
+    gpio_config_struct.pull_down_en = GPIO_PULLDOWN_DISABLE;
+    gpio_config_struct.intr_type = GPIO_INTR_DISABLE;
+    gpio_config(&gpio_config_struct);
+    gpio_set_level(TOUCH_RESET, 0);
+    esp_rom_delay_us(200 * 1000);
+    gpio_set_level(TOUCH_RESET, 1);
+    */
+
+    // init touch screen    
+    const esp_lcd_panel_io_i2c_config_t tp_io_config = {
+        .dev_addr = ESP_LCD_TOUCH_IO_I2C_CST816S_ADDRESS, 
+        .on_color_trans_done = 0,                         
+        .user_ctx = 0,                                    
+        .control_phase_bytes = 1,                         
+        .dc_bit_offset = 0,                               
+        .lcd_cmd_bits = 8,                                
+        .lcd_param_bits = 0,                              
+        .flags =                                          
+        {                                                 
+            .dc_low_on_data = 0,                          
+            .disable_control_phase = 1,                   
+        }                                                 
+    };
     
-    // Touch IO handle
-    if (esp_lcd_new_panel_io_i2c((esp_lcd_i2c_bus_handle_t)I2CNum, &tp_io_config, &tp_io_handle) != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Touch IO handle failed!");
-    }
-    
-    esp_lcd_touch_config_t tp_cfg = {
+    const esp_lcd_touch_config_t tp_cfg = {
         .x_max = WAVESHARE_240_280_LCD_H_RES,
         .y_max = WAVESHARE_240_280_LCD_V_RES,
         .rst_gpio_num = TOUCH_RESET,
         .int_gpio_num = TOUCH_INT,
+        .interrupt_callback = touch_data_ready,
         .levels = {
             .reset = 0,
             .interrupt = 0,
@@ -3734,6 +3799,12 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
             .mirror_y = 0,
         },
     };
+
+    // Touch IO handle
+    if (esp_lcd_new_panel_io_i2c((esp_lcd_i2c_bus_handle_t)I2CNum, &tp_io_config, &tp_io_handle) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Touch IO handle failed!");
+    }
     
     // Initialize touch
     ESP_LOGI(TAG, "Initialize touch controller CST816");
@@ -3760,7 +3831,6 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
 
     if (touch_ok)
     {
-        static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
         lv_indev_drv_init(&indev_drv);
         indev_drv.type = LV_INDEV_TYPE_POINTER;
         indev_drv.disp = disp;
@@ -3872,7 +3942,7 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
             LG_TDISP_S3_TFT_DATA7,
         },
         .bus_width = 8,
-        .max_transfer_bytes = LILYGO_TDISPLAY_S3_LCD_H_RES * 100 * sizeof(uint16_t),
+        .max_transfer_bytes = LILYGO_TDISPLAY_S3_LCD_V_RES * 100 * sizeof(uint16_t),
         .psram_trans_align = 64,
         .sram_trans_align = 4
     };
@@ -3957,7 +4027,83 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
     disp_drv.user_data = lcd_panel;
 
     lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(&disp_drv);
-#endif
+
+#if CONFIG_TONEX_CONTROLLER_HAS_TOUCH
+    // note: basic version of T-Display S3 has no touch screen.
+    // code is here for possible future support of the touch version
+    // init touch screen    
+    const esp_lcd_panel_io_i2c_config_t tp_io_config = {
+        .dev_addr = ESP_LCD_TOUCH_IO_I2C_CST816S_ADDRESS, 
+        .on_color_trans_done = 0,                         
+        .user_ctx = 0,                                    
+        .control_phase_bytes = 1,                         
+        .dc_bit_offset = 0,                               
+        .lcd_cmd_bits = 8,                                
+        .lcd_param_bits = 0,                              
+        .flags =                                          
+        {                                                 
+            .dc_low_on_data = 0,                          
+            .disable_control_phase = 1,                   
+        }                                                 
+    };
+    
+    const esp_lcd_touch_config_t tp_cfg = {
+        .x_max = LILYGO_TDISPLAY_S3_LCD_H_RES,
+        .y_max = LILYGO_TDISPLAY_S3_LCD_V_RES,
+        .rst_gpio_num = TOUCH_RESET,
+        .int_gpio_num = TOUCH_INT,
+        .levels = {
+            .reset = 0,
+            .interrupt = 0,
+        },
+        .flags = {
+            .swap_xy = 0,
+            .mirror_x = 1,
+            .mirror_y = 0,
+        },
+    };
+
+    // Touch IO handle
+    if (esp_lcd_new_panel_io_i2c((esp_lcd_i2c_bus_handle_t)I2CNum, &tp_io_config, &tp_io_handle) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Touch IO handle failed!");
+    }
+    
+    // Initialize touch
+    ESP_LOGI(TAG, "Initialize touch controller CST816");
+
+   if (xSemaphoreTake(I2CMutexHandle, (TickType_t)10000) == pdTRUE)
+    {
+        ret = esp_lcd_touch_new_i2c_cst816s(tp_io_handle, &tp_cfg, &tp);
+        xSemaphoreGive(I2CMutexHandle);
+    }
+    else
+    {
+        ESP_LOGE(TAG, "Initialize touch mutex timeout");
+    }
+        
+    if (ret == ESP_OK)
+    {
+        ESP_LOGI(TAG, "Touch controller init OK");
+        touch_ok = 1;
+    }
+    else
+    {
+        ESP_LOGW(TAG, "Touch controller init failed %s", esp_err_to_name(ret));
+    }
+        
+    if (touch_ok)
+    {
+        lv_indev_drv_init(&indev_drv);
+        indev_drv.type = LV_INDEV_TYPE_POINTER;
+        indev_drv.disp = disp;
+        indev_drv.read_cb = display_lvgl_touch_cb;
+        indev_drv.user_data = tp;
+
+        lv_indev_drv_register(&indev_drv);
+    }
+#endif  // CONFIG_TONEX_CONTROLLER_HAS_TOUCH    
+#endif  // CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
     // Tick interface for LVGL (using esp_timer to generate 2ms periodic event)
