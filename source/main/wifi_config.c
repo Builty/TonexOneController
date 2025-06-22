@@ -49,7 +49,7 @@ limitations under the License.
 #include "tonex_params.h"
 #include "usb_tonex_one.h"
 
-#define WIFI_CONFIG_TASK_STACK_SIZE   (4 * 1024)
+#define WIFI_CONFIG_TASK_STACK_SIZE   (3 * 1024)
 
 #define ESP_WIFI_SSID           "TonexConfig"
 #define ESP_WIFI_PASS           "12345678"
@@ -607,6 +607,7 @@ static esp_err_t ws_handler(httpd_req_t *req)
         if (buf == NULL) 
         {
             ESP_LOGE(TAG, "Failed to calloc memory for buf");
+            heap_caps_print_heap_info(MALLOC_CAP_SPIRAM);
             return ESP_ERR_NO_MEM;
         }
         memset((void*)buf, 0, ws_pkt.len + 1);
@@ -1628,6 +1629,8 @@ static void wifi_config_task(void *arg)
     if (pWebConfig == NULL)
     {
         ESP_LOGE(TAG, "Failed to allocate pWebConfig buffer!");
+
+        heap_caps_print_heap_info(MALLOC_CAP_SPIRAM);
         return;
     }
 

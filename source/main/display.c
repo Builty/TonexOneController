@@ -361,6 +361,16 @@ void NextClicked(lv_event_t * e)
     control_request_preset_up();        
 }
 
+#else   //CONFIG_TONEX_CONTROLLER_HAS_TOUCH
+
+// Dummy functions so that 1.69 and 1.69 Touch can share the same UI project
+void PreviousClicked(lv_event_t * e)
+{
+}
+
+void NextClicked(lv_event_t * e)
+{
+}
 #endif  //CONFIG_TONEX_CONTROLLER_HAS_TOUCH
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
