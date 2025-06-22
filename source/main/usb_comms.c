@@ -195,7 +195,15 @@ void class_driver_task(void *arg)
             }
             else
             {
-                ESP_LOGI(TAG, "Found unexpected USB device");
+                // check the device class
+                if (dev_desc->bDeviceClass == 0x09)
+                {
+                    ESP_LOGI(TAG, "Found USB Hub");
+                }
+                else
+                {
+                    ESP_LOGI(TAG, "Found unexpected USB device");
+                }
 
                 usb_host_device_close(driver_obj.client_hdl, driver_obj.dev_hdl);
                 driver_obj.dev_hdl = NULL;
