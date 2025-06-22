@@ -15,7 +15,7 @@ Status: complete, ready to release with next version
 Need to find how to read the current value. 
 
 ## Expression pedal support. 
-Use ADC to read expression pedal pot, and have config to assign what quantity it adjusts.
+Use ADC to read expression pedal pot, and have config to assign what quantity it adjusts and min/max clamps.
 
 ## Direct Preset load from footswitch 
 Add ability to load preset X from a footswitch press.<br> 
@@ -38,6 +38,7 @@ Also ability to delete a paired device.
 ## USB Hub support
 Migrate to newer version of ESP IDF, to gain support for USB hubs.<br>
 Look at adding USB Midi support once this is complete.
+Status: migration to ESP IDF 5.4.1 is almost complete.
 
 ## Tonex USB disconect handling
 If the pedal is diosconnected after being connected, the ESP32 needs a reboot in order to allow connection again.

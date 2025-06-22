@@ -890,6 +890,9 @@ void control_sync_preset_name(uint16_t index, char* name)
 
     message.Event = EVENT_SET_PRESET_NAME;
     message.Value = index;
+
+    // ensure string is null terminated
+    message.Text[0] = 0;
     strncpy(message.Text, name, MAX_TEXT_LENGTH - 1);
 
     // send to queue
@@ -914,6 +917,9 @@ void control_sync_preset_details(uint16_t index, char* name)
 
     message.Event = EVENT_SET_PRESET_DETAILS;
     message.Value = index;
+
+    // ensure string is null terminated
+    message.Text[0] = 0;
     strncpy(message.Text, name, MAX_TEXT_LENGTH - 1);
 
     // send to queue
@@ -937,6 +943,9 @@ void control_set_user_text(char* text)
     ESP_LOGI(TAG, "control_set_user_text");            
 
     message.Event = EVENT_SET_USER_TEXT;
+
+    // ensure string is null terminated
+    message.Text[0] = 0;
     strncat(message.Text, text, MAX_TEXT_LENGTH - 1);
 
     // send to queue
@@ -1121,6 +1130,9 @@ void control_set_config_item_string(uint32_t item, char* name)
     ESP_LOGI(TAG, "control_set_config_item_string: %d", (int)item);
 
     message.Event = EVENT_SET_CONFIG_ITEM_STRING;
+
+    // ensure string is null terminated
+    message.Text[0] = 0;
     strncpy(message.Text, name, MAX_TEXT_LENGTH - 1);
     message.Item = item;
 
