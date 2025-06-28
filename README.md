@@ -6,38 +6,26 @@ This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a 
 **Note: this project is not endorsed by IK Multimedia. Amplifier skin images copyright is owned by IK Multimedia.**
 **TONEX is a registered trademark of IK Multimedia Production Srl**
 
+# Code Use Notice
+A number of people have taken significant portions of this project, undertaked minor modifications, and then released commercial products using it. Whilst commercial use of this open source is permitted, it is only permitted if the user provides "attribution", that is, publically states in literature that portions of their product are based on this project, and provide a link to it.<br>
+Those who refuse and try to claim this work as their own are violating the license terms and may be reported to Youtube or other entities that may take down your materials.<br>
+For example, the "GuerrilhaBox" Controller is clearly based on this project with no attribution, in violation of the license terms. Comments made to their Youtube videos to this effect are being deleted, as its clearly an embarrassment for them.
+
 # Table of Contents
- 1. [Demonstration Videos](#demonstration_videos)
- 2. [Meet the Family](#meet_family)
- 3. [Key Features](#key_features)
+ 1. [Key Features](#key_features)
+ 2. [Demonstration Videos](#demonstration_videos)
+ 3. [Meet the Family](#meet_family)
  4. [Hardware Platforms and Wiring Diagrams](#hardware_platforms)
- 5. [Uploading/Programming Firmware Releases](#firmware_uploading)
- 6. [Configuration and Settings](#config)
- 7. [Usage Instructions](#usage_instructions)
- 8. [Firmware Development Information](#development_info)
- 9. [Acknowledgements](#acknowledgements)
- 10. [Firmware Release Notes](#release_notes)
- 11. [Companion Projects](#companion_projects)
- 12. [License](#license)
- 13. [Donations](#donations)
-
-## Demonstration Videos <a name="demonstration_videos"></a>
-https://youtu.be/j0I5G5-CXfg
-
-### Full Tutorial Video (in Spanish) thanks to Marcelo
-https://www.youtube.com/watch?v=qkOs5gk3bcQ
-
-## Meet the Family <a name="meet_family"></a>
-This project can run on any of four different hardware platforms, varying in size and cost. All of them are "off-the-shelf" development boards supplied either by the company "Waveshare", or Espressif.
-The code could be adapted to run on other brand ESP32-S3 boards, but to make things easy, pre-built releases are provided for the supported modules.
-<br>All platforms support Bluetooth, WiFi, wired footswitches, and wired Midi.
-- 4.3" LCD board, supporting touch screen and advanced graphics including customisable amp/pedal skins and text
-- 1.69" LCD boards (with or without Touch.) Similar to an Apple Watch, this small board displays the preset name and number
-- "Zero" board with no display, is the smallest and cheapest option
-- "DevKit-C" board with no display
-- "Atom S3R" board with tiny LCD
-![meet_family](https://github.com/user-attachments/assets/b707b61a-ca2c-46b3-972f-cbeb59ffa2b2)
-
+ 5. [Pre-Built Controllers from Pirate Midi](#pre-built)
+ 6. [Uploading/Programming Firmware Releases](#firmware_uploading)
+ 7. [Configuration and Settings](#config)
+ 8. [Usage Instructions](#usage_instructions)
+ 9. [Firmware Development Information](#development_info)
+ 10. [Acknowledgements](#acknowledgements)
+ 11. [Firmware Release Notes](#release_notes)
+ 12. [Companion Projects](#companion_projects)
+ 13. [License](#license)
+ 14. [Donations](#donations)
 
 ## ⭐ Key Features <a name="key_features"></a>
 The supported features vary a little depending on the chosen hardware platform.
@@ -54,9 +42,54 @@ The supported features vary a little depending on the chosen hardware platform.
 - Wired/Serial Midi support
 - New in V1.0.6: full control over all Tonex One parameters and effects, via LCD (4.3B only) and Midi (all platforms.)
 - New in V1.0.8: support for up to 16 footswitches, with configurable preset switching layouts, and up to 5 effect/parameter toggle switches
+  
+## Demonstration Videos <a name="demonstration_videos"></a>
+### Release Videos
+https://youtu.be/j0I5G5-CXfg<br>
+https://www.youtube.com/watch?v=_nemmhjvjcc<br>
+https://www.youtube.com/watch?v=ok4EuUgWt44<br>
+https://www.youtube.com/watch?v=r5wLnxQ4IZo<br>
+https://www.youtube.com/watch?v=WF8BB_EIKBo<br>
+https://www.youtube.com/watch?v=hQ5NEcqaVeE<br>
+
+### Pirate Midi Videos
+https://www.youtube.com/watch?v=g_w_sGxK-ZI<br>
+
+### Review Videos (seach Youtube for more)
+https://www.youtube.com/watch?v=TLoKdBpcDJA<br>
+
+### User Videos (search Youtube for more)
+https://www.youtube.com/watch?v=qkOs5gk3bcQ<br>
+https://www.youtube.com/watch?v=bNvzW3pwNeY<br>
+https://www.youtube.com/watch?v=pgCZfFsZD_4<br>
+https://www.youtube.com/watch?v=E56C4G4_uKk<br>
+https://www.youtube.com/watch?v=aJPtkqnd2sg<br>
+https://www.youtube.com/watch?v=M2mpE5QMi7E<br>
+
+## Articles/Tutorials written by others
+https://gsus4.com.au/blogs/news-promo/what-if-there-was-a-screen-for-ik-tonex-one-step-by-step-guide<br>
+
+## Meet the Family <a name="meet_family"></a>
+This project can run on any of four different hardware platforms, varying in size and cost. All of them are "off-the-shelf" development boards supplied either by the company "Waveshare", or Espressif.
+The code could be adapted to run on other brand ESP32-S3 boards, but to make things easy, pre-built releases are provided for the supported modules.
+<br>All platforms support Bluetooth, WiFi, wired footswitches, and wired Midi.
+- 4.3" LCD board, supporting touch screen and advanced graphics including customisable amp/pedal skins and text
+- 1.69" LCD boards (with or without Touch.) Similar to an Apple Watch, this small board displays the preset name and number
+- "Zero" board with no display, is the smallest and cheapest option
+- "DevKit-C" board with no display
+- "Atom S3R" board with tiny LCD
+![meet_family](https://github.com/user-attachments/assets/b707b61a-ca2c-46b3-972f-cbeb59ffa2b2)
 
 ## Hardware Platforms and Wiring <a name="hardware_platforms"></a>
 For more information about the hardware platforms, refer to [Hardware Platforms](HardwarePlatforms.md)
+
+## Pre-Built Controllers <a name="pre-built"></a>
+A collaboration with Pirate Midi has resulted in the availability of fully assembled controllers for sale world-wide.
+<br>
+This project receives 10% of sales, which is primarily fed back into the purchase of new hardware to develop upon.<br>
+https://piratemidi.com/en-au/products/polar
+
+![image](https://github.com/user-attachments/assets/4c5a7a9a-0827-4381-9b4d-265cbf999ce2)
 
 ## Uploading/Programming Firmware Releases <a name="firmware_uploading"></a>
 For more information about uploading firmware to the boards, refer to [Firmware Uploading](FirmwareUploading.md)
