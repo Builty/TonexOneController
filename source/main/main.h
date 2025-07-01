@@ -379,6 +379,43 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define TOUCH_RESET 		       LG_TDISP_S3_TOUCH_RST
     #define TOUCH_INT                  LG_TDISP_S3_TOUCH_IRQ
 
+#elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
+    // I2C bus 1
+    #define I2C_MASTER_1_SCL_IO  GPIO_NUM_48       
+    #define I2C_MASTER_1_SDA_IO  GPIO_NUM_47       
+
+    // I2C bus 2
+    #define I2C_MASTER_2_SCL_IO  -1
+    #define I2C_MASTER_2_SDA_IO  -1
+
+    #define EXTERNAL_IO_EXPANDER_BUS       I2C_MASTER_NUM_1
+    #define EXTERNAL_IO_EXPANDER_MUTEX     I2CMutex_1 
+
+    // direct IO pins
+    #define FOOTSWITCH_1		GPIO_NUM_1
+    #define FOOTSWITCH_2		GPIO_NUM_2
+    #define FOOTSWITCH_3		GPIO_NUM_3
+    #define FOOTSWITCH_4		GPIO_NUM_4
+
+    // Midi
+    #define UART_RX_PIN         GPIO_NUM_5 
+    #define UART_TX_PIN         GPIO_NUM_6 
+
+    // leds
+    #define LED_OUTPUT_GPIO_NUM          -1
+    
+    // LCD pins
+    #define WAVESHARE_19_LCD_GPIO_SCLK           GPIO_NUM_10
+    #define WAVESHARE_19_LCD_GPIO_MOSI           GPIO_NUM_13
+    #define WAVESHARE_19_LCD_GPIO_RST            GPIO_NUM_9
+    #define WAVESHARE_19_LCD_GPIO_DC             GPIO_NUM_11
+    #define WAVESHARE_19_LCD_GPIO_CS             GPIO_NUM_12
+    #define WAVESHARE_19_LCD_GPIO_BL             GPIO_NUM_14
+
+    // Touch
+    #define TOUCH_RESET 		                 GPIO_NUM_17
+    #define TOUCH_INT                            GPIO_NUM_21
+
 #else
     #error "Unknown hardware platform!"
 #endif

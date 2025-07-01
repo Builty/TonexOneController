@@ -164,6 +164,25 @@ static const char *TAG = "app_display";
     };
 #endif
 
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
+    #define WAVESHARE_19_LCD_H_RES               (320)
+    #define WAVESHARE_19_LCD_V_RES               (170)
+
+    /* LCD settings */
+    #define WAVESHARE_19_LCD_SPI_NUM             (SPI3_HOST)
+    #define WAVESHARE_19_LCD_PIXEL_CLK_HZ        (40 * 1000 * 1000)
+    #define WAVESHARE_19_LCD_CMD_BITS            (8)
+    #define WAVESHARE_19_LCD_PARAM_BITS          (8)
+    #define WAVESHARE_19_LCD_COLOR_SPACE         (ESP_LCD_COLOR_SPACE_RGB)
+    #define WAVESHARE_19_LCD_BITS_PER_PIXEL      (16)
+    #define WAVESHARE_19_LCD_DRAW_BUFF_DOUBLE    (1)
+    #define WAVESHARE_19_LCD_DRAW_BUFF_HEIGHT    (50)
+    #define WAVESHARE_19_LCD_BL_ON_LEVEL         (1)
+
+    static esp_lcd_panel_io_handle_t lcd_io = NULL;
+    static esp_lcd_panel_handle_t lcd_panel = NULL;
+#endif
+
 #define DISPLAY_LVGL_TICK_PERIOD_MS     2
 #define DISPLAY_LVGL_TASK_MAX_DELAY_MS  500
 #define DISPLAY_LVGL_TASK_MIN_DELAY_MS  1
@@ -278,7 +297,7 @@ static void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
     uint8_t touchpad_cnt = 0;
     bool touchpad_pressed = false;
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
     // CST816 driver has to set interrupt before data is valid to read
     if (touch_data_ready_to_read)
     {
@@ -3154,7 +3173,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 \
     || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH \
     || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R \
-    || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3
+    || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3 \
+    || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
             ESP_LOGI(TAG, "Syncing params to UI");
 
             tTonexParameter* param_ptr;
@@ -4100,6 +4120,157 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
     }
 #endif  // CONFIG_TONEX_CONTROLLER_HAS_TOUCH    
 #endif  // CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3
+
+
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
+    // LCD backlight
+    gpio_config_t bk_gpio_config = {
+        .mode = GPIO_MODE_OUTPUT,
+        .pin_bit_mask = 1ULL << WAVESHARE_19_LCD_GPIO_BL};
+    ESP_ERROR_CHECK(gpio_config(&bk_gpio_config));
+
+    /* LCD initialization */
+    ESP_LOGD(TAG, "Initialize SPI bus");
+    const spi_bus_config_t buscfg = {
+        .sclk_io_num = WAVESHARE_19_LCD_GPIO_SCLK,
+        .mosi_io_num = WAVESHARE_19_LCD_GPIO_MOSI,
+        .miso_io_num = GPIO_NUM_NC,
+        .quadwp_io_num = GPIO_NUM_NC,
+        .quadhd_io_num = GPIO_NUM_NC,
+        // note here: this value needs to be: WAVESHARE_240_280_LCD_H_RES * WAVESHARE_240_280_LCD_DRAW_BUFF_HEIGHT * sizeof(uint16_t)
+        // however, the ESP framework uses multiples of 4092 for DMA (LLDESC_MAX_NUM_PER_DESC).
+        // this theoretical number is 49.9 times the DMA size, which gets rounded down and ends up too small.
+        // so instead, manually setting it to a little larger
+        .max_transfer_sz = 6 * LLDESC_MAX_NUM_PER_DESC, 
+    };
+    spi_bus_initialize(WAVESHARE_19_LCD_SPI_NUM, &buscfg, SPI_DMA_CH_AUTO);
+
+    ESP_LOGD(TAG, "Install panel IO");
+    const esp_lcd_panel_io_spi_config_t io_config = {
+        .dc_gpio_num = WAVESHARE_19_LCD_GPIO_DC,
+        .cs_gpio_num = WAVESHARE_19_LCD_GPIO_CS,
+        .pclk_hz = WAVESHARE_19_LCD_PIXEL_CLK_HZ,
+        .lcd_cmd_bits = WAVESHARE_19_LCD_CMD_BITS,
+        .lcd_param_bits = WAVESHARE_19_LCD_PARAM_BITS,
+        .spi_mode = 0,
+        .trans_queue_depth = 10,
+    };
+    esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)WAVESHARE_19_LCD_SPI_NUM, &io_config, &lcd_io);
+
+    ESP_LOGD(TAG, "Install LCD driver");
+    const esp_lcd_panel_dev_config_t panel_config = {
+        .reset_gpio_num = WAVESHARE_19_LCD_GPIO_RST,
+        .color_space = WAVESHARE_19_LCD_COLOR_SPACE,
+        .bits_per_pixel = WAVESHARE_19_LCD_BITS_PER_PIXEL,
+    };
+    esp_lcd_new_panel_st7789(lcd_io, &panel_config, &lcd_panel);
+
+    esp_lcd_panel_reset(lcd_panel);
+    esp_lcd_panel_init(lcd_panel);
+    esp_lcd_panel_mirror(lcd_panel, true, true);
+    esp_lcd_panel_disp_on_off(lcd_panel, true);
+
+    // LCD backlight on 
+    ESP_ERROR_CHECK(gpio_set_level(WAVESHARE_19_LCD_GPIO_BL, WAVESHARE_19_LCD_BL_ON_LEVEL));
+
+    esp_lcd_panel_set_gap(lcd_panel, 0, 20);
+    esp_lcd_panel_invert_color(lcd_panel, true);
+
+    ESP_LOGI(TAG, "Initialize LVGL library");
+    lv_init();
+
+    void *buf1 = NULL;
+    void *buf2 = NULL;
+    ESP_LOGI(TAG, "Allocate separate LVGL draw buffers from PSRAM");
+    buf1 = heap_caps_malloc(WAVESHARE_19_LCD_H_RES * 32 * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
+    assert(buf1);
+    buf2 = heap_caps_malloc(WAVESHARE_19_LCD_H_RES * 32 * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
+    assert(buf2);
+    lv_disp_draw_buf_init(&disp_buf, buf1, buf2, WAVESHARE_19_LCD_H_RES * 32);
+
+    ESP_LOGI(TAG, "Register display driver to LVGL");
+    lv_disp_drv_init(&disp_drv);
+    disp_drv.hor_res = WAVESHARE_19_LCD_H_RES;
+    disp_drv.ver_res = WAVESHARE_19_LCD_V_RES;
+    disp_drv.flush_cb = display_lvgl_flush_cb;
+    disp_drv.draw_buf = &disp_buf;
+    disp_drv.user_data = lcd_panel;
+
+    lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(&disp_drv);
+
+    // init touch screen    
+    const esp_lcd_panel_io_i2c_config_t tp_io_config = {
+        .dev_addr = ESP_LCD_TOUCH_IO_I2C_CST816S_ADDRESS, 
+        .on_color_trans_done = 0,                         
+        .user_ctx = 0,                                    
+        .control_phase_bytes = 1,                         
+        .dc_bit_offset = 0,                               
+        .lcd_cmd_bits = 8,                                
+        .lcd_param_bits = 0,                              
+        .flags =                                          
+        {                                                 
+            .dc_low_on_data = 0,                          
+            .disable_control_phase = 1,                   
+        }                                                 
+    };
+    
+    const esp_lcd_touch_config_t tp_cfg = {
+        .x_max = WAVESHARE_19_LCD_H_RES,
+        .y_max = WAVESHARE_19_LCD_V_RES,
+        .rst_gpio_num = TOUCH_RESET,
+        .int_gpio_num = TOUCH_INT,
+        .interrupt_callback = touch_data_ready,
+        .levels = {
+            .reset = 0,
+            .interrupt = 0,
+        },
+        .flags = {
+            .swap_xy = 0,
+            .mirror_x = 1,
+            .mirror_y = 0,
+        },
+    };
+
+    // Touch IO handle
+    if (esp_lcd_new_panel_io_i2c(bus_handle, &tp_io_config, &tp_io_handle) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Touch IO handle failed!");
+    }
+    
+    // Initialize touch
+    ESP_LOGI(TAG, "Initialize touch controller CST816");
+
+    if (xSemaphoreTake(I2CMutexHandle, (TickType_t)10000) == pdTRUE)
+    {
+        ret = esp_lcd_touch_new_i2c_cst816s(tp_io_handle, &tp_cfg, &tp);
+        xSemaphoreGive(I2CMutexHandle);
+    }
+    else
+    {
+        ESP_LOGE(TAG, "Initialize touch mutex timeout");
+    }
+        
+    if (ret == ESP_OK)
+    {
+        ESP_LOGI(TAG, "Touch controller init OK");
+        touch_ok = 1;
+    }
+    else
+    {
+        ESP_LOGW(TAG, "Touch controller init failed %s", esp_err_to_name(ret));
+    }
+
+    if (touch_ok)
+    {
+        lv_indev_drv_init(&indev_drv);
+        indev_drv.type = LV_INDEV_TYPE_POINTER;
+        indev_drv.disp = disp;
+        indev_drv.read_cb = display_lvgl_touch_cb;
+        indev_drv.user_data = tp;
+
+        lv_indev_drv_register(&indev_drv);
+    }
+#endif  //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
     // Tick interface for LVGL (using esp_timer to generate 2ms periodic event)

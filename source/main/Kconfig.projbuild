@@ -28,6 +28,9 @@ menu "Tonex Controller Configuration"
         config TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3
             bool "LilyGo T-Display S3"   
         
+        config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
+            bool "Waveshare 1.9 Touch"
+            
     endchoice
 
     choice TONEX_CONTROLLER_SKINS

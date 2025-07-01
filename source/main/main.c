@@ -273,7 +273,7 @@ void app_main(void)
     display_init(ic2_bus_handle_1, I2CMutex_1);
 #endif
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
     // init GUI
     ESP_LOGI(TAG, "Init 1.9 display");
     display_init(ic2_bus_handle_1, I2CMutex_1);
