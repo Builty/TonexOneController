@@ -7,3 +7,4 @@ dependencies:
   lvgl/lvgl: ~8.3.0
   esp_lcd_touch_gt911: ^1.0
   espressif/esp_lcd_touch_cst816s: ^1.0.6
+  espressif/esp_lcd_sh8601: ^1.0.0

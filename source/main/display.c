@@ -53,6 +53,7 @@ limitations under the License.
 #include "esp_lcd_touch_gt911.h"
 #include "esp_lcd_touch_cst816s.h"
 #include "esp_lcd_gc9107.h"
+#include "esp_lcd_sh8601.h"
 #include "esp_intr_alloc.h"
 #include "main.h"
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
@@ -170,17 +171,39 @@ static const char *TAG = "app_display";
 
     /* LCD settings */
     #define WAVESHARE_19_LCD_SPI_NUM             (SPI3_HOST)
-    #define WAVESHARE_19_LCD_PIXEL_CLK_HZ        (40 * 1000 * 1000)
+    #define WAVESHARE_19_LCD_PIXEL_CLK_HZ        (20 * 1000 * 1000)
     #define WAVESHARE_19_LCD_CMD_BITS            (8)
     #define WAVESHARE_19_LCD_PARAM_BITS          (8)
-    #define WAVESHARE_19_LCD_COLOR_SPACE         (ESP_LCD_COLOR_SPACE_RGB)
+    #define WAVESHARE_19_LCD_COLOR_SPACE         (LCD_RGB_ELEMENT_ORDER_RGB)
     #define WAVESHARE_19_LCD_BITS_PER_PIXEL      (16)
     #define WAVESHARE_19_LCD_DRAW_BUFF_DOUBLE    (1)
     #define WAVESHARE_19_LCD_DRAW_BUFF_HEIGHT    (50)
-    #define WAVESHARE_19_LCD_BL_ON_LEVEL         (1)
+    #define WAVESHARE_19_LCD_BL_ON_LEVEL         (0)
+
+    #define WAVESHARE_19_LCD_DMA_Line (WAVESHARE_19_LCD_V_RES / 2)
 
     static esp_lcd_panel_io_handle_t lcd_io = NULL;
     static esp_lcd_panel_handle_t lcd_panel = NULL;
+
+    static const sh8601_lcd_init_cmd_t lcd_init_cmds[] = 
+    {
+        {0x36, (uint8_t []){0x70}, 1, 0},	
+        {0xb2, (uint8_t []){0x0c,0x0c,0x00,0x33,0x33}, 5, 0},
+        {0xb7, (uint8_t []){0x35}, 1, 0},
+        {0xbb, (uint8_t []){0x13}, 1, 0},
+        {0xc0, (uint8_t []){0x2c}, 1, 0},
+        {0xc2, (uint8_t []){0x01}, 1, 0},
+        {0xc3, (uint8_t []){0x0b}, 1, 0},
+        {0xc4, (uint8_t []){0x20}, 1, 0},
+        {0xc6, (uint8_t []){0x0f}, 1, 0},
+        {0xd0, (uint8_t []){0xa4,0xa1}, 2, 0},
+        {0xd6, (uint8_t []){0xa1}, 1, 0},
+        {0xe0, (uint8_t []){0x00,0x03,0x07,0x08,0x07,0x15,0x2A,0x44,0x42,0x0A,0x17,0x18,0x25,0x27}, 14, 0},
+        {0xe1, (uint8_t []){0x00,0x03,0x08,0x07,0x07,0x23,0x2A,0x43,0x42,0x09,0x18,0x17,0x25,0x27}, 14, 0},
+        {0x21, (uint8_t []){0x21}, 0, 0},
+        {0x11, (uint8_t []){0x11}, 0, 120},
+        {0x29, (uint8_t []){0x29}, 0, 0},
+    };
 #endif
 
 #define DISPLAY_LVGL_TICK_PERIOD_MS     2
@@ -242,10 +265,19 @@ static uint8_t __attribute__((unused)) touch_data_ready_to_read = 0;
 static void __attribute__((unused)) display_lvgl_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map)
 {
     esp_lcd_panel_handle_t panel_handle = (esp_lcd_panel_handle_t) drv->user_data;
+    
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH    
+    int offsetx1 = area->x1;
+    int offsetx2 = area->x2;
+    int offsety1 = area->y1 + 35;
+    int offsety2 = area->y2 + 35;
+#else
     int offsetx1 = area->x1;
     int offsetx2 = area->x2;
     int offsety1 = area->y1;
     int offsety2 = area->y2;
+#endif
+
 #if CONFIG_DISPLAY_AVOID_TEAR_EFFECT_WITH_SEM
     xSemaphoreGive(sem_gui_ready);
     xSemaphoreTake(sem_vsync_end, portMAX_DELAY);
@@ -3871,11 +3903,11 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
         .miso_io_num = GPIO_NUM_NC,
         .quadwp_io_num = GPIO_NUM_NC,
         .quadhd_io_num = GPIO_NUM_NC,
-        // note here: this value needs to be: WAVESHARE_240_280_LCD_H_RES * WAVESHARE_240_280_LCD_DRAW_BUFF_HEIGHT * sizeof(uint16_t)
+        // note here: this value needs to be: ATOM3SR_LCD_H_RES * ATOM3SR_LCD_DRAW_BUFF_HEIGHT * sizeof(uint16_t)
         // however, the ESP framework uses multiples of 4092 for DMA (LLDESC_MAX_NUM_PER_DESC).
-        // this theoretical number is 49.9 times the DMA size, which gets rounded down and ends up too small.
-        // so instead, manually setting it to a little larger (50 rather than 49.9)
-        .max_transfer_sz = 50 * LLDESC_MAX_NUM_PER_DESC,
+        // this theoretical number is 3.125 times the DMA size, which gets rounded down and ends up too small.
+        // so instead, manually setting it to a little larger (4 rather than 3.125)
+        .max_transfer_sz = 4 * LLDESC_MAX_NUM_PER_DESC,
     };
     spi_bus_initialize(ATOM3SR_LCD_SPI_NUM, &buscfg, SPI_DMA_CH_AUTO);
 
@@ -4048,20 +4080,7 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
     // note: basic version of T-Display S3 has no touch screen.
     // code is here for possible future support of the touch version
     // init touch screen    
-    const esp_lcd_panel_io_i2c_config_t tp_io_config = {
-        .dev_addr = ESP_LCD_TOUCH_IO_I2C_CST816S_ADDRESS, 
-        .on_color_trans_done = 0,                         
-        .user_ctx = 0,                                    
-        .control_phase_bytes = 1,                         
-        .dc_bit_offset = 0,                               
-        .lcd_cmd_bits = 8,                                
-        .lcd_param_bits = 0,                              
-        .flags =                                          
-        {                                                 
-            .dc_low_on_data = 0,                          
-            .disable_control_phase = 1,                   
-        }                                                 
-    };
+    const esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_CST816S_CONFIG();
     
     const esp_lcd_touch_config_t tp_cfg = {
         .x_max = LILYGO_TDISPLAY_S3_LCD_H_RES,
@@ -4137,11 +4156,7 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
         .miso_io_num = GPIO_NUM_NC,
         .quadwp_io_num = GPIO_NUM_NC,
         .quadhd_io_num = GPIO_NUM_NC,
-        // note here: this value needs to be: WAVESHARE_240_280_LCD_H_RES * WAVESHARE_240_280_LCD_DRAW_BUFF_HEIGHT * sizeof(uint16_t)
-        // however, the ESP framework uses multiples of 4092 for DMA (LLDESC_MAX_NUM_PER_DESC).
-        // this theoretical number is 49.9 times the DMA size, which gets rounded down and ends up too small.
-        // so instead, manually setting it to a little larger
-        .max_transfer_sz = 6 * LLDESC_MAX_NUM_PER_DESC, 
+        .max_transfer_sz = WAVESHARE_19_LCD_H_RES * WAVESHARE_19_LCD_DMA_Line * sizeof(uint16_t), // RGB565
     };
     spi_bus_initialize(WAVESHARE_19_LCD_SPI_NUM, &buscfg, SPI_DMA_CH_AUTO);
 
@@ -4154,27 +4169,33 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
         .lcd_param_bits = WAVESHARE_19_LCD_PARAM_BITS,
         .spi_mode = 0,
         .trans_queue_depth = 10,
+        .on_color_trans_done = display_notify_lvgl_flush_ready,
+        .user_ctx = &disp_drv,
     };
+
+    sh8601_vendor_config_t vendor_config = 
+    {
+        .init_cmds = lcd_init_cmds,
+        .init_cmds_size = sizeof(lcd_init_cmds) / sizeof(lcd_init_cmds[0]),
+    };
+
     esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)WAVESHARE_19_LCD_SPI_NUM, &io_config, &lcd_io);
 
     ESP_LOGD(TAG, "Install LCD driver");
     const esp_lcd_panel_dev_config_t panel_config = {
         .reset_gpio_num = WAVESHARE_19_LCD_GPIO_RST,
-        .color_space = WAVESHARE_19_LCD_COLOR_SPACE,
+        .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_RGB,
         .bits_per_pixel = WAVESHARE_19_LCD_BITS_PER_PIXEL,
+        .vendor_config = &vendor_config,
+        .data_endian = LCD_RGB_DATA_ENDIAN_BIG,
     };
-    esp_lcd_new_panel_st7789(lcd_io, &panel_config, &lcd_panel);
+    esp_lcd_new_panel_sh8601(lcd_io, &panel_config, &lcd_panel);
 
     esp_lcd_panel_reset(lcd_panel);
     esp_lcd_panel_init(lcd_panel);
-    esp_lcd_panel_mirror(lcd_panel, true, true);
-    esp_lcd_panel_disp_on_off(lcd_panel, true);
 
     // LCD backlight on 
     ESP_ERROR_CHECK(gpio_set_level(WAVESHARE_19_LCD_GPIO_BL, WAVESHARE_19_LCD_BL_ON_LEVEL));
-
-    esp_lcd_panel_set_gap(lcd_panel, 0, 20);
-    esp_lcd_panel_invert_color(lcd_panel, true);
 
     ESP_LOGI(TAG, "Initialize LVGL library");
     lv_init();
@@ -4182,11 +4203,11 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
     void *buf1 = NULL;
     void *buf2 = NULL;
     ESP_LOGI(TAG, "Allocate separate LVGL draw buffers from PSRAM");
-    buf1 = heap_caps_malloc(WAVESHARE_19_LCD_H_RES * 32 * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
+    buf1 = heap_caps_malloc(WAVESHARE_19_LCD_H_RES * WAVESHARE_19_LCD_DMA_Line * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
     assert(buf1);
-    buf2 = heap_caps_malloc(WAVESHARE_19_LCD_H_RES * 32 * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
+    buf2 = heap_caps_malloc(WAVESHARE_19_LCD_H_RES * WAVESHARE_19_LCD_DMA_Line * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
     assert(buf2);
-    lv_disp_draw_buf_init(&disp_buf, buf1, buf2, WAVESHARE_19_LCD_H_RES * 32);
+    lv_disp_draw_buf_init(&disp_buf, buf1, buf2, WAVESHARE_19_LCD_H_RES * WAVESHARE_19_LCD_DMA_Line);
 
     ESP_LOGI(TAG, "Register display driver to LVGL");
     lv_disp_drv_init(&disp_drv);
@@ -4199,20 +4220,7 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
     lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(&disp_drv);
 
     // init touch screen    
-    const esp_lcd_panel_io_i2c_config_t tp_io_config = {
-        .dev_addr = ESP_LCD_TOUCH_IO_I2C_CST816S_ADDRESS, 
-        .on_color_trans_done = 0,                         
-        .user_ctx = 0,                                    
-        .control_phase_bytes = 1,                         
-        .dc_bit_offset = 0,                               
-        .lcd_cmd_bits = 8,                                
-        .lcd_param_bits = 0,                              
-        .flags =                                          
-        {                                                 
-            .dc_low_on_data = 0,                          
-            .disable_control_phase = 1,                   
-        }                                                 
-    };
+    const esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_CST816S_CONFIG();
     
     const esp_lcd_touch_config_t tp_cfg = {
         .x_max = WAVESHARE_19_LCD_H_RES,
