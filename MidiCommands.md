@@ -14,7 +14,7 @@ This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a 
 | Digital Delay: Mode | 7 | Normal: 0, Ping-Pong: 64|
 | Digital Delay: Mix | 8 | 0-127 |
 | Tuner | 9 | Not Supported |
-| Tap Tempo | 10 | 0-127 |
+| Tap Tempo | 10 | Value Not used |
 | Expression Pedal | 11 | Not Supported |
 | Preset On | 12 | Not supported |
 | Gate Position | 13 | First: 0, Post Amp: 127 |
@@ -26,7 +26,7 @@ This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a 
 | Compressor Threshold | 19 | 0-127 |
 | Compressor Gain | 20 | 0-127 |
 | Compressor Attack | 21 | 0-127 |
-| Compressor Position | 22 | 0-127 |
+| Compressor Position | 22 | First: 0, Post Amp: 127 |
 | Bass EQ | 23 | 0-127 |
 | Bass Hz | 24 | 0-127 |
 | Mid EQ | 25 | 0-127|
@@ -88,8 +88,8 @@ This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a 
 | Spring Reverb 4 Mix | 83 | 0-127 |
 | Reverb Type | 85 | Spring 1-4: 0-3, Room: 4, Plate: 5 |
 | Reverb Position | 84 | Post Amp: 0, Last: 127 |
-| Preset Down | 86 | 0-127 |
-| Preset Up |  87 | 0-127 |
+| Preset Down | 86 | Value not used |
+| Preset Up |  87 | Value not used |
 | BPM | 88  | 0-127 |
 | Bank Up | 89 | Not supported |
 | Bank Down | 90 | Not supported |
@@ -114,6 +114,6 @@ This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a 
 | VIR Blend | 115 | 0-127 |
 | Input Trim | 116 | 0-127 |
 | Cab Sim Bypass | 117 | On: 127, Off: 0 |
-| Global Tempo Source | 118 | 0-127 |
+| Global Tempo Source | 118 | Global: 127, Local: 0 |
 | Global Tuning Reference | 119 | 0-127 |
 | Select Preset | 127 | 0-19 |
