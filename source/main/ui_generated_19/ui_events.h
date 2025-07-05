@@ -10,6 +10,9 @@
 extern "C" {
 #endif
 
+void NextClicked(lv_event_t * e);
+void PreviousClicked(lv_event_t * e);
+
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

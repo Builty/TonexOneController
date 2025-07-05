@@ -261,7 +261,7 @@ typedef struct __attribute__ ((packed))
 #define MAX_EXTERNAL_EFFECT_FOOTSWITCHES        8
 #define MAX_INTERNAL_EFFECT_FOOTSWITCHES        4
 #define SWITCH_NOT_USED                         0xFF
-#define MAX_PRESETS_DEFAULT                     20
+#define MAX_SUPPORTED_PRESETS                   150
 
 // thread safe public API
 void control_request_preset_up(void);
@@ -279,7 +279,7 @@ void control_sync_preset_name(uint16_t index, char* name);
 void control_sync_preset_details(uint16_t index, char* name);
 void control_set_user_text(char* text);
 void control_trigger_tap_tempo(void);
-void control_set_preset_order(uint8_t order[MAX_PRESETS_DEFAULT]);
+void control_set_preset_order(uint8_t* order);
 uint8_t* control_get_preset_order(void);
 
 // config API

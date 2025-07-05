@@ -47,6 +47,7 @@ limitations under the License.
 #include "usb_comms.h"
 #include "task_priorities.h"
 #include "tonex_params.h"
+#include "usb_comms.h"
 #include "usb_tonex_one.h"
 
 #define WIFI_CONFIG_TASK_STACK_SIZE   (3 * 1024)
@@ -104,7 +105,7 @@ typedef struct
     jparse_ctx_t jctx;
     json_gen_str_t jstr;
     httpd_ws_frame_t ws_rsp;
-    char PresetNames[MAX_PRESETS_DEFAULT][MAX_TEXT_LENGTH];
+    char PresetNames[MAX_SUPPORTED_PRESETS][MAX_TEXT_LENGTH];
     uint16_t PresetIndex;
     uint8_t ParamsChanged : 1;
     uint8_t PresetChanged : 1;
@@ -447,7 +448,7 @@ static void wifi_build_config_json(void)
     json_gen_obj_set_int(&pWebConfig->jstr, "INTFS_ES4_V2", control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT4_VAL2));
 
     json_gen_push_array(&pWebConfig->jstr, "PRESET_COLORS");
-    for (uint8_t preset_index = 0; preset_index < MAX_PRESETS; preset_index++)
+    for (uint8_t preset_index = 0; preset_index < usb_get_max_presets_for_connected_tonex(); preset_index++)
     {
         uint32_t preset_color;
         if (tonex_params_colors_get_color(preset_index, &preset_color) == ESP_OK)
@@ -460,7 +461,7 @@ static void wifi_build_config_json(void)
     json_gen_pop_array(&pWebConfig->jstr);
     
     json_gen_push_array(&pWebConfig->jstr, "PRESET_ORDER");
-    for (uint8_t index = 0; index < MAX_PRESETS; index++)
+    for (uint8_t index = 0; index < usb_get_max_presets_for_connected_tonex(); index++)
     {
         json_gen_arr_set_int(&pWebConfig->jstr, control_get_preset_order()[index]);
     }
@@ -686,6 +687,7 @@ static esp_err_t ws_handler(httpd_req_t *req)
                         ESP_LOGI(TAG, "Preset names request");
 
                         // build json response
+                        //TODO here: max 150 on big Tonex
                         uint8_t presetIndexes[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
                         wifi_build_preset_names_json(presetIndexes, 20);
                         
@@ -1156,10 +1158,12 @@ static esp_err_t ws_handler(httpd_req_t *req)
 
                         if (json_obj_get_array(&pWebConfig->jctx, "PRESET_ORDER", &preset_order_count) == OS_SUCCESS)
                         {
-                            if (preset_order_count == MAX_PRESETS)
+                            if (preset_order_count == usb_get_max_presets_for_connected_tonex())
                             {
-                                uint8_t preset_order[MAX_PRESETS];
-                                for (uint8_t i = 0; i < MAX_PRESETS; i++) {
+                                uint8_t preset_order[MAX_SUPPORTED_PRESETS];
+                                
+                                for (uint8_t i = 0; i < usb_get_max_presets_for_connected_tonex(); i++) 
+                                {
                                     int value;
                                     json_arr_get_int(&pWebConfig->jctx, i, &value);
                                     preset_order[i] = value;

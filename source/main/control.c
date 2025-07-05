@@ -86,7 +86,11 @@ typedef struct __attribute__ ((packed))
 
 typedef struct __attribute__ ((packed)) 
 {
-    tUserData UserData[MAX_PRESETS_DEFAULT];
+    // note here: Tonex big pedal support needed this to jump from 20 to 150, which
+    // if allocated here, nukes the user's entire configuration.
+    // Instead, this part is used for the first 20 (all of the One, and part of the big Tonex), and a new section later
+    // is used for the other 130 
+    tUserData UserData[MAX_PRESETS_TONEX_ONE];
 
     uint8_t BTMode;
 
@@ -129,7 +133,10 @@ typedef struct __attribute__ ((packed))
     tExternalFootswitchEffectConfig InternalFootswitchEffectConfig[MAX_INTERNAL_EFFECT_FOOTSWITCHES];
 
     // preset order mapping
-    uint8_t PresetOrder[MAX_PRESETS_DEFAULT];
+    uint8_t PresetOrder[MAX_SUPPORTED_PRESETS];
+
+    // user data 
+    tUserData UserDataExtended[MAX_SUPPORTED_PRESETS - MAX_PRESETS_TONEX_ONE];
 } tConfigData;
 
 typedef struct
@@ -142,7 +149,7 @@ typedef struct
 typedef struct 
 {
     uint32_t PresetIndex;                        // 0-based index
-    char PresetNames[MAX_PRESETS_DEFAULT][MAX_TEXT_LENGTH];
+    char PresetNames[MAX_SUPPORTED_PRESETS][MAX_TEXT_LENGTH];
     uint32_t USBStatus;
     uint32_t BTStatus;
     uint32_t WiFiStatus;
@@ -180,7 +187,7 @@ static uint8_t process_control_command(tControlMessage* message)
             {
                 if (control_get_config_item_int(CONFIG_ITEM_LOOP_AROUND))
                 {
-                    uint8_t newIndex = (ControlData.PresetIndex > 0) ? (ControlData.PresetIndex - 1) : (MAX_PRESETS_DEFAULT - 1);
+                    uint8_t newIndex = (ControlData.PresetIndex > 0) ? (ControlData.PresetIndex - 1) : (usb_get_max_presets_for_connected_tonex() - 1);
                     uint8_t preset = ControlData.ConfigData.PresetOrder[newIndex];
 
                     // send message to USB
@@ -202,13 +209,13 @@ static uint8_t process_control_command(tControlMessage* message)
             {
                 if (control_get_config_item_int(CONFIG_ITEM_LOOP_AROUND))
                 {
-                    uint8_t newIndex = (ControlData.PresetIndex < (MAX_PRESETS_DEFAULT - 1)) ? (ControlData.PresetIndex + 1) : 0;
+                    uint8_t newIndex = (ControlData.PresetIndex < (usb_get_max_presets_for_connected_tonex() - 1)) ? (ControlData.PresetIndex + 1) : 0;
                     uint8_t preset = ControlData.ConfigData.PresetOrder[newIndex];
                     
                     // send message to USB
                     usb_set_preset(preset);
                 }
-                else if (ControlData.PresetIndex < (MAX_PRESETS_DEFAULT - 1))
+                else if (ControlData.PresetIndex < (usb_get_max_presets_for_connected_tonex() - 1))
                 {
                     uint8_t preset = ControlData.ConfigData.PresetOrder[ControlData.PresetIndex + 1];
                     
@@ -256,8 +263,19 @@ static uint8_t process_control_command(tControlMessage* message)
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
             // update UI
             UI_SetPresetLabel(PresetIndexForOrderValue(message->Value), ControlData.PresetNames[message->Value]);
-            UI_SetAmpSkin(ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex);
-            UI_SetPresetDescription(ControlData.ConfigData.UserData[ControlData.PresetIndex].PresetDescription);
+
+            if (ControlData.PresetIndex < MAX_PRESETS_TONEX_ONE)
+            {
+                // use first bank
+                UI_SetAmpSkin(ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex);
+                UI_SetPresetDescription(ControlData.ConfigData.UserData[ControlData.PresetIndex].PresetDescription);
+            }
+            else
+            {
+                // use second bank            
+                UI_SetAmpSkin(ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex);
+                UI_SetPresetDescription(ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].PresetDescription);
+            }
 #endif
 
             // update web UI
@@ -295,13 +313,26 @@ static uint8_t process_control_command(tControlMessage* message)
         } break;
 
         case EVENT_SET_AMP_SKIN:
-        {
-            ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex = message->Value;
+        {            
+            if (ControlData.PresetIndex < MAX_PRESETS_TONEX_ONE)
+            {
+                ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex = message->Value;
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
-            // update UI
-            UI_SetAmpSkin(ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex);
-#endif 
+                // update UI
+                UI_SetAmpSkin(ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex);
+#endif                 
+            }
+            else
+            {
+                ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex = message->Value;
+
+#if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
+                // update UI
+                UI_SetAmpSkin(ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex);
+#endif                 
+            }
+
         } break;
 
         case EVENT_SAVE_USER_DATA:
@@ -319,8 +350,16 @@ static uint8_t process_control_command(tControlMessage* message)
 
         case EVENT_SET_USER_TEXT:
         {
-            memcpy((void*)ControlData.ConfigData.UserData[ControlData.PresetIndex].PresetDescription, (void*)message->Text, MAX_TEXT_LENGTH);
-            ControlData.ConfigData.UserData[ControlData.PresetIndex].PresetDescription[MAX_TEXT_LENGTH - 1] = 0;
+            if (ControlData.PresetIndex < MAX_PRESETS_TONEX_ONE)
+            {
+                memcpy((void*)ControlData.ConfigData.UserData[ControlData.PresetIndex].PresetDescription, (void*)message->Text, MAX_TEXT_LENGTH);
+                ControlData.ConfigData.UserData[ControlData.PresetIndex].PresetDescription[MAX_TEXT_LENGTH - 1] = 0;
+            }
+            else
+            {
+                memcpy((void*)ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].PresetDescription, (void*)message->Text, MAX_TEXT_LENGTH);
+                ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].PresetDescription[MAX_TEXT_LENGTH - 1] = 0;
+            }
         } break;
 
         case EVENT_SET_CONFIG_ITEM_INT:
@@ -1531,9 +1570,9 @@ void control_get_config_item_string(uint32_t item, char* name)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void control_set_preset_order(uint8_t order[MAX_PRESETS_DEFAULT])
+void control_set_preset_order(uint8_t* order)
 {
-    for (uint8_t index = 0; index < MAX_PRESETS_DEFAULT; index++)
+    for (uint8_t index = 0; index < usb_get_max_presets_for_connected_tonex(); index++)
     {
         ControlData.ConfigData.PresetOrder[index] = order[index];
     }
@@ -1565,10 +1604,21 @@ uint8_t* control_get_preset_order(void)
 *****************************************************************************/
 void control_set_skin_next(void)
 {
-    if (ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex < (SKIN_MAX - 1))
+    if (ControlData.PresetIndex < MAX_PRESETS_TONEX_ONE)
     {
-        ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex++;
-        control_set_amp_skin_index(ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex);
+        if (ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex < (SKIN_MAX - 1))
+        {
+            ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex++;
+            control_set_amp_skin_index(ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex);
+        }
+    }
+    else
+    {
+        if (ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex < (SKIN_MAX - 1))
+        {
+            ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex++;
+            control_set_amp_skin_index(ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex);
+        }
     }
 }
 
@@ -1581,11 +1631,23 @@ void control_set_skin_next(void)
 *****************************************************************************/
 void control_set_skin_previous(void)
 {
-    if (ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex > 0)
+    if (ControlData.PresetIndex < MAX_PRESETS_TONEX_ONE)
     {
-        ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex--;
-    
-        control_set_amp_skin_index(ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex);
+        if (ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex > 0)
+        {
+            ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex--;
+        
+            control_set_amp_skin_index(ControlData.ConfigData.UserData[ControlData.PresetIndex].SkinIndex);
+        }
+    }
+    else
+    {
+        if (ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex > 0)
+        {
+            ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex--;
+        
+            control_set_amp_skin_index(ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex);
+        }
     }
 }
 
@@ -1599,7 +1661,7 @@ void control_set_skin_previous(void)
 ****************************************************************************/
 static uint8_t PresetIndexForOrderValue(uint8_t value)
 {
-    for (uint8_t i = 0; i < MAX_PRESETS_DEFAULT; i++)
+    for (uint8_t i = 0; i < usb_get_max_presets_for_connected_tonex(); i++)
     {
         if (ControlData.ConfigData.PresetOrder[i] == value)
         {
@@ -1863,7 +1925,7 @@ void control_set_default_config(void)
         ControlData.ConfigData.InternalFootswitchEffectConfig[loop].Switch = SWITCH_NOT_USED;
     }
 
-    for (uint8_t loop = 0; loop < MAX_PRESETS_DEFAULT; loop++)
+    for (uint8_t loop = 0; loop < MAX_SUPPORTED_PRESETS; loop++)
     {
         ControlData.ConfigData.PresetOrder[loop] = loop;
     }
@@ -1906,13 +1968,19 @@ void control_task(void *arg)
 void control_load_config(void)
 {
     esp_err_t ret;
+    uint32_t loop;
 
     memset((void*)&ControlData, 0, sizeof(ControlData));
 
     // this will become init from Flash mem
-    for (uint32_t loop = 0; loop < MAX_PRESETS_DEFAULT; loop++)
+    for (loop = 0; loop < MAX_PRESETS_TONEX_ONE; loop++)
     {
         sprintf(ControlData.ConfigData.UserData[loop].PresetDescription, "Description");
+    }
+
+    for (loop = 0; loop < (MAX_SUPPORTED_PRESETS - MAX_PRESETS_TONEX_ONE); loop++)
+    {
+        sprintf(ControlData.ConfigData.UserDataExtended[loop].PresetDescription, "Description");
     }
 
     // default config, will be overwritten or used as default

@@ -25,6 +25,15 @@ extern "C" {
 
 #define IK_MULTIMEDIA_USB_VENDOR        0x1963
 #define TONEX_ONE_PRODUCT_ID            0x00D1
+#define TONEX_PRODUCT_ID                0x0068
+
+// Amp Modeller types
+enum AmpModellers
+{
+    AMP_MODELLER_NONE,
+    AMP_MODELLER_TONEX_ONE,
+    AMP_MODELLER_TONEX,     // full size pedal with 3 footswitches
+};
 
 enum USB_Commands
 {
@@ -52,6 +61,7 @@ void init_usb_comms(void);
 // thread safe public API
 void usb_set_preset(uint32_t preset);
 void usb_modify_parameter(uint16_t index, float value);
+uint8_t usb_get_max_presets_for_connected_tonex(void);
 
 #ifdef __cplusplus
 } /*extern "C"*/

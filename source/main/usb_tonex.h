@@ -16,19 +16,20 @@ limitations under the License.
 */
 
 
-#ifndef _USB_TONEX_ONE_H
-#define _USB_TONEX_ONE_H
+#ifndef _USB_TONEX_H
+#define _USB_TONEX_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define MAX_PRESETS_TONEX_ONE             20
+#define MAX_PRESETS_TONEX               150
 
-void usb_tonex_one_handle(class_driver_t* driver_obj);
-void usb_tonex_one_init(class_driver_t* driver_obj, QueueHandle_t comms_queue);
-void usb_tonex_one_deinit(void);
-void usb_tonex_one_preallocate_memory(void);
+
+void usb_tonex_handle(class_driver_t* driver_obj);
+void usb_tonex_init(class_driver_t* driver_obj, QueueHandle_t comms_queue);
+void usb_tonex_deinit(void);
+void usb_tonex_preallocate_memory(void);
 
 #ifdef __cplusplus
 } /*extern "C"*/

@@ -36,6 +36,8 @@ extern lv_obj_t * ui_BTStatusDisconn;
 extern lv_obj_t * ui_BTStatusConn;
 extern lv_obj_t * ui_WiFiStatusDisconn;
 extern lv_obj_t * ui_WiFiStatusConn;
+void ui_event_TouchGestureContainer(lv_event_t * e);
+extern lv_obj_t * ui_TouchGestureContainer;
 // CUSTOM VARIABLES
 
 // EVENTS

@@ -135,7 +135,7 @@ static const __attribute__((unused)) tFootswitchLayoutEntry FootswitchLayouts[FO
 *****************************************************************************/
 static uint8_t get_banks_count(tFootswitchLayoutEntry* layout)
 {
-    return ((MAX_PRESETS - 1) / layout->presets_per_bank) + 1;
+    return ((usb_get_max_presets_for_connected_tonex() - 1) / layout->presets_per_bank) + 1;
 }
 
 /****************************************************************************

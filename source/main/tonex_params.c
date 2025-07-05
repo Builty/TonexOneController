@@ -181,7 +181,7 @@ static tTonexParameter TonexParameters[TONEX_GLOBAL_LAST] =
     {440,    415,    465,  "TUNEREF", TONEX_PARAM_TYPE_RANGE},              // TONEX_GLOBAL_TUNING_REFERENCE
 };
 
-static tTonexPresetColor TonexPresetColors[MAX_PRESETS] = {
+static tTonexPresetColor TonexPresetColors[MAX_PRESETS_TONEX_ONE] = {
     {0x00, 0x00, 0x00},
     {0x00, 0x00, 0x00},
     {0x00, 0x00, 0x00},

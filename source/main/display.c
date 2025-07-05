@@ -60,8 +60,11 @@ limitations under the License.
     #include "ui.h"
 #endif
 #include "usb/usb_host.h"
+#include "usb/cdc_acm_host.h"
 #include "usb_comms.h"
+#include "usb_tonex_common.h"
 #include "usb_tonex_one.h"
+#include "usb_tonex.h"
 #include "display.h"
 #include "CH422G.h"
 #include "control.h"
@@ -180,7 +183,7 @@ static const char *TAG = "app_display";
     #define WAVESHARE_19_LCD_DRAW_BUFF_HEIGHT    (50)
     #define WAVESHARE_19_LCD_BL_ON_LEVEL         (0)
 
-    #define WAVESHARE_19_LCD_DMA_Line (WAVESHARE_19_LCD_V_RES / 2)
+    #define WAVESHARE_19_LCD_DMA_Line            (WAVESHARE_19_LCD_V_RES / 2)
 
     static esp_lcd_panel_io_handle_t lcd_io = NULL;
     static esp_lcd_panel_handle_t lcd_panel = NULL;
