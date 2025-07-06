@@ -70,6 +70,7 @@ static httpd_handle_t http_server = NULL;
 static httpd_config_t http_config = HTTPD_DEFAULT_CONFIG();
 static EventGroupHandle_t s_wifi_event_group;
 static QueueHandle_t wifi_input_queue;
+static uint8_t presetIndexes[MAX_SUPPORTED_PRESETS];
 
 static esp_err_t index_get_handler(httpd_req_t *req);
 static esp_err_t get_handler(httpd_req_t *req);
@@ -355,6 +356,9 @@ static void wifi_build_config_json(void)
 
     // add response
     json_gen_obj_set_string(&pWebConfig->jstr, "CMD", "GETCONFIG");
+
+    // set max presets value
+    json_gen_obj_set_int(&pWebConfig->jstr, "MAX_PRESETS", usb_get_max_presets_for_connected_tonex());
 
     // add config
     json_gen_obj_set_int(&pWebConfig->jstr, "BT_MODE", control_get_config_item_int(CONFIG_ITEM_BT_MODE));
@@ -687,9 +691,13 @@ static esp_err_t ws_handler(httpd_req_t *req)
                         ESP_LOGI(TAG, "Preset names request");
 
                         // build json response
-                        //TODO here: max 150 on big Tonex
-                        uint8_t presetIndexes[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
-                        wifi_build_preset_names_json(presetIndexes, 20);
+                        uint8_t max_presets = usb_get_max_presets_for_connected_tonex();
+                        
+                        for (uint8_t loop = 0; loop < max_presets; loop++)
+                        {
+                            presetIndexes[loop] = loop;
+                        }
+                        wifi_build_preset_names_json(presetIndexes, max_presets);
                         
                         // build packet and send
                         build_send_ws_response_packet(req, pWebConfig->TempBuffer);

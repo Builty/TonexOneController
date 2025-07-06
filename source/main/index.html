@@ -387,6 +387,7 @@
         var websocket;
         var pageTimer = 0;
         var SocketConnected = 0;   
+        var maxPresets = 20;
         
         // param models
         const TONEX_REVERB_SPRING_1 = 0;
@@ -798,6 +799,72 @@
             }
         }
         
+        function createPresetOrderRow(parent, preset, enable_up, enable_down) {
+            // Create the outer div with class "row" and attributes
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'row';
+            rowDiv.id = 'preset-order-' + preset;
+            rowDiv.setAttribute('order_value', preset);
+
+            // Create the inner div with class "col d-flex align-items-center preset-order-item"
+            const colDiv = document.createElement('div');
+            colDiv.className = 'col d-flex align-items-center preset-order-item';
+
+            // Create the first span with the bullet symbol
+            const bulletSpan = document.createElement('span');
+            bulletSpan.textContent = '⬤';
+
+            // Create a non-breaking space
+            const space = document.createTextNode('\u00A0');
+
+            // Create the second span with class "flex-grow-1" and text "1"
+            const textSpan = document.createElement('span');
+            textSpan.className = 'flex-grow-1';
+            textSpan.textContent = (preset + 1).toString();
+
+            let upButton = document.createElement('button');
+            upButton.className = 'btn btn-dark';
+            if (enable_up) {
+                // Create the up button with onclick event                
+                upButton.textContent = '↑';
+                upButton.onclick = () => presetOrderUp(preset); 
+            } else {
+                // Create the disabled up button
+                upButton.style.opacity = '0%';
+                upButton.disabled = true;
+                upButton.textContent = '↑';
+            }
+
+            let downButton = document.createElement('button');
+            downButton.className = 'btn btn-dark';
+            if (enable_down) {
+                // Create the down button with onclick event
+                downButton.textContent = '↓';
+                downButton.onclick = () => presetOrderDown(preset); 
+            } else {
+                 // Create the disabled down button
+                downButton.style.opacity = '0%';
+                downButton.disabled = true;
+                downButton.textContent = '↓';
+            }
+
+            //console.log("createPresetOrderRow");
+            //console.log(upButton);
+            //console.log(downButton);
+
+            // Append elements to the inner div
+            colDiv.appendChild(bulletSpan);
+            colDiv.appendChild(space);
+            colDiv.appendChild(textSpan);
+            colDiv.appendChild(upButton);
+            colDiv.appendChild(downButton);
+
+            // Append inner div to outer div
+            rowDiv.appendChild(colDiv);
+
+            parent.appendChild(rowDiv); 
+        }
+
         // Function that receives the message from the ESP32
         function onMessage(event) {
             var received_data = JSON.parse(event.data);
@@ -1619,6 +1686,9 @@
                     break;
                     
                 case 'GETCONFIG':  
+                    // get the maximum presets for the connected pedal
+                    maxPresets = data['MAX_PRESETS'];
+
                     // set all config items              
                     configureParamSelect("btmode", data['BT_MODE']);
                     configureParamSwitch("mvavechoc", data['BT_CHOC_EN']);
@@ -1724,6 +1794,39 @@
                     break;  
                 
                 case 'GETPRESETNAMES':
+                    var preset_list = document.getElementById("set_preset");
+
+                    var item_count = Object.keys(data['PRESET_NAMES']).length;
+
+                    //console.log("GetPresetNames");
+                    //console.log(data['PRESET_NAMES']);
+                    //console.log(item_count);
+                    //console.log(preset_list.options.length);
+
+                    if (preset_list.options.length != item_count) {
+                        console.log("Init GetPresetNames");
+
+                        // init select options
+                        for (var index = 0; index < item_count; index++) {
+                            const option = new Option((index + 1).toString(), index.toString());
+                            preset_list.add(option);
+                        }
+
+                        // build preset order list to suit max presets
+                        var preset_order_div = document.getElementById("preset-order-list");
+
+                        // create top row
+                        createPresetOrderRow(preset_order_div, 0, false, true);
+
+                        // create other rows except last
+                        for (var index = 1; index < item_count - 1; index++) {
+                            createPresetOrderRow(preset_order_div, index, true, true);
+                        }
+
+                        // create last row
+                        createPresetOrderRow(preset_order_div, item_count - 1, true, false);
+                    }
+
                     // update the list to have the preset names
                     for (var index in data['PRESET_NAMES']) {
                         let name = data['PRESET_NAMES'][index];
@@ -1992,7 +2095,8 @@
             if (SocketConnected === 1) {
                 // get values
                 var preset_index = document.getElementById("set_preset").value;
-                console.log('Preset change');
+                console.log('Preset change: ');
+                console.log(preset_index);
                 
                 sendWS({"CMD": "SETPRESET", 
                         "PRESET": parseInt(preset_index)});                        
@@ -2324,12 +2428,12 @@
         function setPresetOrder(presetOrder, presetColors) {
             var names = [];
             
-            for (i=0; i<20; i++) {
+            for (i = 0; i < maxPresets; i++) {
                 var element = document.querySelector('[id^="preset-order-"][order_value="' + i + '"]');
                 names.push(presetOrderElementName(element).innerHTML);
             }
 
-            for (i=0; i<20; i++) {
+            for (i = 0; i < maxPresets; i++) {
                 let value = presetOrder[i];
                 let name = names[value];
                 var element = document.getElementById(`preset-order-${i}`);
@@ -2361,9 +2465,9 @@
         function updatePresetOrderBanksWithLayout(layout) {
             let layoutValues = /(\d)x(\d)(A|B)?.*/g.exec(layout);
             let presetsPerBank = layoutValues[1] * layoutValues[2] - (layoutValues[3] == 'B' ? 2 : 0);
-            let banks = Math.ceil(20/presetsPerBank);
-            let height = 100*presetsPerBank/20;
-            let heightLast = 100*(20-(banks-1)*presetsPerBank)/20;
+            let banks = Math.ceil(maxPresets / presetsPerBank);
+            let height = 100 * presetsPerBank / maxPresets;
+            let heightLast = 100 * (maxPresets - (banks - 1) * presetsPerBank) / maxPresets;
 
             for (i=0; i<7; i++) {
                 var element = document.getElementById(`preset-order-bank-${i}`);
@@ -2422,7 +2526,7 @@
 
         function savePresetOrder() {
             var presetOrder = [];
-            for (i=0; i<20; i++) {
+            for (i = 0; i < maxPresets; i++) {
                 var element = document.getElementById(`preset-order-${i}`);
                 presetOrder.push(parseInt(element.getAttribute("order_value")));
             }
@@ -2434,30 +2538,10 @@
     </script>
   
     <nav class="navbar navbar-dark bg-dark">
-       <label style="margin-left: 10px; font-size: 30px; color:#FB9230;">Tonex One Controller</label>
+       <label style="margin-left: 10px; font-size: 30px; color:#FB9230;">Tonex Controller</label>
        <form class="form-inline text-white">
             <div class="input-group">
-                <select class="form-select" id="set_preset" onchange="onPresetChange()" style="width: 290px; margin-right: 10px; padding-right: 40px; color:white; background: #1f1f1f;">
-                  <option value="0" selected>1</option>
-                  <option value="1">2</option>
-                  <option value="2">3</option>
-                  <option value="3">4</option>
-                  <option value="4">5</option>
-                  <option value="5">6</option>
-                  <option value="6">7</option>
-                  <option value="7">8</option>
-                  <option value="8">9</option>
-                  <option value="9">10</option>
-                  <option value="10">11</option>
-                  <option value="11">12</option>
-                  <option value="12">13</option>
-                  <option value="13">14</option>
-                  <option value="14">15</option>
-                  <option value="15">16</option>
-                  <option value="16">17</option>
-                  <option value="17">18</option>
-                  <option value="18">19</option>
-                  <option value="19">20</option>
+                <select class="form-select" id="set_preset" onchange="onPresetChange()" style="width: 290px; margin-right: 10px; padding-right: 40px; color:white; background: #1f1f1f;">                
                 </select> 
             </div>            
         </form>
@@ -2987,167 +3071,8 @@
                         </div>
                       </div>
 
-                      <div class="col-10" style="margin-left: 4px">
-                        <div class="row" id="preset-order-0" order_value=0>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="flex-grow-1">1</span>
-                            <button class="btn btn-dark" style="opacity: 0%;" disabled>↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(0)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-1" order_value=1>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">2</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(1)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(1)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-2" order_value=2>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">3</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(2)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(2)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-3" order_value=3>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">4</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(3)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(3)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-4" order_value=4>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">5</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(4)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(4)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-5" order_value=5>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">6</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(5)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(5)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-6" order_value=6>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">7</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(6)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(6)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-7" order_value=7>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">8</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(7)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(7)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-8" order_value=8>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">9</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(8)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(8)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-9" order_value=9>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">10</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(9)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(9)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-10" order_value=10>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">11</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(10)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(10)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-11" order_value=11>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">12</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(11)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(11)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-12" order_value=12>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">13</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(12)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(12)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-13" order_value=13>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">14</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(13)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(13)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-14" order_value=14>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">15</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(14)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(14)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-15" order_value=15>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">16</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(15)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(15)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-16" order_value=16>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">17</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(16)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(16)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-17" order_value=17>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">18</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(17)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(17)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-18" order_value=18>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">19</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(18)">↑</button>
-                            <button class="btn btn-dark" onclick="presetOrderDown(18)">↓</button>
-                          </div>
-                        </div>
-                        <div class="row" id="preset-order-19" order_value=19>
-                          <div class="col d-flex align-items-center preset-order-item">
-                            <span>⬤</span>&nbsp;
-                            <span class="p-0 m-0 flex-grow-1">20</span>
-                            <button class="btn btn-dark" onclick="presetOrderUp(19)">↑</button>
-                            <button class="btn btn-dark" style="opacity: 0%;" disabled>↓</button>
-                          </div>
-                        </div>
+                      <div id="preset-order-list" class="col-10" style="margin-left: 4px">
+                      
                       </div>
                     </div>
                 </div>

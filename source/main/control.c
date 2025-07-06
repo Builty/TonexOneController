@@ -925,7 +925,7 @@ void control_sync_preset_name(uint16_t index, char* name)
 {
     tControlMessage message;
 
-    ESP_LOGI(TAG, "control_sync_preset_details");            
+    ESP_LOGI(TAG, "control_sync_preset_name: index: %d, name: %s", (int)index, name);            
 
     message.Event = EVENT_SET_PRESET_NAME;
     message.Value = index;
@@ -952,7 +952,7 @@ void control_sync_preset_details(uint16_t index, char* name)
 {
     tControlMessage message;
 
-    ESP_LOGI(TAG, "control_sync_preset_details");            
+    ESP_LOGI(TAG, "control_sync_preset_details index: %d, name: %s", (int)index, name);
 
     message.Event = EVENT_SET_PRESET_DETAILS;
     message.Value = index;

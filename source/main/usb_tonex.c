@@ -97,7 +97,7 @@ typedef enum Type
     TYPE_HELLO,
     TYPE_STATE_PRESET_DETAILS,
     TYPE_STATE_PRESET_DETAILS_FULL,
-    TYPE_PARAM_CHANGED
+    TYPE_PARAM_CHANGED,
 } Type;
 
 typedef enum Slot
@@ -134,10 +134,6 @@ typedef struct __attribute__ ((packed))
 
 typedef struct __attribute__ ((packed)) 
 {
-    // storage for current pedal state data
-    //uint8_t StateData[MAX_STATE_DATA]; 
-    //uint16_t StateDataLength;
-
     // storage for current preset details data (short version)
     uint8_t PresetData[TONEX_MAX_SHORT_PRESET_DATA];
     uint16_t PresetDataLength;
@@ -164,7 +160,6 @@ typedef struct
     uint8_t ReadyToRead : 1;
     uint8_t ReadyToWrite : 1;
 } tInputBufferEntry;
-
 
 
 /*
@@ -390,6 +385,9 @@ static esp_err_t usb_tonex_set_preset(uint16_t preset)
     // do framing
     framed_length = tonex_common_add_framing(request, request_len, FramedBuffer);
 
+    // update the current preset
+    TonexData->Message.CurrentPreset = preset;
+
     // send it
     return tonex_common_transmit(cdc_dev, FramedBuffer, framed_length, TONEX_USB_TX_BUFFER_SIZE);
 }
@@ -503,46 +501,9 @@ static esp_err_t usb_tonex_modify_global(uint16_t global_val, float value)
 *****************************************************************************/
 static TonexStatus usb_tonex_parse_state(uint8_t* unframed, uint16_t length, uint16_t index)
 {
-    //tTonexParameter* param_ptr;
-
+    // state packet only has current preset index
     TonexData->Message.Header.type = TYPE_STATE_UPDATE;
-
     TonexData->Message.CurrentPreset = unframed[9];
-
-    // debug
-    //ESP_LOG_BUFFER_HEXDUMP(TAG, unframed, length, ESP_LOG_INFO);
-
-#if 0    
-    TonexData->Message.PedalData.StateDataLength = length - index;
-    memcpy((void*)TonexData->Message.PedalData.StateData, (void*)&unframed[index], TonexData->Message.PedalData.StateDataLength);
-    ESP_LOGI(TAG, "Saved Pedal StateData: %d", TonexData->Message.PedalData.StateDataLength);
-    
-    // save preset details
-    TonexData->Message.SlotAPreset = TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_SLOT_A_PRESET];
-    TonexData->Message.SlotBPreset = TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_SLOT_B_PRESET];
-    TonexData->Message.SlotCPreset = TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_SLOT_C_PRESET];
-    TonexData->Message.CurrentSlot = TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_CURRENT_SLOT];
- 
-    // update global params
-    if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
-    {
-        memcpy((void*)&param_ptr[TONEX_GLOBAL_BPM].Value, (void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BPM], sizeof(float));
-        memcpy((void*)&param_ptr[TONEX_GLOBAL_INPUT_TRIM].Value, (void*)&TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_INPUT_TRIM], sizeof(float));
-        param_ptr[TONEX_GLOBAL_CABSIM_BYPASS].Value = (float)TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_CAB_BYPASS];
-        param_ptr[TONEX_GLOBAL_TEMPO_SOURCE].Value = (float)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TEMPO_SOURCE];        
-        
-        uint16_t freq;
-        memcpy((void*)&freq, (void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TUNING_REF], sizeof(uint16_t));
-        param_ptr[TONEX_GLOBAL_TUNING_REFERENCE].Value = (float)freq;
-
-        tonex_params_release_locked_access();
-    }
-
-    // debug
-    //ESP_LOG_BUFFER_HEXDUMP(TAG, TonexData->Message.PedalData.StateData, TonexData->Message.PedalData.StateDataLength, ESP_LOG_INFO);
-    //tonex_dump_parameters();
-    //usb_tonex_dump_state();
-#endif 
 
     ESP_LOGI(TAG, "Current Preset: %d", (int)TonexData->Message.CurrentPreset);
 
@@ -567,6 +528,62 @@ static TonexStatus usb_tonex_parse_preset_details(uint8_t* unframed, uint16_t le
     // debug
     //ESP_LOGI(TAG, "Preset Data Rx: %d %d", (int)length, (int)index);
     //ESP_LOG_BUFFER_HEXDUMP(TAG, TonexData->Message.PedalData.PresetData, TonexData->Message.PedalData.PresetDataLength, ESP_LOG_INFO);
+
+    return STATUS_OK;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static TonexStatus usb_tonex_parse_param_changed(uint8_t* unframed, uint16_t length, uint16_t index)
+{
+    uint8_t param_index = 0;
+    float temp_val = 0;
+    TonexData->Message.Header.type = TYPE_PARAM_CHANGED;
+
+    uint8_t param_start_marker[] = {0xB9, 0x04, 0x02, 0x00}; 
+    tTonexParameter* param_ptr = NULL;
+
+    // try to locate the start of the parameter block 
+    uint8_t* temp_ptr = memmem((void*)unframed, length, (void*)param_start_marker, sizeof(param_start_marker));
+    if (temp_ptr != NULL)
+    {
+        // skip the start marker
+        temp_ptr += sizeof(param_start_marker);
+
+        param_index = *temp_ptr++;
+
+        if (*temp_ptr == 0x88)
+        {
+            // skip the marker
+            temp_ptr++;
+
+            if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
+            {
+                // get the value
+                memcpy((void*)&param_ptr[param_index].Value, (void*)temp_ptr, sizeof(float));
+                temp_val = param_ptr[param_index].Value;
+
+                tonex_params_release_locked_access();
+
+                ESP_LOGI(TAG, "Param changed index: %d value: %f", (int)param_index, temp_val);
+
+                // signal to refresh param UI
+                UI_RefreshParameterValues();
+
+                // update web UI
+                wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+            }
+        }
+        else
+        {
+            ESP_LOGW(TAG, "Param confirm unexpected value: %d", (int)*temp_ptr);
+        }
+    }
 
     return STATUS_OK;
 }
@@ -667,7 +684,6 @@ static TonexStatus usb_tonex_parse(uint8_t* message, uint16_t inlength)
 
     switch (type)
     {
-        //case 0x0306:
         case 0x0301:
         {
             header.type = TYPE_STATE_UPDATE;
@@ -690,10 +706,10 @@ static TonexStatus usb_tonex_parse(uint8_t* message, uint16_t inlength)
             header.type = TYPE_HELLO;
         } break;
 
-        case 0x0309:
-        {           
-            header.type = TYPE_PARAM_CHANGED;
-        } break;
+        //case 0x0309:
+        //{           
+        //    header.type = TYPE_PARAM_CHANGED;
+        //} break;
 
         case 0x0201:
         {
@@ -703,6 +719,11 @@ static TonexStatus usb_tonex_parse(uint8_t* message, uint16_t inlength)
         case 0x0204:
         {
             header.type = TYPE_STATE_PRESET_DETAILS;
+        } break;
+
+        case 0x0207:
+        {
+            header.type = TYPE_PARAM_CHANGED;
         } break;
 
         default:
@@ -754,8 +775,7 @@ static TonexStatus usb_tonex_parse(uint8_t* message, uint16_t inlength)
 
         case TYPE_PARAM_CHANGED:
         {
-            ESP_LOGI(TAG, "Param change confirmation");
-            return STATUS_OK;
+            return usb_tonex_parse_param_changed(FramedBuffer, out_len, index);
         } break;
 
         default:
@@ -887,8 +907,8 @@ static esp_err_t usb_tonex_process_single_message(uint8_t* data, uint16_t length
                     boot_init_needed = 1;
                     boot_preset_request = 0;
 
-                    usb_tonex_request_preset_details(boot_preset_request, 0);
-
+                    // preset sync occurs when state response is received
+                    
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
                     // show sync message
                     UI_SetPresetLabel(0, "Syncing....");
