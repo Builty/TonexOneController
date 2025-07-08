@@ -213,7 +213,7 @@ esp_err_t tonex_common_transmit(cdc_acm_dev_hdl_t cdc_dev, uint8_t* tx_data, uin
     ESP_LOGI(TAG, "Sending %d bytes over CDC", (int)tx_len);
     
     // debug
-    ESP_LOG_BUFFER_HEX(TAG, tx_data, tx_len);
+    //ESP_LOG_BUFFER_HEX(TAG, tx_data, tx_len);
 
     // send lage packets in chunks
     while (tx_len > 0)

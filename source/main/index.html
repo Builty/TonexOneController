@@ -1825,6 +1825,31 @@
 
                         // create last row
                         createPresetOrderRow(preset_order_div, item_count - 1, true, false);
+
+
+                        // create bank indicators
+                        var banks_div = document.getElementById("preset-orderbank-column");
+
+                        for (var bank = 0; bank < (item_count / 3); bank++) {
+                            var bankDiv = document.createElement('div');
+                            bankDiv.className = 'row preset-orderbank';
+                            bankDiv.setAttribute('style', 'padding-bottom: -2px;');
+                            bankDiv.id = 'preset-orderbank-' + bank;
+                            bankDiv.setAttribute('order_value', bank);
+
+                            var bankCol = document.createElement('div');
+                            bankCol.className = 'col';
+
+                            var bankSpan = document.createElement('span');
+                            bankSpan.textContent = 'Bank ' + (bank + 1);
+
+                            bankCol.appendChild(bankSpan);
+                            bankDiv.appendChild(bankCol);
+                            banks_div.appendChild(bankDiv);
+
+                            //console.log('preset-orderbank');
+                            //console.log(bank);
+                        }
                     }
 
                     // update the list to have the preset names
@@ -1833,6 +1858,9 @@
                         document.getElementById("set_preset").options[index].text = name;
 
                         var element = document.querySelector('[id^="preset-order-"][order_value="' + index + '"]');
+                        //console.log('preset names');
+                        //console.log(index);
+                        //console.log(element);
                         presetOrderElementName(element).innerHTML = name;
                     }
                     break;                  
@@ -2446,7 +2474,7 @@
         }
 
         function updatePresetOrderBanks() {
-            let column = document.getElementById('preset-order-bank-column');
+            let column = document.getElementById('preset-orderbank-column');
 
             let internalLayout = document.querySelector('#intfslay option:checked').innerHTML;
             let externalLayout = document.querySelector('#extfslay option:checked').innerHTML;
@@ -2469,8 +2497,13 @@
             let height = 100 * presetsPerBank / maxPresets;
             let heightLast = 100 * (maxPresets - (banks - 1) * presetsPerBank) / maxPresets;
 
-            for (i=0; i<7; i++) {
-                var element = document.getElementById(`preset-order-bank-${i}`);
+            for (i=0; i< (maxPresets / 3); i++) {
+                var element = document.getElementById(`preset-orderbank-${i}`);
+
+                //console.log('updatePresetOrderBanksWithLayout');
+                //console.log(i);
+                //console.log(element);
+
                 element.style.height = `${i<(banks-1) ? height : heightLast}%`;
                 element.style.display = i>=banks ? "none" : "block";
             }
@@ -3033,46 +3066,10 @@
             <p class="lead">
                 <div class="container">
                     <div class="row">
-                      <div class="col-1" id="preset-order-bank-column">
-                        <div class="row preset-order-bank" style="padding-bottom: -2px;" id="preset-order-bank-0">
-                            <div class="col">
-                                <span>Bank 1</span>
-                            </div>
-                        </div>
-                        <div class="row preset-order-bank" id="preset-order-bank-1">
-                            <div class="col">
-                                <span>Bank 2</span>
-                            </div>
-                        </div>
-                        <div class="row preset-order-bank" id="preset-order-bank-2">
-                            <div class="col">
-                                <span>Bank 3</span>
-                            </div>
-                        </div>
-                        <div class="row preset-order-bank" id="preset-order-bank-3">
-                            <div class="col">
-                                <span>Bank 4</span>
-                            </div>
-                        </div>
-                        <div class="row preset-order-bank" id="preset-order-bank-4">
-                            <div class="col">
-                                <span>Bank 5</span>
-                            </div>
-                        </div>
-                        <div class="row preset-order-bank" id="preset-order-bank-5">
-                            <div class="col">
-                                <span>Bank 6</span>
-                            </div>
-                        </div>
-                        <div class="row preset-order-bank" id="preset-order-bank-6">
-                            <div class="col">
-                                <span>Bank 7</span>
-                            </div>
-                        </div>
+                      <div class="col-1" id="preset-orderbank-column">
                       </div>
 
-                      <div id="preset-order-list" class="col-10" style="margin-left: 4px">
-                      
+                      <div id="preset-order-list" class="col-10" style="margin-left: 4px">                      
                       </div>
                     </div>
                 </div>

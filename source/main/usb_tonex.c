@@ -112,6 +112,7 @@ typedef enum Slot
 #define GLOBAL_CONFIG_INDEX_CABSIM_BYPASS       4   //??
 #define GLOBAL_CONFIG_INDEX_TEMPO_SOURCE        5   //??
 #define GLOBAL_CONFIG_INDEX_INPUT_TRIM          9
+#define GLOBAL_CONFIG_INDEX_INTERFACE_VOLUME    11
 #define GLOBAL_CONFIG_INDEX_TUNING_REFERENCE    17
 #define GLOBAL_CONFIG_INDEX_BPM                 18               
 #define GLOBAL_CONFIG_INDEX_MAX                 22
@@ -328,12 +329,6 @@ static void __attribute__((unused)) usb_tonex_dump_state(void)
     ESP_LOGI(TAG, "Cab Sim Bypass: %d.\t\tTuning Mode: %d", (int)TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_CAB_BYPASS], 
                                                             (int)TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_TUNING_MODE]);
 
-    ESP_LOGI(TAG, "Slot A Preset: %d,\t\tSlot B Preset: %d", (int)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_SLOT_A_PRESET], 
-                                                             (int)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_SLOT_B_PRESET]);
-
-    ESP_LOGI(TAG, "Slot C Preset: %d.\t\tCurrent Slot: %d", (int)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_SLOT_C_PRESET], 
-                                                            (int)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_CURRENT_SLOT]);
-
     ESP_LOGI(TAG, "Tuning Reference: %d.\t\tDirect Monitoring: %d", (int)TuningRef, 
                                                                     (int)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_DIRECT_MONITOR]);
 
@@ -402,7 +397,7 @@ static esp_err_t usb_tonex_send_global_config(void)
     ESP_LOGI(TAG, "Sending Global Config");
 
     // start of global config packet
-    uint8_t request[] = { 0x7E, 0xB9, 0x03, 0x81, 0x06, 0x02, 0x82, 0xF0, 0x0D, 0x80, 0x10, 0x03, 0xB9, 0x01, 0xb9, 0x02, 0xBA, 0x16 };
+    uint8_t request[] = {0x7E, 0xB9, 0x03, 0x81, 0x06, 0x02, 0x82, 0xF0, 0x0D, 0x80, 0x10, 0x03, 0xB9, 0x01, 0xb9, 0x02, 0xBA, 0x16};
 
     // build the request and payload into a single buffer
     memcpy((void*)TxBuffer, (void*)request, sizeof(request));
@@ -685,7 +680,11 @@ static TonexStatus usb_tonex_parse_global_config(uint8_t* unframed, uint16_t len
     
     TonexData->Message.Header.type = TYPE_GLOBAL_CONFIG;
 
-    // try to locate the start of the parameter block 
+    // debug
+    //ESP_LOGI(TAG, "Global config Data Rx: %d %d", (int)length, (int)index);
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, unframed, length, ESP_LOG_INFO);
+
+    // try to locate the start of the global config block 
     uint8_t* temp_ptr = memmem((void*)unframed, length, (void*)config_start_marker, sizeof(config_start_marker));
     if (temp_ptr != NULL)
     {
@@ -708,9 +707,6 @@ static TonexStatus usb_tonex_parse_global_config(uint8_t* unframed, uint16_t len
         // check for float marker
         if (*temp_ptr == 0x88)
         {
-            // skip the marker
-            temp_ptr++;
-
             if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
             {
                 // globals here are start marker of 0x88, followed by a 4-byte float
