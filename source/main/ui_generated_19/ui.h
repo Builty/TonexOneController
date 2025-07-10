@@ -19,6 +19,8 @@ extern "C" {
 // SCREEN: ui_Screen1
 void ui_Screen1_screen_init(void);
 extern lv_obj_t * ui_Screen1;
+void ui_event_TouchGestureContainer(lv_event_t * e);
+extern lv_obj_t * ui_TouchGestureContainer;
 extern lv_obj_t * ui_PresetHeadingLabel;
 extern lv_obj_t * ui_BPMLabel;
 extern lv_obj_t * ui_BPM;
@@ -36,8 +38,6 @@ extern lv_obj_t * ui_BTStatusDisconn;
 extern lv_obj_t * ui_BTStatusConn;
 extern lv_obj_t * ui_WiFiStatusDisconn;
 extern lv_obj_t * ui_WiFiStatusConn;
-void ui_event_TouchGestureContainer(lv_event_t * e);
-extern lv_obj_t * ui_TouchGestureContainer;
 // CUSTOM VARIABLES
 
 // EVENTS

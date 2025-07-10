@@ -11,6 +11,8 @@
 // SCREEN: ui_Screen1
 void ui_Screen1_screen_init(void);
 lv_obj_t * ui_Screen1;
+void ui_event_TouchGestureContainer(lv_event_t * e);
+lv_obj_t * ui_TouchGestureContainer;
 lv_obj_t * ui_PresetHeadingLabel;
 lv_obj_t * ui_BPMLabel;
 lv_obj_t * ui_BPM;
@@ -28,8 +30,6 @@ lv_obj_t * ui_BTStatusDisconn;
 lv_obj_t * ui_BTStatusConn;
 lv_obj_t * ui_WiFiStatusDisconn;
 lv_obj_t * ui_WiFiStatusConn;
-void ui_event_TouchGestureContainer(lv_event_t * e);
-lv_obj_t * ui_TouchGestureContainer;
 // CUSTOM VARIABLES
 
 // EVENTS

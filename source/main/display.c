@@ -372,12 +372,19 @@ static void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
 
     if (touchpad_pressed && touchpad_cnt > 0) 
     {
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH    
+        // 1.9 in landscape mode needs the co-ordinates adjusted
+        data->point.x = touchpad_y[0];
+        data->point.y = WAVESHARE_19_LCD_V_RES - touchpad_x[0];
+#else
         data->point.x = touchpad_x[0];
         data->point.y = touchpad_y[0];
+#endif        
+
         data->state = LV_INDEV_STATE_PR;
 
         // debug
-        //ESP_LOGI(TAG, "Touch");
+        //ESP_LOGI(TAG, "Touch X:%d Y:%d", (int)data->point.x, (int)data->point.y);
     } 
     else 
     {
@@ -3819,21 +3826,8 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH
     // init touch screen    
-    const esp_lcd_panel_io_i2c_config_t tp_io_config = {
-        .dev_addr = ESP_LCD_TOUCH_IO_I2C_CST816S_ADDRESS, 
-        .on_color_trans_done = 0,                         
-        .user_ctx = 0,                                    
-        .control_phase_bytes = 1,                         
-        .dc_bit_offset = 0,                               
-        .lcd_cmd_bits = 8,                                
-        .lcd_param_bits = 0,                              
-        .flags =                                          
-        {                                                 
-            .dc_low_on_data = 0,                          
-            .disable_control_phase = 1,                   
-        }                                                 
-    };
-    
+    const esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_CST816S_CONFIG();
+
     const esp_lcd_touch_config_t tp_cfg = {
         .x_max = WAVESHARE_240_280_LCD_H_RES,
         .y_max = WAVESHARE_240_280_LCD_V_RES,
@@ -4237,7 +4231,7 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
         },
         .flags = {
             .swap_xy = 0,
-            .mirror_x = 1,
+            .mirror_x = 0,
             .mirror_y = 0,
         },
     };
