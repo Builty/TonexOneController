@@ -67,6 +67,7 @@ limitations under the License.
 #include "wifi_config.h"
 #include "leds.h"
 #include "tonex_params.h"
+#include "platform_common.h"
 
 #define I2C_MASTER_FREQ_HZ              400000      /*!< I2C master clock frequency */
 #define I2C_MASTER_TX_BUF_DISABLE       0           /*!< I2C master doesn't need buffer */
@@ -79,8 +80,9 @@ static const char *TAG = "app_main";
 
 __attribute__((unused)) SemaphoreHandle_t I2CMutex_1;
 __attribute__((unused)) SemaphoreHandle_t I2CMutex_2;
-static i2c_master_bus_handle_t __attribute__((unused)) ic2_bus_handle_1;
-static i2c_master_bus_handle_t __attribute__((unused)) ic2_bus_handle_2;
+static __attribute__((unused)) lv_disp_drv_t disp_drv;  
+static __attribute__((unused)) i2c_master_bus_handle_t ic2_bus_handle_1;
+static __attribute__((unused)) i2c_master_bus_handle_t ic2_bus_handle_2;
 
 static esp_err_t i2c_master_init(i2c_master_bus_handle_t *bus_handle, uint32_t port, uint32_t scl_pin, uint32_t sda_pin);
 
@@ -167,37 +169,6 @@ static esp_err_t i2c_master_init(i2c_master_bus_handle_t *bus_handle, uint32_t p
     return res;
 }
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-static void InitIOExpander(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex)
-{
-    // init IO expander
-    if (CH422G_init(bus_handle, I2CMutex) == ESP_OK)
-    {
-        // set IO expander to output mode. Can't do mixed pins
-        // For inputs, we will temporarily flip the mode
-        if (CH422G_set_io_mode(1) == ESP_OK)
-        {
-            ESP_LOGI(TAG, "Onboard IO Expander init OK");
-        }
-        else
-        {
-            ESP_LOGE(TAG, "Failed to init Onboard IO expander IO Mode!");
-        }
-    }
-    else
-    {
-        ESP_LOGE(TAG, "Failed to init Onboard IO expander!");
-    }
-}
-#endif  //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
-
 /****************************************************************************
 * NAME:        
 * DESCRIPTION: 
@@ -235,18 +206,6 @@ void app_main(void)
         ESP_LOGI(TAG, "I2C 2 initialized successfully");    
     }
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
-    // init onboard IO expander
-    ESP_LOGI(TAG, "Init Onboard IO Expander");
-    InitIOExpander(ic2_bus_handle_1, I2CMutex_1);
-#endif
-
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R
-    // init LP5562 led driver
-    ESP_LOGI(TAG, "Init LP5562 Led Driver");
-    LP5562_init(ic2_bus_handle_1, I2CMutex_1);
-#endif
-
     // init parameters
     ESP_LOGI(TAG, "Init Params");
     tonex_params_init();
@@ -255,29 +214,13 @@ void app_main(void)
     ESP_LOGI(TAG, "Init Control");
     control_init();
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
-    // init GUI
-    ESP_LOGI(TAG, "Init 43.B display");
-    display_init(ic2_bus_handle_1, I2CMutex_1);
-#endif
+    // init platform
+    ESP_LOGI(TAG, "Init Platform");
+    platform_init(ic2_bus_handle_1, I2CMutex_1, &disp_drv);
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH 
-    // init GUI
-    ESP_LOGI(TAG, "Init 1.69 display");
-    display_init(ic2_bus_handle_1, I2CMutex_1);
-#endif
-
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R
-    // init GUI
-    ESP_LOGI(TAG, "Init 0.85 display");
-    display_init(ic2_bus_handle_1, I2CMutex_1);
-#endif
-
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
-    // init GUI
-    ESP_LOGI(TAG, "Init 1.9 display");
-    display_init(ic2_bus_handle_1, I2CMutex_1);
-#endif
+    // init display
+    ESP_LOGI(TAG, "Init Display");
+    display_init(ic2_bus_handle_1, I2CMutex_1, &disp_drv);
 
     // init Footswitches
     ESP_LOGI(TAG, "Init footswitches");
