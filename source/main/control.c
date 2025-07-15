@@ -149,7 +149,6 @@ typedef struct
 typedef struct 
 {
     uint32_t PresetIndex;                        // 0-based index
-    char PresetNames[MAX_SUPPORTED_PRESETS][MAX_TEXT_LENGTH];
     uint32_t USBStatus;
     uint32_t BTStatus;
     uint32_t WiFiStatus;
@@ -157,9 +156,17 @@ typedef struct
     tTapTempo TapTempo;
 } tControlData;
 
+// allocating preset data in a seperate struct, as its quite large and having separate to tControlData
+// has a better chance of fitting in fragmented memory than a single larger chunk does
+typedef struct 
+{
+    char PresetNames[MAX_SUPPORTED_PRESETS][MAX_PRESET_NAME_LENGTH];
+} tPresetData;
+
 static const char *TAG = "app_control";
 static QueueHandle_t control_input_queue;
 static tControlData ControlData;
+static tPresetData PresetData;
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
 static uint8_t PresetIndexForOrderValue(uint8_t value);
@@ -246,23 +253,23 @@ static uint8_t process_control_command(tControlMessage* message)
 
         case EVENT_SET_PRESET_NAME:
         {
-            memcpy((void*)ControlData.PresetNames[message->Value], (void*)message->Text, MAX_TEXT_LENGTH);
-            ControlData.PresetNames[message->Value][MAX_TEXT_LENGTH - 1] = 0;
+            memcpy((void*)PresetData.PresetNames[message->Value], (void*)message->Text, MAX_PRESET_NAME_LENGTH);
+            PresetData.PresetNames[message->Value][MAX_PRESET_NAME_LENGTH - 1] = 0;
 
             // update web UI
-            wifi_request_sync(WIFI_SYNC_TYPE_PRESET_NAME, (void*)ControlData.PresetNames[message->Value], (void*)&message->Value);
+            wifi_request_sync(WIFI_SYNC_TYPE_PRESET_NAME, (void*)PresetData.PresetNames[message->Value], (void*)&message->Value);
         } break;
 
         case EVENT_SET_PRESET_DETAILS:
         {
             ControlData.PresetIndex = message->Value;
 
-            memcpy((void*)ControlData.PresetNames[message->Value], (void*)message->Text, MAX_TEXT_LENGTH);
-            ControlData.PresetNames[message->Value][MAX_TEXT_LENGTH - 1] = 0;
+            memcpy((void*)PresetData.PresetNames[message->Value], (void*)message->Text, MAX_PRESET_NAME_LENGTH);
+            PresetData.PresetNames[message->Value][MAX_PRESET_NAME_LENGTH - 1] = 0;
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
             // update UI
-            UI_SetPresetLabel(PresetIndexForOrderValue(message->Value), ControlData.PresetNames[message->Value]);
+            UI_SetPresetLabel(PresetIndexForOrderValue(message->Value), PresetData.PresetNames[message->Value]);
 
             if (ControlData.PresetIndex < MAX_PRESETS_TONEX_ONE)
             {
@@ -1579,7 +1586,7 @@ void control_set_preset_order(uint8_t* order)
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
     // update UI
-    UI_SetPresetLabel(PresetIndexForOrderValue(ControlData.PresetIndex), ControlData.PresetNames[ControlData.PresetIndex]);
+    UI_SetPresetLabel(PresetIndexForOrderValue(ControlData.PresetIndex), PresetData.PresetNames[ControlData.PresetIndex]);
 #endif
 }
 
@@ -1971,6 +1978,7 @@ void control_load_config(void)
     uint32_t loop;
 
     memset((void*)&ControlData, 0, sizeof(ControlData));
+    memset((void*)&PresetData, 0, sizeof(PresetData));
 
     // this will become init from Flash mem
     for (loop = 0; loop < MAX_PRESETS_TONEX_ONE; loop++)

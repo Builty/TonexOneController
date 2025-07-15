@@ -106,7 +106,7 @@ typedef struct
     jparse_ctx_t jctx;
     json_gen_str_t jstr;
     httpd_ws_frame_t ws_rsp;
-    char PresetNames[MAX_SUPPORTED_PRESETS][MAX_TEXT_LENGTH];
+    char PresetNames[MAX_SUPPORTED_PRESETS][MAX_PRESET_NAME_LENGTH];
     uint16_t PresetIndex;
     uint8_t ParamsChanged : 1;
     uint8_t PresetChanged : 1;
@@ -167,7 +167,7 @@ static uint8_t process_wifi_command(tWiFiMessage* message)
         case EVENT_SYNC_PRESET_NAME:
         {
             // save preset details
-            memcpy((void*)pWebConfig->PresetNames[message->Value], (void*)message->Text, MAX_TEXT_LENGTH - 1);
+            memcpy((void*)pWebConfig->PresetNames[message->Value], (void*)message->Text, MAX_PRESET_NAME_LENGTH - 1);
 
             // send to all web sockets clients
             //ws_send_all_clients(&http_server, &send_preset_async);
@@ -225,7 +225,7 @@ void wifi_request_sync(uint8_t type, void* arg1, void* arg2)
 
             // get preset name
             sprintf(message.Text, "%d: ", *(int*)arg2 + usb_get_first_preset_index_for_connected_modeller());
-            strncat(message.Text, arg1, MAX_TEXT_LENGTH - 1);
+            strncat(message.Text, arg1, MAX_PRESET_NAME_LENGTH - 1);
 
             // get preset index
             message.Value = *(uint32_t*)arg2;
