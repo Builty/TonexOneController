@@ -61,7 +61,8 @@ void init_usb_comms(void);
 // thread safe public API
 void usb_set_preset(uint32_t preset);
 void usb_modify_parameter(uint16_t index, float value);
-uint8_t usb_get_max_presets_for_connected_tonex(void);
+uint8_t usb_get_max_presets_for_connected_modeller(void);
+uint8_t usb_get_first_preset_index_for_connected_modeller(void);
 
 #ifdef __cplusplus
 } /*extern "C"*/

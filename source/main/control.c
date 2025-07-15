@@ -187,7 +187,7 @@ static uint8_t process_control_command(tControlMessage* message)
             {
                 if (control_get_config_item_int(CONFIG_ITEM_LOOP_AROUND))
                 {
-                    uint8_t newIndex = (ControlData.PresetIndex > 0) ? (ControlData.PresetIndex - 1) : (usb_get_max_presets_for_connected_tonex() - 1);
+                    uint8_t newIndex = (ControlData.PresetIndex > 0) ? (ControlData.PresetIndex - 1) : (usb_get_max_presets_for_connected_modeller() - 1);
                     uint8_t preset = ControlData.ConfigData.PresetOrder[newIndex];
 
                     // send message to USB
@@ -209,13 +209,13 @@ static uint8_t process_control_command(tControlMessage* message)
             {
                 if (control_get_config_item_int(CONFIG_ITEM_LOOP_AROUND))
                 {
-                    uint8_t newIndex = (ControlData.PresetIndex < (usb_get_max_presets_for_connected_tonex() - 1)) ? (ControlData.PresetIndex + 1) : 0;
+                    uint8_t newIndex = (ControlData.PresetIndex < (usb_get_max_presets_for_connected_modeller() - 1)) ? (ControlData.PresetIndex + 1) : 0;
                     uint8_t preset = ControlData.ConfigData.PresetOrder[newIndex];
                     
                     // send message to USB
                     usb_set_preset(preset);
                 }
-                else if (ControlData.PresetIndex < (usb_get_max_presets_for_connected_tonex() - 1))
+                else if (ControlData.PresetIndex < (usb_get_max_presets_for_connected_modeller() - 1))
                 {
                     uint8_t preset = ControlData.ConfigData.PresetOrder[ControlData.PresetIndex + 1];
                     
@@ -1572,7 +1572,7 @@ void control_get_config_item_string(uint32_t item, char* name)
 *****************************************************************************/
 void control_set_preset_order(uint8_t* order)
 {
-    for (uint8_t index = 0; index < usb_get_max_presets_for_connected_tonex(); index++)
+    for (uint8_t index = 0; index < usb_get_max_presets_for_connected_modeller(); index++)
     {
         ControlData.ConfigData.PresetOrder[index] = order[index];
     }
@@ -1661,7 +1661,7 @@ void control_set_skin_previous(void)
 ****************************************************************************/
 static uint8_t PresetIndexForOrderValue(uint8_t value)
 {
-    for (uint8_t i = 0; i < usb_get_max_presets_for_connected_tonex(); i++)
+    for (uint8_t i = 0; i < usb_get_max_presets_for_connected_modeller(); i++)
     {
         if (ControlData.ConfigData.PresetOrder[i] == value)
         {

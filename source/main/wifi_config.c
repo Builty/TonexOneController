@@ -358,7 +358,7 @@ static void wifi_build_config_json(void)
     json_gen_obj_set_string(&pWebConfig->jstr, "CMD", "GETCONFIG");
 
     // set max presets value
-    json_gen_obj_set_int(&pWebConfig->jstr, "MAX_PRESETS", usb_get_max_presets_for_connected_tonex());
+    json_gen_obj_set_int(&pWebConfig->jstr, "MAX_PRESETS", usb_get_max_presets_for_connected_modeller());
 
     // add config
     json_gen_obj_set_int(&pWebConfig->jstr, "BT_MODE", control_get_config_item_int(CONFIG_ITEM_BT_MODE));
@@ -452,7 +452,7 @@ static void wifi_build_config_json(void)
     json_gen_obj_set_int(&pWebConfig->jstr, "INTFS_ES4_V2", control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT4_VAL2));
 
     json_gen_push_array(&pWebConfig->jstr, "PRESET_COLORS");
-    for (uint8_t preset_index = 0; preset_index < usb_get_max_presets_for_connected_tonex(); preset_index++)
+    for (uint8_t preset_index = 0; preset_index < usb_get_max_presets_for_connected_modeller(); preset_index++)
     {
         uint32_t preset_color;
         if (tonex_params_colors_get_color(preset_index, &preset_color) == ESP_OK)
@@ -465,7 +465,7 @@ static void wifi_build_config_json(void)
     json_gen_pop_array(&pWebConfig->jstr);
     
     json_gen_push_array(&pWebConfig->jstr, "PRESET_ORDER");
-    for (uint8_t index = 0; index < usb_get_max_presets_for_connected_tonex(); index++)
+    for (uint8_t index = 0; index < usb_get_max_presets_for_connected_modeller(); index++)
     {
         json_gen_arr_set_int(&pWebConfig->jstr, control_get_preset_order()[index]);
     }
@@ -691,7 +691,7 @@ static esp_err_t ws_handler(httpd_req_t *req)
                         ESP_LOGI(TAG, "Preset names request");
 
                         // build json response
-                        uint8_t max_presets = usb_get_max_presets_for_connected_tonex();
+                        uint8_t max_presets = usb_get_max_presets_for_connected_modeller();
                         
                         for (uint8_t loop = 0; loop < max_presets; loop++)
                         {
@@ -1166,11 +1166,11 @@ static esp_err_t ws_handler(httpd_req_t *req)
 
                         if (json_obj_get_array(&pWebConfig->jctx, "PRESET_ORDER", &preset_order_count) == OS_SUCCESS)
                         {
-                            if (preset_order_count == usb_get_max_presets_for_connected_tonex())
+                            if (preset_order_count == usb_get_max_presets_for_connected_modeller())
                             {
                                 uint8_t preset_order[MAX_SUPPORTED_PRESETS];
                                 
-                                for (uint8_t i = 0; i < usb_get_max_presets_for_connected_tonex(); i++) 
+                                for (uint8_t i = 0; i < usb_get_max_presets_for_connected_modeller(); i++) 
                                 {
                                     int value;
                                     json_arr_get_int(&pWebConfig->jctx, i, &value);

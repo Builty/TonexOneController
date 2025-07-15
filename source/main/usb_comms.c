@@ -435,7 +435,7 @@ void usb_modify_parameter(uint16_t index, float value)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-uint8_t usb_get_max_presets_for_connected_tonex(void)
+uint8_t usb_get_max_presets_for_connected_modeller(void)
 {
     uint8_t max = MAX_PRESETS_TONEX_ONE;
     switch (AmpModellerType)
@@ -452,6 +452,34 @@ uint8_t usb_get_max_presets_for_connected_tonex(void)
     }
 
     return max;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+uint8_t usb_get_first_preset_index_for_connected_modeller(void)
+{
+    uint8_t first = 1;
+    
+    switch (AmpModellerType)
+    {
+        case AMP_MODELLER_TONEX_ONE:
+        {
+            first = 1;
+        } break;
+
+        case AMP_MODELLER_TONEX:
+        {
+            // big Tonex LCD uses 0-based indexing
+            first = 0;
+        } break;
+    }
+
+    return first;
 }
 
 /****************************************************************************

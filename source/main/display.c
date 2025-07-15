@@ -1354,7 +1354,7 @@ void UI_SetPresetLabel(uint16_t index, char* name)
     // build command
     ui_update.ElementID = UI_ELEMENT_PRESET_NAME;
     ui_update.Action = UI_ACTION_SET_LABEL_TEXT;
-    sprintf(ui_update.Text, "%d: ", (int)index + 1);
+    sprintf(ui_update.Text, "%d: ", (int)index + usb_get_first_preset_index_for_connected_modeller());
     strncat(ui_update.Text, name, MAX_UI_TEXT - 1);
 
     // send to queue
