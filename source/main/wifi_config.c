@@ -224,7 +224,7 @@ void wifi_request_sync(uint8_t type, void* arg1, void* arg2)
             message.Event = EVENT_SYNC_PRESET_NAME;
 
             // get preset name
-            sprintf(message.Text, "%d: ", *(int*)arg2 + 1);
+            sprintf(message.Text, "%d: ", *(int*)arg2 + usb_get_first_preset_index_for_connected_modeller());
             strncat(message.Text, arg1, MAX_TEXT_LENGTH - 1);
 
             // get preset index
@@ -357,9 +357,6 @@ static void wifi_build_config_json(void)
     // add response
     json_gen_obj_set_string(&pWebConfig->jstr, "CMD", "GETCONFIG");
 
-    // set max presets value
-    json_gen_obj_set_int(&pWebConfig->jstr, "MAX_PRESETS", usb_get_max_presets_for_connected_modeller());
-
     // add config
     json_gen_obj_set_int(&pWebConfig->jstr, "BT_MODE", control_get_config_item_int(CONFIG_ITEM_BT_MODE));
     json_gen_obj_set_int(&pWebConfig->jstr, "BT_CHOC_EN", control_get_config_item_int(CONFIG_ITEM_MV_CHOC_ENABLE));
@@ -470,6 +467,37 @@ static void wifi_build_config_json(void)
         json_gen_arr_set_int(&pWebConfig->jstr, control_get_preset_order()[index]);
     }
     json_gen_pop_array(&pWebConfig->jstr);
+
+    // add the }
+    json_gen_end_object(&pWebConfig->jstr);
+
+    // end generation
+    json_gen_str_end(&pWebConfig->jstr);
+
+    //debug ESP_LOGI(TAG, "Json: %s", pWebConfig->TempBuffer);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      none
+* NOTES:       none
+****************************************************************************/
+static void wifi_build_modeller_data_json(void)
+{
+    // init generation of json response
+    json_gen_str_start(&pWebConfig->jstr, pWebConfig->TempBuffer, MAX_TEMP_BUFFER, NULL, NULL);
+
+    // start json object, adds {
+    json_gen_start_object(&pWebConfig->jstr);
+
+    // add response
+    json_gen_obj_set_string(&pWebConfig->jstr, "CMD", "GETMODELLERDATA");
+
+    // set modeller values
+    json_gen_obj_set_int(&pWebConfig->jstr, "MAX_PRESETS", usb_get_max_presets_for_connected_modeller());
+    json_gen_obj_set_int(&pWebConfig->jstr, "START_PRESET", usb_get_first_preset_index_for_connected_modeller());
 
     // add the }
     json_gen_end_object(&pWebConfig->jstr);
@@ -681,6 +709,17 @@ static esp_err_t ws_handler(httpd_req_t *req)
 
                         // build json response
                         wifi_build_preset_json();
+                        
+                        // build packet and send
+                        build_send_ws_response_packet(req, pWebConfig->TempBuffer);
+                    }
+                    else if (strcmp(str_val, "GETMODELLERDATA") == 0)
+                    {
+                        // send current preset details
+                        ESP_LOGI(TAG, "Modeller data request");
+
+                        // build json response
+                        wifi_build_modeller_data_json();
                         
                         // build packet and send
                         build_send_ws_response_packet(req, pWebConfig->TempBuffer);

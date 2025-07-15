@@ -388,6 +388,7 @@
         var pageTimer = 0;
         var SocketConnected = 0;   
         var maxPresets = 20;
+        var startPreset = 1;
         
         // param models
         const TONEX_REVERB_SPRING_1 = 0;
@@ -781,10 +782,12 @@
             SocketConnected = 1;
             
             // request config, params, and current preset
+            // Get modeller data first so we now how to display the presets
+            sendWS({"CMD": "GETMODELLERDATA"});
             sendWS({"CMD": "GETPRESET"});
             sendWS({"CMD": "GETPRESETNAMES"});
-            sendWS({"CMD": "GETPARAMS"});
-            sendWS({"CMD": "GETCONFIG"});        
+            sendWS({"CMD": "GETPARAMS"});      
+            sendWS({"CMD": "GETCONFIG"});              
         }
 
         function onClose(event) {
@@ -946,6 +949,8 @@
             switch (data['CMD'])
             {
                 case 'GETPARAMS':
+                    console.log("Got Params");
+
                     for (var key in data['PARAMS']) {
                         //console.log(data['PARAMS'][key]);
                         var min = data['PARAMS'][key]['Min'];
@@ -1685,9 +1690,16 @@
                     } 
                     break;
                     
-                case 'GETCONFIG':  
+                case 'GETMODELLERDATA':  
+                    console.log("Got Modeller Data");
+
                     // get the maximum presets for the connected pedal
                     maxPresets = data['MAX_PRESETS'];
+                    startPreset = data['START_PRESET'];
+                    break;
+
+                case 'GETCONFIG':  
+                    console.log("Got Config");
 
                     // set all config items              
                     configureParamSelect("btmode", data['BT_MODE']);
@@ -1794,6 +1806,7 @@
                     break;  
                 
                 case 'GETPRESETNAMES':
+                    console.log("Got Preset Names");
                     var preset_list = document.getElementById("set_preset");
 
                     var item_count = Object.keys(data['PRESET_NAMES']).length;
@@ -1808,7 +1821,7 @@
 
                         // init select options
                         for (var index = 0; index < item_count; index++) {
-                            const option = new Option((index + 1).toString(), index.toString());
+                            const option = new Option((index + startPreset).toString(), index.toString());
                             preset_list.add(option);
                         }
 

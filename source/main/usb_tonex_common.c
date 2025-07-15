@@ -346,6 +346,10 @@ void tonex_common_preallocate_memory(void)
     {
         ESP_LOGE(TAG, "Failed to allocate PreallocatedMemory!");
     } 
+    else
+    {
+        ESP_LOGI(TAG, "PreallocatedMemory OK");
+    }
 }
 
 /****************************************************************************
