@@ -82,8 +82,6 @@ static const char *TAG = "platform Waveshare 1.9";
 #define WAVESHARE_19_LCD_DRAW_BUFF_HEIGHT    (50)
 #define WAVESHARE_19_LCD_BL_ON_LEVEL         (0)
 
-#define WAVESHARE_19_LCD_DMA_Line            (WAVESHARE_19_LCD_V_RES / 2)
-
 static lv_disp_draw_buf_t disp_buf; // contains internal graphic buffer(s) called draw buffer(s)
 static lv_disp_drv_t* disp_drv;      // contains callback functions
 static esp_lcd_panel_io_handle_t lcd_io = NULL;
@@ -172,7 +170,11 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         .miso_io_num = GPIO_NUM_NC,
         .quadwp_io_num = GPIO_NUM_NC,
         .quadhd_io_num = GPIO_NUM_NC,
-        .max_transfer_sz = WAVESHARE_19_LCD_H_RES * WAVESHARE_19_LCD_DMA_Line * sizeof(uint16_t), // RGB565
+        // note here: this value needs to be: WAVESHARE_19_LCD_H_RES * WAVESHARE_19_LCD_DRAW_BUFF_HEIGHT * sizeof(uint16_t)
+        // however, the ESP framework uses multiples of 4092 for DMA (LLDESC_MAX_NUM_PER_DESC).
+        // this theoretical number is 7.8 times the DMA size, which gets rounded down and ends up too small.
+        // so instead, manually setting it to a little larger
+        .max_transfer_sz = 8 * LLDESC_MAX_NUM_PER_DESC,        
     };
     spi_bus_initialize(WAVESHARE_19_LCD_SPI_NUM, &buscfg, SPI_DMA_CH_AUTO);
 
@@ -219,11 +221,11 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     void *buf1 = NULL;
     void *buf2 = NULL;
     ESP_LOGI(TAG, "Allocate separate LVGL draw buffers from PSRAM");
-    buf1 = heap_caps_malloc(WAVESHARE_19_LCD_H_RES * WAVESHARE_19_LCD_DMA_Line * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
+    buf1 = heap_caps_malloc(WAVESHARE_19_LCD_H_RES * 32 * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
     assert(buf1);
-    buf2 = heap_caps_malloc(WAVESHARE_19_LCD_H_RES * WAVESHARE_19_LCD_DMA_Line * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
+    buf2 = heap_caps_malloc(WAVESHARE_19_LCD_H_RES * 32 * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
     assert(buf2);
-    lv_disp_draw_buf_init(&disp_buf, buf1, buf2, WAVESHARE_19_LCD_H_RES * WAVESHARE_19_LCD_DMA_Line);
+    lv_disp_draw_buf_init(&disp_buf, buf1, buf2, WAVESHARE_19_LCD_H_RES * 32);
 
     ESP_LOGI(TAG, "Register display driver to LVGL");
     lv_disp_drv_init(disp_drv);

@@ -166,7 +166,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         .quadhd_io_num = GPIO_NUM_NC,
         // note here: this value needs to be: WAVESHARE_240_280_LCD_H_RES * WAVESHARE_240_280_LCD_DRAW_BUFF_HEIGHT * sizeof(uint16_t)
         // however, the ESP framework uses multiples of 4092 for DMA (LLDESC_MAX_NUM_PER_DESC).
-        // this theoretical number is 49.9 times the DMA size, which gets rounded down and ends up too small.
+        // this theoretical number is 5.9 times the DMA size, which gets rounded down and ends up too small.
         // so instead, manually setting it to a little larger
         .max_transfer_sz = 6 * LLDESC_MAX_NUM_PER_DESC, 
     };
