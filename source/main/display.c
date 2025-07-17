@@ -78,7 +78,7 @@ static const char *TAG = "app_display";
 
 #define DISPLAY_TASK_STACK_SIZE   (6 * 1024)
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
     static lv_anim_t *ui_BPMAnimation = NULL;
     static lv_anim_t PropertyAnimation_0;
     void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration);
@@ -302,7 +302,7 @@ void NextClicked(lv_event_t * e)
 }
 #endif  //CONFIG_TONEX_CONTROLLER_HAS_TOUCH
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
 // we use two semaphores to sync the VSYNC event and the LVGL task, to avoid potential tearing effect
 #if CONFIG_DISPLAY_AVOID_TEAR_EFFECT_WITH_SEM
 SemaphoreHandle_t sem_vsync_end;
@@ -1229,7 +1229,7 @@ void ParameterChanged(lv_event_t * e)
         ESP_LOGW(TAG, "Unknown Parameter changed");    
     }
 }
-#endif
+#endif  //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
 
 /****************************************************************************
 * NAME:        
@@ -1456,7 +1456,7 @@ void UI_RefreshParameterValues(void)
 #endif    
 }
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY 
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
 
 /****************************************************************************
 * NAME:        
@@ -1737,7 +1737,7 @@ static lv_obj_t* ui_get_skin_image(uint16_t index)
 }
 #endif 
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY 
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
 /****************************************************************************
 * NAME:        
 * DESCRIPTION: 
@@ -1855,28 +1855,28 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
         case UI_ELEMENT_BANK_INDEX:
         {
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             element_1 = ui_BankValueLabel;
 #endif
         } break;
 
         case UI_ELEMENT_AMP_SKIN:
         {
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             element_1 = ui_SkinImage;
 #endif            
         } break;
 
         case UI_ELEMENT_PRESET_DESCRIPTION:
         {
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY            
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             element_1 = ui_PresetDetailsTextArea;
 #endif            
         } break;
 
         case UI_ELEMENT_PARAMETERS:
         {
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY     
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             ESP_LOGI(TAG, "Syncing params to UI");
 
             tTonexParameter* param_ptr;
@@ -3225,7 +3225,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                     lv_obj_clear_flag(ui_WiFiStatusConn, LV_OBJ_FLAG_HIDDEN);
                 }
             }
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY            
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             else if (element_1 == ui_SkinImage)
             {
                 // set skin
@@ -3243,7 +3243,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
         case UI_ACTION_SET_LABEL_TEXT:
         {
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             lv_label_set_text(element_1, update->Text);
 #elif CONFIG_TONEX_CONTROLLER_DISPLAY_SMALL
             if (element_1 == ui_PresetHeadingLabel)
@@ -3277,7 +3277,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
         case UI_ACTION_SET_ENTRY_TEXT:
         {
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             lv_textarea_set_text(element_1, update->Text);
 #endif            
         } break;
@@ -3292,7 +3292,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
     return 1;
 }
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
 void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration)
 {
     if (ui_BPMAnimation != NULL) {

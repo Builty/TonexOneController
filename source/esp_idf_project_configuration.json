@@ -129,6 +129,58 @@
       "postFlash": ""
     }
   },
+  "WS35_AS": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_ws35_as",
+      "sdkconfigDefaults": [
+        "sdkconfig.ws35_as",
+        "sdkconfig.defaults"
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws35_as"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "WS35_PS": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_ws35_ps",
+      "sdkconfigDefaults": [
+        "sdkconfig.ws35_ps",
+        "sdkconfig.defaults"
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws35_ps"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
   "WSZERO": {
     "build": {
       "compileArgs": [],

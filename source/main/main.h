@@ -23,7 +23,7 @@ limitations under the License.
 extern "C" {
 #endif
 
-#define APP_VERSION		"1.0.11.2"
+#define APP_VERSION		"2.0.0.2"
 
 #define I2C_MASTER_NUM_1                0          
 #define I2C_MASTER_NUM_2                1          
@@ -415,6 +415,59 @@ extern SemaphoreHandle_t I2CMutex_2;
     // Touch
     #define TOUCH_RESET 		                 GPIO_NUM_17
     #define TOUCH_INT                            GPIO_NUM_21
+
+#elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35
+    // I2C bus 1
+    #define I2C_MASTER_1_SCL_IO  GPIO_NUM_7       
+    #define I2C_MASTER_1_SDA_IO  GPIO_NUM_8       
+
+    // I2C bus 2
+    #define I2C_MASTER_2_SCL_IO  -1
+    #define I2C_MASTER_2_SDA_IO  -1
+
+    #define EXTERNAL_IO_EXPANDER_BUS       I2C_MASTER_NUM_1
+    #define EXTERNAL_IO_EXPANDER_MUTEX     I2CMutex_1 
+
+    // IO expander
+    #define CAM_PWDN       		IO_EXPANDER_PIN_0
+    #define LCD_RESET    		IO_EXPANDER_PIN_1
+    #define TOUCH_INT    		IO_EXPANDER_PIN_2
+    #define SD_CS       		IO_EXPANDER_PIN_3
+
+    #define FOOTSWITCH_1		GPIO_NUM_38
+    #define FOOTSWITCH_2		GPIO_NUM_39
+    #define FOOTSWITCH_3		GPIO_NUM_40
+    #define FOOTSWITCH_4		GPIO_NUM_41
+
+    // Midi: 
+    #define UART_RX_PIN         GPIO_NUM_9
+    #define UART_TX_PIN         GPIO_NUM_10 
+
+    // leds
+    #define LED_OUTPUT_GPIO_NUM          -1
+
+    // LCD pins
+    #define WAVESHARE_35_LCD_GPIO_SCLK           GPIO_NUM_5
+    #define WAVESHARE_35_LCD_GPIO_MOSI           GPIO_NUM_1
+    #define WAVESHARE_35_LCD_GPIO_MISO           GPIO_NUM_2
+    #define WAVESHARE_35_LCD_GPIO_RST            GPIO_NUM_NC
+    #define WAVESHARE_35_LCD_GPIO_DC             GPIO_NUM_3
+    #define WAVESHARE_35_LCD_GPIO_CS             GPIO_NUM_NC
+    #define WAVESHARE_35_LCD_GPIO_BL             GPIO_NUM_6
+
+    // backlight
+    #define WAVESHARE_35_LCD_BL_LEDC_TIMER              LEDC_TIMER_1
+    #define WAVESHARE_35_LCD_BL_LEDC_MODE               LEDC_LOW_SPEED_MODE
+    #define WAVESHARE_35_LCD_BL_LEDC_CHANNEL            LEDC_CHANNEL_0
+    #define WAVESHARE_35_LCD_BL_LEDC_DUTY_RES           LEDC_TIMER_10_BIT // Set duty resolution to 13 bits
+    #define WAVESHARE_35_LCD_BL_LEDC_DUTY               (1024)                // Set duty to 50%. (2 ** 13) * 50% = 4096
+    #define WAVESHARE_35_LCD_BL_LEDC_FREQUENCY          (10000)          // Frequency in Hertz. Set frequency at 5 kHz
+
+
+    // Pin assignments for SD Card
+    #define PIN_NUM_MISO        GPIO_NUM9
+    #define PIN_NUM_MOSI        GPIO_NUM10
+    #define PIN_NUM_CLK         GPIO_NUM11
 
 #else
     #error "Unknown hardware platform!"

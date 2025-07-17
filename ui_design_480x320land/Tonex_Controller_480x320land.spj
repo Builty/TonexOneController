@@ -150,25 +150,25 @@
                       {
                         "nid": -1699478295,
                         "strtype": "IMGBUTTON/Image_disabled",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
                         "nid": 1011608136,
                         "strtype": "IMGBUTTON/Image_checked_released",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
                         "nid": -1608472123,
                         "strtype": "IMGBUTTON/Image_checked_pressed",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
                         "nid": 478219001,
                         "strtype": "IMGBUTTON/Image_checked_disabled",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
@@ -592,25 +592,25 @@
                       {
                         "nid": 1000599862,
                         "strtype": "IMGBUTTON/Image_disabled",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
                         "nid": 36997191,
                         "strtype": "IMGBUTTON/Image_checked_released",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
                         "nid": 2685328,
                         "strtype": "IMGBUTTON/Image_checked_pressed",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
                         "nid": -174413622,
                         "strtype": "IMGBUTTON/Image_checked_disabled",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
@@ -9099,8 +9099,8 @@
           }
         ],
         "isPage": true,
-        "editor_posx": 610,
-        "editor_posy": -580,
+        "editor_posx": 600,
+        "editor_posy": -600,
         "dont_export": false,
         "locked": false,
         "properties": [
@@ -33589,8 +33589,8 @@
           }
         ],
         "isPage": true,
-        "editor_posx": 1610,
-        "editor_posy": -580,
+        "editor_posx": 1590,
+        "editor_posy": -600,
         "dont_export": false,
         "locked": false,
         "properties": [
@@ -33740,7 +33740,7 @@
     "name": "Tonex_Controller_480x320land.spj",
     "depth": 1,
     "width": 480,
-    "height": 320,
+    "height": 480,
     "rotation": 0,
     "offset_x": 0,
     "offset_y": 0,

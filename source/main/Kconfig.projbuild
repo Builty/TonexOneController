@@ -7,6 +7,9 @@ menu "Tonex Controller Configuration"
         config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B
             bool "Waveshare 4.3B"
 
+        config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35
+            bool "Waveshare 3.5"
+
         config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169
             bool "Waveshare 1.69"
 
@@ -61,6 +64,12 @@ menu "Tonex Controller Configuration"
         default "n"
         help
             Enable this option if the platform has a small display
+
+    config TONEX_CONTROLLER_DISPLAY_FULL_UI
+       bool "Large LCD display with full user interface is used"
+        default "n"
+        help
+            Enable this option if the platform has a large display with full UI
     
     config TONEX_CONTROLLER_GPIO_FOOTSWITCHES
        bool "Footswitches are directly connected to GPIO"
