@@ -120,19 +120,37 @@ static void InitIOExpander(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t
     if (xSemaphoreTake(I2CMutex, (TickType_t)100) == pdTRUE)
     {
         // init IO expander
-        esp_io_expander_new_i2c_tca9554(bus_handle, ESP_IO_EXPANDER_I2C_TCA9554_ADDRESS_000, &expander_handle);
-        esp_io_expander_set_dir(expander_handle,  IO_EXPANDER_PIN_NUM_1, IO_EXPANDER_OUTPUT);
-        esp_io_expander_set_level(expander_handle, IO_EXPANDER_PIN_NUM_1, 0);
+        if (esp_io_expander_new_i2c_tca9554(bus_handle, ESP_IO_EXPANDER_I2C_TCA9554_ADDRESS_000, &expander_handle) != ESP_OK)
+        {
+            ESP_LOGE(TAG, "Onboard IO Expander init 1 failed");
+        }
+        
+        if (esp_io_expander_set_dir(expander_handle,  LCD_RESET, IO_EXPANDER_OUTPUT) != ESP_OK)
+        {
+            ESP_LOGE(TAG, "Onboard IO Expander init 2 failed");
+        }
+    
+        // reset LCD
+        esp_io_expander_set_level(expander_handle, LCD_RESET, 0);
         xSemaphoreGive(I2CMutexHandle);
 
         vTaskDelay(pdMS_TO_TICKS(100));
 
         if (xSemaphoreTake(I2CMutex, (TickType_t)100) == pdTRUE)
         {
-            esp_io_expander_set_level(expander_handle, IO_EXPANDER_PIN_NUM_1, 1);
+            esp_io_expander_set_level(expander_handle, LCD_RESET, 1);
             xSemaphoreGive(I2CMutexHandle);
         }
+        else
+        {
+            ESP_LOGE(TAG, "Onboard IO Expander mutex failed");
+        }
+
         vTaskDelay(pdMS_TO_TICKS(100));    
+    }
+    else
+    {
+        ESP_LOGE(TAG, "Onboard IO Expander mutex failed");
     }
 }
 
@@ -209,7 +227,6 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         .user_ctx = disp_drv,
     };
 
-
     esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)WAVESHARE_35_LCD_SPI_NUM, &io_config, &lcd_io);
 
     ESP_LOGD(TAG, "Install LCD driver");
@@ -218,15 +235,26 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_BGR,
         .bits_per_pixel = WAVESHARE_35_LCD_BITS_PER_PIXEL,
     };
-    esp_lcd_new_panel_st7796(lcd_io, &panel_config, &lcd_panel);
 
-    esp_lcd_panel_reset(lcd_panel);
-    esp_lcd_panel_init(lcd_panel);
+    if (esp_lcd_new_panel_st7796(lcd_io, &panel_config, &lcd_panel) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "LCD panel create failed");
+    }
+
+    if (esp_lcd_panel_reset(lcd_panel) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "LCD panel reset failed");
+    }
+    
+    if (esp_lcd_panel_init(lcd_panel) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "LCD panel init failed");
+    }
+
     esp_lcd_panel_invert_color(lcd_panel, true);
     esp_lcd_panel_disp_on_off(lcd_panel, true);
-
-    // LCD backlight on 
-    //?? ESP_ERROR_CHECK(gpio_set_level(WAVESHARE_35_LCD_GPIO_BL, WAVESHARE_35_LCD_BL_ON_LEVEL));
+    esp_lcd_panel_swap_xy(lcd_panel, true);
+    esp_lcd_panel_mirror(lcd_panel, false, true);
 
     ESP_LOGI(TAG, "Initialize LVGL library");
     lv_init();
@@ -247,6 +275,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     disp_drv->flush_cb = display_lvgl_flush_cb;
     disp_drv->draw_buf = &disp_buf;
     disp_drv->user_data = lcd_panel;
+    disp_drv->sw_rotate = 1;
 
     lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(disp_drv);
 
@@ -256,7 +285,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     ledc_timer.speed_mode = WAVESHARE_35_LCD_BL_LEDC_MODE,
     ledc_timer.timer_num = WAVESHARE_35_LCD_BL_LEDC_TIMER;
     ledc_timer.duty_resolution = WAVESHARE_35_LCD_BL_LEDC_DUTY_RES;
-    ledc_timer.freq_hz = WAVESHARE_35_LCD_BL_LEDC_FREQUENCY; // Set output frequency at 5 kHz
+    ledc_timer.freq_hz = WAVESHARE_35_LCD_BL_LEDC_FREQUENCY;
     ledc_timer.clk_cfg = LEDC_AUTO_CLK;
     ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
 

@@ -434,10 +434,11 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define TOUCH_INT    		IO_EXPANDER_PIN_2
     #define SD_CS       		IO_EXPANDER_PIN_3
 
-    #define FOOTSWITCH_1		GPIO_NUM_38
-    #define FOOTSWITCH_2		GPIO_NUM_39
-    #define FOOTSWITCH_3		GPIO_NUM_40
-    #define FOOTSWITCH_4		GPIO_NUM_41
+    // to do
+    #define FOOTSWITCH_1		-1  //GPIO_NUM_38
+    #define FOOTSWITCH_2		-1  //GPIO_NUM_39
+    #define FOOTSWITCH_3		-1  // GPIO_NUM_40
+    #define FOOTSWITCH_4		-1  //GPIO_NUM_41
 
     // Midi: 
     #define UART_RX_PIN         GPIO_NUM_9

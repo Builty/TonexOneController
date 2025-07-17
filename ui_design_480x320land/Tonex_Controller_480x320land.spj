@@ -33738,9 +33738,9 @@
   "selected_theme": "Default",
   "info": {
     "name": "Tonex_Controller_480x320land.spj",
-    "depth": 1,
+    "depth": 2,
     "width": 480,
-    "height": 480,
+    "height": 320,
     "rotation": 0,
     "offset_x": 0,
     "offset_y": 0,

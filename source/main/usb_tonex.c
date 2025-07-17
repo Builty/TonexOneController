@@ -73,6 +73,9 @@ static const char *TAG = "app_Tonex";
 // preset name is proceeded by this byte sequence:
 static const uint8_t TonexPresetByteMarker[] = {0xB9, 0x04, 0xB9, 0x02, 0xBC, 0x21};
 
+// when preset is changed on pedal, this byte sequence is in the preset details
+static const uint8_t TonexPresetIndexByteMarker[] = {0xB9, 0x04, 0x00, 0x00};
+
 // lengths of preset name and drive character
 #define TONEX_RESP_OFFSET_PRESET_NAME_LEN           32
 #define TONEX_CDC_INTERFACE_INDEX                   0
@@ -1002,7 +1005,19 @@ static esp_err_t usb_tonex_process_single_message(uint8_t* data, uint16_t length
                         memcpy((void*)preset_name, (void*)(temp_ptr + sizeof(TonexPresetByteMarker)), TONEX_RESP_OFFSET_PRESET_NAME_LEN);                
                     }
 
-                    if (boot_preset_request < MAX_PRESETS_TONEX) {
+                    // locate the TonexPresetIndexByteMarker[] to get preset index (doesn't get sent during sync)
+                    temp_ptr = memmem((void*)data, length, (void*)TonexPresetIndexByteMarker, sizeof(TonexPresetIndexByteMarker));
+                    if (temp_ptr != NULL)
+                    {                        
+                        // grab index
+                        char* index_ptr_start = temp_ptr + sizeof(TonexPresetIndexByteMarker);
+                        TonexData->Message.CurrentPreset = (uint8_t)*index_ptr_start;
+
+                        ESP_LOGI(TAG, "Got preset index: %d", (int)TonexData->Message.CurrentPreset);
+                    }
+                    
+                    if (boot_preset_request < MAX_PRESETS_TONEX) 
+                    {
                         // save preset name 
                         control_sync_preset_name(boot_preset_request, preset_name);
 

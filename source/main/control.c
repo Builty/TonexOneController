@@ -45,10 +45,13 @@ limitations under the License.
 #include "tonex_params.h"
 
 #define CTRL_TASK_STACK_SIZE                (3 * 1024)
-#define NVS_USERDATA_NAME                   "userdata"        
+#define NVS_USERDATA_NAME                   "userdata"
+#define NVS_USERDATA_EXTENDED_NAME          "userdataext"
 
 #define MAX_TEXT_LENGTH                     128
 #define MAX_BT_CUSTOM_NAME                  25                 
+#define MAX_PRESET_TEXT_LENGTH_LEGACY       128     // to avoid trashing existing config
+#define MAX_PRESET_TEXT_LENGTH              64
 
 enum CommandEvents
 {
@@ -80,17 +83,24 @@ typedef struct
 typedef struct __attribute__ ((packed)) 
 {
     uint16_t SkinIndex;
-    char PresetDescription[MAX_TEXT_LENGTH];
+    char PresetDescription[MAX_PRESET_TEXT_LENGTH_LEGACY];
+} tUserDataLegacy;
+
+typedef struct __attribute__ ((packed)) 
+{
+    uint16_t SkinIndex;
+    char PresetDescription[MAX_PRESET_TEXT_LENGTH];
 } tUserData;
 
 
+// warning here: Max 4000 bytes total
 typedef struct __attribute__ ((packed)) 
 {
     // note here: Tonex big pedal support needed this to jump from 20 to 150, which
     // if allocated here, nukes the user's entire configuration.
     // Instead, this part is used for the first 20 (all of the One, and part of the big Tonex), and a new section later
     // is used for the other 130 
-    tUserData UserData[MAX_PRESETS_TONEX_ONE];
+    tUserDataLegacy UserData[MAX_PRESETS_TONEX_ONE];
 
     uint8_t BTMode;
 
@@ -134,10 +144,14 @@ typedef struct __attribute__ ((packed))
 
     // preset order mapping
     uint8_t PresetOrder[MAX_SUPPORTED_PRESETS];
+} tConfigData;
 
+//todo: save this in new config or something. Above one is too big
+typedef struct __attribute__ ((packed)) 
+{
     // user data 
     tUserData UserDataExtended[MAX_SUPPORTED_PRESETS - MAX_PRESETS_TONEX_ONE];
-} tConfigData;
+} tConfigDataExtended;
 
 typedef struct
 {
@@ -153,6 +167,7 @@ typedef struct
     uint32_t BTStatus;
     uint32_t WiFiStatus;
     tConfigData ConfigData;
+    tConfigDataExtended ConfigDataExtended;
     tTapTempo TapTempo;
 } tControlData;
 
@@ -280,8 +295,8 @@ static uint8_t process_control_command(tControlMessage* message)
             else
             {
                 // use second bank            
-                UI_SetAmpSkin(ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex);
-                UI_SetPresetDescription(ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].PresetDescription);
+                UI_SetAmpSkin(ControlData.ConfigDataExtended.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex);
+                UI_SetPresetDescription(ControlData.ConfigDataExtended.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].PresetDescription);
             }
 #endif
 
@@ -332,11 +347,11 @@ static uint8_t process_control_command(tControlMessage* message)
             }
             else
             {
-                ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex = message->Value;
+                ControlData.ConfigDataExtended.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex = message->Value;
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
                 // update UI
-                UI_SetAmpSkin(ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex);
+                UI_SetAmpSkin(ControlData.ConfigDataExtended.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex);
 #endif                 
             }
 
@@ -359,13 +374,13 @@ static uint8_t process_control_command(tControlMessage* message)
         {
             if (ControlData.PresetIndex < MAX_PRESETS_TONEX_ONE)
             {
-                memcpy((void*)ControlData.ConfigData.UserData[ControlData.PresetIndex].PresetDescription, (void*)message->Text, MAX_TEXT_LENGTH);
-                ControlData.ConfigData.UserData[ControlData.PresetIndex].PresetDescription[MAX_TEXT_LENGTH - 1] = 0;
+                memcpy((void*)ControlData.ConfigData.UserData[ControlData.PresetIndex].PresetDescription, (void*)message->Text, MAX_PRESET_TEXT_LENGTH_LEGACY);
+                ControlData.ConfigData.UserData[ControlData.PresetIndex].PresetDescription[MAX_PRESET_TEXT_LENGTH_LEGACY - 1] = 0;
             }
             else
             {
-                memcpy((void*)ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].PresetDescription, (void*)message->Text, MAX_TEXT_LENGTH);
-                ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].PresetDescription[MAX_TEXT_LENGTH - 1] = 0;
+                memcpy((void*)ControlData.ConfigDataExtended.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].PresetDescription, (void*)message->Text, MAX_PRESET_TEXT_LENGTH);
+                ControlData.ConfigDataExtended.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].PresetDescription[MAX_PRESET_TEXT_LENGTH - 1] = 0;
             }
         } break;
 
@@ -1621,10 +1636,10 @@ void control_set_skin_next(void)
     }
     else
     {
-        if (ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex < (SKIN_MAX - 1))
+        if (ControlData.ConfigDataExtended.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex < (SKIN_MAX - 1))
         {
-            ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex++;
-            control_set_amp_skin_index(ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex);
+            ControlData.ConfigDataExtended.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex++;
+            control_set_amp_skin_index(ControlData.ConfigDataExtended.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex);
         }
     }
 }
@@ -1649,11 +1664,11 @@ void control_set_skin_previous(void)
     }
     else
     {
-        if (ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex > 0)
+        if (ControlData.ConfigDataExtended.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex > 0)
         {
-            ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex--;
+            ControlData.ConfigDataExtended.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex--;
         
-            control_set_amp_skin_index(ControlData.ConfigData.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex);
+            control_set_amp_skin_index(ControlData.ConfigDataExtended.UserDataExtended[ControlData.PresetIndex - MAX_PRESETS_TONEX_ONE].SkinIndex);
         }
     }
 }
@@ -1691,6 +1706,7 @@ static uint8_t SaveUserData(void)
     esp_err_t err;
     nvs_handle_t my_handle;
     uint8_t result = 0;
+    size_t required_size;
 
     ESP_LOGI(TAG, "Writing User Data");
 
@@ -1699,9 +1715,19 @@ static uint8_t SaveUserData(void)
 
     if (err == ESP_OK) 
     {
-        // write value
-        size_t required_size = sizeof(ControlData.ConfigData);
+        // write config
+        required_size = sizeof(ControlData.ConfigData);
+        ESP_LOGI(TAG, "Writing ConfigData, size: %d", (int)required_size);
         err = nvs_set_blob(my_handle, NVS_USERDATA_NAME, (void*)&ControlData.ConfigData, required_size);
+
+        // code fails, not enough space
+        //if (err == ESP_OK)
+        //{
+            // write second chunk
+        //    required_size = sizeof(ControlData.ConfigDataExtended);
+        //    ESP_LOGI(TAG, "Writing ConfigDataExtended Extended, size: %d", (int)required_size);
+        //    err = nvs_set_blob(my_handle, NVS_USERDATA_EXTENDED_NAME, (void*)&ControlData.ConfigDataExtended, required_size);            
+        //}
 
         switch (err) 
         {
@@ -1745,6 +1771,7 @@ static uint8_t LoadUserData(void)
     nvs_handle_t my_handle;
     uint8_t result = 0;
     uint8_t save_needed = 0;
+    size_t required_size;
 
     ESP_LOGI(TAG, "Load User Data");
 
@@ -1754,8 +1781,16 @@ static uint8_t LoadUserData(void)
     if (err == ESP_OK) 
     {
         // read data
-        size_t required_size = sizeof(ControlData.ConfigData);
+        required_size = sizeof(ControlData.ConfigData);
         err = nvs_get_blob(my_handle, NVS_USERDATA_NAME, (void*)&ControlData.ConfigData, &required_size);
+
+        // code fails, not enough space
+        //if (err == ESP_OK)
+        //{
+            // read second chunk
+        //    required_size = sizeof(ControlData.ConfigDataExtended);
+        //    err = nvs_get_blob(my_handle, NVS_USERDATA_EXTENDED_NAME, (void*)&ControlData.ConfigDataExtended, &required_size);            
+        //}
 
          switch (err) 
          {
@@ -1988,7 +2023,7 @@ void control_load_config(void)
 
     for (loop = 0; loop < (MAX_SUPPORTED_PRESETS - MAX_PRESETS_TONEX_ONE); loop++)
     {
-        sprintf(ControlData.ConfigData.UserDataExtended[loop].PresetDescription, "Description");
+        sprintf(ControlData.ConfigDataExtended.UserDataExtended[loop].PresetDescription, "Description");
     }
 
     // default config, will be overwritten or used as default

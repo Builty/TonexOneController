@@ -262,7 +262,7 @@ typedef struct __attribute__ ((packed))
 #define MAX_INTERNAL_EFFECT_FOOTSWITCHES        4
 #define SWITCH_NOT_USED                         0xFF
 #define MAX_SUPPORTED_PRESETS                   150
-#define MAX_PRESET_NAME_LENGTH                  34
+#define MAX_PRESET_NAME_LENGTH                  33
 
 // thread safe public API
 void control_request_preset_up(void);
