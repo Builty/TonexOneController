@@ -812,9 +812,8 @@
 
         function setEffectIcons() {
             // set effect icons
-
             // noise gate
-            var fxImage = document.getElementById("fx_image_1");
+            var fxImage = document.getElementById("fx_image_gate");
             var fxState = document.getElementById("ng_enable");
 
             if (fxState.checked) {
@@ -824,11 +823,12 @@
                 fxImage.src = img_gate_off;
             }
 
-            // amp enable
-            fxImage = document.getElementById("fx_image_2");
+            // eq
+            fxImage = document.getElementById("fx_image_eq");
             fxImage.src = img_eq; 
 
-            fxImage = document.getElementById("fx_image_3");
+            // amp enable
+            fxImage = document.getElementById("fx_image_amp");
             fxState = document.getElementById("am_ampen");
              if (fxState.checked) {
                 fxImage.src = img_amp_on;
@@ -838,7 +838,7 @@
             }
 
             // cab enable
-            fxImage = document.getElementById("fx_image_4");
+            fxImage = document.getElementById("fx_image_cab");
             fxState = document.getElementById("am_cabtype");
             if (fxState.value == 2) {
                 fxImage.src = img_cab_off;
@@ -848,7 +848,7 @@
             }
             
             // compressor    
-            fxImage = document.getElementById("fx_image_5");
+            fxImage = document.getElementById("fx_image_comp");
             fxState = document.getElementById("cp_enable");
             if (fxState.checked) {
                 fxImage.src = img_comp_on;
@@ -858,7 +858,7 @@
             }
 
             // modulation
-            fxImage = document.getElementById("fx_image_6");
+            fxImage = document.getElementById("fx_image_mod");
             fxState = document.getElementById("mo_enable");
             if (fxState.checked) {
                 // check the model
@@ -885,7 +885,7 @@
             }
 
             // delay
-            fxImage = document.getElementById("fx_image_7");
+            fxImage = document.getElementById("fx_image_dly");
             fxState = document.getElementById("dl_enable");
             if (fxState.checked) {
                 if (getSelectValue("dl_model") == TONEX_DELAY_DIGITAL) {
@@ -900,7 +900,7 @@
             }
 
             // reverb
-            fxImage = document.getElementById("fx_image_8");
+            fxImage = document.getElementById("fx_image_rvb");
             fxState = document.getElementById("rv_enable");
             if (fxState.checked) {
                 // check the model
@@ -928,6 +928,100 @@
             else {
                 fxImage.src = img_reverb_off;
             }
+
+            // set the order
+            var gatePost = document.getElementById("ng_post");
+            var compPost = document.getElementById("cp_post");
+            var modPost = document.getElementById("mo_post");
+            var delayPost = document.getElementById("dl_post");
+            var eqPost = document.getElementById("eq_post");
+            var rvbPost = document.getElementById("rv_post");
+
+            const container = document.querySelector('.fx_icon_container');
+            const images = Array.from(container.querySelectorAll('img'));
+            var newOrderIds = [];
+            var index = 0;
+
+            if (!gatePost.checked)
+            {
+                newOrderIds[index] = 'fx_image_gate';
+                index++;
+            }
+            
+            if (!compPost.checked)
+            {
+                newOrderIds[index] = 'fx_image_comp';
+                index++;
+            }
+            
+            if (!modPost.checked)
+            {
+                newOrderIds[index] = 'fx_image_mod';
+                index++;
+            }
+            
+            if (!delayPost.checked)
+            {
+                newOrderIds[index] = 'fx_image_dly';
+                index++;
+            }
+
+            if (!eqPost.checked)
+            {
+                newOrderIds[index] = 'fx_image_eq';
+                index++;
+            }
+
+            newOrderIds[index] = 'fx_image_amp';
+            index++;
+            newOrderIds[index] = 'fx_image_cab';
+            index++;
+
+            if (eqPost.checked)
+            {
+                newOrderIds[index] = 'fx_image_eq';
+                index++;
+            }
+
+            if (gatePost.checked)
+            {
+                newOrderIds[index] = 'fx_image_gate';
+                index++;
+            }
+            
+            if (compPost.checked)
+            {
+                newOrderIds[index] = 'fx_image_comp';
+                index++;
+            }
+            
+            if (!rvbPost.checked)
+            {
+                newOrderIds[index] = 'fx_image_rvb';
+                index++;
+            }
+
+            if (modPost.checked)
+            {
+                newOrderIds[index] = 'fx_image_mod';
+                index++;
+            }
+            
+            if (delayPost.checked)
+            {
+                newOrderIds[index] = 'fx_image_dly';
+                index++;
+            }
+
+            if (rvbPost.checked)
+            {
+                newOrderIds[index] = 'fx_image_rvb';
+                index++;
+            }
+
+            const orderedImages = newOrderIds.map(id => images.find(img => img.id === id));
+            container.innerHTML = ''; // Clear the container
+            orderedImages.forEach(img => container.appendChild(img));
         }
 
         function pageTimerEvent(){
@@ -2778,14 +2872,14 @@
     </nav>
 
     <div class="fx_icon_container">
-        <img id="fx_image_1">
-        <img id="fx_image_2">
-        <img id="fx_image_3">
-        <img id="fx_image_4">
-        <img id="fx_image_5">
-        <img id="fx_image_6">
-        <img id="fx_image_7">
-        <img id="fx_image_8">
+        <img id="fx_image_gate">
+        <img id="fx_image_eq">
+        <img id="fx_image_amp">
+        <img id="fx_image_cab">
+        <img id="fx_image_comp">
+        <img id="fx_image_mod">
+        <img id="fx_image_dly">
+        <img id="fx_image_rvb">
     </div> 
 
     <div class="tab" id="MainMenu">
