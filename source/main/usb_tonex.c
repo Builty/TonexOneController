@@ -503,9 +503,7 @@ static esp_err_t usb_tonex_modify_global(uint16_t global_val, float value)
         case TONEX_GLOBAL_TUNING_REFERENCE:
         {
             // modify the tuning ref value in state packet
-            uint16_t freq = (uint16_t)value;
-            memcpy((void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_TUNING_REFERENCE * 5) + 1], (void*)&freq, sizeof(uint16_t));
-
+            memcpy((void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_TUNING_REFERENCE * 5) + 1], (void*)&value, sizeof(float));
             res = ESP_OK;
         } break;
     }

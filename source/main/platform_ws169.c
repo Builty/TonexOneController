@@ -198,7 +198,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     esp_lcd_panel_disp_on_off(lcd_panel, true);
 
     // LCD backlight on 
-    ESP_ERROR_CHECK(gpio_set_level(WAVESHARE_240_280_LCD_GPIO_BL, WAVESHARE_240_280_LCD_BL_ON_LEVEL));
+    gpio_set_level(WAVESHARE_240_280_LCD_GPIO_BL, WAVESHARE_240_280_LCD_BL_ON_LEVEL);
 
     esp_lcd_panel_set_gap(lcd_panel, 0, 20);
     esp_lcd_panel_invert_color(lcd_panel, true);

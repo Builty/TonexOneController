@@ -108,6 +108,33 @@ static esp_lcd_panel_io_handle_t tp_io_handle = NULL;
 static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
 static esp_io_expander_handle_t expander_handle = NULL;
 
+// below from Waveshare sample
+static const st7796_lcd_init_cmd_t lcd_init_cmds[] = 
+{
+//  {cmd, { data }, data_size, delay_ms}
+    /* Power contorl B, power control = 0, DC_ENA = 1 */
+    {0x11, (uint8_t []){ 0x00 }, 0, 120},
+
+    // {0x36, (uint8_t []){ 0x08 }, 1, 0},
+
+    {0x3A, (uint8_t []){ 0x05 }, 1, 0},
+    {0xF0, (uint8_t []){ 0xC3 }, 1, 0},
+    {0xF0, (uint8_t []){ 0x96 }, 1, 0},
+    {0xB4, (uint8_t []){ 0x01 }, 1, 0},
+    {0xB7, (uint8_t []){ 0xC6 }, 1, 0},
+    {0xC0, (uint8_t []){ 0x80, 0x45 }, 2, 0},
+    {0xC1, (uint8_t []){ 0x13 }, 1, 0},
+    {0xC2, (uint8_t []){ 0xA7 }, 1, 0},
+    {0xC5, (uint8_t []){ 0x0A }, 1, 0},
+    {0xE8, (uint8_t []){ 0x40, 0x8A, 0x00, 0x00, 0x29, 0x19, 0xA5, 0x33}, 8, 0},
+    {0xE0, (uint8_t []){ 0xD0, 0x08, 0x0F, 0x06, 0x06, 0x33, 0x30, 0x33, 0x47, 0x17, 0x13, 0x13, 0x2B, 0x31}, 14, 0},
+    {0xE1, (uint8_t []){ 0xD0, 0x0A, 0x11, 0x0B, 0x09, 0x07, 0x2F, 0x33, 0x47, 0x38, 0x15, 0x16, 0x2C, 0x32},14, 0},
+    {0xF0, (uint8_t []){ 0x3C }, 1, 0},
+    {0xF0, (uint8_t []){ 0x69 }, 1, 120},
+    {0x21, (uint8_t []){ 0x00 }, 0, 0},
+    {0x29, (uint8_t []){ 0x00 }, 0, 0},
+};
+
 /****************************************************************************
 * NAME:        
 * DESCRIPTION: 
@@ -212,7 +239,11 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         // so instead, manually setting it to a little larger
         .max_transfer_sz = 6 * LLDESC_MAX_NUM_PER_DESC,        
     };
-    spi_bus_initialize(WAVESHARE_35_LCD_SPI_NUM, &buscfg, SPI_DMA_CH_AUTO);
+    
+    if (spi_bus_initialize(WAVESHARE_35_LCD_SPI_NUM, &buscfg, SPI_DMA_CH_AUTO) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Platform Init spi_bus_initialize() failed");
+    }
 
     ESP_LOGD(TAG, "Install panel IO");
     const esp_lcd_panel_io_spi_config_t io_config = {
@@ -227,13 +258,23 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         .user_ctx = disp_drv,
     };
 
-    esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)WAVESHARE_35_LCD_SPI_NUM, &io_config, &lcd_io);
+    if (esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)WAVESHARE_35_LCD_SPI_NUM, &io_config, &lcd_io) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Platform Init esp_lcd_new_panel_io_spi() failed");
+    }
+
+    st7796_vendor_config_t vendor_config = 
+    {
+        .init_cmds = lcd_init_cmds,
+        .init_cmds_size = sizeof(lcd_init_cmds) / sizeof(lcd_init_cmds[0]),
+    };
 
     ESP_LOGD(TAG, "Install LCD driver");
     const esp_lcd_panel_dev_config_t panel_config = {
         .reset_gpio_num = WAVESHARE_35_LCD_GPIO_RST,
         .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_BGR,
         .bits_per_pixel = WAVESHARE_35_LCD_BITS_PER_PIXEL,
+        .vendor_config = &vendor_config,        
     };
 
     if (esp_lcd_new_panel_st7796(lcd_io, &panel_config, &lcd_panel) != ESP_OK)
@@ -253,8 +294,8 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 
     esp_lcd_panel_invert_color(lcd_panel, true);
     esp_lcd_panel_disp_on_off(lcd_panel, true);
-    esp_lcd_panel_swap_xy(lcd_panel, true);
-    esp_lcd_panel_mirror(lcd_panel, false, true);
+    //esp_lcd_panel_swap_xy(lcd_panel, true);
+    //esp_lcd_panel_mirror(lcd_panel, false, true);
 
     ESP_LOGI(TAG, "Initialize LVGL library");
     lv_init();
@@ -275,7 +316,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     disp_drv->flush_cb = display_lvgl_flush_cb;
     disp_drv->draw_buf = &disp_buf;
     disp_drv->user_data = lcd_panel;
-    disp_drv->sw_rotate = 1;
+    //?? disp_drv->sw_rotate = 1;
 
     lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(disp_drv);
 
@@ -287,7 +328,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     ledc_timer.duty_resolution = WAVESHARE_35_LCD_BL_LEDC_DUTY_RES;
     ledc_timer.freq_hz = WAVESHARE_35_LCD_BL_LEDC_FREQUENCY;
     ledc_timer.clk_cfg = LEDC_AUTO_CLK;
-    ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
+    ledc_timer_config(&ledc_timer);
 
     // Prepare and then apply the LEDC PWM channel configuration
     ledc_channel_config_t ledc_channel = {};
@@ -298,7 +339,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     ledc_channel.gpio_num = WAVESHARE_35_LCD_GPIO_BL;
     ledc_channel.duty = 0, // Set duty to 0%
     ledc_channel.hpoint = 0;
-    ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
+    ledc_channel_config(&ledc_channel);
 
     // set brightness
     uint8_t brightness = 70;
