@@ -1,7 +1,7 @@
 
 idf_component_register(SRCS "midi_control.c" "control.c" "footswitches.c" "CH422G.c" "display.c" "main.c" "tonex_params.c" "SX1509.c"
                             "usb_comms.c" "usb_tonex_one.c" "usb_tonex_common.c" "usb_tonex.c" "CH422G.c" "midi_serial.c" "wifi_config.c" "leds.c" "midi_helper.c" "LP5562.c"
-                            "platform_devkitc.c" "platform_lgtdisps3.c" "platform_m5atoms3r.c" "platform_ws19t.c" "platform_ws43.c" "platform_wszero.c" "platform_ws169.c" "platform_ws35.c"
+                            "platform_devkitc.c" "platform_lgtdisps3.c" "platform_m5atoms3r.c" "platform_ws19t.c" "platform_ws43.c" "platform_wszero.c" "platform_ws169.c" "platform_ws35b.c"
                             EMBED_TXTFILES index.html 
                             INCLUDE_DIRS "." "./")
                                                        
@@ -50,7 +50,7 @@ if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B OR CONFIG_TONEX_CONTR
                            "ui_generated/images/ui_img_pskin_ratyellow_png.c")
 endif()
 
-if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35)
+if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35B)
     target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated_480x320land")
 
     target_sources(${COMPONENT_LIB} PRIVATE "ui_generated_480x320land/ui.c" "ui_generated_480x320land/ui_helpers.c"

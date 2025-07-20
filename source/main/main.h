@@ -416,7 +416,7 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define TOUCH_RESET 		                 GPIO_NUM_17
     #define TOUCH_INT                            GPIO_NUM_21
 
-#elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35
+#elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35B
     // I2C bus 1
     #define I2C_MASTER_1_SCL_IO  GPIO_NUM_7       
     #define I2C_MASTER_1_SDA_IO  GPIO_NUM_8       
@@ -441,19 +441,20 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define FOOTSWITCH_4		-1  //GPIO_NUM_41
 
     // Midi: 
-    #define UART_RX_PIN         GPIO_NUM_9
-    #define UART_TX_PIN         GPIO_NUM_10 
+    #define UART_RX_PIN         GPIO_NUM_17
+    #define UART_TX_PIN         GPIO_NUM_18 
 
     // leds
     #define LED_OUTPUT_GPIO_NUM          -1
 
     // LCD pins
     #define WAVESHARE_35_LCD_GPIO_SCLK           GPIO_NUM_5
-    #define WAVESHARE_35_LCD_GPIO_MOSI           GPIO_NUM_1
-    #define WAVESHARE_35_LCD_GPIO_MISO           GPIO_NUM_2
+    #define WAVESHARE_35_LCD_GPIO_QSPI_0         GPIO_NUM_1
+    #define WAVESHARE_35_LCD_GPIO_QSPI_1         GPIO_NUM_2
+    #define WAVESHARE_35_LCD_GPIO_QSPI_2         GPIO_NUM_3
+    #define WAVESHARE_35_LCD_GPIO_QSPI_3         GPIO_NUM_4
     #define WAVESHARE_35_LCD_GPIO_RST            GPIO_NUM_NC
-    #define WAVESHARE_35_LCD_GPIO_DC             GPIO_NUM_3
-    #define WAVESHARE_35_LCD_GPIO_CS             GPIO_NUM_NC
+    #define WAVESHARE_35_LCD_GPIO_CS             GPIO_NUM_12
     #define WAVESHARE_35_LCD_GPIO_BL             GPIO_NUM_6
 
     // backlight

@@ -129,16 +129,16 @@
       "postFlash": ""
     }
   },
-  "WS35_AS": {
+  "WS35B_AS": {
     "build": {
       "compileArgs": [],
       "ninjaArgs": [],
-      "buildDirectoryPath": "${workspaceFolder}/build_ws35_as",
+      "buildDirectoryPath": "${workspaceFolder}/build_ws35b_as",
       "sdkconfigDefaults": [
-        "sdkconfig.ws35_as",
+        "sdkconfig.ws35b_as",
         "sdkconfig.defaults"
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_ws35_as"
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws35b_as"
     },
     "env": {},
     "flashBaudRate": "",
@@ -155,16 +155,16 @@
       "postFlash": ""
     }
   },
-  "WS35_PS": {
+  "WS35B_PS": {
     "build": {
       "compileArgs": [],
       "ninjaArgs": [],
-      "buildDirectoryPath": "${workspaceFolder}/build_ws35_ps",
+      "buildDirectoryPath": "${workspaceFolder}/build_ws35b_ps",
       "sdkconfigDefaults": [
-        "sdkconfig.ws35_ps",
+        "sdkconfig.ws35b_ps",
         "sdkconfig.defaults"
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_ws35_ps"
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws35b_ps"
     },
     "env": {},
     "flashBaudRate": "",

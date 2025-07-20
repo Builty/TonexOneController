@@ -7,8 +7,8 @@ menu "Tonex Controller Configuration"
         config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B
             bool "Waveshare 4.3B"
 
-        config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35
-            bool "Waveshare 3.5"
+        config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35B
+            bool "Waveshare 3.5B"
 
         config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169
             bool "Waveshare 1.69"
