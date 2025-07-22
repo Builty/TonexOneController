@@ -90,9 +90,13 @@ static const char *TAG = "platform_ws35b";
 #define WAVESHARE_35_LCD_DRAW_BUFF_HEIGHT    (50)
 #define WAVESHARE_35_LCD_BL_ON_LEVEL         (0)
 
+#define LCD_BUFFER_SIZE                      (WAVESHARE_35_LCD_H_RES *WAVESHARE_35_LCD_V_RES)
+
 #define BUF_SIZE                            (1024)
 #define I2C_MASTER_TIMEOUT_MS               1000
 #define I2C_AXS15231B_ADDRESS               (0x3B)
+
+typedef bool (*lvgl_port_wait_cb)(void *handle);
 
 static SemaphoreHandle_t I2CMutexHandle;
 static lv_disp_draw_buf_t disp_buf; // contains internal graphic buffer(s) called draw buffer(s)
@@ -103,6 +107,12 @@ static esp_lcd_touch_handle_t tp = NULL;
 static esp_lcd_panel_io_handle_t tp_io_handle = NULL;
 static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
 static esp_io_expander_handle_t expander_handle = NULL;
+static uint32_t trans_size = LCD_BUFFER_SIZE / 10;       
+static lv_color_t* trans_buf_1 = NULL;
+static lv_color_t* trans_buf_2 = NULL;
+static lv_color_t* trans_act = NULL;
+static SemaphoreHandle_t trans_done_sem = NULL;
+static lvgl_port_wait_cb draw_wait_cb;     /* Callback function for drawing */
 
 static const axs15231b_lcd_init_cmd_t lcd_init_cmds[] = {
     {0xBB, (uint8_t[]){0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x5A, 0xA5}, 8, 0},
@@ -138,6 +148,8 @@ static const axs15231b_lcd_init_cmd_t lcd_init_cmds[] = {
     {0x11, (uint8_t[]){0x00}, 0, 120},
     {0x2C, (uint8_t[]){0x00, 0x00, 0x00, 0x00}, 4, 0},
 };
+
+static bool lvgl_port_flush_ready_callback(esp_lcd_panel_io_handle_t panel_io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx);
 
 /****************************************************************************
 * NAME:        
@@ -216,6 +228,210 @@ __attribute__((unused)) void platform_adjust_display_flush_area(lv_area_t *area)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+static bool lvgl_port_flush_ready_callback(esp_lcd_panel_io_handle_t panel_io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx)
+{
+    BaseType_t taskAwake = pdFALSE;
+
+    //lv_disp_drv_t *disp_drv = (lv_disp_drv_t *)user_ctx;
+    //assert(disp_drv != NULL);
+    //lvgl_port_display_ctx_t *disp_ctx = disp_drv->user_data;
+    //assert(disp_ctx != NULL);
+
+    if (trans_done_sem) 
+    {
+        xSemaphoreGiveFromISR(trans_done_sem, &taskAwake);
+    }
+
+    return false;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void lvgl_port_flush_callback(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map)
+{
+    assert(drv != NULL);
+    esp_lcd_panel_handle_t panel_handle = (esp_lcd_panel_handle_t)drv->user_data;
+
+    const int x_start = area->x1;
+    const int x_end = area->x2;
+    const int y_start = area->y1;
+    const int y_end = area->y2;
+    const int width = x_end - x_start + 1;
+    const int height = y_end - y_start + 1;
+
+    lv_color_t *from = color_map;
+    lv_color_t *to = NULL;
+
+    int x_draw_start = 0;
+    int x_draw_end = 0;
+    int y_draw_start = 0;
+    int y_draw_end = 0;
+    int trans_count = 0;
+
+    trans_act = trans_buf_1;
+    int rotate = LV_DISP_ROT_90;
+
+    int x_start_tmp = 0;
+    int x_end_tmp = 0;
+    int max_width = 0;
+    int trans_width = 0;
+
+    int y_start_tmp = 0;
+    int y_end_tmp = 0;
+    int max_height = 0;
+    int trans_height = 0;
+  
+    if (LV_DISP_ROT_270 == rotate || LV_DISP_ROT_90 == rotate) 
+    {
+        max_width = ((trans_size / height) > width) ? (width) : (trans_size / height);
+        trans_count = width / max_width + (width % max_width ? (1) : (0));
+
+        x_start_tmp = x_start;
+        x_end_tmp = x_end;
+    } 
+    else 
+    {
+        max_height = ((trans_size / width) > height) ? (height) : (trans_size / width);
+        trans_count = height / max_height + (height % max_height ? (1) : (0));
+
+        y_start_tmp = y_start;
+        y_end_tmp = y_end;
+    }
+
+    for (int i = 0; i < trans_count; i++) 
+    {
+        if (LV_DISP_ROT_90 == rotate) 
+        {
+            trans_width = (x_end - x_start_tmp + 1) > max_width ? max_width : (x_end - x_start_tmp + 1);
+            x_end_tmp = (x_end - x_start_tmp + 1) > max_width ? (x_start_tmp + max_width - 1) : x_end;
+        } 
+        else if (LV_DISP_ROT_270 == rotate) 
+        {
+            trans_width = (x_end_tmp - x_start + 1) > max_width ? max_width : (x_end_tmp - x_start + 1);
+            x_start_tmp = (x_end_tmp - x_start + 1) > max_width ? (x_end_tmp - trans_width + 1) : x_start;
+        } 
+        else if (LV_DISP_ROT_NONE == rotate) 
+        {
+            trans_height = (y_end - y_start_tmp + 1) > max_height ? max_height : (y_end - y_start_tmp + 1);
+            y_end_tmp = (y_end - y_start_tmp + 1) > max_height ? (y_start_tmp + max_height - 1) : y_end;
+        } 
+        else 
+        {
+            trans_height = (y_end_tmp - y_start + 1) > max_height ? max_height : (y_end_tmp - y_start + 1);
+            y_start_tmp = (y_end_tmp - y_start + 1) > max_height ? (y_end_tmp - max_height + 1) : y_start;
+        }
+     
+        trans_act = (trans_act == trans_buf_1) ? (trans_buf_2) : (trans_buf_1);
+        to = trans_act;
+        
+        switch (rotate) 
+        {
+            case LV_DISP_ROT_90:
+                for (int y = 0; y < height; y++) 
+                {
+                    for (int x = 0; x < trans_width; x++) 
+                    {
+                        *(to + x * height + (height - y - 1)) = *(from + y * width + x_start_tmp + x);
+                    }
+                }
+                x_draw_start = drv->ver_res - y_end - 1;
+                x_draw_end = drv->ver_res - y_start - 1;
+                y_draw_start = x_start_tmp;
+                y_draw_end = x_end_tmp;
+                break;
+
+            case LV_DISP_ROT_270:
+                for (int y = 0; y < height; y++) 
+                {
+                    for (int x = 0; x < trans_width; x++) 
+                    {
+                        *(to + (trans_width - x - 1) * height + y) = *(from + y * width + x_start_tmp + x);
+                    }
+                }
+                x_draw_start = y_start;
+                x_draw_end = y_end;
+                y_draw_start = drv->hor_res - x_end_tmp - 1;
+                y_draw_end = drv->hor_res - x_start_tmp - 1;
+                break;
+
+            case LV_DISP_ROT_180:
+                for (int y = 0; y < trans_height; y++) 
+                {
+                    for (int x = 0; x < width; x++) 
+                    {
+                        *(to + (trans_height - y - 1)*width + (width - x - 1)) = *(from + y_start_tmp * width + y * (width) + x);
+                    }
+                }
+                x_draw_start = drv->hor_res - x_end - 1;
+                x_draw_end = drv->hor_res - x_start - 1;
+                y_draw_start = drv->ver_res - y_end_tmp - 1;
+                y_draw_end = drv->ver_res - y_start_tmp - 1;
+                break;
+
+            case LV_DISP_ROT_NONE:
+                for (int y = 0; y < trans_height; y++) 
+                {
+                    for (int x = 0; x < width; x++) 
+                    {
+                        *(to + y * (width) + x) = *(from + y_start_tmp * width + y * (width) + x);
+                    }
+                }
+                x_draw_start = x_start;
+                x_draw_end = x_end;
+                y_draw_start = y_start_tmp;
+                y_draw_end = y_end_tmp;
+                break;
+
+            default:
+                break;
+        }
+
+        if (0 == i) 
+        {
+            if (draw_wait_cb) 
+            {
+                draw_wait_cb(drv->user_data);
+            }
+            xSemaphoreGive(trans_done_sem);
+        }
+
+        xSemaphoreTake(trans_done_sem, portMAX_DELAY);
+         
+        esp_lcd_panel_draw_bitmap(panel_handle, x_draw_start, y_draw_start, x_draw_end + 1, y_draw_end + 1, to);
+
+        if (LV_DISP_ROT_90 == rotate) 
+        {
+            x_start_tmp += max_width;
+        } 
+        else if (LV_DISP_ROT_270 == rotate) 
+        {
+            x_end_tmp -= max_width;
+        } 
+        if (LV_DISP_ROT_NONE == rotate) 
+        {
+            y_start_tmp += max_height;
+        } 
+        else 
+        {
+            y_end_tmp -= max_height;
+        } 
+    }
+
+    lv_disp_flush_ready(drv);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex, lv_disp_drv_t* pdisp_drv)
 {    
     __attribute__((unused)) esp_err_t ret = ESP_OK;
@@ -241,7 +457,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         // however, the ESP framework uses multiples of 4092 for DMA (LLDESC_MAX_NUM_PER_DESC).
         // this theoretical number is 5.8 times the DMA size, which gets rounded down and ends up too small.
         // so instead, manually setting it to a little larger
-        .max_transfer_sz = 6 * LLDESC_MAX_NUM_PER_DESC,        
+        .max_transfer_sz = LCD_BUFFER_SIZE, //6 * LLDESC_MAX_NUM_PER_DESC,        
     };
     
     if (spi_bus_initialize(WAVESHARE_35_LCD_SPI_NUM, &buscfg, SPI_DMA_CH_AUTO) != ESP_OK)
@@ -286,14 +502,59 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     ESP_LOGI(TAG, "Initialize LVGL library");
     lv_init();
 
-    void *buf1 = NULL;
-    void *buf2 = NULL;
-    ESP_LOGI(TAG, "Allocate separate LVGL draw buffers from PSRAM");
-    buf1 = heap_caps_malloc(WAVESHARE_35_LCD_H_RES * 32 * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
-    assert(buf1);
-    buf2 = heap_caps_malloc(WAVESHARE_35_LCD_H_RES * 32 * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
+    // allocate draw buffers
+    lv_color_t* buf1 = NULL;
+    lv_color_t* buf2 = NULL;
+    lv_color_t* buf3 = NULL;
+
+    buf1 = heap_caps_malloc(LCD_BUFFER_SIZE * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
+
+    buf2 = heap_caps_malloc(trans_size * sizeof(lv_color_t), MALLOC_CAP_DMA);
     assert(buf2);
-    lv_disp_draw_buf_init(&disp_buf, buf1, buf2, WAVESHARE_35_LCD_H_RES * 32);
+    trans_buf_1 = buf2;
+
+    buf3 = heap_caps_malloc(trans_size * sizeof(lv_color_t), MALLOC_CAP_DMA);
+    assert(buf3);
+    trans_buf_2 = buf3;
+
+    trans_done_sem = xSemaphoreCreateCounting(1, 0);
+    assert(trans_done_sem);
+    trans_done_sem = trans_done_sem;
+
+    lv_disp_draw_buf_init(&disp_buf, buf1, NULL, LCD_BUFFER_SIZE);
+
+    ESP_LOGI(TAG, "Register display driver to LVGL");
+    lv_disp_drv_init(disp_drv);
+    disp_drv->hor_res = WAVESHARE_35_LCD_H_RES;
+    disp_drv->ver_res = WAVESHARE_35_LCD_V_RES;
+    disp_drv->flush_cb = lvgl_port_flush_callback;
+    disp_drv->draw_buf = &disp_buf;
+    disp_drv->user_data = lcd_panel;
+    //disp_drv->rotated = LV_DISP_ROT_90;    
+    //disp_drv->sw_rotate = 1;
+    disp_drv->full_refresh = 1;
+
+    //
+    const esp_lcd_panel_io_callbacks_t cbs = {
+        .on_color_trans_done = lvgl_port_flush_ready_callback,
+    };
+    esp_lcd_panel_io_register_event_callbacks(lcd_io, &cbs, &disp_drv);
+
+    lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(disp_drv);
+
+#if 0    
+    void *buf2 = NULL;
+
+    ESP_LOGI(TAG, "Allocate separate LVGL draw buffers from PSRAM");
+    buf1 = heap_caps_malloc(LCD_BUFFER_SIZE * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
+    assert(buf1);
+    //buf2 = heap_caps_malloc(LCD_BUFFER_SIZE * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
+    //assert(buf2);
+
+    //lv_disp_draw_buf_init(&disp_buf, buf1, buf2, LCD_BUFFER_SIZE * sizeof(lv_color_t));
+    lv_disp_draw_buf_init(&disp_buf, buf1, NULL, LCD_BUFFER_SIZE);
+
+    //LCD_BUFFER_SIZE
 
     ESP_LOGI(TAG, "Register display driver to LVGL");
     lv_disp_drv_init(disp_drv);
@@ -302,11 +563,12 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     disp_drv->flush_cb = display_lvgl_flush_cb;
     disp_drv->draw_buf = &disp_buf;
     disp_drv->user_data = lcd_panel;
-    disp_drv->rotated = LV_DISP_ROT_90;    
-    disp_drv->sw_rotate = 1;
+    //disp_drv->rotated = LV_DISP_ROT_90;    
+    //disp_drv->sw_rotate = 1;
     disp_drv->full_refresh = 1;
 
     lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(disp_drv);
+#endif
 
     // init LCD backlight
     // Prepare and then apply the LEDC PWM timer configuration
