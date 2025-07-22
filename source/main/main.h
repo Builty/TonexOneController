@@ -434,11 +434,10 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define TOUCH_INT    		IO_EXPANDER_PIN_2
     #define SD_CS       		IO_EXPANDER_PIN_3
 
-    // to do
-    #define FOOTSWITCH_1		-1  //GPIO_NUM_38
-    #define FOOTSWITCH_2		-1  //GPIO_NUM_39
-    #define FOOTSWITCH_3		-1  // GPIO_NUM_40
-    #define FOOTSWITCH_4		-1  //GPIO_NUM_41
+    #define FOOTSWITCH_1		GPIO_NUM_38
+    #define FOOTSWITCH_2		GPIO_NUM_39
+    #define FOOTSWITCH_3		GPIO_NUM_40
+    #define FOOTSWITCH_4		GPIO_NUM_41
 
     // Midi: 
     #define UART_RX_PIN         GPIO_NUM_17
@@ -470,6 +469,56 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define PIN_NUM_MISO        GPIO_NUM9
     #define PIN_NUM_MOSI        GPIO_NUM10
     #define PIN_NUM_CLK         GPIO_NUM11
+
+#elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC3248W535
+    // I2C bus 1
+    #define I2C_MASTER_1_SCL_IO  GPIO_NUM_8       
+    #define I2C_MASTER_1_SDA_IO  GPIO_NUM_4       
+
+    // I2C bus 2
+    #define I2C_MASTER_2_SCL_IO  GPIO_NUM_14
+    #define I2C_MASTER_2_SDA_IO  GPIO_NUM_19
+
+    #define EXTERNAL_IO_EXPANDER_BUS       I2C_MASTER_NUM_2
+    #define EXTERNAL_IO_EXPANDER_MUTEX     I2CMutex_2 
+
+    #define FOOTSWITCH_1		GPIO_NUM_5
+    #define FOOTSWITCH_2		GPIO_NUM_6
+    #define FOOTSWITCH_3		GPIO_NUM_7
+    #define FOOTSWITCH_4		GPIO_NUM_8
+
+    // Midi: 
+    #define UART_RX_PIN         GPIO_NUM_15
+    #define UART_TX_PIN         GPIO_NUM_16 
+
+    // leds
+    #define LED_OUTPUT_GPIO_NUM          -1
+
+    // LCD pins
+    #define JC3248W_LCD_GPIO_SCLK           GPIO_NUM_47
+    #define JC3248W_LCD_GPIO_QSPI_0         GPIO_NUM_21
+    #define JC3248W_LCD_GPIO_QSPI_1         GPIO_NUM_48
+    #define JC3248W_LCD_GPIO_QSPI_2         GPIO_NUM_40
+    #define JC3248W_LCD_GPIO_QSPI_3         GPIO_NUM_39
+    #define JC3248W_LCD_GPIO_RST            GPIO_NUM_NC
+    #define JC3248W_LCD_GPIO_CS             GPIO_NUM_45
+    #define JC3248W_LCD_GPIO_BL             GPIO_NUM_1
+    #define JC3248W_LCD_GPIO_TE             GPIO_NUM_38
+    
+    // backlight
+    #define JC3248W_LCD_BL_LEDC_TIMER              LEDC_TIMER_1
+    #define JC3248W_LCD_BL_LEDC_MODE               LEDC_LOW_SPEED_MODE
+    #define JC3248W_LCD_BL_LEDC_CHANNEL            LEDC_CHANNEL_0
+    #define JC3248W_LCD_BL_LEDC_DUTY_RES           LEDC_TIMER_10_BIT // Set duty resolution to 13 bits
+    #define JC3248W_LCD_BL_LEDC_DUTY               (1024)                // Set duty to 50%. (2 ** 13) * 50% = 4096
+    #define JC3248W_LCD_BL_LEDC_FREQUENCY          (10000)          // Frequency in Hertz. Set frequency at 5 kHz
+
+
+    // Pin assignments for SD Card
+    #define PIN_NUM_MISO        GPIO_NUM13
+    #define PIN_NUM_MOSI        GPIO_NUM11
+    #define PIN_NUM_CLK         GPIO_NUM12
+    #define PIN_NUM_CS          GPIO_NUM10
 
 #else
     #error "Unknown hardware platform!"

@@ -75,22 +75,22 @@ limitations under the License.
 #include "LP5562.h"
 #include "tonex_params.h"
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35B
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC3248W535
 
-static const char *TAG = "platform_ws35b";
+static const char *TAG = "platform_jc3248w";
 
 // LCD panel config
-#define WAVESHARE_35_LCD_H_RES               (480)
-#define WAVESHARE_35_LCD_V_RES               (320)
+#define JC3248W_LCD_H_RES               (480)
+#define JC3248W_LCD_V_RES               (320)
 
 /* LCD settings */
-#define WAVESHARE_35_LCD_SPI_NUM             (SPI2_HOST)
-#define WAVESHARE_35_LCD_PIXEL_CLK_HZ        (40 * 1000 * 1000)
-#define WAVESHARE_35_LCD_DRAW_BUFF_DOUBLE    (1)
-#define WAVESHARE_35_LCD_DRAW_BUFF_HEIGHT    (50)
-#define WAVESHARE_35_LCD_BL_ON_LEVEL         (0)
+#define JC3248W_LCD_SPI_NUM             (SPI2_HOST)
+#define JC3248W_LCD_PIXEL_CLK_HZ        (40 * 1000 * 1000)
+#define JC3248W_LCD_DRAW_BUFF_DOUBLE    (1)
+#define JC3248W_LCD_DRAW_BUFF_HEIGHT    (50)
+#define JC3248W_LCD_BL_ON_LEVEL         (0)
 
-#define LCD_BUFFER_SIZE                      (WAVESHARE_35_LCD_H_RES * WAVESHARE_35_LCD_V_RES)
+#define LCD_BUFFER_SIZE                      (JC3248W_LCD_H_RES * JC3248W_LCD_V_RES)
 
 #define BUF_SIZE                            (1024)
 #define I2C_MASTER_TIMEOUT_MS               1000
@@ -106,7 +106,6 @@ static esp_lcd_panel_handle_t lcd_panel = NULL;
 static esp_lcd_touch_handle_t tp = NULL;
 static esp_lcd_panel_io_handle_t tp_io_handle = NULL;
 static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
-static esp_io_expander_handle_t expander_handle = NULL;
 static uint32_t trans_size = LCD_BUFFER_SIZE / 15;
 static lv_color_t* trans_buf_1 = NULL;
 static lv_color_t* trans_buf_2 = NULL;
@@ -158,52 +157,6 @@ static bool lvgl_port_flush_ready_callback(esp_lcd_panel_io_handle_t panel_io, e
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void InitIOExpander(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex)
-{    
-    if (xSemaphoreTake(I2CMutex, (TickType_t)100) == pdTRUE)
-    {
-        // init IO expander
-        if (esp_io_expander_new_i2c_tca9554(bus_handle, ESP_IO_EXPANDER_I2C_TCA9554_ADDRESS_000, &expander_handle) != ESP_OK)
-        {
-            ESP_LOGE(TAG, "Onboard IO Expander init 1 failed");
-        }
-        
-        if (esp_io_expander_set_dir(expander_handle,  LCD_RESET, IO_EXPANDER_OUTPUT) != ESP_OK)
-        {
-            ESP_LOGE(TAG, "Onboard IO Expander init 2 failed");
-        }
-    
-        // reset LCD
-        esp_io_expander_set_level(expander_handle, LCD_RESET, 0);
-        xSemaphoreGive(I2CMutexHandle);
-
-        vTaskDelay(pdMS_TO_TICKS(100));
-
-        if (xSemaphoreTake(I2CMutex, (TickType_t)100) == pdTRUE)
-        {
-            esp_io_expander_set_level(expander_handle, LCD_RESET, 1);
-            xSemaphoreGive(I2CMutexHandle);
-        }
-        else
-        {
-            ESP_LOGE(TAG, "Onboard IO Expander mutex failed");
-        }
-
-        vTaskDelay(pdMS_TO_TICKS(100));    
-    }
-    else
-    {
-        ESP_LOGE(TAG, "Onboard IO Expander mutex failed");
-    }
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
 __attribute__((unused)) void platform_adjust_touch_coords(lv_coord_t* x, lv_coord_t* y)
 {
     lv_coord_t xpos = *x;
@@ -211,7 +164,7 @@ __attribute__((unused)) void platform_adjust_touch_coords(lv_coord_t* x, lv_coor
 
     // 90 degree screen rotation
     *x = ypos;
-    *y = WAVESHARE_35_LCD_V_RES - xpos;
+    *y = JC3248W_LCD_V_RES - xpos;
 }
 
 /****************************************************************************
@@ -441,31 +394,27 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 
     ESP_LOGI(TAG, "Platform Init");
 
-    // init onboard IO expander
-    ESP_LOGI(TAG, "Init Onboard IO Expander");
-    InitIOExpander(bus_handle, I2CMutex);
-
     /* LCD initialization */
     ESP_LOGD(TAG, "Initialize SPI bus");
     const spi_bus_config_t buscfg = {
-        .sclk_io_num = WAVESHARE_35_LCD_GPIO_SCLK,
-        .data0_io_num = WAVESHARE_35_LCD_GPIO_QSPI_0,
-        .data1_io_num = WAVESHARE_35_LCD_GPIO_QSPI_1,
-        .data2_io_num = WAVESHARE_35_LCD_GPIO_QSPI_2,
-        .data3_io_num = WAVESHARE_35_LCD_GPIO_QSPI_3,
+        .sclk_io_num = JC3248W_LCD_GPIO_SCLK,
+        .data0_io_num = JC3248W_LCD_GPIO_QSPI_0,
+        .data1_io_num = JC3248W_LCD_GPIO_QSPI_1,
+        .data2_io_num = JC3248W_LCD_GPIO_QSPI_2,
+        .data3_io_num = JC3248W_LCD_GPIO_QSPI_3,
         .max_transfer_sz = LCD_BUFFER_SIZE,
     };
     
-    if (spi_bus_initialize(WAVESHARE_35_LCD_SPI_NUM, &buscfg, SPI_DMA_CH_AUTO) != ESP_OK)
+    if (spi_bus_initialize(JC3248W_LCD_SPI_NUM, &buscfg, SPI_DMA_CH_AUTO) != ESP_OK)
     {
         ESP_LOGE(TAG, "Platform Init spi_bus_initialize() failed");
     }
 
     ESP_LOGD(TAG, "Install panel IO");
-    esp_lcd_panel_io_spi_config_t io_config = AXS15231B_PANEL_IO_QSPI_CONFIG(WAVESHARE_35_LCD_GPIO_CS, NULL, NULL);
-    io_config.pclk_hz = WAVESHARE_35_LCD_PIXEL_CLK_HZ;
+    esp_lcd_panel_io_spi_config_t io_config = AXS15231B_PANEL_IO_QSPI_CONFIG(JC3248W_LCD_GPIO_CS, NULL, NULL);
+    io_config.pclk_hz = JC3248W_LCD_PIXEL_CLK_HZ;
 
-    if (esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)WAVESHARE_35_LCD_SPI_NUM, &io_config, &lcd_io) != ESP_OK)
+    if (esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)JC3248W_LCD_SPI_NUM, &io_config, &lcd_io) != ESP_OK)
     {
         ESP_LOGE(TAG, "Platform Init esp_lcd_new_panel_io_spi() failed");
     }
@@ -476,7 +425,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     vendor_config.flags.use_qspi_interface = 1;
 
     esp_lcd_panel_dev_config_t panel_config = {
-        .reset_gpio_num = WAVESHARE_35_LCD_GPIO_RST,
+        .reset_gpio_num = JC3248W_LCD_GPIO_RST,
         .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_RGB,
         .bits_per_pixel = 16,
     };
@@ -521,8 +470,8 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 
     ESP_LOGI(TAG, "Register display driver to LVGL");
     lv_disp_drv_init(disp_drv);
-    disp_drv->hor_res = WAVESHARE_35_LCD_H_RES;
-    disp_drv->ver_res = WAVESHARE_35_LCD_V_RES;
+    disp_drv->hor_res = JC3248W_LCD_H_RES;
+    disp_drv->ver_res = JC3248W_LCD_V_RES;
     disp_drv->flush_cb = lvgl_port_flush_callback;
     disp_drv->draw_buf = &disp_buf;
     disp_drv->user_data = lcd_panel;
@@ -538,29 +487,29 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     // init LCD backlight
     // Prepare and then apply the LEDC PWM timer configuration
     ledc_timer_config_t ledc_timer = {};
-    ledc_timer.speed_mode = WAVESHARE_35_LCD_BL_LEDC_MODE,
-    ledc_timer.timer_num = WAVESHARE_35_LCD_BL_LEDC_TIMER;
-    ledc_timer.duty_resolution = WAVESHARE_35_LCD_BL_LEDC_DUTY_RES;
-    ledc_timer.freq_hz = WAVESHARE_35_LCD_BL_LEDC_FREQUENCY;
+    ledc_timer.speed_mode = JC3248W_LCD_BL_LEDC_MODE,
+    ledc_timer.timer_num = JC3248W_LCD_BL_LEDC_TIMER;
+    ledc_timer.duty_resolution = JC3248W_LCD_BL_LEDC_DUTY_RES;
+    ledc_timer.freq_hz = JC3248W_LCD_BL_LEDC_FREQUENCY;
     ledc_timer.clk_cfg = LEDC_AUTO_CLK;
     ledc_timer_config(&ledc_timer);
 
     // Prepare and then apply the LEDC PWM channel configuration
     ledc_channel_config_t ledc_channel = {};
-    ledc_channel.speed_mode = WAVESHARE_35_LCD_BL_LEDC_MODE;
-    ledc_channel.channel = WAVESHARE_35_LCD_BL_LEDC_CHANNEL;
-    ledc_channel.timer_sel = WAVESHARE_35_LCD_BL_LEDC_TIMER;
+    ledc_channel.speed_mode = JC3248W_LCD_BL_LEDC_MODE;
+    ledc_channel.channel = JC3248W_LCD_BL_LEDC_CHANNEL;
+    ledc_channel.timer_sel = JC3248W_LCD_BL_LEDC_TIMER;
     ledc_channel.intr_type = LEDC_INTR_DISABLE;
-    ledc_channel.gpio_num = WAVESHARE_35_LCD_GPIO_BL;
+    ledc_channel.gpio_num = JC3248W_LCD_GPIO_BL;
     ledc_channel.duty = 0, // Set duty to 0%
     ledc_channel.hpoint = 0;
     ledc_channel_config(&ledc_channel);
 
     // set brightness
     uint8_t brightness = 70;
-    uint32_t duty = (brightness * (WAVESHARE_35_LCD_BL_LEDC_DUTY - 1)) / 100;
-    ledc_set_duty(WAVESHARE_35_LCD_BL_LEDC_MODE, WAVESHARE_35_LCD_BL_LEDC_CHANNEL, duty);
-    ledc_update_duty(WAVESHARE_35_LCD_BL_LEDC_MODE, WAVESHARE_35_LCD_BL_LEDC_CHANNEL);
+    uint32_t duty = (brightness * (JC3248W_LCD_BL_LEDC_DUTY - 1)) / 100;
+    ledc_set_duty(JC3248W_LCD_BL_LEDC_MODE, JC3248W_LCD_BL_LEDC_CHANNEL, duty);
+    ledc_update_duty(JC3248W_LCD_BL_LEDC_MODE, JC3248W_LCD_BL_LEDC_CHANNEL);
 
     // init touch screen   
     ESP_LOGI(TAG, "Initialize touch controller");
@@ -569,8 +518,8 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     tp_io_config.scl_speed_hz = 400000;
 
     esp_lcd_touch_config_t tp_cfg = {};
-    tp_cfg.x_max = WAVESHARE_35_LCD_H_RES;
-    tp_cfg.y_max = WAVESHARE_35_LCD_V_RES;
+    tp_cfg.x_max = JC3248W_LCD_H_RES;
+    tp_cfg.y_max = JC3248W_LCD_V_RES;
     tp_cfg.rst_gpio_num = GPIO_NUM_NC;
     tp_cfg.int_gpio_num = GPIO_NUM_NC;
 
@@ -612,4 +561,4 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     }       
 }
 
-#endif //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35
+#endif //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC3248W535

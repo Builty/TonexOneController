@@ -181,6 +181,32 @@
       "postFlash": ""
     }
   },
+  "JC3248W_AS": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_jc3248w_as",
+      "sdkconfigDefaults": [
+        "sdkconfig.jc3248w_as",
+        "sdkconfig.defaults"
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_jc3248w_as"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
   "WSZERO": {
     "build": {
       "compileArgs": [],

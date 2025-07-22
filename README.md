@@ -129,6 +129,18 @@ For more information about the firmware development and customisation, refer to 
 - https://github.com/vit3k/tonex_controller for great work on reverse engineering the Tonex One USB protocol
 
 ## Firmware Release Notes <a name="release_notes"></a>
+V2.0.0.2 (in development, no beta yet):
+- Caution: due to structural changes, amp/pedal skins and user preset text is not maintained and will need to be entered again
+- Upgraded to ESP-IDF 5.4.1 
+- Added support for big Tonex pedal 
+- Added effect icons to web page, showing order and status of each effect 
+- Added new platform LilyGo T-Display S3 1.9" touch 
+- Added new platform Waveshare ESP32-S3 1.9" touch 
+- Added new platform Waveshare ESP32-S3 3.5B touch, with full UI as per 4.3B
+- Added new platform JC3248W535C 3.5" touch, with full UI as per 4.3B
+- Code updates to better isolate hardware platforms from user interface 
+- Added left/right swipe gestures to Waveshare 1.69" Touch for next/previous preset 
+
 V1.0.10.2:
 - User contribution from Mateusz: web config now allows the order of the presets to be remapped. E.g. footswitches 1,2,3,4 could now load presets 10,5,11,20 instead of having to be 1,2,3,4.
 - User contribution from Mateusz: all 20 presets are now read from the Tonex during boot. Web UI preset selection has all names, instead of only being loaded when the preset was selected
