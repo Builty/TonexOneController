@@ -90,7 +90,7 @@ static const char *TAG = "platform_ws35b";
 #define WAVESHARE_35_LCD_DRAW_BUFF_HEIGHT    (50)
 #define WAVESHARE_35_LCD_BL_ON_LEVEL         (0)
 
-#define LCD_BUFFER_SIZE                      (WAVESHARE_35_LCD_H_RES *WAVESHARE_35_LCD_V_RES)
+#define LCD_BUFFER_SIZE                      (WAVESHARE_35_LCD_H_RES * WAVESHARE_35_LCD_V_RES)
 
 #define BUF_SIZE                            (1024)
 #define I2C_MASTER_TIMEOUT_MS               1000
@@ -107,7 +107,7 @@ static esp_lcd_touch_handle_t tp = NULL;
 static esp_lcd_panel_io_handle_t tp_io_handle = NULL;
 static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
 static esp_io_expander_handle_t expander_handle = NULL;
-static uint32_t trans_size = LCD_BUFFER_SIZE / 10;       
+static uint32_t trans_size = LCD_BUFFER_SIZE / 15;
 static lv_color_t* trans_buf_1 = NULL;
 static lv_color_t* trans_buf_2 = NULL;
 static lv_color_t* trans_act = NULL;
@@ -206,7 +206,12 @@ static void InitIOExpander(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t
 *****************************************************************************/
 __attribute__((unused)) void platform_adjust_touch_coords(lv_coord_t* x, lv_coord_t* y)
 {
-    // nothing needed
+    lv_coord_t xpos = *x;
+    lv_coord_t ypos = *y;
+
+    // 90 degree screen rotation
+    *x = ypos;
+    *y = WAVESHARE_35_LCD_V_RES - xpos;
 }
 
 /****************************************************************************
@@ -231,11 +236,6 @@ __attribute__((unused)) void platform_adjust_display_flush_area(lv_area_t *area)
 static bool lvgl_port_flush_ready_callback(esp_lcd_panel_io_handle_t panel_io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx)
 {
     BaseType_t taskAwake = pdFALSE;
-
-    //lv_disp_drv_t *disp_drv = (lv_disp_drv_t *)user_ctx;
-    //assert(disp_drv != NULL);
-    //lvgl_port_display_ctx_t *disp_ctx = disp_drv->user_data;
-    //assert(disp_ctx != NULL);
 
     if (trans_done_sem) 
     {
@@ -610,7 +610,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     tp_cfg.int_gpio_num = GPIO_NUM_NC;
 
     // 90 degree rotation
-    tp_cfg.flags.swap_xy = 1;
+    tp_cfg.flags.swap_xy = 0;
     tp_cfg.flags.mirror_x = 0;
     tp_cfg.flags.mirror_y = 0;
     
