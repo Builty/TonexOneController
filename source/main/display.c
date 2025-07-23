@@ -1808,7 +1808,9 @@ void updateIconOrder()
         icons[index] = ui_IconReverb;
     }
     
-    const int16_t offsets[8] = {-275, -205, -135, -65, 0, 65, 135, 205};
+    // get the icon coords for this platform
+    int16_t offsets[8];
+    platform_get_icon_coords(offsets, sizeof(offsets) / sizeof(int16_t));
 
     for (uint8_t i = 0; i<8; i++)
     {

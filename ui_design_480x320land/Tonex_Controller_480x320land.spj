@@ -150,25 +150,25 @@
                       {
                         "nid": -1699478295,
                         "strtype": "IMGBUTTON/Image_disabled",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
                         "nid": 1011608136,
                         "strtype": "IMGBUTTON/Image_checked_released",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
                         "nid": -1608472123,
                         "strtype": "IMGBUTTON/Image_checked_pressed",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
                         "nid": 478219001,
                         "strtype": "IMGBUTTON/Image_checked_disabled",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
@@ -592,25 +592,25 @@
                       {
                         "nid": 1000599862,
                         "strtype": "IMGBUTTON/Image_disabled",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
                         "nid": 36997191,
                         "strtype": "IMGBUTTON/Image_checked_released",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
                         "nid": 2685328,
                         "strtype": "IMGBUTTON/Image_checked_pressed",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
                         "nid": -174413622,
                         "strtype": "IMGBUTTON/Image_checked_disabled",
-                        "strval": "",
+                        "strval": "-",
                         "InheritedType": 5
                       },
                       {
@@ -1207,7 +1207,7 @@
                     "flags": 17,
                     "strtype": "OBJECT/Position",
                     "intarray": [
-                      -125,
+                      -126,
                       0
                     ],
                     "InheritedType": 7
@@ -1543,7 +1543,7 @@
                     "flags": 17,
                     "strtype": "OBJECT/Position",
                     "intarray": [
-                      -80,
+                      -84,
                       0
                     ],
                     "InheritedType": 7
@@ -1878,7 +1878,7 @@
                     "flags": 17,
                     "strtype": "OBJECT/Position",
                     "intarray": [
-                      -37,
+                      -42,
                       0
                     ],
                     "InheritedType": 7
@@ -2886,7 +2886,7 @@
                     "flags": 17,
                     "strtype": "OBJECT/Position",
                     "intarray": [
-                      85,
+                      84,
                       0
                     ],
                     "InheritedType": 7

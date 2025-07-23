@@ -82,7 +82,7 @@ void ui_Screen1_screen_init(void)
     lv_img_set_src(ui_IconGate, &ui_img_effect_icon_gate_off_png);
     lv_obj_set_width(ui_IconGate, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_IconGate, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_IconGate, -125);
+    lv_obj_set_x(ui_IconGate, -126);
     lv_obj_set_y(ui_IconGate, 0);
     lv_obj_set_align(ui_IconGate, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_IconGate, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
@@ -93,7 +93,7 @@ void ui_Screen1_screen_init(void)
     lv_img_set_src(ui_IconAmp, &ui_img_effect_icon_amp_off_png);
     lv_obj_set_width(ui_IconAmp, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_IconAmp, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_IconAmp, -80);
+    lv_obj_set_x(ui_IconAmp, -84);
     lv_obj_set_y(ui_IconAmp, 0);
     lv_obj_set_align(ui_IconAmp, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_IconAmp, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
@@ -104,7 +104,7 @@ void ui_Screen1_screen_init(void)
     lv_img_set_src(ui_IconCab, &ui_img_effect_icon_cab_off_png);
     lv_obj_set_width(ui_IconCab, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_IconCab, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_IconCab, -37);
+    lv_obj_set_x(ui_IconCab, -42);
     lv_obj_set_y(ui_IconCab, 0);
     lv_obj_set_align(ui_IconCab, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_IconCab, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
@@ -135,7 +135,7 @@ void ui_Screen1_screen_init(void)
     lv_img_set_src(ui_IconDelay, &ui_img_effect_icon_delay_off_png);
     lv_obj_set_width(ui_IconDelay, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_IconDelay, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_IconDelay, 85);
+    lv_obj_set_x(ui_IconDelay, 84);
     lv_obj_set_y(ui_IconDelay, 0);
     lv_obj_set_align(ui_IconDelay, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_IconDelay, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags

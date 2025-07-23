@@ -108,11 +108,25 @@ __attribute__((unused)) void platform_adjust_display_flush_area(lv_area_t *area)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+__attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max_entries)
+{
+   // nothing needed
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex, lv_disp_drv_t* pdisp_drv)
 {    
     ESP_LOGI(TAG, "Platform DevkitC Init");
     
     // nothing needed
 }
+
+
 
 #endif //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_DEVKITC

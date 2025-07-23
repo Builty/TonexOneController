@@ -233,6 +233,28 @@ __attribute__((unused)) void platform_adjust_display_flush_area(lv_area_t *area)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+__attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max_entries)
+{
+    if (max_entries <= 8)
+    {
+        dest[0] = -168;
+        dest[1] = -126;
+        dest[2] = -84;
+        dest[3] = -42;
+        dest[4] = 0;
+        dest[5] = 42;
+        dest[6] = 84;
+        dest[7] = 126;
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 static bool lvgl_port_flush_ready_callback(esp_lcd_panel_io_handle_t panel_io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx)
 {
     BaseType_t taskAwake = pdFALSE;

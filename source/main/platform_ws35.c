@@ -212,6 +212,28 @@ __attribute__((unused)) void platform_adjust_display_flush_area(lv_area_t *area)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+__attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max_entries)
+{
+    if (max_entries <= 8)
+    {
+        dest[0] = -168;
+        dest[1] = -126;
+        dest[2] = -84;
+        dest[3] = -42;
+        dest[4] = 0;
+        dest[5] = 42;
+        dest[6] = 84;
+        dest[7] = 126;
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex, lv_disp_drv_t* pdisp_drv)
 {    
     __attribute__((unused)) esp_err_t ret = ESP_OK;
