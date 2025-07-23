@@ -365,7 +365,7 @@ void ui_Settings_screen_init(void)
     lv_dropdown_set_options(ui_CabinetModeDropdown, "Tone Model\nVIR\nDisabled");
     lv_obj_set_width(ui_CabinetModeDropdown, 165);
     lv_obj_set_height(ui_CabinetModeDropdown, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_CabinetModeDropdown, -31);
+    lv_obj_set_x(ui_CabinetModeDropdown, -42);
     lv_obj_set_y(ui_CabinetModeDropdown, -76);
     lv_obj_set_align(ui_CabinetModeDropdown, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_CabinetModeDropdown, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
@@ -708,7 +708,7 @@ void ui_Settings_screen_init(void)
     lv_dropdown_set_options(ui_ModulationModelDropdown, "Chorus\nTremolo\nPhaser\nFlanger\nRotary");
     lv_obj_set_width(ui_ModulationModelDropdown, 165);
     lv_obj_set_height(ui_ModulationModelDropdown, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_ModulationModelDropdown, -31);
+    lv_obj_set_x(ui_ModulationModelDropdown, -51);
     lv_obj_set_y(ui_ModulationModelDropdown, -76);
     lv_obj_set_align(ui_ModulationModelDropdown, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_ModulationModelDropdown, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
@@ -965,7 +965,7 @@ void ui_Settings_screen_init(void)
     lv_dropdown_set_options(ui_DelayModelDropdown, "Digital\nTape");
     lv_obj_set_width(ui_DelayModelDropdown, 165);
     lv_obj_set_height(ui_DelayModelDropdown, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_DelayModelDropdown, -31);
+    lv_obj_set_x(ui_DelayModelDropdown, -45);
     lv_obj_set_y(ui_DelayModelDropdown, -76);
     lv_obj_set_align(ui_DelayModelDropdown, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_DelayModelDropdown, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
@@ -1219,7 +1219,7 @@ void ui_Settings_screen_init(void)
     lv_dropdown_set_options(ui_ReverbModelDropdown, "Spring 1\nSpring 2\nSpring 3\nSpring 4\nRoom\nPlate");
     lv_obj_set_width(ui_ReverbModelDropdown, 165);
     lv_obj_set_height(ui_ReverbModelDropdown, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_ReverbModelDropdown, -31);
+    lv_obj_set_x(ui_ReverbModelDropdown, -43);
     lv_obj_set_y(ui_ReverbModelDropdown, -76);
     lv_obj_set_align(ui_ReverbModelDropdown, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_ReverbModelDropdown, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags

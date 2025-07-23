@@ -476,11 +476,11 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 
     buf1 = heap_caps_malloc(LCD_BUFFER_SIZE * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
 
-    buf2 = heap_caps_malloc(trans_size * sizeof(lv_color_t), MALLOC_CAP_DMA);
+    buf2 = heap_caps_malloc(trans_size * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
     assert(buf2);
     trans_buf_1 = buf2;
 
-    buf3 = heap_caps_malloc(trans_size * sizeof(lv_color_t), MALLOC_CAP_DMA);
+    buf3 = heap_caps_malloc(trans_size * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
     assert(buf3);
     trans_buf_2 = buf3;
 

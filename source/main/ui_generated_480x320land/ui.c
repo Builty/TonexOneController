@@ -16,10 +16,14 @@ void ui_event_PreviousContainer(lv_event_t * e);
 lv_obj_t * ui_PreviousContainer;
 void ui_event_PreviousButton(lv_event_t * e);
 lv_obj_t * ui_PreviousButton;
+void ui_event_PreviousButton2(lv_event_t * e);
+lv_obj_t * ui_PreviousButton2;
 void ui_event_NextContainer(lv_event_t * e);
 lv_obj_t * ui_NextContainer;
 void ui_event_NextButton(lv_event_t * e);
 lv_obj_t * ui_NextButton;
+void ui_event_NextButton2(lv_event_t * e);
+lv_obj_t * ui_NextButton2;
 void ui_event_IconEQ(lv_event_t * e);
 lv_obj_t * ui_IconEQ;
 void ui_event_IconGate(lv_event_t * e);
@@ -270,6 +274,15 @@ void ui_event_PreviousButton(lv_event_t * e)
     }
 }
 
+void ui_event_PreviousButton2(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        PreviousClicked(e);
+    }
+}
+
 void ui_event_NextContainer(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
@@ -280,6 +293,15 @@ void ui_event_NextContainer(lv_event_t * e)
 }
 
 void ui_event_NextButton(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        NextClicked(e);
+    }
+}
+
+void ui_event_NextButton2(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 

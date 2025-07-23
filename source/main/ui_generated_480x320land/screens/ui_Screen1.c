@@ -34,18 +34,30 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_x(ui_PreviousContainer, -212);
     lv_obj_set_y(ui_PreviousContainer, 0);
     lv_obj_set_align(ui_PreviousContainer, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_PreviousContainer, LV_OBJ_FLAG_HIDDEN);     /// Flags
     lv_obj_clear_flag(ui_PreviousContainer, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_PreviousButton = lv_imgbtn_create(ui_PreviousContainer);
     lv_imgbtn_set_src(ui_PreviousButton, LV_IMGBTN_STATE_RELEASED, NULL, &ui_img_previous_png, NULL);
     lv_imgbtn_set_src(ui_PreviousButton, LV_IMGBTN_STATE_PRESSED, NULL, &ui_img_previous_down_png, NULL);
-    lv_obj_set_height(ui_PreviousButton, 44);
     lv_obj_set_width(ui_PreviousButton, LV_SIZE_CONTENT);   /// 40
-    lv_obj_set_x(ui_PreviousButton, 6);
-    lv_obj_set_y(ui_PreviousButton, 5);
+    lv_obj_set_height(ui_PreviousButton, LV_SIZE_CONTENT);    /// 44
+    lv_obj_set_x(ui_PreviousButton, -208);
+    lv_obj_set_y(ui_PreviousButton, 1);
     lv_obj_set_align(ui_PreviousButton, LV_ALIGN_CENTER);
     lv_obj_clear_flag(ui_PreviousButton, LV_OBJ_FLAG_CLICKABLE);      /// Flags
     lv_obj_set_style_transform_zoom(ui_PreviousButton, 192, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_PreviousButton2 = lv_img_create(ui_BottomPanel);
+    lv_img_set_src(ui_PreviousButton2, &ui_img_previous_png);
+    lv_obj_set_width(ui_PreviousButton2, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_PreviousButton2, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_PreviousButton2, -215);
+    lv_obj_set_y(ui_PreviousButton2, -1);
+    lv_obj_set_align(ui_PreviousButton2, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_PreviousButton2, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_PreviousButton2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_img_set_zoom(ui_PreviousButton2, 200);
 
     ui_NextContainer = lv_obj_create(ui_BottomPanel);
     lv_obj_remove_style_all(ui_NextContainer);
@@ -54,6 +66,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_x(ui_NextContainer, 211);
     lv_obj_set_y(ui_NextContainer, -1);
     lv_obj_set_align(ui_NextContainer, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_NextContainer, LV_OBJ_FLAG_HIDDEN);     /// Flags
     lv_obj_clear_flag(ui_NextContainer, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_NextButton = lv_imgbtn_create(ui_NextContainer);
@@ -61,11 +74,22 @@ void ui_Screen1_screen_init(void)
     lv_imgbtn_set_src(ui_NextButton, LV_IMGBTN_STATE_PRESSED, NULL, &ui_img_next_down_png, NULL);
     lv_obj_set_height(ui_NextButton, 51);
     lv_obj_set_width(ui_NextButton, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_x(ui_NextButton, 7);
-    lv_obj_set_y(ui_NextButton, 8);
+    lv_obj_set_x(ui_NextButton, 213);
+    lv_obj_set_y(ui_NextButton, 7);
     lv_obj_set_align(ui_NextButton, LV_ALIGN_CENTER);
     lv_obj_clear_flag(ui_NextButton, LV_OBJ_FLAG_CLICKABLE);      /// Flags
     lv_obj_set_style_transform_zoom(ui_NextButton, 192, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_NextButton2 = lv_img_create(ui_BottomPanel);
+    lv_img_set_src(ui_NextButton2, &ui_img_next_png);
+    lv_obj_set_width(ui_NextButton2, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_NextButton2, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_NextButton2, 214);
+    lv_obj_set_y(ui_NextButton2, 0);
+    lv_obj_set_align(ui_NextButton2, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_NextButton2, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_NextButton2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_img_set_zoom(ui_NextButton2, 200);
 
     ui_IconEQ = lv_img_create(ui_BottomPanel);
     lv_img_set_src(ui_IconEQ, &ui_img_effect_icon_eq_png);
@@ -429,8 +453,10 @@ void ui_Screen1_screen_init(void)
 
     lv_obj_add_event_cb(ui_PreviousButton, ui_event_PreviousButton, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_PreviousContainer, ui_event_PreviousContainer, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_PreviousButton2, ui_event_PreviousButton2, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_NextButton, ui_event_NextButton, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_NextContainer, ui_event_NextContainer, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_NextButton2, ui_event_NextButton2, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_IconEQ, ui_event_IconEQ, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_IconGate, ui_event_IconGate, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_IconAmp, ui_event_IconAmp, LV_EVENT_ALL, NULL);
