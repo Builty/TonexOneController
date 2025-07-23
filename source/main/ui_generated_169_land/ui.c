@@ -28,6 +28,8 @@ lv_obj_t * ui_BTStatusDisconn;
 lv_obj_t * ui_BTStatusConn;
 lv_obj_t * ui_WiFiStatusDisconn;
 lv_obj_t * ui_WiFiStatusConn;
+void ui_event_TouchGestureContainer(lv_event_t * e);
+lv_obj_t * ui_TouchGestureContainer;
 // CUSTOM VARIABLES
 
 // EVENTS
@@ -46,6 +48,19 @@ lv_obj_t * ui____initial_actions0;
 ///////////////////// ANIMATIONS ////////////////////
 
 ///////////////////// FUNCTIONS ////////////////////
+void ui_event_TouchGestureContainer(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_BOTTOM) {
+        lv_indev_wait_release(lv_indev_get_act());
+        PreviousClicked(e);
+    }
+    if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP) {
+        lv_indev_wait_release(lv_indev_get_act());
+        NextClicked(e);
+    }
+}
 
 ///////////////////// SCREENS ////////////////////
 

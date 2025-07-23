@@ -234,4 +234,14 @@ void ui_Screen1_screen_init(void)
     lv_obj_clear_flag(ui_WiFiStatusConn, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_img_set_zoom(ui_WiFiStatusConn, 200);
 
+    ui_TouchGestureContainer = lv_obj_create(ui_Screen1);
+    lv_obj_remove_style_all(ui_TouchGestureContainer);
+    lv_obj_set_width(ui_TouchGestureContainer, 240);
+    lv_obj_set_height(ui_TouchGestureContainer, 280);
+    lv_obj_set_align(ui_TouchGestureContainer, LV_ALIGN_CENTER);
+    lv_obj_clear_flag(ui_TouchGestureContainer,
+                      LV_OBJ_FLAG_CLICK_FOCUSABLE | LV_OBJ_FLAG_GESTURE_BUBBLE | LV_OBJ_FLAG_SCROLLABLE);     /// Flags
+
+    lv_obj_add_event_cb(ui_TouchGestureContainer, ui_event_TouchGestureContainer, LV_EVENT_ALL, NULL);
+
 }
