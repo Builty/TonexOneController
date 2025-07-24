@@ -477,7 +477,7 @@ extern SemaphoreHandle_t I2CMutex_2;
 
     // I2C bus 2
     #define I2C_MASTER_2_SCL_IO  GPIO_NUM_14
-    #define I2C_MASTER_2_SDA_IO  GPIO_NUM_19
+    #define I2C_MASTER_2_SDA_IO  GPIO_NUM_9
 
     #define EXTERNAL_IO_EXPANDER_BUS       I2C_MASTER_NUM_2
     #define EXTERNAL_IO_EXPANDER_MUTEX     I2CMutex_2 
