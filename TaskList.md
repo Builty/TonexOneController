@@ -1,15 +1,24 @@
 # Tonex One Controller: An open-source controller and display interface for the IK Multimedia Tonex One guitar pedal
 # Task List
 
+## big Tonex pedal support
+Mostly complete.<br>
+Issues with handling of global variables. Need to find method to obtain current globals from pedal.
+
+## Effect toggle via CC
+Suggestion: Change so that value 64 togles the effect from its current state 
+
+## Bypass Support 
+Add support for toggling Bypass mode, via the web UI. 
+
+## Midi Mapping
+Add the ability to map all 127 midi program change values to any preset. 
+
 ## 4.3B Parameter UI
 Add sliders for bass/Mid/Treble frequency, to the 4.3B UI.<br>
-Due to the widget limit of 150 in free Squareline Studio, consider migrating to EEZ Studio.
 Add values to sliders that update as the slider is dragged.
-Add units to parameters (db, Hz etc)
-
-## Waveshare 1.69" touch support. 
-Swipe left/right to select next/previous preset.<br>
-Status: complete, ready to release with next version
+Add units to parameters (db, Hz etc)<br>
+Need to port to EEZ Studio due to widget limit in Squareline.
 
 ## Global volume support. 
 Need to find how to read the current value. 
@@ -30,23 +39,6 @@ Could be done by adding a new platform type, with the Cmake file including some 
 ## Midi Output support
 Add support for Midi output, sending Midi PC and CC messages to indicate to receivers the current state.
 
-## Secure Bluetooth pairing. 
-Add support for pairing with devices that use security.<br>
-Add to web UI a display of scanned devices, and allow one to be selected and paired with.<br>
-Also ability to delete a paired device.
-
-## USB Hub support
-Migrate to newer version of ESP IDF, to gain support for USB hubs.<br>
-Look at adding USB Midi support once this is complete.
-Status: migration to ESP IDF 5.4.1 is almost complete.
-
 ## Tonex USB disconect handling
 If the pedal is diosconnected after being connected, the ESP32 needs a reboot in order to allow connection again.
 Review the de-init and init code to allow it to be handled without needing a reboot.
-
-## Bypass Support 
-Add support for toggling Bypass mode, via the web UI. 
-
-## Midi Mapping
-Add the ability to map all 127 midi program change values to any preset. 
-
