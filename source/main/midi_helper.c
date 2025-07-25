@@ -40,6 +40,12 @@ limitations under the License.
 
 static const char *TAG = "app_midi_helper";
 
+// for boolean values:
+// 0 = off, 127 = on, and 64 to toggle the current state
+#define MIDI_BOOL_DISABLE   0           // matches Tonex
+#define MIDI_BOOL_TOGGLE    64          // custom for this controller, not natively supported by Tonex
+#define MIDI_BOOL_ENABLE    127         // matches Tonex
+
 /****************************************************************************
 * NAME:        
 * DESCRIPTION: 
@@ -68,7 +74,7 @@ float midi_helper_scale_midi_to_float(uint16_t param_index, uint8_t midi_value)
 *****************************************************************************/
 static float midi_helper_boolean_midi_to_float(uint8_t midi_value)
 {
-    if (midi_value == 127)
+    if (midi_value == MIDI_BOOL_ENABLE)
     {
         return 1.0f;
     }
@@ -76,6 +82,44 @@ static float midi_helper_boolean_midi_to_float(uint8_t midi_value)
     {
         return 0.0f;
     }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static uint8_t midi_helper_boolean_midi_toggle(uint16_t param, uint8_t midi_value, float* value)
+{
+    tTonexParameter* param_ptr;
+
+    if (midi_value == MIDI_BOOL_TOGGLE)
+    {
+        // take mutex
+        if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
+        {		
+            // toggle current state
+            if (param_ptr[param].Value == 0.0f)
+            {
+                *value = 1.0f;
+            }
+            else
+            {
+                *value = 0.0f;
+            }  
+                
+            // release mutex
+            tonex_params_release_locked_access();
+        }  
+        
+        // toggling
+        return 1;
+    }
+
+    // not toggling
+    return 0;
 }
 
 /****************************************************************************
@@ -98,16 +142,26 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
 
         case 1:
         {
-            param = TONEX_PARAM_DELAY_POST;       
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+            param = TONEX_PARAM_DELAY_POST;  
+            
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 2:
         {
             param = TONEX_PARAM_DELAY_ENABLE;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 3:
@@ -120,8 +174,13 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 4:
         {
             param = TONEX_PARAM_DELAY_DIGITAL_SYNC;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 5:
@@ -209,15 +268,25 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 13:
         {
             param = TONEX_PARAM_NOISE_GATE_POST;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 14:
         {
             param = TONEX_PARAM_NOISE_GATE_ENABLE;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 15:
@@ -244,8 +313,13 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 18:
         {
             param = TONEX_PARAM_COMP_ENABLE;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 19:             
@@ -272,8 +346,13 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 22:
         {
             param = TONEX_PARAM_COMP_POST;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 23:
@@ -334,15 +413,25 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 31:
         {
             param = TONEX_PARAM_MODULATION_POST;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 32:
         {       
             param = TONEX_PARAM_MODULATION_ENABLE;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 33:
@@ -355,8 +444,13 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 34:
         {
             param = TONEX_PARAM_MODULATION_CHORUS_SYNC;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 35:
@@ -474,8 +568,13 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 43:
         {
             param = TONEX_PARAM_MODULATION_PHASER_SYNC;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 44:
@@ -530,8 +629,13 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 47:
         {
             param = TONEX_PARAM_MODULATION_FLANGER_SYNC;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 48:
@@ -593,8 +697,13 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 52:
         {
             param = TONEX_PARAM_MODULATION_ROTARY_SYNC;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 53:
@@ -770,8 +879,13 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 75:
         {
             param = TONEX_PARAM_REVERB_ENABLE;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 76:
@@ -833,8 +947,13 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 84:
         {
             param = TONEX_PARAM_REVERB_POSITION;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 85:
@@ -875,8 +994,13 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 91:
         {
             param = TONEX_PARAM_DELAY_TAPE_SYNC;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 92:
@@ -1063,15 +1187,25 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 117: 
         {
             param = TONEX_GLOBAL_CABSIM_BYPASS;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
         
         case 118:
         {
             param = TONEX_GLOBAL_TEMPO_SOURCE;
-            value = midi_helper_boolean_midi_to_float(midi_value);
-            value = tonex_params_clamp_value(param, value);
+            
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
         } break;
 
         case 119:
@@ -1084,9 +1218,12 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 127: 
         {
             // Custom case: use CC to change params.
-            if (midi_value > 19) {
+            if (midi_value >= (usb_get_max_presets_for_connected_modeller())) 
+            {
                 ESP_LOGW(TAG, "Unsupported Midi CC 127 value %d", change_num);
-            } else {
+            } 
+            else 
+            {
                 control_request_preset_index(midi_value);
             }
 

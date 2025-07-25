@@ -45,11 +45,20 @@ limitations under the License.
 #include "tonex_params.h"
 
 #define CTRL_TASK_STACK_SIZE                (3 * 1024)
+
 #define NVS_USERDATA_NAME                   "userdata"
+#define NVS_USERDATA_SKIN_CONF              "skinconf"
+#define NVS_USERDATA_BT_CONF                "btconf"
+#define NVS_USERDATA_SMIDI_CONF             "smidiconf"
+#define NVS_USERDATA_GENERAL_CONF           "genconf"
+#define NVS_USERDATA_FOOTSW_CONF            "footconf"
+#define NVS_USERDATA_WIFI_CONF              "wificonf"
+#define NVS_USERDATA_PRESET_ORDER_CONF      "porderconf"
 
 #define MAX_TEXT_LENGTH                     128
 #define MAX_BT_CUSTOM_NAME                  25                 
 #define MAX_PRESET_USER_TEXT_LENGTH         32
+#define LEGACY_CONFIG_USER_COUNT            20
 
 enum CommandEvents
 {
@@ -85,11 +94,10 @@ typedef struct __attribute__ ((packed))
     char PresetDescription[MAX_TEXT_LENGTH];
 } tUserDataLegacy;
 
-// warning here: Max 4000 bytes total
+// note here: obsolete data, moved to other locations
 typedef struct __attribute__ ((packed)) 
 {
-    // note here: obsolete data, moved to other locations
-    tUserDataLegacy Obsolete[20];
+    tUserDataLegacy UserData[LEGACY_CONFIG_USER_COUNT];
 
     uint8_t BTMode;
 
@@ -133,9 +141,84 @@ typedef struct __attribute__ ((packed))
 
     // preset order mapping
     uint8_t PresetOrder[MAX_SUPPORTED_PRESETS];
+} tLegacyConfigData;
 
+typedef struct __attribute__ ((packed)) 
+{
+    uint8_t BTMode;
+
+    // bt client flags
+    uint16_t BTClientMvaveChocolateEnable: 1;
+    uint16_t BTClientXviveMD1Enable: 1;
+    uint16_t BTClientCustomEnable: 1;
+    uint16_t BTClientSpares: 13;
+
+    char BTClientCustomName[MAX_BT_CUSTOM_NAME];
+} tBluetoothConfig;
+
+typedef struct __attribute__ ((packed)) 
+{
+    // serial Midi flags
+    uint8_t MidiSerialEnable: 1;
+    uint8_t EnableBTmidiCC: 1;
+    uint8_t MidiSpares: 6;
+
+    uint8_t MidiChannel;
+} tSMidiConfig;
+
+typedef struct __attribute__ ((packed)) 
+{
+    uint16_t GeneralDoublePressToggleBypass: 1;
+    uint16_t GeneralScreenRotation: 2;
+    uint16_t GeneralLoopAround: 1;
+    uint16_t GeneralSavePresetToSlot: 2;
+    uint16_t GeneralSpare: 10;
+} tGeneralConfig;
+
+typedef struct __attribute__ ((packed)) 
+{    
+    uint8_t WiFiMode : 4;
+    uint8_t WifiTxPower : 4;
+
+    char WifiSSID[MAX_WIFI_SSID_PW];
+    char WifiPassword[MAX_WIFI_SSID_PW];
+    char MDNSName[MAX_MDNS_NAME];
+} tWiFiConfig;
+
+typedef struct __attribute__ ((packed)) 
+{ 
+    uint8_t FootswitchMode;
+
+    // external footswitches
+    uint8_t ExternalFootswitchPresetLayout;
+    tExternalFootswitchEffectConfig ExternalFootswitchEffectConfig[MAX_EXTERNAL_EFFECT_FOOTSWITCHES];
+
+    // internal footswitches
+    uint8_t InternalFootswitchPresetLayout;
+    tExternalFootswitchEffectConfig InternalFootswitchEffectConfig[MAX_INTERNAL_EFFECT_FOOTSWITCHES];
+} tFootSwitchConfig;
+
+typedef struct __attribute__ ((packed)) 
+{ 
+    // preset order mapping
+    uint8_t PresetOrder[MAX_SUPPORTED_PRESETS];
+} tPresetOrderMappingConfig;
+
+typedef struct __attribute__ ((packed)) 
+{ 
     // selected skin indexes
     uint8_t SkinIndex[MAX_SUPPORTED_PRESETS];
+} tSkinConfig;
+
+typedef struct 
+{
+    tBluetoothConfig BTConfig;
+    tSMidiConfig MidiConfig;
+    tGeneralConfig GeneralConfig;
+    tWiFiConfig WiFiConfig;
+    tFootSwitchConfig FootSwitchConfig;
+    tPresetOrderMappingConfig PresetOrderMappingConfig;
+    tSkinConfig SkinConfig;
 } tConfigData;
 
 typedef struct
@@ -143,7 +226,6 @@ typedef struct
     uint32_t LastTime;
     float BPM;
 } tTapTempo;
-
 
 typedef struct 
 {
@@ -167,6 +249,8 @@ static uint8_t SaveUserData(void);
 static uint8_t LoadUserData(void);
 static uint8_t SavePresetUserText(uint16_t preset_index, char* text);
 static uint8_t LoadPresetUserText(uint16_t preset_index, char* text);
+static void DumpUserConfig(void);
+static uint8_t MigrateUserData(void);
 
 /****************************************************************************
 * NAME:        
@@ -189,14 +273,14 @@ static uint8_t process_control_command(tControlMessage* message)
                 if (control_get_config_item_int(CONFIG_ITEM_LOOP_AROUND))
                 {
                     uint8_t newIndex = (ControlData.PresetIndex > 0) ? (ControlData.PresetIndex - 1) : (usb_get_max_presets_for_connected_modeller() - 1);
-                    uint8_t preset = ControlData.ConfigData.PresetOrder[newIndex];
+                    uint8_t preset = ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder[newIndex];
 
                     // send message to USB
                     usb_set_preset(preset);
                 }
                 else if (ControlData.PresetIndex > 0)
                 {
-                    uint8_t preset = ControlData.ConfigData.PresetOrder[ControlData.PresetIndex - 1];
+                    uint8_t preset = ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder[ControlData.PresetIndex - 1];
                     
                     // send message to USB
                     usb_set_preset(preset);
@@ -211,14 +295,14 @@ static uint8_t process_control_command(tControlMessage* message)
                 if (control_get_config_item_int(CONFIG_ITEM_LOOP_AROUND))
                 {
                     uint8_t newIndex = (ControlData.PresetIndex < (usb_get_max_presets_for_connected_modeller() - 1)) ? (ControlData.PresetIndex + 1) : 0;
-                    uint8_t preset = ControlData.ConfigData.PresetOrder[newIndex];
+                    uint8_t preset = ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder[newIndex];
                     
                     // send message to USB
                     usb_set_preset(preset);
                 }
                 else if (ControlData.PresetIndex < (usb_get_max_presets_for_connected_modeller() - 1))
                 {
-                    uint8_t preset = ControlData.ConfigData.PresetOrder[ControlData.PresetIndex + 1];
+                    uint8_t preset = ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder[ControlData.PresetIndex + 1];
                     
                     // send message to USB
                     usb_set_preset(preset);
@@ -230,7 +314,7 @@ static uint8_t process_control_command(tControlMessage* message)
         {
             if (ControlData.USBStatus != 0)
             {
-                uint8_t preset = ControlData.ConfigData.PresetOrder[message->Value];
+                uint8_t preset = ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder[message->Value];
 
                 // send message to USB
                 usb_set_preset(preset);
@@ -265,7 +349,7 @@ static uint8_t process_control_command(tControlMessage* message)
             // update UI
             UI_SetPresetLabel(PresetIndexForOrderValue(message->Value), ControlData.PresetNames[message->Value]);
 
-            UI_SetAmpSkin(ControlData.ConfigData.SkinIndex[ControlData.PresetIndex]);
+            UI_SetAmpSkin(ControlData.ConfigData.SkinConfig.SkinIndex[ControlData.PresetIndex]);
 
             char preset_user_text[MAX_PRESET_USER_TEXT_LENGTH] = {0};
             
@@ -310,11 +394,11 @@ static uint8_t process_control_command(tControlMessage* message)
 
         case EVENT_SET_AMP_SKIN:
         {            
-            ControlData.ConfigData.SkinIndex[ControlData.PresetIndex] = message->Value;
+            ControlData.ConfigData.SkinConfig.SkinIndex[ControlData.PresetIndex] = message->Value;
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
             // update UI
-            UI_SetAmpSkin(ControlData.ConfigData.SkinIndex[ControlData.PresetIndex]);
+            UI_SetAmpSkin(ControlData.ConfigData.SkinConfig.SkinIndex[ControlData.PresetIndex]);
 #endif                 
         } break;
 
@@ -352,379 +436,379 @@ static uint8_t process_control_command(tControlMessage* message)
                 case CONFIG_ITEM_BT_MODE:
                 {
                     ESP_LOGI(TAG, "Config set BT mode %d", (int)message->Value);
-                    ControlData.ConfigData.BTMode = (uint8_t)message->Value;
+                    ControlData.ConfigData.BTConfig.BTMode = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_MV_CHOC_ENABLE:
                 {
                     ESP_LOGI(TAG, "Config set MV Choc enable %d", (int)message->Value);
-                    ControlData.ConfigData.BTClientMvaveChocolateEnable = (uint8_t)message->Value;
+                    ControlData.ConfigData.BTConfig.BTClientMvaveChocolateEnable = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_XV_MD1_ENABLE:
                 {
                     ESP_LOGI(TAG, "Config set XV MD1 enable %d", (int)message->Value);
-                    ControlData.ConfigData.BTClientXviveMD1Enable = (uint8_t)message->Value;
+                    ControlData.ConfigData.BTConfig.BTClientXviveMD1Enable = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_CUSTOM_BT_ENABLE:
                 {
                     ESP_LOGI(TAG, "Config set custom BT enable %d", (int)message->Value);
-                    ControlData.ConfigData.BTClientCustomEnable = (uint8_t)message->Value;
+                    ControlData.ConfigData.BTConfig.BTClientCustomEnable = (uint8_t)message->Value;
                 } break;
                 
                 case CONFIG_ITEM_MIDI_ENABLE:
                 {
                     ESP_LOGI(TAG, "Config set Midi enable %d", (int)message->Value);
-                    ControlData.ConfigData.MidiSerialEnable = (uint8_t)message->Value;
+                    ControlData.ConfigData.MidiConfig.MidiSerialEnable = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_MIDI_CHANNEL:
                 {
                     ESP_LOGI(TAG, "Config set Midi channel %d", (int)message->Value);
-                    ControlData.ConfigData.MidiChannel = (uint8_t)message->Value;
+                    ControlData.ConfigData.MidiConfig.MidiChannel = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_TOGGLE_BYPASS:
                 {
                     ESP_LOGI(TAG, "Config set Toggle Bypass %d", (int)message->Value);
-                    ControlData.ConfigData.GeneralDoublePressToggleBypass = (uint8_t)message->Value;
+                    ControlData.ConfigData.GeneralConfig.GeneralDoublePressToggleBypass = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_LOOP_AROUND:
                 {
                     ESP_LOGI(TAG, "Config set Loop Around %d", (int)message->Value);
-                    ControlData.ConfigData.GeneralLoopAround = (uint8_t)message->Value;
+                    ControlData.ConfigData.GeneralConfig.GeneralLoopAround = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_FOOTSWITCH_MODE:
                 {
                     ESP_LOGI(TAG, "Config set Footswitch Mode %d", (int)message->Value);
-                    ControlData.ConfigData.FootswitchMode = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.FootswitchMode = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_ENABLE_BT_MIDI_CC:
                 {
                     ESP_LOGI(TAG, "Config set BT Midi CC enable %d", (int)message->Value);
-                    ControlData.ConfigData.EnableBTmidiCC = (uint8_t)message->Value;
+                    ControlData.ConfigData.MidiConfig.EnableBTmidiCC = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_WIFI_MODE:
                 {
                     ESP_LOGI(TAG, "Config set WiFi modee %d", (int)message->Value);
-                    ControlData.ConfigData.WiFiMode = (uint8_t)message->Value;
+                    ControlData.ConfigData.WiFiConfig.WiFiMode = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_SCREEN_ROTATION:
                 {
                     ESP_LOGI(TAG, "Config set screen rotation %d", (int)message->Value);
-                    ControlData.ConfigData.GeneralScreenRotation = (uint8_t)message->Value & 0x03;
+                    ControlData.ConfigData.GeneralConfig.GeneralScreenRotation = (uint8_t)message->Value & 0x03;
                 } break;
 
                 case CONFIG_ITEM_SAVE_PRESET_TO_SLOT:
                 {
                     ESP_LOGI(TAG, "Config set save preset to slot %d", (int)message->Value);
-                    ControlData.ConfigData.GeneralSavePresetToSlot = (uint8_t)message->Value & 0x03;
+                    ControlData.ConfigData.GeneralConfig.GeneralSavePresetToSlot = (uint8_t)message->Value & 0x03;
                 } break;
 
                 case CONFIG_ITEM_WIFI_TX_POWER:
                 {
                     ESP_LOGI(TAG, "Config set wifi tx power %d", (int)message->Value);
-                    ControlData.ConfigData.WifiTxPower = (uint8_t)message->Value & 0x0F;
+                    ControlData.ConfigData.WiFiConfig.WifiTxPower = (uint8_t)message->Value & 0x0F;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_PRESET_LAYOUT:
                 {
                     ESP_LOGI(TAG, "Config set external footsw preset layout %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchPresetLayout = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchPresetLayout = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT1_SW:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect1 sw %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[0].Switch = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[0].Switch = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT1_CC:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect1 CC %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[0].CC = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[0].CC = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT1_VAL1:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect1 Value_1 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[0].Value_1 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[0].Value_1 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT1_VAL2:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect1 Value_2 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[0].Value_2 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[0].Value_2 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT2_SW:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect2 sw %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[1].Switch = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[1].Switch = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT2_CC:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect2 CC %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[1].CC = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[1].CC = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT2_VAL1:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect2 Value_1 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[1].Value_1 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[1].Value_1 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT2_VAL2:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect2 Value_2 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[1].Value_2 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[1].Value_2 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT3_SW:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect3 sw %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[2].Switch = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[2].Switch = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT3_CC:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect3 CC %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[2].CC = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[2].CC = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT3_VAL1:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect3 Value_1 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[2].Value_1 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[2].Value_1 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT3_VAL2:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect3 Value_2 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[2].Value_2 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[2].Value_2 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT4_SW:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect4 sw %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[3].Switch = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[3].Switch = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT4_CC:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect4 CC %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[3].CC = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[3].CC = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT4_VAL1:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect4 Value_1 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[3].Value_1 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[3].Value_1 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT4_VAL2:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect4 Value_2 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[3].Value_2 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[3].Value_2 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT5_SW:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect5 sw %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[4].Switch = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[4].Switch = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT5_CC:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect5 CC %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[4].CC = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[4].CC = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT5_VAL1:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect5 Value_1 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[4].Value_1 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[4].Value_1 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT5_VAL2:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect5 Value_2 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[4].Value_2 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[4].Value_2 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT6_SW:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect6 sw %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[5].Switch = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[5].Switch = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT6_CC:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect6 CC %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[5].CC = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[5].CC = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT6_VAL1:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect6 Value_1 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[5].Value_1 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[5].Value_1 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT6_VAL2:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect6 Value_2 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[5].Value_2 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[5].Value_2 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT7_SW:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect7 sw %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[6].Switch = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[6].Switch = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT7_CC:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect7 CC %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[6].CC = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[6].CC = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT7_VAL1:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect7 Value_1 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[6].Value_1 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[6].Value_1 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT7_VAL2:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect7 Value_2 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[6].Value_2 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[6].Value_2 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT8_SW:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect8 sw %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[7].Switch = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[7].Switch = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT8_CC:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect8 CC %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[7].CC = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[7].CC = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT8_VAL1:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect8 Value_1 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[7].Value_1 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[7].Value_1 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_EXT_FOOTSW_EFFECT8_VAL2:
                 {
                     ESP_LOGI(TAG, "Config set external footsw effect8 Value_2 %d", (int)message->Value);
-                    ControlData.ConfigData.ExternalFootswitchEffectConfig[7].Value_2 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[7].Value_2 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT1_SW:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect1 sw %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[0].Switch = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[0].Switch = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT1_CC:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect1 CC %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[0].CC = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[0].CC = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT1_VAL1:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect1 Value_1 %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[0].Value_1 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[0].Value_1 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT1_VAL2:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect1 Value_2 %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[0].Value_2 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[0].Value_2 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT2_SW:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect2 sw %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[1].Switch = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[1].Switch = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT2_CC:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect2 CC %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[1].CC = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[1].CC = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT2_VAL1:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect2 Value_1 %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[1].Value_1 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[1].Value_1 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT2_VAL2:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect2 Value_2 %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[1].Value_2 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[1].Value_2 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT3_SW:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect3 sw %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[2].Switch = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[2].Switch = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT3_CC:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect3 CC %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[2].CC = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[2].CC = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT3_VAL1:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect3 Value_1 %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[2].Value_1 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[2].Value_1 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT3_VAL2:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect3 Value_2 %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[2].Value_2 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[2].Value_2 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT4_SW:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect4 sw %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[3].Switch = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[3].Switch = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT4_CC:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect4 CC %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[3].CC = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[3].CC = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT4_VAL1:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect4 Value_1 %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[3].Value_1 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[3].Value_1 = (uint8_t)message->Value;
                 } break;
 
                 case CONFIG_ITEM_INT_FOOTSW_EFFECT4_VAL2:
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect4 Value_2 %d", (int)message->Value);
-                    ControlData.ConfigData.InternalFootswitchEffectConfig[3].Value_2 = (uint8_t)message->Value;
+                    ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[3].Value_2 = (uint8_t)message->Value;
                 } break;
             }
         } break;
@@ -736,29 +820,29 @@ static uint8_t process_control_command(tControlMessage* message)
                 case CONFIG_ITEM_BT_CUSTOM_NAME:
                 {
                     ESP_LOGI(TAG, "Config set custom BT name %s", message->Text);
-                    strncpy(ControlData.ConfigData.BTClientCustomName, message->Text, MAX_BT_CUSTOM_NAME - 1);
-                    ControlData.ConfigData.BTClientCustomName[MAX_BT_CUSTOM_NAME - 1] = 0;
+                    strncpy(ControlData.ConfigData.BTConfig.BTClientCustomName, message->Text, MAX_BT_CUSTOM_NAME - 1);
+                    ControlData.ConfigData.BTConfig.BTClientCustomName[MAX_BT_CUSTOM_NAME - 1] = 0;
                 } break;
 
                 case CONFIG_ITEM_WIFI_SSID:
                 {
                     ESP_LOGI(TAG, "Config set WiFi SSID %s", message->Text);
-                    strncpy(ControlData.ConfigData.WifiSSID, message->Text, MAX_WIFI_SSID_PW - 1);
-                    ControlData.ConfigData.WifiSSID[MAX_WIFI_SSID_PW - 1] = 0;
+                    strncpy(ControlData.ConfigData.WiFiConfig.WifiSSID, message->Text, MAX_WIFI_SSID_PW - 1);
+                    ControlData.ConfigData.WiFiConfig.WifiSSID[MAX_WIFI_SSID_PW - 1] = 0;
                 } break;
 
                 case CONFIG_ITEM_WIFI_PASSWORD:
                 {
                     ESP_LOGI(TAG, "Config set WiFi password <hidden>");
-                    strncpy(ControlData.ConfigData.WifiPassword, message->Text, MAX_WIFI_SSID_PW - 1);
-                    ControlData.ConfigData.WifiPassword[MAX_WIFI_SSID_PW - 1] = 0;
+                    strncpy(ControlData.ConfigData.WiFiConfig.WifiPassword, message->Text, MAX_WIFI_SSID_PW - 1);
+                    ControlData.ConfigData.WiFiConfig.WifiPassword[MAX_WIFI_SSID_PW - 1] = 0;
                 } break;
 
                 case CONFIG_ITEM_MDNS_NAME:
                 {
                     ESP_LOGI(TAG, "Config set MDNS name %s", message->Text);
-                    strncpy(ControlData.ConfigData.MDNSName, message->Text, MAX_MDNS_NAME - 1);
-                    ControlData.ConfigData.MDNSName[MAX_MDNS_NAME - 1] = 0;
+                    strncpy(ControlData.ConfigData.WiFiConfig.MDNSName, message->Text, MAX_MDNS_NAME - 1);
+                    ControlData.ConfigData.WiFiConfig.MDNSName[MAX_MDNS_NAME - 1] = 0;
                 } break;
             }
         } break;
@@ -1180,319 +1264,319 @@ uint32_t control_get_config_item_int(uint32_t item)
     {
         case CONFIG_ITEM_BT_MODE:
         {
-            value = ControlData.ConfigData.BTMode;
+            value = ControlData.ConfigData.BTConfig.BTMode;
         } break;
 
         case CONFIG_ITEM_MV_CHOC_ENABLE:
         {
-            value = ControlData.ConfigData.BTClientMvaveChocolateEnable;
+            value = ControlData.ConfigData.BTConfig.BTClientMvaveChocolateEnable;
         } break;
 
         case CONFIG_ITEM_XV_MD1_ENABLE:
         {
-            value = ControlData.ConfigData.BTClientXviveMD1Enable;
+            value = ControlData.ConfigData.BTConfig.BTClientXviveMD1Enable;
         } break;
 
         case CONFIG_ITEM_CUSTOM_BT_ENABLE:
         {
-            value = ControlData.ConfigData.BTClientCustomEnable;
+            value = ControlData.ConfigData.BTConfig.BTClientCustomEnable;
         } break;
         
         case CONFIG_ITEM_MIDI_ENABLE:
         {
-            value = ControlData.ConfigData.MidiSerialEnable;
+            value = ControlData.ConfigData.MidiConfig.MidiSerialEnable;
         } break;
 
         case CONFIG_ITEM_MIDI_CHANNEL:
         {
-            value = ControlData.ConfigData.MidiChannel;
+            value = ControlData.ConfigData.MidiConfig.MidiChannel;
         } break;
 
         case CONFIG_ITEM_TOGGLE_BYPASS:
         {
-            value = ControlData.ConfigData.GeneralDoublePressToggleBypass;
+            value = ControlData.ConfigData.GeneralConfig.GeneralDoublePressToggleBypass;
         } break;
 
         case CONFIG_ITEM_LOOP_AROUND:
         {
-            value = ControlData.ConfigData.GeneralLoopAround;
+            value = ControlData.ConfigData.GeneralConfig.GeneralLoopAround;
         } break;
 
         case CONFIG_ITEM_FOOTSWITCH_MODE:
         {
-            value = ControlData.ConfigData.FootswitchMode;
+            value = ControlData.ConfigData.FootSwitchConfig.FootswitchMode;
         } break;
 
         case CONFIG_ITEM_ENABLE_BT_MIDI_CC:
         {
-            value = ControlData.ConfigData.EnableBTmidiCC;
+            value = ControlData.ConfigData.MidiConfig.EnableBTmidiCC;
         } break;
 
         case CONFIG_ITEM_WIFI_MODE:
         {
-            value = ControlData.ConfigData.WiFiMode;
+            value = ControlData.ConfigData.WiFiConfig.WiFiMode;
         } break;
 
         case CONFIG_ITEM_SCREEN_ROTATION:
         {
-            value = ControlData.ConfigData.GeneralScreenRotation;
+            value = ControlData.ConfigData.GeneralConfig.GeneralScreenRotation;
         } break;
 
         case CONFIG_ITEM_SAVE_PRESET_TO_SLOT:
         {
-            value = ControlData.ConfigData.GeneralSavePresetToSlot;
+            value = ControlData.ConfigData.GeneralConfig.GeneralSavePresetToSlot;
         } break;
 
         case CONFIG_ITEM_WIFI_TX_POWER:
         {
-            value = ControlData.ConfigData.WifiTxPower;
+            value = ControlData.ConfigData.WiFiConfig.WifiTxPower;
         } break;
         
         case CONFIG_ITEM_EXT_FOOTSW_PRESET_LAYOUT:
         {
-            value = ControlData.ConfigData.ExternalFootswitchPresetLayout;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchPresetLayout;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT1_SW:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[0].Switch;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[0].Switch;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT1_CC:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[0].CC;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[0].CC;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT1_VAL1:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[0].Value_1;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[0].Value_1;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT1_VAL2:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[0].Value_2;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[0].Value_2;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT2_SW:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[1].Switch;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[1].Switch;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT2_CC:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[1].CC;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[1].CC;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT2_VAL1:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[1].Value_1;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[1].Value_1;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT2_VAL2:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[1].Value_2;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[1].Value_2;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT3_SW:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[2].Switch;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[2].Switch;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT3_CC:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[2].CC;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[2].CC;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT3_VAL1:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[2].Value_1;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[2].Value_1;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT3_VAL2:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[2].Value_2;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[2].Value_2;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT4_SW:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[3].Switch;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[3].Switch;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT4_CC:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[3].CC;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[3].CC;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT4_VAL1:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[3].Value_1;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[3].Value_1;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT4_VAL2:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[3].Value_2;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[3].Value_2;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT5_SW:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[4].Switch;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[4].Switch;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT5_CC:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[4].CC;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[4].CC;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT5_VAL1:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[4].Value_1;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[4].Value_1;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT5_VAL2:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[4].Value_2;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[4].Value_2;
         } break;
 
 
         //xxxx
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT6_SW:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[5].Switch;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[5].Switch;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT6_CC:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[5].CC;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[5].CC;
         } break;
         
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT6_VAL1:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[5].Value_1;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[5].Value_1;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT6_VAL2:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[5].Value_2;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[5].Value_2;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT7_SW:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[6].Switch;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[6].Switch;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT7_CC:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[6].CC;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[6].CC;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT7_VAL1:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[6].Value_1;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[6].Value_1;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT7_VAL2:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[6].Value_2;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[6].Value_2;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT8_SW:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[7].Switch;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[7].Switch;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT8_CC:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[7].CC;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[7].CC;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT8_VAL1:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[7].Value_1;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[7].Value_1;
         } break;
 
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT8_VAL2:
         {
-            value = ControlData.ConfigData.ExternalFootswitchEffectConfig[7].Value_2;
+            value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[7].Value_2;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT1_SW:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[0].Switch;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[0].Switch;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT1_CC:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[0].CC;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[0].CC;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT1_VAL1:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[0].Value_1;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[0].Value_1;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT1_VAL2:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[0].Value_2;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[0].Value_2;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT2_SW:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[1].Switch;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[1].Switch;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT2_CC:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[1].CC;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[1].CC;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT2_VAL1:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[1].Value_1;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[1].Value_1;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT2_VAL2:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[1].Value_2;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[1].Value_2;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT3_SW:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[2].Switch;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[2].Switch;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT3_CC:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[2].CC;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[2].CC;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT3_VAL1:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[2].Value_1;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[2].Value_1;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT3_VAL2:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[2].Value_2;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[2].Value_2;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT4_SW:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[3].Switch;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[3].Switch;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT4_CC:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[3].CC;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[3].CC;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT4_VAL1:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[3].Value_1;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[3].Value_1;
         } break;
 
         case CONFIG_ITEM_INT_FOOTSW_EFFECT4_VAL2:
         {
-            value = ControlData.ConfigData.InternalFootswitchEffectConfig[3].Value_2;
+            value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[3].Value_2;
         } break;
 
         default:
@@ -1517,25 +1601,25 @@ void control_get_config_item_string(uint32_t item, char* name)
     {
         case CONFIG_ITEM_BT_CUSTOM_NAME:
         {
-            strncpy(name, ControlData.ConfigData.BTClientCustomName, MAX_BT_CUSTOM_NAME - 1);
+            strncpy(name, ControlData.ConfigData.BTConfig.BTClientCustomName, MAX_BT_CUSTOM_NAME - 1);
             name[MAX_BT_CUSTOM_NAME - 1] = 0;
         } break;
 
         case CONFIG_ITEM_WIFI_SSID:
         {
-            strncpy(name, ControlData.ConfigData.WifiSSID, MAX_WIFI_SSID_PW - 1);
+            strncpy(name, ControlData.ConfigData.WiFiConfig.WifiSSID, MAX_WIFI_SSID_PW - 1);
             name[MAX_WIFI_SSID_PW - 1] = 0;
         } break;
 
         case CONFIG_ITEM_WIFI_PASSWORD:
         {
-            strncpy(name, ControlData.ConfigData.WifiPassword, MAX_WIFI_SSID_PW - 1);
+            strncpy(name, ControlData.ConfigData.WiFiConfig.WifiPassword, MAX_WIFI_SSID_PW - 1);
             name[MAX_WIFI_SSID_PW - 1] = 0;            
         } break;
 
         case CONFIG_ITEM_MDNS_NAME:
         {
-            strncpy(name, ControlData.ConfigData.MDNSName, MAX_MDNS_NAME - 1);
+            strncpy(name, ControlData.ConfigData.WiFiConfig.MDNSName, MAX_MDNS_NAME - 1);
             name[MAX_MDNS_NAME - 1] = 0;            
         } break;
 
@@ -1557,7 +1641,7 @@ void control_set_preset_order(uint8_t* order)
 {
     for (uint8_t index = 0; index < usb_get_max_presets_for_connected_modeller(); index++)
     {
-        ControlData.ConfigData.PresetOrder[index] = order[index];
+        ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder[index] = order[index];
     }
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
@@ -1575,7 +1659,7 @@ void control_set_preset_order(uint8_t* order)
 *****************************************************************************/
 uint8_t* control_get_preset_order(void)
 {
-    return ControlData.ConfigData.PresetOrder;
+    return ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder;
 }
 
 /****************************************************************************
@@ -1587,10 +1671,10 @@ uint8_t* control_get_preset_order(void)
 *****************************************************************************/
 void control_set_skin_next(void)
 {
-    if (ControlData.ConfigData.SkinIndex[ControlData.PresetIndex] < (SKIN_MAX - 1))
+    if (ControlData.ConfigData.SkinConfig.SkinIndex[ControlData.PresetIndex] < (SKIN_MAX - 1))
     {
-        ControlData.ConfigData.SkinIndex[ControlData.PresetIndex]++;
-        control_set_amp_skin_index(ControlData.ConfigData.SkinIndex[ControlData.PresetIndex]);
+        ControlData.ConfigData.SkinConfig.SkinIndex[ControlData.PresetIndex]++;
+        control_set_amp_skin_index(ControlData.ConfigData.SkinConfig.SkinIndex[ControlData.PresetIndex]);
     }
 }
 
@@ -1603,11 +1687,11 @@ void control_set_skin_next(void)
 *****************************************************************************/
 void control_set_skin_previous(void)
 {
-    if (ControlData.ConfigData.SkinIndex[ControlData.PresetIndex] > 0)
+    if (ControlData.ConfigData.SkinConfig.SkinIndex[ControlData.PresetIndex] > 0)
     {
-        ControlData.ConfigData.SkinIndex[ControlData.PresetIndex]--;
+        ControlData.ConfigData.SkinConfig.SkinIndex[ControlData.PresetIndex]--;
     
-        control_set_amp_skin_index(ControlData.ConfigData.SkinIndex[ControlData.PresetIndex]);
+        control_set_amp_skin_index(ControlData.ConfigData.SkinConfig.SkinIndex[ControlData.PresetIndex]);
     }
 }
 
@@ -1623,7 +1707,7 @@ static uint8_t PresetIndexForOrderValue(uint8_t value)
 {
     for (uint8_t i = 0; i < usb_get_max_presets_for_connected_modeller(); i++)
     {
-        if (ControlData.ConfigData.PresetOrder[i] == value)
+        if (ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder[i] == value)
         {
             return i;
         }
@@ -1639,58 +1723,56 @@ static uint8_t PresetIndexForOrderValue(uint8_t value)
 * RETURN:      none
 * NOTES:       none
 ****************************************************************************/
-static uint8_t SaveUserData(void)
+static esp_err_t LoadUserConfigItem(void* item, size_t item_length, char* key)
 {
     esp_err_t err;
     nvs_handle_t my_handle;
-    uint8_t result = 0;
+    esp_err_t result = ESP_FAIL;
     size_t required_size;
 
-    ESP_LOGI(TAG, "Writing User Data");
+    ESP_LOGI(TAG, "LoadUserConfigItem %s Length: %d", key, (int)item_length);
 
     // open storage
     err = nvs_open("storage", NVS_READWRITE, &my_handle);
 
     if (err == ESP_OK) 
     {
-        // write config
-        required_size = sizeof(ControlData.ConfigData);
-        ESP_LOGI(TAG, "Writing ConfigData, size: %d", (int)required_size);
-        err = nvs_set_blob(my_handle, NVS_USERDATA_NAME, (void*)&ControlData.ConfigData, required_size);
-
-        // code fails, not enough space
-        //if (err == ESP_OK)
-        //{
-            // write second chunk
-        //    required_size = sizeof(ControlData.ConfigDataExtended);
-        //    ESP_LOGI(TAG, "Writing ConfigDataExtended Extended, size: %d", (int)required_size);
-        //    err = nvs_set_blob(my_handle, NVS_USERDATA_EXTENDED_NAME, (void*)&ControlData.ConfigDataExtended, required_size);            
-        //}
+        // read data
+        required_size = item_length;
+        err = nvs_get_blob(my_handle, key, (void*)item, &required_size);
 
         switch (err) 
         {
             case ESP_OK:
             {
-                result = 1;
+                // close
+                nvs_close(my_handle);
 
-                ESP_LOGI(TAG, "Wrote User Data OK");
+                ESP_LOGI(TAG, "LoadUserConfigItem OK");
+
+                result = ESP_OK;
+            } break;
+            
+            case ESP_ERR_NVS_NOT_FOUND:
+            {
+                ESP_LOGW(TAG, "LoadUserConfigItem not found");
+
+                // close
+                nvs_close(my_handle);
             } break;
             
             default:
             {
-                ESP_LOGE(TAG, "Error (%s) writing User Data\n", esp_err_to_name(err));
+                ESP_LOGE(TAG, "LoadUserConfigItem Error (%s)", esp_err_to_name(err));
+
+                // close
+                nvs_close(my_handle);
             } break;
         }
-
-        // commit value
-        err = nvs_commit(my_handle);
-
-        // close
-        nvs_close(my_handle);
     }
     else
     {
-        ESP_LOGE(TAG, "Write User Data failed to open");
+        ESP_LOGE(TAG, "LoadUserConfigItem failed to open nvs");
     }
 
     return result;
@@ -1703,15 +1785,14 @@ static uint8_t SaveUserData(void)
 * RETURN:      none
 * NOTES:       none
 ****************************************************************************/
-static uint8_t LoadUserData(void)
+static esp_err_t SaveUserConfigItem(void* item, size_t item_length, char* key)
 {
     esp_err_t err;
     nvs_handle_t my_handle;
-    uint8_t result = 0;
-    uint8_t save_needed = 0;
+    esp_err_t result = ESP_FAIL;
     size_t required_size;
 
-    ESP_LOGI(TAG, "Load User Data");
+    ESP_LOGI(TAG, "SaveUserConfigItem %s Length: %d", key, (int)item_length);
 
     // open storage
     err = nvs_open("storage", NVS_READWRITE, &my_handle);
@@ -1719,128 +1800,328 @@ static uint8_t LoadUserData(void)
     if (err == ESP_OK) 
     {
         // read data
-        required_size = sizeof(ControlData.ConfigData);
-        err = nvs_get_blob(my_handle, NVS_USERDATA_NAME, (void*)&ControlData.ConfigData, &required_size);
-
+        required_size = item_length;
+        err = nvs_set_blob(my_handle, key, (void*)item, required_size);
 
         switch (err) 
         {
             case ESP_OK:
             {
+                nvs_commit(my_handle);
+
                 // close
                 nvs_close(my_handle);
 
-                ESP_LOGI(TAG, "Load User Data OK");
+                ESP_LOGI(TAG, "SaveUserConfigItem OK");
 
-                result = 1;
+                result = ESP_OK;
             } break;
             
             case ESP_ERR_NVS_NOT_FOUND:
-            default:
             {
-                ESP_LOGE(TAG, "Error (%s) reading User Data \n", esp_err_to_name(err));
+                ESP_LOGE(TAG, "SaveUserConfigItem Not found: %s", key);
 
                 // close
                 nvs_close(my_handle);
+            } break;
+            
+            default:
+            {
+                ESP_LOGE(TAG, "SaveUserConfigItem Error (%s)", esp_err_to_name(err));
 
-                // write default values
-                SaveUserData();
+                // close
+                nvs_close(my_handle);
             } break;
         }
     }
     else
     {
-        ESP_LOGE(TAG, "Read User Data failed to open");
+        ESP_LOGE(TAG, "SaveUserConfigItem failed to open nvs");
     }
 
-    // check values
-    if (ControlData.ConfigData.BTMode > BT_MODE_PERIPHERAL)
+    return result;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      none
+* NOTES:       none
+****************************************************************************/
+static uint8_t MigrateUserData(void)
+{
+    esp_err_t err;
+    nvs_handle_t my_handle;
+    size_t required_size;
+    nvs_type_t out_type;
+    tLegacyConfigData* LegacyConfigData;
+
+    ESP_LOGI(TAG, "Checking MigrateUserData");
+
+    // open storage
+    err = nvs_open("storage", NVS_READWRITE, &my_handle);
+
+    if (err == ESP_OK) 
+    {
+        // check if we have legacy config
+        if (nvs_find_key(my_handle, NVS_USERDATA_NAME, &out_type) == ESP_OK)
+        {
+            required_size = sizeof(tLegacyConfigData);
+
+            // allocate temp space for legacy config
+            LegacyConfigData = heap_caps_malloc(required_size, MALLOC_CAP_SPIRAM);
+
+            if (LegacyConfigData == NULL)
+            {
+                ESP_LOGE(TAG, "Checking MigrateUserData malloc failed!");
+                nvs_close(my_handle);
+                return 0;
+            }
+
+            // read data            
+            if (nvs_get_blob(my_handle, NVS_USERDATA_NAME, (void*)LegacyConfigData, &required_size) == ESP_OK)
+            {
+                ESP_LOGI(TAG, "Legacy config migration");
+
+                // BT
+                ControlData.ConfigData.BTConfig.BTMode = LegacyConfigData->BTMode;
+                ControlData.ConfigData.BTConfig.BTClientMvaveChocolateEnable = LegacyConfigData->BTClientMvaveChocolateEnable;
+                ControlData.ConfigData.BTConfig.BTClientXviveMD1Enable = LegacyConfigData->BTClientXviveMD1Enable;
+                ControlData.ConfigData.BTConfig.BTClientCustomEnable = LegacyConfigData->BTClientCustomEnable;
+                memcpy((void*)ControlData.ConfigData.BTConfig.BTClientCustomName, LegacyConfigData->BTClientCustomName, MAX_BT_CUSTOM_NAME);
+
+                // midi
+                ControlData.ConfigData.MidiConfig.MidiSerialEnable = LegacyConfigData->MidiSerialEnable;
+                ControlData.ConfigData.MidiConfig.EnableBTmidiCC = LegacyConfigData->EnableBTmidiCC;
+                ControlData.ConfigData.MidiConfig.MidiChannel = LegacyConfigData->MidiChannel;
+
+                // general
+                ControlData.ConfigData.GeneralConfig.GeneralDoublePressToggleBypass = LegacyConfigData->GeneralDoublePressToggleBypass;
+                ControlData.ConfigData.GeneralConfig.GeneralScreenRotation = LegacyConfigData->GeneralScreenRotation;
+                ControlData.ConfigData.GeneralConfig.GeneralLoopAround = LegacyConfigData->GeneralLoopAround;
+                ControlData.ConfigData.GeneralConfig.GeneralSavePresetToSlot = LegacyConfigData->GeneralSavePresetToSlot;
+
+                // WiFi
+                ControlData.ConfigData.WiFiConfig.WiFiMode = LegacyConfigData->WiFiMode;
+                ControlData.ConfigData.WiFiConfig.WifiTxPower = LegacyConfigData->WifiTxPower;
+                memcpy((void*)ControlData.ConfigData.WiFiConfig.WifiSSID, (void*)LegacyConfigData->WifiSSID, MAX_WIFI_SSID_PW);
+                memcpy((void*)ControlData.ConfigData.WiFiConfig.WifiPassword, (void*)LegacyConfigData->WifiPassword, MAX_WIFI_SSID_PW);
+                memcpy((void*)ControlData.ConfigData.WiFiConfig.MDNSName, (void*)LegacyConfigData->MDNSName, MAX_MDNS_NAME);
+
+                // Footswitch
+                ControlData.ConfigData.FootSwitchConfig.FootswitchMode = LegacyConfigData->FootswitchMode;
+                ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchPresetLayout = LegacyConfigData->ExternalFootswitchPresetLayout;
+                memcpy((void*)ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig, (void*)LegacyConfigData->ExternalFootswitchEffectConfig, sizeof(ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig));
+                ControlData.ConfigData.FootSwitchConfig.InternalFootswitchPresetLayout = LegacyConfigData->InternalFootswitchPresetLayout;
+                memcpy((void*)ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig, (void*)LegacyConfigData->InternalFootswitchEffectConfig, sizeof(ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig));
+
+                // preset order mapping
+                memcpy((void*)ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder, (void*)LegacyConfigData->PresetOrder, sizeof(ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder));
+
+                // skins
+                for (uint8_t loop = 0; loop < LEGACY_CONFIG_USER_COUNT; loop++)
+                {
+                    ControlData.ConfigData.SkinConfig.SkinIndex[loop] = LegacyConfigData->UserData[loop].SkinIndex;
+                }
+            }
+
+            // delete the old data key
+            nvs_erase_key(my_handle, NVS_USERDATA_NAME);
+            nvs_commit(my_handle);
+            nvs_close(my_handle);      
+
+            // delete temp memory
+            heap_caps_free(LegacyConfigData);
+
+            // debug
+            //DumpUserConfig();
+
+            // now save new config
+            SaveUserData();
+        }     
+        else
+        {
+            ESP_LOGI(TAG, "No legacy config found, skipping migration");
+            nvs_close(my_handle);
+            return 0;
+        }
+    } 
+
+    return 1;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      none
+* NOTES:       none
+****************************************************************************/
+static uint8_t SaveUserData(void)
+{
+    ESP_LOGI(TAG, "Writing User Data");
+
+    // save each config item
+    SaveUserConfigItem((void*)&ControlData.ConfigData.BTConfig, sizeof(ControlData.ConfigData.BTConfig), NVS_USERDATA_BT_CONF);
+    SaveUserConfigItem((void*)&ControlData.ConfigData.MidiConfig, sizeof(ControlData.ConfigData.MidiConfig), NVS_USERDATA_SMIDI_CONF);
+    SaveUserConfigItem((void*)&ControlData.ConfigData.GeneralConfig, sizeof(ControlData.ConfigData.GeneralConfig), NVS_USERDATA_GENERAL_CONF);
+    SaveUserConfigItem((void*)&ControlData.ConfigData.WiFiConfig, sizeof(ControlData.ConfigData.WiFiConfig), NVS_USERDATA_WIFI_CONF);
+    SaveUserConfigItem((void*)&ControlData.ConfigData.FootSwitchConfig, sizeof(ControlData.ConfigData.FootSwitchConfig), NVS_USERDATA_FOOTSW_CONF);
+    SaveUserConfigItem((void*)&ControlData.ConfigData.PresetOrderMappingConfig, sizeof(ControlData.ConfigData.PresetOrderMappingConfig), NVS_USERDATA_PRESET_ORDER_CONF);
+    SaveUserConfigItem((void*)&ControlData.ConfigData.SkinConfig, sizeof(ControlData.ConfigData.SkinConfig), NVS_USERDATA_SKIN_CONF);
+
+    return 1;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      none
+* NOTES:       none
+****************************************************************************/
+static uint8_t LoadUserData(void)
+{
+    // load each config item
+    // Bluetooth
+    if (LoadUserConfigItem((void*)&ControlData.ConfigData.BTConfig, sizeof(ControlData.ConfigData.BTConfig), NVS_USERDATA_BT_CONF) != ESP_OK)
+    {
+        SaveUserConfigItem((void*)&ControlData.ConfigData.BTConfig, sizeof(ControlData.ConfigData.BTConfig), NVS_USERDATA_BT_CONF);
+    }
+
+    // Midi
+    if (LoadUserConfigItem((void*)&ControlData.ConfigData.MidiConfig, sizeof(ControlData.ConfigData.MidiConfig), NVS_USERDATA_SMIDI_CONF) != ESP_OK)
+    {
+        SaveUserConfigItem((void*)&ControlData.ConfigData.MidiConfig, sizeof(ControlData.ConfigData.MidiConfig), NVS_USERDATA_SMIDI_CONF);
+    }
+
+    // General
+    if (LoadUserConfigItem((void*)&ControlData.ConfigData.GeneralConfig, sizeof(ControlData.ConfigData.GeneralConfig), NVS_USERDATA_GENERAL_CONF) != ESP_OK)
+    {
+        SaveUserConfigItem((void*)&ControlData.ConfigData.GeneralConfig, sizeof(ControlData.ConfigData.GeneralConfig), NVS_USERDATA_GENERAL_CONF);
+    }
+
+    // WiFi
+    if (LoadUserConfigItem((void*)&ControlData.ConfigData.WiFiConfig, sizeof(ControlData.ConfigData.WiFiConfig), NVS_USERDATA_WIFI_CONF) != ESP_OK)
+    {
+        SaveUserConfigItem((void*)&ControlData.ConfigData.WiFiConfig, sizeof(ControlData.ConfigData.WiFiConfig), NVS_USERDATA_WIFI_CONF);
+    }
+
+    // Footswitch
+    if (LoadUserConfigItem((void*)&ControlData.ConfigData.FootSwitchConfig, sizeof(ControlData.ConfigData.FootSwitchConfig), NVS_USERDATA_FOOTSW_CONF) != ESP_OK)
+    {
+        SaveUserConfigItem((void*)&ControlData.ConfigData.FootSwitchConfig, sizeof(ControlData.ConfigData.FootSwitchConfig), NVS_USERDATA_FOOTSW_CONF);
+    }
+
+    // Preset order mapping
+    if (LoadUserConfigItem((void*)&ControlData.ConfigData.PresetOrderMappingConfig, sizeof(ControlData.ConfigData.PresetOrderMappingConfig), NVS_USERDATA_PRESET_ORDER_CONF) != ESP_OK)
+    {
+        SaveUserConfigItem((void*)&ControlData.ConfigData.PresetOrderMappingConfig, sizeof(ControlData.ConfigData.PresetOrderMappingConfig), NVS_USERDATA_PRESET_ORDER_CONF);
+    }
+
+    // Skin config
+    if (LoadUserConfigItem((void*)&ControlData.ConfigData.SkinConfig, sizeof(ControlData.ConfigData.SkinConfig), NVS_USERDATA_SKIN_CONF) != ESP_OK)
+    {
+        SaveUserConfigItem((void*)&ControlData.ConfigData.SkinConfig, sizeof(ControlData.ConfigData.SkinConfig), NVS_USERDATA_SKIN_CONF);
+    }   
+    
+
+    // perform sanity check on values
+    if (ControlData.ConfigData.BTConfig.BTMode > BT_MODE_PERIPHERAL)
     {
         ESP_LOGW(TAG, "Config BTMode invalid");
-        ControlData.ConfigData.BTMode = BT_MODE_CENTRAL;
-        save_needed = 1;
+        ControlData.ConfigData.BTConfig.BTMode = BT_MODE_CENTRAL;
+        SaveUserConfigItem((void*)&ControlData.ConfigData.BTConfig, sizeof(ControlData.ConfigData.BTConfig), NVS_USERDATA_BT_CONF);
     }
 
-    if (ControlData.ConfigData.MidiChannel > 16)
+    if (ControlData.ConfigData.MidiConfig.MidiChannel > 16)
     {
         ESP_LOGW(TAG, "Config MidiChannel invalid");
-        ControlData.ConfigData.MidiChannel = 1;
-        save_needed = 1;
+        ControlData.ConfigData.MidiConfig.MidiChannel = 1;
+        SaveUserConfigItem((void*)&ControlData.ConfigData.MidiConfig, sizeof(ControlData.ConfigData.MidiConfig), NVS_USERDATA_SMIDI_CONF);
     }
 
-    if (ControlData.ConfigData.FootswitchMode != FOOTSWITCH_LAYOUT_DISABLED)
+    if (ControlData.ConfigData.FootSwitchConfig.FootswitchMode != FOOTSWITCH_LAYOUT_DISABLED)
     {
-        if (ControlData.ConfigData.FootswitchMode >= FOOTSWITCH_LAYOUT_LAST)
+        if (ControlData.ConfigData.FootSwitchConfig.FootswitchMode >= FOOTSWITCH_LAYOUT_LAST)
         {
             ESP_LOGW(TAG, "Config Footswitch mode invalid");
-            ControlData.ConfigData.FootswitchMode = FOOTSWITCH_LAYOUT_1X2;
-            save_needed = 1;
+            ControlData.ConfigData.FootSwitchConfig.FootswitchMode = FOOTSWITCH_LAYOUT_1X2;
+            SaveUserConfigItem((void*)&ControlData.ConfigData.FootSwitchConfig, sizeof(ControlData.ConfigData.FootSwitchConfig), NVS_USERDATA_FOOTSW_CONF);
         }
     }
 
-    if (ControlData.ConfigData.ExternalFootswitchPresetLayout != FOOTSWITCH_LAYOUT_DISABLED)
+    if (ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchPresetLayout != FOOTSWITCH_LAYOUT_DISABLED)
     {
-        if (ControlData.ConfigData.ExternalFootswitchPresetLayout >= FOOTSWITCH_LAYOUT_LAST) 
+        if (ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchPresetLayout >= FOOTSWITCH_LAYOUT_LAST) 
         {
             ESP_LOGW(TAG, "Config External Footswitch preset layout invalid");
-            ControlData.ConfigData.ExternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
-            save_needed = 1;
+            ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
+            SaveUserConfigItem((void*)&ControlData.ConfigData.FootSwitchConfig, sizeof(ControlData.ConfigData.FootSwitchConfig), NVS_USERDATA_FOOTSW_CONF);
         }
     }
 
-    if (ControlData.ConfigData.InternalFootswitchPresetLayout != FOOTSWITCH_LAYOUT_DISABLED)
+    if (ControlData.ConfigData.FootSwitchConfig.InternalFootswitchPresetLayout != FOOTSWITCH_LAYOUT_DISABLED)
     {
-        if (ControlData.ConfigData.InternalFootswitchPresetLayout >= FOOTSWITCH_LAYOUT_LAST) 
+        if (ControlData.ConfigData.FootSwitchConfig.InternalFootswitchPresetLayout >= FOOTSWITCH_LAYOUT_LAST) 
         {
             ESP_LOGW(TAG, "Config Internal Footswitch preset layout invalid");
-            ControlData.ConfigData.InternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
-            save_needed = 1;
+            ControlData.ConfigData.FootSwitchConfig.InternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
+            SaveUserConfigItem((void*)&ControlData.ConfigData.FootSwitchConfig, sizeof(ControlData.ConfigData.FootSwitchConfig), NVS_USERDATA_FOOTSW_CONF);
         }
     }
 
-    if (save_needed)
-    {
-        SaveUserData();
-    }
+    // show the config
+    DumpUserConfig();
 
-    ESP_LOGI(TAG, "Config BT Mode: %d", (int)ControlData.ConfigData.BTMode);
-    ESP_LOGI(TAG, "Config BT Mvave Choc: %d", (int)ControlData.ConfigData.BTClientMvaveChocolateEnable);
-    ESP_LOGI(TAG, "Config BT Xvive MD1: %d", (int)ControlData.ConfigData.BTClientMvaveChocolateEnable);
-    ESP_LOGI(TAG, "Config BT Custom Client Enable: %d", (int)ControlData.ConfigData.BTClientCustomEnable);
-    ESP_LOGI(TAG, "Config BT Custom Client Name: %s", ControlData.ConfigData.BTClientCustomName);
-    ESP_LOGI(TAG, "Config Midi enable: %d", (int)ControlData.ConfigData.MidiSerialEnable);
-    ESP_LOGI(TAG, "Config Midi channel: %d", (int)ControlData.ConfigData.MidiChannel);
-    ESP_LOGI(TAG, "Config Toggle bypass: %d", (int)ControlData.ConfigData.GeneralDoublePressToggleBypass);
-    ESP_LOGI(TAG, "Config Loop around: %d", (int)ControlData.ConfigData.GeneralLoopAround);
-    ESP_LOGI(TAG, "Config Footswitch Mode: %d", (int)ControlData.ConfigData.FootswitchMode);
-    ESP_LOGI(TAG, "Config EnableBTmidiCC Mode: %d", (int)ControlData.ConfigData.EnableBTmidiCC);
-    ESP_LOGI(TAG, "Config WiFi Mode: %d", (int)ControlData.ConfigData.WiFiMode);
-    ESP_LOGI(TAG, "Config WiFi SSID: %s", ControlData.ConfigData.WifiSSID);
+    return 1;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      none
+* NOTES:       none
+****************************************************************************/
+static void DumpUserConfig(void)
+{
+    ESP_LOGI(TAG, "Config BT Mode: %d", (int)ControlData.ConfigData.BTConfig.BTMode);
+    ESP_LOGI(TAG, "Config BT Mvave Choc: %d", (int)ControlData.ConfigData.BTConfig.BTClientMvaveChocolateEnable);
+    ESP_LOGI(TAG, "Config BT Xvive MD1: %d", (int)ControlData.ConfigData.BTConfig.BTClientMvaveChocolateEnable);
+    ESP_LOGI(TAG, "Config BT Custom Client Enable: %d", (int)ControlData.ConfigData.BTConfig.BTClientCustomEnable);
+    ESP_LOGI(TAG, "Config BT Custom Client Name: %s", ControlData.ConfigData.BTConfig.BTClientCustomName);
+    ESP_LOGI(TAG, "Config Midi enable: %d", (int)ControlData.ConfigData.MidiConfig.MidiSerialEnable);
+    ESP_LOGI(TAG, "Config Midi channel: %d", (int)ControlData.ConfigData.MidiConfig.MidiChannel);
+    ESP_LOGI(TAG, "Config Toggle bypass: %d", (int)ControlData.ConfigData.GeneralConfig.GeneralDoublePressToggleBypass);
+    ESP_LOGI(TAG, "Config Loop around: %d", (int)ControlData.ConfigData.GeneralConfig.GeneralLoopAround);
+    ESP_LOGI(TAG, "Config Footswitch Mode: %d", (int)ControlData.ConfigData.FootSwitchConfig.FootswitchMode);
+    ESP_LOGI(TAG, "Config EnableBTmidiCC Mode: %d", (int)ControlData.ConfigData.MidiConfig.EnableBTmidiCC);
+    ESP_LOGI(TAG, "Config WiFi Mode: %d", (int)ControlData.ConfigData.WiFiConfig.WiFiMode);
+    ESP_LOGI(TAG, "Config WiFi SSID: %s", ControlData.ConfigData.WiFiConfig.WifiSSID);
     ESP_LOGI(TAG, "Config WiFi Password: <hidden>");
-    ESP_LOGI(TAG, "Config MDNS name: %s", ControlData.ConfigData.MDNSName);
-    ESP_LOGI(TAG, "Config WiFi TX Power: %d", ControlData.ConfigData.WifiTxPower);
-    ESP_LOGI(TAG, "Config Screen Rotation: %d", (int)ControlData.ConfigData.GeneralScreenRotation);
-    ESP_LOGI(TAG, "Config Save preset to slot: %d", (int)ControlData.ConfigData.GeneralSavePresetToSlot);
-    ESP_LOGI(TAG, "Config Ext Footsw Prst Layout: %d", (int)ControlData.ConfigData.ExternalFootswitchPresetLayout);
+    ESP_LOGI(TAG, "Config MDNS name: %s", ControlData.ConfigData.WiFiConfig.MDNSName);
+    ESP_LOGI(TAG, "Config WiFi TX Power: %d", ControlData.ConfigData.WiFiConfig.WifiTxPower);
+    ESP_LOGI(TAG, "Config Screen Rotation: %d", (int)ControlData.ConfigData.GeneralConfig.GeneralScreenRotation);
+    ESP_LOGI(TAG, "Config Save preset to slot: %d", (int)ControlData.ConfigData.GeneralConfig.GeneralSavePresetToSlot);
+    ESP_LOGI(TAG, "Config Ext Footsw Prst Layout: %d", (int)ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchPresetLayout);
     
     for (uint8_t loop = 0; loop < MAX_EXTERNAL_EFFECT_FOOTSWITCHES; loop++)
     {
-        ESP_LOGI(TAG, "Config Ext Footsw Effect %d Switch: %d", (int)loop, (int)ControlData.ConfigData.ExternalFootswitchEffectConfig[loop].Switch);
-        ESP_LOGI(TAG, "Config Ext Footsw Effect %d CC: %d", (int)loop, (int)ControlData.ConfigData.ExternalFootswitchEffectConfig[loop].CC);
-        ESP_LOGI(TAG, "Config Ext Footsw Effect %d Val 1: %d", (int)loop, (int)ControlData.ConfigData.ExternalFootswitchEffectConfig[loop].Value_1);
-        ESP_LOGI(TAG, "Config Ext Footsw Effect %d Val 2: %d", (int)loop, (int)ControlData.ConfigData.ExternalFootswitchEffectConfig[loop].Value_2);
+        ESP_LOGI(TAG, "Config Ext Footsw Effect %d Switch: %d", (int)loop, (int)ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[loop].Switch);
+        ESP_LOGI(TAG, "Config Ext Footsw Effect %d CC: %d", (int)loop, (int)ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[loop].CC);
+        ESP_LOGI(TAG, "Config Ext Footsw Effect %d Val 1: %d", (int)loop, (int)ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[loop].Value_1);
+        ESP_LOGI(TAG, "Config Ext Footsw Effect %d Val 2: %d", (int)loop, (int)ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[loop].Value_2);
     }
     
     for (uint8_t loop = 0; loop < MAX_INTERNAL_EFFECT_FOOTSWITCHES; loop++)
     {
-        ESP_LOGI(TAG, "Config Int Footsw Effect %d Switch: %d", (int)loop, (int)ControlData.ConfigData.InternalFootswitchEffectConfig[loop].Switch);
-        ESP_LOGI(TAG, "Config Int Footsw Effect %d CC: %d", (int)loop, (int)ControlData.ConfigData.InternalFootswitchEffectConfig[loop].CC);
-        ESP_LOGI(TAG, "Config Int Footsw Effect %d Val 1: %d", (int)loop, (int)ControlData.ConfigData.InternalFootswitchEffectConfig[loop].Value_1);
-        ESP_LOGI(TAG, "Config Int Footsw Effect %d Val 2: %d", (int)loop, (int)ControlData.ConfigData.InternalFootswitchEffectConfig[loop].Value_2);
+        ESP_LOGI(TAG, "Config Int Footsw Effect %d Switch: %d", (int)loop, (int)ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[loop].Switch);
+        ESP_LOGI(TAG, "Config Int Footsw Effect %d CC: %d", (int)loop, (int)ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[loop].CC);
+        ESP_LOGI(TAG, "Config Int Footsw Effect %d Val 1: %d", (int)loop, (int)ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[loop].Value_1);
+        ESP_LOGI(TAG, "Config Int Footsw Effect %d Val 2: %d", (int)loop, (int)ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[loop].Value_2);
     }
-
-    // status    
-    return result;
 }
 
 /****************************************************************************
@@ -1977,55 +2258,56 @@ static uint8_t LoadPresetUserText(uint16_t preset_index, char* text)
 *****************************************************************************/
 void control_set_default_config(void)
 {
-    ControlData.ConfigData.BTMode = BT_MODE_CENTRAL;
-    ControlData.ConfigData.BTClientMvaveChocolateEnable = 1;
-    ControlData.ConfigData.BTClientXviveMD1Enable = 1;
-    ControlData.ConfigData.BTClientCustomEnable = 0;
-    ControlData.ConfigData.GeneralDoublePressToggleBypass = 0;
-    ControlData.ConfigData.GeneralLoopAround = 0;
+    ControlData.ConfigData.BTConfig.BTMode = BT_MODE_CENTRAL;
+    ControlData.ConfigData.BTConfig.BTClientMvaveChocolateEnable = 1;
+    ControlData.ConfigData.BTConfig.BTClientXviveMD1Enable = 1;
+    ControlData.ConfigData.BTConfig.BTClientCustomEnable = 0;
+
+    ControlData.ConfigData.GeneralConfig.GeneralDoublePressToggleBypass = 0;
+    ControlData.ConfigData.GeneralConfig.GeneralLoopAround = 0;
 
 #if CONFIG_TONEX_CONTROLLER_DEFAULT_MIDI_ENABLE
-    ControlData.ConfigData.MidiSerialEnable = 1;
+    ControlData.ConfigData.MidiConfig.MidiSerialEnable = 1;
 #else
-    ControlData.ConfigData.MidiSerialEnable = 0;    
+    ControlData.ConfigData.MidiConfig.MidiSerialEnable = 0;    
 #endif    
 
-    ControlData.ConfigData.MidiChannel = 1;
-    ControlData.ConfigData.FootswitchMode = FOOTSWITCH_LAYOUT_1X2;
-    ControlData.ConfigData.EnableBTmidiCC = 0;
-    memset((void*)ControlData.ConfigData.BTClientCustomName, 0, sizeof(ControlData.ConfigData.BTClientCustomName));
-    ControlData.ConfigData.WiFiMode = WIFI_MODE_ACCESS_POINT_TIMED;
-    strcpy(ControlData.ConfigData.WifiSSID, "TonexConfig");
-    strcpy(ControlData.ConfigData.WifiPassword, "12345678");   
-    strcpy(ControlData.ConfigData.MDNSName, "tonex");   
-    ControlData.ConfigData.WifiTxPower = WIFI_TX_POWER_25;
+    ControlData.ConfigData.MidiConfig.MidiChannel = 1;
+    ControlData.ConfigData.FootSwitchConfig.FootswitchMode = FOOTSWITCH_LAYOUT_1X2;
+    ControlData.ConfigData.MidiConfig.EnableBTmidiCC = 0;
+    memset((void*)ControlData.ConfigData.BTConfig.BTClientCustomName, 0, sizeof(ControlData.ConfigData.BTConfig.BTClientCustomName));
+    ControlData.ConfigData.WiFiConfig.WiFiMode = WIFI_MODE_ACCESS_POINT_TIMED;
+    strcpy(ControlData.ConfigData.WiFiConfig.WifiSSID, "TonexConfig");
+    strcpy(ControlData.ConfigData.WiFiConfig.WifiPassword, "12345678");   
+    strcpy(ControlData.ConfigData.WiFiConfig.MDNSName, "tonex");   
+    ControlData.ConfigData.WiFiConfig.WifiTxPower = WIFI_TX_POWER_25;
 
 #if CONFIG_TONEX_CONTROLLER_SCREEN_ROTATION_DEFAULT_180    
-    ControlData.ConfigData.GeneralScreenRotation = SCREEN_ROTATION_180;
+    ControlData.ConfigData.GeneralConfig.GeneralScreenRotation = SCREEN_ROTATION_180;
 #else
-    ControlData.ConfigData.GeneralScreenRotation = SCREEN_ROTATION_0;
+    ControlData.ConfigData.GeneralConfig.GeneralScreenRotation = SCREEN_ROTATION_0;
 #endif    
 
-    ControlData.ConfigData.GeneralSavePresetToSlot = SAVE_PRESET_SLOT_C;
-    ControlData.ConfigData.ExternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
-    memset((void*)ControlData.ConfigData.ExternalFootswitchEffectConfig, 0, sizeof(ControlData.ConfigData.ExternalFootswitchEffectConfig));
-    memset((void*)ControlData.ConfigData.InternalFootswitchEffectConfig, 0, sizeof(ControlData.ConfigData.InternalFootswitchEffectConfig));
+    ControlData.ConfigData.GeneralConfig.GeneralSavePresetToSlot = SAVE_PRESET_SLOT_C;
+    ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
+    memset((void*)ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig, 0, sizeof(ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig));
+    memset((void*)ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig, 0, sizeof(ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig));
 
     // default to no switches configured
     for (uint8_t loop = 0; loop < MAX_EXTERNAL_EFFECT_FOOTSWITCHES; loop++)
     {
-        ControlData.ConfigData.ExternalFootswitchEffectConfig[loop].Switch = SWITCH_NOT_USED;
+        ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[loop].Switch = SWITCH_NOT_USED;
     }
 
     // default to no switches configured
     for (uint8_t loop = 0; loop < MAX_INTERNAL_EFFECT_FOOTSWITCHES; loop++)
     {
-        ControlData.ConfigData.InternalFootswitchEffectConfig[loop].Switch = SWITCH_NOT_USED;
+        ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[loop].Switch = SWITCH_NOT_USED;
     }
 
     for (uint8_t loop = 0; loop < MAX_SUPPORTED_PRESETS; loop++)
     {
-        ControlData.ConfigData.PresetOrder[loop] = loop;
+        ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder[loop] = loop;
     }
 }
 
@@ -2083,6 +2365,9 @@ void control_load_config(void)
     {
         ESP_LOGE(TAG, "Failed to init NVS");
     }
+
+    // check if we need to migrate user data from old scheme to new scheme
+    MigrateUserData();
 
     // load the non-volatile user data
     LoadUserData();
