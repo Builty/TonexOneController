@@ -314,30 +314,26 @@ static esp_err_t usb_tonex_send_single_parameter(uint16_t index, float value)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-#if 0
-static void __attribute__((unused)) usb_tonex_dump_state(void)
+static void __attribute__((unused)) usb_tonex_dump_globals(void)
 {
-    float InputTrim;
     float BPM;
-    uint16_t TuningRef;
+    float InputTrim;
+    float CabsimBypass;
+    float TempoSource;
+    float TuningRef;
+    
+    // get the global values
+    memcpy((void*)&BPM, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_BPM * 5) + 1], sizeof(float));
+    memcpy((void*)&InputTrim, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_INPUT_TRIM * 5) + 1], sizeof(float));
+    memcpy((void*)&CabsimBypass, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_CABSIM_BYPASS * 5) + 1], sizeof(float));
+    memcpy((void*)&TempoSource, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_TEMPO_SOURCE * 5) + 1], sizeof(float));
+    memcpy((void*)&TuningRef, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_TUNING_REFERENCE * 5) + 1], sizeof(float));
 
-    memcpy((void*)&BPM, (void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BPM], sizeof(float));
-    memcpy((void*)&InputTrim, (void*)&TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_INPUT_TRIM], sizeof(float));    
-    memcpy((void*)&TuningRef, (void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TUNING_REF], sizeof(uint16_t));
-
-    ESP_LOGI(TAG, "**** Tonex State Data ****");
-    ESP_LOGI(TAG, "Input Trim: %3.2f.\t\tStomp Mode: %d", InputTrim, 
-                                                          (int)TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_STOMP_MODE]);
-
-    ESP_LOGI(TAG, "Cab Sim Bypass: %d.\t\tTuning Mode: %d", (int)TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_CAB_BYPASS], 
-                                                            (int)TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_TUNING_MODE]);
-
-    ESP_LOGI(TAG, "Tuning Reference: %d.\t\tDirect Monitoring: %d", (int)TuningRef, 
-                                                                    (int)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_DIRECT_MONITOR]);
-
-    ESP_LOGI(TAG, "BPM: %3.2f\t\t\tTempo Source: %d", BPM, (int)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TEMPO_SOURCE]);     
+    ESP_LOGI(TAG, "**** Tonex Global Data ****");
+    ESP_LOGI(TAG, "Input Trim: %3.2f.\t\tCab Sim Bypass: %3.2f", InputTrim, CabsimBypass);
+    ESP_LOGI(TAG, "Tuning Reference: %3.2f.\t\tBPM: %3.2f", TuningRef, BPM);                                                                
+    ESP_LOGI(TAG, "Tempo Source: %3.2f", TempoSource);     
 }
-#endif 
 
 /****************************************************************************
 * NAME:        
@@ -780,6 +776,8 @@ static TonexStatus usb_tonex_parse_global_config(uint8_t* unframed, uint16_t len
         }
     }
 
+    usb_tonex_dump_globals();
+
     return STATUS_OK;
 }
 
@@ -1195,13 +1193,13 @@ void usb_tonex_handle(class_driver_t* driver_obj)
                         else if (message.Payload < TONEX_GLOBAL_LAST)
                         {
                             // modify the global
-                            usb_tonex_modify_global(message.Payload, message.PayloadFloat);
+                            //todo usb_tonex_modify_global(message.Payload, message.PayloadFloat);
 
                             // debug
-                            //usb_tonex_one_dump_state(&TonexData->Message.PedalData.TonexStateData);
+                            //usb_tonex_dump_globals();
 
                             // send it 
-                            usb_tonex_send_global_config();
+                            //todo usb_tonex_send_global_config();
                         }
                         else
                         {

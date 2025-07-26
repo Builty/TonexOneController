@@ -1437,8 +1437,6 @@ uint32_t control_get_config_item_int(uint32_t item)
             value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[4].Value_2;
         } break;
 
-
-        //xxxx
         case CONFIG_ITEM_EXT_FOOTSW_EFFECT6_SW:
         {
             value = ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[5].Switch;
@@ -1917,7 +1915,14 @@ static uint8_t MigrateUserData(void)
                 memcpy((void*)ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig, (void*)LegacyConfigData->InternalFootswitchEffectConfig, sizeof(ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig));
 
                 // preset order mapping
-                memcpy((void*)ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder, (void*)LegacyConfigData->PresetOrder, sizeof(ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder));
+                // start with 1:1 mapping
+                for (uint32_t loop = 0; loop < MAX_SUPPORTED_PRESETS; loop++)
+                {
+                    ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder[loop] = loop;
+                }
+
+                // copy in legacy config
+                memcpy((void*)ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder, (void*)LegacyConfigData->PresetOrder, LEGACY_CONFIG_USER_COUNT);
 
                 // skins
                 for (uint8_t loop = 0; loop < LEGACY_CONFIG_USER_COUNT; loop++)
@@ -1983,6 +1988,9 @@ static uint8_t SaveUserData(void)
 ****************************************************************************/
 static uint8_t LoadUserData(void)
 {
+    uint8_t reset_order = 0;
+    uint32_t loop;
+
     // load each config item
     // Bluetooth
     if (LoadUserConfigItem((void*)&ControlData.ConfigData.BTConfig, sizeof(ControlData.ConfigData.BTConfig), NVS_USERDATA_BT_CONF) != ESP_OK)
@@ -2070,6 +2078,30 @@ static uint8_t LoadUserData(void)
             ControlData.ConfigData.FootSwitchConfig.InternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
             SaveUserConfigItem((void*)&ControlData.ConfigData.FootSwitchConfig, sizeof(ControlData.ConfigData.FootSwitchConfig), NVS_USERDATA_FOOTSW_CONF);
         }
+    }
+    
+    // check the preset order
+    for (loop = 0; loop < MAX_SUPPORTED_PRESETS; loop++)
+    {
+        // check for any invalid values
+        if (ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder[loop] > MAX_SUPPORTED_PRESETS)
+        {
+            reset_order = 1;
+            break;
+        }
+    }
+
+    if (reset_order)
+    {
+        ESP_LOGW(TAG, "Repairing preset layout");
+
+        // fix corrupted preset order
+        for (loop = 0; loop < MAX_SUPPORTED_PRESETS; loop++)
+        {
+            ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder[loop] = loop;
+        }
+
+        SaveUserConfigItem((void*)&ControlData.ConfigData.PresetOrderMappingConfig, sizeof(ControlData.ConfigData.PresetOrderMappingConfig), NVS_USERDATA_PRESET_ORDER_CONF);
     }
 
     // show the config

@@ -107,7 +107,8 @@ enum UIAction
 {
     UI_ACTION_SET_STATE,
     UI_ACTION_SET_LABEL_TEXT,
-    UI_ACTION_SET_ENTRY_TEXT
+    UI_ACTION_SET_ENTRY_TEXT,
+    UI_ACTION_NONE = 0xFF
 };
 
 typedef struct 
@@ -1446,6 +1447,7 @@ void UI_RefreshParameterValues(void)
     tUIUpdate ui_update;
 
     // build command
+    ui_update.Action = UI_ACTION_NONE;
     ui_update.ElementID = UI_ELEMENT_PARAMETERS;
     
     // send to queue
@@ -3282,6 +3284,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             lv_textarea_set_text(element_1, update->Text);
 #endif            
+        } break;
+
+        case UI_ACTION_NONE:
+        {
+            // nothing needed
         } break;
 
         default:
