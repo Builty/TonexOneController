@@ -3061,7 +3061,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             lv_slider_set_value(ui_BPMSlider, round(param_entry->Value), LV_ANIM_OFF); 
 
                             char buf[128];
-                            sprintf(buf, "%d", (int)round(param_entry->Value));
+                            sprintf(buf, "%.1f", param_entry->Value);
                             lv_label_set_text(ui_BPMValueLabel, buf);
                             ui_BPMAnimate(ui_BPMIndicator, 1000 * 60 / param_entry->Value);
                         } break;

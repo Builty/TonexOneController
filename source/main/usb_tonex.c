@@ -173,6 +173,7 @@ static uint8_t* FramedBuffer;
 static QueueHandle_t input_queue;
 static uint8_t boot_init_needed = 0;
 static uint8_t boot_preset_request = 0;
+static uint8_t boot_global_request = 0;
 static volatile tInputBufferEntry* InputBuffers;
 
 /*
@@ -215,6 +216,26 @@ static esp_err_t usb_tonex_request_state(void)
     uint16_t outlength;
 
     uint8_t request[] = {0xb9, 0x03, 0x00, 0x82, 0x06, 0x00, 0x80, 0x10, 0x03, 0xb9, 0x02, 0x81, 0x01, 0x02, 0x10};
+
+    // add framing
+    outlength = tonex_common_add_framing(request, sizeof(request), FramedBuffer);
+
+    // send it
+    return tonex_common_transmit(cdc_dev, FramedBuffer, outlength, TONEX_USB_TX_BUFFER_SIZE);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static esp_err_t usb_tonex_request_global_config(void)
+{
+    uint16_t outlength;
+
+    uint8_t request[] = {0xb9, 0x03, 0x00, 0x82, 0x06, 0x00, 0x80, 0x10, 0x03, 0xb9, 0x02, 0x81, 0x06, 0x02, 0x10};
 
     // add framing
     outlength = tonex_common_add_framing(request, sizeof(request), FramedBuffer);
@@ -1046,6 +1067,14 @@ static esp_err_t usb_tonex_process_single_message(uint8_t* data, uint16_t length
                             wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
                         }
 
+                        if (boot_global_request)
+                        {
+                            // request globals
+                            usb_tonex_request_global_config();
+
+                            boot_global_request = 0;
+                        }
+
                         // debug dump parameters
                         //tonex_dump_parameters();
                     }
@@ -1054,13 +1083,14 @@ static esp_err_t usb_tonex_process_single_message(uint8_t* data, uint16_t length
                 case TYPE_HELLO:
                 {
                     ESP_LOGI(TAG, "Received Hello");
-
+                    
                     // get current state
                     usb_tonex_request_state();
                     TonexData->TonexState = COMMS_STATE_GET_STATE;
 
                     // flag that we need to do the boot init procedure
                     boot_init_needed = 1;
+                    boot_global_request = 1;
                     boot_preset_request = 0;
 
                     // preset sync occurs when state response is received
@@ -1069,6 +1099,11 @@ static esp_err_t usb_tonex_process_single_message(uint8_t* data, uint16_t length
                     // show sync message
                     UI_SetPresetLabel(0, "Syncing....");
 #endif
+                } break;
+
+                case TYPE_GLOBAL_CONFIG:
+                {   
+                    // nothing needed
                 } break;
 
                 case TYPE_STATE_PRESET_DETAILS_FULL:
@@ -1193,13 +1228,13 @@ void usb_tonex_handle(class_driver_t* driver_obj)
                         else if (message.Payload < TONEX_GLOBAL_LAST)
                         {
                             // modify the global
-                            //todo usb_tonex_modify_global(message.Payload, message.PayloadFloat);
+                            usb_tonex_modify_global(message.Payload, message.PayloadFloat);
 
                             // debug
                             //usb_tonex_dump_globals();
 
                             // send it 
-                            //todo usb_tonex_send_global_config();
+                            usb_tonex_send_global_config();
                         }
                         else
                         {
