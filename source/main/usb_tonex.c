@@ -112,12 +112,29 @@ typedef enum Slot
 } Slot;
 
 // indexes of global config packet
-#define GLOBAL_CONFIG_INDEX_CABSIM_BYPASS       4   //??
-#define GLOBAL_CONFIG_INDEX_TEMPO_SOURCE        5   //??
+//#define GLOBAL_CONFIG_INDEX_BYPASS_MODE       unknown! is it possible? 
+#define GLOBAL_CONFIG_INDEX_UNKNOWN_0           0   // typically 100 
+#define GLOBAL_CONFIG_INDEX_UNKNOWN_1           1   // typically 4000
+#define GLOBAL_CONFIG_INDEX_PRESET_NAMING       2   // 0=name only, 1=PC+name, 2=bank+name	
+#define GLOBAL_CONFIG_INDEX_USERMODE            3   // 0=easy, 1=advanced
+#define GLOBAL_CONFIG_INDEX_EXT_CTL_EXT_TYPE    4   // external switch type
+#define GLOBAL_CONFIG_INDEX_EXT_CTL_SINGLE      5   // single switch mode
+#define GLOBAL_CONFIG_INDEX_EXT_CTL_DOUBLE      6   // double switch mode
+#define GLOBAL_CONFIG_INDEX_MIDI_CHANNEL        7
+#define GLOBAL_CONFIG_INDEX_MIDI_THRU           8   // 0=off, 1=thru, 2=merge
 #define GLOBAL_CONFIG_INDEX_INPUT_TRIM          9
+#define GLOBAL_CONFIG_INDEX_MAIN_VOLUME         10
 #define GLOBAL_CONFIG_INDEX_INTERFACE_VOLUME    11
+#define GLOBAL_CONFIG_INDEX_OPMODE              12  // 0-live, 1=interface
+#define GLOBAL_CONFIG_INDEX_USB_MODE            13  // 0=stereo, 1=dual  
+#define GLOBAL_CONFIG_INDEX_SWITCH_MODE         14  // 0=released, 1=pressed
+#define GLOBAL_CONFIG_INDEX_CABSIM_BYPASS       15
+#define GLOBAL_CONFIG_INDEX_TUNER_MODE          16  // 0=mute, 1=thru
 #define GLOBAL_CONFIG_INDEX_TUNING_REFERENCE    17
-#define GLOBAL_CONFIG_INDEX_BPM                 18               
+#define GLOBAL_CONFIG_INDEX_BPM                 18
+#define GLOBAL_CONFIG_INDEX_TEMPO_SOURCE        19
+#define GLOBAL_CONFIG_INDEX_MIDI_CLOCK_MODE     20  // 0=off, 1=master, 2=slave midi, 3=slave USB
+#define GLOBAL_CONFIG_INDEX_SWITCH_BYPASS_EN    21  // 0=don't bypass on second press, 1=bypass on second press
 #define GLOBAL_CONFIG_INDEX_MAX                 22
 
 typedef struct __attribute__ ((packed)) 
@@ -342,6 +359,7 @@ static void __attribute__((unused)) usb_tonex_dump_globals(void)
     float CabsimBypass;
     float TempoSource;
     float TuningRef;
+    float BypassMode = 0;   // unsupported
     
     // get the global values
     memcpy((void*)&BPM, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_BPM * 5) + 1], sizeof(float));
@@ -349,11 +367,12 @@ static void __attribute__((unused)) usb_tonex_dump_globals(void)
     memcpy((void*)&CabsimBypass, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_CABSIM_BYPASS * 5) + 1], sizeof(float));
     memcpy((void*)&TempoSource, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_TEMPO_SOURCE * 5) + 1], sizeof(float));
     memcpy((void*)&TuningRef, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_TUNING_REFERENCE * 5) + 1], sizeof(float));
+    // unsupported for now memcpy((void*)&BypassMode, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_BYPASS_MODE * 5) + 1], sizeof(float));
 
     ESP_LOGI(TAG, "**** Tonex Global Data ****");
     ESP_LOGI(TAG, "Input Trim: %3.2f.\t\tCab Sim Bypass: %3.2f", InputTrim, CabsimBypass);
     ESP_LOGI(TAG, "Tuning Reference: %3.2f.\t\tBPM: %3.2f", TuningRef, BPM);                                                                
-    ESP_LOGI(TAG, "Tempo Source: %3.2f", TempoSource);     
+    ESP_LOGI(TAG, "Tempo Source: %3.2f\t\tBypass Mode: %3.2f", TempoSource, BypassMode);     
 }
 
 /****************************************************************************
@@ -521,6 +540,19 @@ static esp_err_t usb_tonex_modify_global(uint16_t global_val, float value)
         {
             // modify the tuning ref value in state packet
             memcpy((void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_TUNING_REFERENCE * 5) + 1], (void*)&value, sizeof(float));
+            res = ESP_OK;
+        } break;
+
+        case TONEX_GLOBAL_BYPASS:
+        {
+            // modify the bypass in state packet
+            //unsupported memcpy((void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_BYPASS_MODE * 5) + 1], (void*)&value, sizeof(float));
+            res = ESP_OK;
+        } break;
+
+        case TONEX_GLOBAL_MASTER_VOLUME:
+        {
+            memcpy((void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_MAIN_VOLUME * 5) + 1], (void*)&value, sizeof(float));
             res = ESP_OK;
         } break;
     }
@@ -764,6 +796,17 @@ static TonexStatus usb_tonex_parse_global_config(uint8_t* unframed, uint16_t len
                             case GLOBAL_CONFIG_INDEX_TUNING_REFERENCE:
                             {
                                 param_ptr[TONEX_GLOBAL_TUNING_REFERENCE].Value = temp_val; 
+                            } break;
+
+                            // unsupported
+                            //case GLOBAL_CONFIG_INDEX_BYPASS_MODE:
+                            //{
+                            //    param_ptr[TONEX_GLOBAL_BYPASS].Value = temp_val; 
+                            //} break;
+
+                            case GLOBAL_CONFIG_INDEX_MAIN_VOLUME:
+                            {
+                                param_ptr[TONEX_GLOBAL_MASTER_VOLUME].Value = temp_val; 
                             } break;
 
                             default:

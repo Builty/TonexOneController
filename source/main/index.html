@@ -599,6 +599,8 @@
         const TONEX_GLOBAL_CABSIM_BYPASS = 112;
         const TONEX_GLOBAL_TEMPO_SOURCE = 113;
         const TONEX_GLOBAL_TUNING_REFERENCE = 114;
+        const TONEX_GLOBAL_BYPASS = 115;
+        const TONEX_GLOBAL_MASTER_VOLUME = 116;
 
         
         // External Footswitch midi associations
@@ -1960,6 +1962,16 @@
                             case TONEX_GLOBAL_TUNING_REFERENCE:
                                 configureParamRange("gb_tref", value, min, max, 1);
                                 setParamData("gb_tref", parseInt(key));
+                                break;
+
+                            case TONEX_GLOBAL_BYPASS:
+                                configureParamSwitch("gb_bypass", value);
+                                setParamData("gb_bypass", parseInt(key));
+                                break;
+
+                            case TONEX_GLOBAL_MASTER_VOLUME:
+                                configureParamRange("gb_vol", value, min, max, 0.1);
+                                setParamData("gb_vol", parseInt(key));
                                 break;
                         }
                     } 
@@ -3343,6 +3355,19 @@
                 </div>
                 <br>
                 <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="gb_bypass">
+                                <label class="form-check-label" for="gb_bypass">Bypass</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="container">
                     <div id="gb_tap" class="bpm-tap d-flex user-select-none" onclick="globalTempoTap()" ontouchstart="">
                         <div class="justify-content-center align-self-center text-center w-100">TAP</div>
                     </div>
@@ -3358,6 +3383,10 @@
                 <div class="container">
                     <label for="gb_tref" class="form-label" unit="Hz">Tuning Reference</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="gb_tref">
+                </div>
+                <div class="container">
+                    <label for="gb_vol" class="form-label">Master Volume</label>
+                    <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="gb_vol">
                 </div>
             </p>
         </div>

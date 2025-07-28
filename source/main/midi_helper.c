@@ -263,7 +263,19 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         } break;
 
         // 11: expression pedal
-        // 12: preset on/off
+        
+        case 12: 
+        {
+            //preset on/off
+            param = TONEX_GLOBAL_BYPASS;
+
+            // check for toggling
+            if (!midi_helper_boolean_midi_toggle(param, midi_value, &value))
+            {
+                value = midi_helper_boolean_midi_to_float(midi_value);
+                value = tonex_params_clamp_value(param, value);
+            }
+        } break;
         
         case 13:
         {
@@ -1324,8 +1336,13 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
         } break;
 
         // 11: expression pedal
-        // 12: preset on/off
         
+        case 12: 
+        {
+            // preset on/off
+            param = TONEX_GLOBAL_BYPASS;
+        } break;
+
         case 13:
         {
             param = TONEX_PARAM_NOISE_GATE_POST;

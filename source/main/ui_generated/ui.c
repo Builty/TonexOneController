@@ -10,234 +10,237 @@
 
 // SCREEN: ui_Screen1
 void ui_Screen1_screen_init(void);
-lv_obj_t *ui_Screen1;
-lv_obj_t *ui_BottomPanel;
-void ui_event_PreviousContainer( lv_event_t * e);
-lv_obj_t *ui_PreviousContainer;
-void ui_event_PreviousButton( lv_event_t * e);
-lv_obj_t *ui_PreviousButton;
-void ui_event_NextContainer( lv_event_t * e);
-lv_obj_t *ui_NextContainer;
-void ui_event_NextButton( lv_event_t * e);
-lv_obj_t *ui_NextButton;
-void ui_event_IconEQ( lv_event_t * e);
-lv_obj_t *ui_IconEQ;
-void ui_event_IconGate( lv_event_t * e);
-lv_obj_t *ui_IconGate;
-void ui_event_IconAmp( lv_event_t * e);
-lv_obj_t *ui_IconAmp;
-void ui_event_IconCab( lv_event_t * e);
-lv_obj_t *ui_IconCab;
-void ui_event_IconComp( lv_event_t * e);
-lv_obj_t *ui_IconComp;
-void ui_event_IconMod( lv_event_t * e);
-lv_obj_t *ui_IconMod;
-void ui_event_IconDelay( lv_event_t * e);
-lv_obj_t *ui_IconDelay;
-void ui_event_IconReverb( lv_event_t * e);
-lv_obj_t *ui_IconReverb;
-void ui_event_SettingsImage( lv_event_t * e);
-lv_obj_t *ui_SettingsImage;
-lv_obj_t *ui_TopPanel;
-lv_obj_t *ui_IKLogo;
-lv_obj_t *ui_BTStatusConn;
-void ui_event_BTStatusDisconn( lv_event_t * e);
-lv_obj_t *ui_BTStatusDisconn;
-lv_obj_t *ui_USBStatusOK;
-lv_obj_t *ui_USBStatusFail;
-lv_obj_t *ui_WiFiStatusConn;
-lv_obj_t *ui_WiFiStatusDisconn;
-lv_obj_t *ui_ProjectHeadingLabel;
-lv_obj_t *ui_Skins;
-lv_obj_t *ui_SkinImage;
-void ui_event_PresetHeadingLabel( lv_event_t * e);
-lv_obj_t *ui_PresetHeadingLabel;
-lv_obj_t *ui_BankTitleLabel;
-lv_obj_t *ui_BankValueLabel;
-lv_obj_t *ui_BPMTitleLabel;
-lv_obj_t *ui_BPMValueLabel;
-lv_obj_t *ui_BPMIndicator;
-void ui_event_PresetDetailsTextArea( lv_event_t * e);
-lv_obj_t *ui_PresetDetailsTextArea;
-void ui_event_LeftArrow( lv_event_t * e);
-lv_obj_t *ui_LeftArrow;
-void ui_event_RightArrow( lv_event_t * e);
-lv_obj_t *ui_RightArrow;
-void ui_event_EntryKeyboard( lv_event_t * e);
-lv_obj_t *ui_EntryKeyboard;
-void ui_event_OKTick( lv_event_t * e);
-lv_obj_t *ui_OKTick;
+lv_obj_t * ui_Screen1;
+lv_obj_t * ui_BottomPanel;
+void ui_event_PreviousContainer(lv_event_t * e);
+lv_obj_t * ui_PreviousContainer;
+void ui_event_PreviousButton(lv_event_t * e);
+lv_obj_t * ui_PreviousButton;
+void ui_event_NextContainer(lv_event_t * e);
+lv_obj_t * ui_NextContainer;
+void ui_event_NextButton(lv_event_t * e);
+lv_obj_t * ui_NextButton;
+void ui_event_IconEQ(lv_event_t * e);
+lv_obj_t * ui_IconEQ;
+void ui_event_IconGate(lv_event_t * e);
+lv_obj_t * ui_IconGate;
+void ui_event_IconAmp(lv_event_t * e);
+lv_obj_t * ui_IconAmp;
+void ui_event_IconCab(lv_event_t * e);
+lv_obj_t * ui_IconCab;
+void ui_event_IconComp(lv_event_t * e);
+lv_obj_t * ui_IconComp;
+void ui_event_IconMod(lv_event_t * e);
+lv_obj_t * ui_IconMod;
+void ui_event_IconDelay(lv_event_t * e);
+lv_obj_t * ui_IconDelay;
+void ui_event_IconReverb(lv_event_t * e);
+lv_obj_t * ui_IconReverb;
+void ui_event_SettingsImage(lv_event_t * e);
+lv_obj_t * ui_SettingsImage;
+lv_obj_t * ui_TopPanel;
+lv_obj_t * ui_IKLogo;
+lv_obj_t * ui_BTStatusConn;
+void ui_event_BTStatusDisconn(lv_event_t * e);
+lv_obj_t * ui_BTStatusDisconn;
+lv_obj_t * ui_USBStatusOK;
+lv_obj_t * ui_USBStatusFail;
+lv_obj_t * ui_WiFiStatusConn;
+lv_obj_t * ui_WiFiStatusDisconn;
+lv_obj_t * ui_ProjectHeadingLabel;
+lv_obj_t * ui_Skins;
+lv_obj_t * ui_SkinImage;
+void ui_event_PresetHeadingLabel(lv_event_t * e);
+lv_obj_t * ui_PresetHeadingLabel;
+lv_obj_t * ui_BankTitleLabel;
+lv_obj_t * ui_BankValueLabel;
+lv_obj_t * ui_BPMTitleLabel;
+lv_obj_t * ui_BPMValueLabel;
+lv_obj_t * ui_BPMIndicator;
+void ui_event_PresetDetailsTextArea(lv_event_t * e);
+lv_obj_t * ui_PresetDetailsTextArea;
+void ui_event_LeftArrow(lv_event_t * e);
+lv_obj_t * ui_LeftArrow;
+void ui_event_RightArrow(lv_event_t * e);
+lv_obj_t * ui_RightArrow;
+void ui_event_EntryKeyboard(lv_event_t * e);
+lv_obj_t * ui_EntryKeyboard;
+void ui_event_OKTick(lv_event_t * e);
+lv_obj_t * ui_OKTick;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_Settings
 void ui_Settings_screen_init(void);
-lv_obj_t *ui_Settings;
-lv_obj_t *ui_SettingsTabview;
-lv_obj_t *ui_NoiseGateTab;
-lv_obj_t *ui_NoiseGateEnableLabel;
-void ui_event_NoiseGateSwitch( lv_event_t * e);
-lv_obj_t *ui_NoiseGateSwitch;
-void ui_event_NoiseGatePostSwitch( lv_event_t * e);
-lv_obj_t *ui_NoiseGatePostSwitch;
-lv_obj_t *ui_NoiseGatePostLabel;
-lv_obj_t *ui_NoiseGateThresholdLabel;
-void ui_event_NoiseGateThresholdSlider( lv_event_t * e);
-lv_obj_t *ui_NoiseGateThresholdSlider;
-lv_obj_t *ui_NoiseGateReleaseLabel;
-void ui_event_NoiseGateReleaseSlider( lv_event_t * e);
-lv_obj_t *ui_NoiseGateReleaseSlider;
-lv_obj_t *ui_NoiseGateDepthLabel;
-void ui_event_NoiseGateDepthSlider( lv_event_t * e);
-lv_obj_t *ui_NoiseGateDepthSlider;
-lv_obj_t *ui_CompressorTab;
-lv_obj_t *ui_CompressorEnableLabel;
-void ui_event_CompressorEnableSwitch( lv_event_t * e);
-lv_obj_t *ui_CompressorEnableSwitch;
-lv_obj_t *ui_CompressorPostLabel;
-void ui_event_CompressorPostSwitch( lv_event_t * e);
-lv_obj_t *ui_CompressorPostSwitch;
-lv_obj_t *ui_CompressorThresholdLabel;
-void ui_event_CompressorThresholdSlider( lv_event_t * e);
-lv_obj_t *ui_CompressorThresholdSlider;
-lv_obj_t *ui_CompressorAttackLabel;
-void ui_event_CompresorAttackSlider( lv_event_t * e);
-lv_obj_t *ui_CompresorAttackSlider;
-lv_obj_t *ui_CompressorGainLabel;
-void ui_event_CompressorGainSlider( lv_event_t * e);
-lv_obj_t *ui_CompressorGainSlider;
-lv_obj_t *ui_Amplifier;
-void ui_event_AmpEnableSwitch( lv_event_t * e);
-lv_obj_t *ui_AmpEnableSwitch;
-lv_obj_t *ui_AmpEnableLabel;
-lv_obj_t *ui_AmpCabLabel;
-void ui_event_CabinetModeDropdown( lv_event_t * e);
-lv_obj_t *ui_CabinetModeDropdown;
-lv_obj_t *ui_AmplifierGainLabel;
-void ui_event_AmplifierGainSlider( lv_event_t * e);
-lv_obj_t *ui_AmplifierGainSlider;
-lv_obj_t *ui_AmplifierVolumeLabel;
-void ui_event_AmplifierVolumeSlider( lv_event_t * e);
-lv_obj_t *ui_AmplifierVolumeSlider;
-lv_obj_t *ui_AmplifierPresenseLabel;
-void ui_event_AmplifierPresenseSlider( lv_event_t * e);
-lv_obj_t *ui_AmplifierPresenseSlider;
-lv_obj_t *ui_AmplifierDepthLabel;
-void ui_event_AmplifierDepthSlider( lv_event_t * e);
-lv_obj_t *ui_AmplifierDepthSlider;
-lv_obj_t *ui_EQTab;
-lv_obj_t *ui_EQPostLabel;
-void ui_event_EQPostSwitch( lv_event_t * e);
-lv_obj_t *ui_EQPostSwitch;
-lv_obj_t *ui_EQBassLabel;
-void ui_event_EQBassSlider( lv_event_t * e);
-lv_obj_t *ui_EQBassSlider;
-lv_obj_t *ui_EQMidLabel;
-void ui_event_EQMidSlider( lv_event_t * e);
-lv_obj_t *ui_EQMidSlider;
-lv_obj_t *ui_EQMidQLabel;
-void ui_event_EQMidQSlider( lv_event_t * e);
-lv_obj_t *ui_EQMidQSlider;
-lv_obj_t *ui_EQTrebleLabel;
-void ui_event_EQTrebleSlider( lv_event_t * e);
-lv_obj_t *ui_EQTrebleSlider;
-lv_obj_t *ui_Modulation;
-lv_obj_t *ui_ModulationEnableLabel;
-void ui_event_ModulationEnableSwitch( lv_event_t * e);
-lv_obj_t *ui_ModulationEnableSwitch;
-lv_obj_t *ui_ModulationPostLabel;
-void ui_event_ModulationPostSwitch( lv_event_t * e);
-lv_obj_t *ui_ModulationPostSwitch;
-lv_obj_t *ui_ModulationModelLabel;
-void ui_event_ModulationModelDropdown( lv_event_t * e);
-lv_obj_t *ui_ModulationModelDropdown;
-lv_obj_t *ui_ModulationSyncLabel;
-void ui_event_ModulationSyncSwitch( lv_event_t * e);
-lv_obj_t *ui_ModulationSyncSwitch;
-lv_obj_t *ui_ModulationParam1Label;
-void ui_event_ModulationParam1Slider( lv_event_t * e);
-lv_obj_t *ui_ModulationParam1Slider;
-void ui_event_ModulationTSDropdown( lv_event_t * e);
-lv_obj_t *ui_ModulationTSDropdown;
-lv_obj_t *ui_ModulationParam2Label;
-void ui_event_ModulationParam2Slider( lv_event_t * e);
-lv_obj_t *ui_ModulationParam2Slider;
-lv_obj_t *ui_ModulationParam3Label;
-void ui_event_ModulationParam3Slider( lv_event_t * e);
-lv_obj_t *ui_ModulationParam3Slider;
-lv_obj_t *ui_ModulationParam4Label;
-void ui_event_ModulationParam4Slider( lv_event_t * e);
-lv_obj_t *ui_ModulationParam4Slider;
-lv_obj_t *ui_Delay;
-void ui_event_DelayEnableSwitch( lv_event_t * e);
-lv_obj_t *ui_DelayEnableSwitch;
-lv_obj_t *ui_DelayEnableLabel;
-void ui_event_DelayPostSwitch( lv_event_t * e);
-lv_obj_t *ui_DelayPostSwitch;
-lv_obj_t *ui_DelayPostLabel;
-lv_obj_t *ui_DelayModelLabel;
-void ui_event_DelayModelDropdown( lv_event_t * e);
-lv_obj_t *ui_DelayModelDropdown;
-lv_obj_t *ui_DelaySyncLabel;
-void ui_event_DelaySyncSwitch( lv_event_t * e);
-lv_obj_t *ui_DelaySyncSwitch;
-lv_obj_t *ui_DelayPingPongLabel;
-void ui_event_DelayPingPongSwitch( lv_event_t * e);
-lv_obj_t *ui_DelayPingPongSwitch;
-lv_obj_t *ui_DelayTSLabel;
-void ui_event_DelayTSSlider( lv_event_t * e);
-lv_obj_t *ui_DelayTSSlider;
-void ui_event_DelayTSDropdown( lv_event_t * e);
-lv_obj_t *ui_DelayTSDropdown;
-lv_obj_t *ui_DelayFeedbackLabel;
-void ui_event_DelayFeedbackSlider( lv_event_t * e);
-lv_obj_t *ui_DelayFeedbackSlider;
-lv_obj_t *ui_DelayMixLabel;
-void ui_event_DelayMixSlider( lv_event_t * e);
-lv_obj_t *ui_DelayMixSlider;
-lv_obj_t *ui_ReverbPage;
-lv_obj_t *ui_ReverbEnableLabel;
-void ui_event_ReverbEnableSwitch( lv_event_t * e);
-lv_obj_t *ui_ReverbEnableSwitch;
-lv_obj_t *ui_ReverbPostLabel;
-void ui_event_ReverbPostSwitch( lv_event_t * e);
-lv_obj_t *ui_ReverbPostSwitch;
-lv_obj_t *ui_ReverbModelLabel;
-void ui_event_ReverbModelDropdown( lv_event_t * e);
-lv_obj_t *ui_ReverbModelDropdown;
-lv_obj_t *ui_ReverbMixLabel;
-void ui_event_ReverbMixSlider( lv_event_t * e);
-lv_obj_t *ui_ReverbMixSlider;
-lv_obj_t *ui_ReverbTimeLabel;
-void ui_event_ReverbTimeSlider( lv_event_t * e);
-lv_obj_t *ui_ReverbTimeSlider;
-lv_obj_t *ui_ReverbPredelayLabel;
-void ui_event_ReverbPredelaySlider( lv_event_t * e);
-lv_obj_t *ui_ReverbPredelaySlider;
-lv_obj_t *ui_ReverbColorLabel;
-void ui_event_ReverbColorSlider( lv_event_t * e);
-lv_obj_t *ui_ReverbColorSlider;
-lv_obj_t *ui_Global;
-lv_obj_t *ui_CabBypassLabel;
-void ui_event_CabBypassSwitch( lv_event_t * e);
-lv_obj_t *ui_CabBypassSwitch;
-lv_obj_t *ui_TempoSourceLabel;
-void ui_event_TempoSourceSwitch( lv_event_t * e);
-lv_obj_t *ui_TempoSourceSwitch;
-lv_obj_t *ui_BPMLabel;
-void ui_event_BPMSlider( lv_event_t * e);
-lv_obj_t *ui_BPMSlider;
-lv_obj_t *ui_InputTrimLabel;
-void ui_event_InputTrimSlider( lv_event_t * e);
-lv_obj_t *ui_InputTrimSlider;
-lv_obj_t *ui_TuningReferenceLabel;
-void ui_event_TuningReferenceSlider( lv_event_t * e);
-lv_obj_t *ui_TuningReferenceSlider;
-void ui_event_CloseImage( lv_event_t * e);
-lv_obj_t *ui_CloseImage;
+lv_obj_t * ui_Settings;
+lv_obj_t * ui_SettingsTabview;
+lv_obj_t * ui_NoiseGateTab;
+lv_obj_t * ui_NoiseGateEnableLabel;
+void ui_event_NoiseGateSwitch(lv_event_t * e);
+lv_obj_t * ui_NoiseGateSwitch;
+void ui_event_NoiseGatePostSwitch(lv_event_t * e);
+lv_obj_t * ui_NoiseGatePostSwitch;
+lv_obj_t * ui_NoiseGatePostLabel;
+lv_obj_t * ui_NoiseGateThresholdLabel;
+void ui_event_NoiseGateThresholdSlider(lv_event_t * e);
+lv_obj_t * ui_NoiseGateThresholdSlider;
+lv_obj_t * ui_NoiseGateReleaseLabel;
+void ui_event_NoiseGateReleaseSlider(lv_event_t * e);
+lv_obj_t * ui_NoiseGateReleaseSlider;
+lv_obj_t * ui_NoiseGateDepthLabel;
+void ui_event_NoiseGateDepthSlider(lv_event_t * e);
+lv_obj_t * ui_NoiseGateDepthSlider;
+lv_obj_t * ui_CompressorTab;
+lv_obj_t * ui_CompressorEnableLabel;
+void ui_event_CompressorEnableSwitch(lv_event_t * e);
+lv_obj_t * ui_CompressorEnableSwitch;
+lv_obj_t * ui_CompressorPostLabel;
+void ui_event_CompressorPostSwitch(lv_event_t * e);
+lv_obj_t * ui_CompressorPostSwitch;
+lv_obj_t * ui_CompressorThresholdLabel;
+void ui_event_CompressorThresholdSlider(lv_event_t * e);
+lv_obj_t * ui_CompressorThresholdSlider;
+lv_obj_t * ui_CompressorAttackLabel;
+void ui_event_CompresorAttackSlider(lv_event_t * e);
+lv_obj_t * ui_CompresorAttackSlider;
+lv_obj_t * ui_CompressorGainLabel;
+void ui_event_CompressorGainSlider(lv_event_t * e);
+lv_obj_t * ui_CompressorGainSlider;
+lv_obj_t * ui_Amplifier;
+void ui_event_AmpEnableSwitch(lv_event_t * e);
+lv_obj_t * ui_AmpEnableSwitch;
+lv_obj_t * ui_AmpEnableLabel;
+lv_obj_t * ui_AmpCabLabel;
+void ui_event_CabinetModeDropdown(lv_event_t * e);
+lv_obj_t * ui_CabinetModeDropdown;
+lv_obj_t * ui_AmplifierGainLabel;
+void ui_event_AmplifierGainSlider(lv_event_t * e);
+lv_obj_t * ui_AmplifierGainSlider;
+lv_obj_t * ui_AmplifierVolumeLabel;
+void ui_event_AmplifierVolumeSlider(lv_event_t * e);
+lv_obj_t * ui_AmplifierVolumeSlider;
+lv_obj_t * ui_AmplifierPresenseLabel;
+void ui_event_AmplifierPresenseSlider(lv_event_t * e);
+lv_obj_t * ui_AmplifierPresenseSlider;
+lv_obj_t * ui_AmplifierDepthLabel;
+void ui_event_AmplifierDepthSlider(lv_event_t * e);
+lv_obj_t * ui_AmplifierDepthSlider;
+lv_obj_t * ui_EQTab;
+lv_obj_t * ui_EQPostLabel;
+void ui_event_EQPostSwitch(lv_event_t * e);
+lv_obj_t * ui_EQPostSwitch;
+lv_obj_t * ui_EQBassLabel;
+void ui_event_EQBassSlider(lv_event_t * e);
+lv_obj_t * ui_EQBassSlider;
+lv_obj_t * ui_EQMidLabel;
+void ui_event_EQMidSlider(lv_event_t * e);
+lv_obj_t * ui_EQMidSlider;
+lv_obj_t * ui_EQMidQLabel;
+void ui_event_EQMidQSlider(lv_event_t * e);
+lv_obj_t * ui_EQMidQSlider;
+lv_obj_t * ui_EQTrebleLabel;
+void ui_event_EQTrebleSlider(lv_event_t * e);
+lv_obj_t * ui_EQTrebleSlider;
+lv_obj_t * ui_Modulation;
+lv_obj_t * ui_ModulationEnableLabel;
+void ui_event_ModulationEnableSwitch(lv_event_t * e);
+lv_obj_t * ui_ModulationEnableSwitch;
+lv_obj_t * ui_ModulationPostLabel;
+void ui_event_ModulationPostSwitch(lv_event_t * e);
+lv_obj_t * ui_ModulationPostSwitch;
+lv_obj_t * ui_ModulationModelLabel;
+void ui_event_ModulationModelDropdown(lv_event_t * e);
+lv_obj_t * ui_ModulationModelDropdown;
+lv_obj_t * ui_ModulationSyncLabel;
+void ui_event_ModulationSyncSwitch(lv_event_t * e);
+lv_obj_t * ui_ModulationSyncSwitch;
+lv_obj_t * ui_ModulationParam1Label;
+void ui_event_ModulationParam1Slider(lv_event_t * e);
+lv_obj_t * ui_ModulationParam1Slider;
+void ui_event_ModulationTSDropdown(lv_event_t * e);
+lv_obj_t * ui_ModulationTSDropdown;
+lv_obj_t * ui_ModulationParam2Label;
+void ui_event_ModulationParam2Slider(lv_event_t * e);
+lv_obj_t * ui_ModulationParam2Slider;
+lv_obj_t * ui_ModulationParam3Label;
+void ui_event_ModulationParam3Slider(lv_event_t * e);
+lv_obj_t * ui_ModulationParam3Slider;
+lv_obj_t * ui_ModulationParam4Label;
+void ui_event_ModulationParam4Slider(lv_event_t * e);
+lv_obj_t * ui_ModulationParam4Slider;
+lv_obj_t * ui_Delay;
+void ui_event_DelayEnableSwitch(lv_event_t * e);
+lv_obj_t * ui_DelayEnableSwitch;
+lv_obj_t * ui_DelayEnableLabel;
+void ui_event_DelayPostSwitch(lv_event_t * e);
+lv_obj_t * ui_DelayPostSwitch;
+lv_obj_t * ui_DelayPostLabel;
+lv_obj_t * ui_DelayModelLabel;
+void ui_event_DelayModelDropdown(lv_event_t * e);
+lv_obj_t * ui_DelayModelDropdown;
+lv_obj_t * ui_DelaySyncLabel;
+void ui_event_DelaySyncSwitch(lv_event_t * e);
+lv_obj_t * ui_DelaySyncSwitch;
+lv_obj_t * ui_DelayPingPongLabel;
+void ui_event_DelayPingPongSwitch(lv_event_t * e);
+lv_obj_t * ui_DelayPingPongSwitch;
+lv_obj_t * ui_DelayTSLabel;
+void ui_event_DelayTSSlider(lv_event_t * e);
+lv_obj_t * ui_DelayTSSlider;
+void ui_event_DelayTSDropdown(lv_event_t * e);
+lv_obj_t * ui_DelayTSDropdown;
+lv_obj_t * ui_DelayFeedbackLabel;
+void ui_event_DelayFeedbackSlider(lv_event_t * e);
+lv_obj_t * ui_DelayFeedbackSlider;
+lv_obj_t * ui_DelayMixLabel;
+void ui_event_DelayMixSlider(lv_event_t * e);
+lv_obj_t * ui_DelayMixSlider;
+lv_obj_t * ui_ReverbPage;
+lv_obj_t * ui_ReverbEnableLabel;
+void ui_event_ReverbEnableSwitch(lv_event_t * e);
+lv_obj_t * ui_ReverbEnableSwitch;
+lv_obj_t * ui_ReverbPostLabel;
+void ui_event_ReverbPostSwitch(lv_event_t * e);
+lv_obj_t * ui_ReverbPostSwitch;
+lv_obj_t * ui_ReverbModelLabel;
+void ui_event_ReverbModelDropdown(lv_event_t * e);
+lv_obj_t * ui_ReverbModelDropdown;
+lv_obj_t * ui_ReverbMixLabel;
+void ui_event_ReverbMixSlider(lv_event_t * e);
+lv_obj_t * ui_ReverbMixSlider;
+lv_obj_t * ui_ReverbTimeLabel;
+void ui_event_ReverbTimeSlider(lv_event_t * e);
+lv_obj_t * ui_ReverbTimeSlider;
+lv_obj_t * ui_ReverbPredelayLabel;
+void ui_event_ReverbPredelaySlider(lv_event_t * e);
+lv_obj_t * ui_ReverbPredelaySlider;
+lv_obj_t * ui_ReverbColorLabel;
+void ui_event_ReverbColorSlider(lv_event_t * e);
+lv_obj_t * ui_ReverbColorSlider;
+lv_obj_t * ui_Global;
+lv_obj_t * ui_CabBypassLabel;
+void ui_event_CabBypassSwitch(lv_event_t * e);
+lv_obj_t * ui_CabBypassSwitch;
+lv_obj_t * ui_TempoSourceLabel;
+void ui_event_TempoSourceSwitch(lv_event_t * e);
+lv_obj_t * ui_TempoSourceSwitch;
+lv_obj_t * ui_BPMLabel;
+void ui_event_BPMSlider(lv_event_t * e);
+lv_obj_t * ui_BPMSlider;
+lv_obj_t * ui_InputTrimLabel;
+void ui_event_InputTrimSlider(lv_event_t * e);
+lv_obj_t * ui_InputTrimSlider;
+lv_obj_t * ui_TuningReferenceLabel;
+void ui_event_TuningReferenceSlider(lv_event_t * e);
+lv_obj_t * ui_TuningReferenceSlider;
+lv_obj_t * ui_VolumeLabel;
+void ui_event_VolumeSlider(lv_event_t * e);
+lv_obj_t * ui_VolumeSlider;
+void ui_event_CloseImage(lv_event_t * e);
+lv_obj_t * ui_CloseImage;
 // CUSTOM VARIABLES
 
 // EVENTS
-lv_obj_t *ui____initial_actions0;
+lv_obj_t * ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
 
@@ -252,643 +255,725 @@ lv_obj_t *ui____initial_actions0;
 ///////////////////// ANIMATIONS ////////////////////
 
 ///////////////////// FUNCTIONS ////////////////////
-void ui_event_PreviousContainer( lv_event_t * e) {
+void ui_event_PreviousContainer(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_CLICKED) {
-      PreviousClicked( e );
+    if(event_code == LV_EVENT_CLICKED) {
+        PreviousClicked(e);
+    }
 }
-}
 
-void ui_event_PreviousButton( lv_event_t * e) {
+void ui_event_PreviousButton(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_CLICKED) {
-      PreviousClicked( e );
-}
+    if(event_code == LV_EVENT_CLICKED) {
+        PreviousClicked(e);
+    }
 }
 
-void ui_event_NextContainer( lv_event_t * e) {
+void ui_event_NextContainer(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_CLICKED) {
-      NextClicked( e );
+    if(event_code == LV_EVENT_CLICKED) {
+        NextClicked(e);
+    }
 }
-}
 
-void ui_event_NextButton( lv_event_t * e) {
+void ui_event_NextButton(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_CLICKED) {
-      NextClicked( e );
+    if(event_code == LV_EVENT_CLICKED) {
+        NextClicked(e);
+    }
 }
-}
 
-void ui_event_IconEQ( lv_event_t * e) {
+void ui_event_IconEQ(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_LONG_PRESSED) {
-      _ui_screen_change( &ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
-      show_settings_tab( e );
-}
+    if(event_code == LV_EVENT_LONG_PRESSED) {
+        _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
+        show_settings_tab(e);
+    }
 }
 
-void ui_event_IconGate( lv_event_t * e) {
+void ui_event_IconGate(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_SHORT_CLICKED) {
-      toggle_effect_gate( e );
+    if(event_code == LV_EVENT_SHORT_CLICKED) {
+        toggle_effect_gate(e);
+    }
+    if(event_code == LV_EVENT_LONG_PRESSED) {
+        _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
+        show_settings_tab(e);
+    }
 }
-if ( event_code == LV_EVENT_LONG_PRESSED) {
-      _ui_screen_change( &ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
-      show_settings_tab( e );
-}
-}
 
-void ui_event_IconAmp( lv_event_t * e) {
+void ui_event_IconAmp(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_SHORT_CLICKED) {
-      toggle_effect_amp( e );
+    if(event_code == LV_EVENT_SHORT_CLICKED) {
+        toggle_effect_amp(e);
+    }
+    if(event_code == LV_EVENT_LONG_PRESSED) {
+        _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
+        show_settings_tab(e);
+    }
 }
-if ( event_code == LV_EVENT_LONG_PRESSED) {
-      _ui_screen_change( &ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
-      show_settings_tab( e );
-}
-}
 
-void ui_event_IconCab( lv_event_t * e) {
+void ui_event_IconCab(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_SHORT_CLICKED) {
-      toggle_effect_cab( e );
-}
-if ( event_code == LV_EVENT_LONG_PRESSED) {
-      _ui_screen_change( &ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
-      show_settings_tab( e );
+    if(event_code == LV_EVENT_SHORT_CLICKED) {
+        toggle_effect_cab(e);
+    }
+    if(event_code == LV_EVENT_LONG_PRESSED) {
+        _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
+        show_settings_tab(e);
+    }
 }
-}
 
-void ui_event_IconComp( lv_event_t * e) {
+void ui_event_IconComp(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_SHORT_CLICKED) {
-      toggle_effect_comp( e );
-}
-if ( event_code == LV_EVENT_LONG_PRESSED) {
-      _ui_screen_change( &ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
-      show_settings_tab( e );
+    if(event_code == LV_EVENT_SHORT_CLICKED) {
+        toggle_effect_comp(e);
+    }
+    if(event_code == LV_EVENT_LONG_PRESSED) {
+        _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
+        show_settings_tab(e);
+    }
 }
-}
 
-void ui_event_IconMod( lv_event_t * e) {
+void ui_event_IconMod(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_SHORT_CLICKED) {
-      toggle_effect_mod( e );
-}
-if ( event_code == LV_EVENT_LONG_PRESSED) {
-      _ui_screen_change( &ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
-      show_settings_tab( e );
-}
+    if(event_code == LV_EVENT_SHORT_CLICKED) {
+        toggle_effect_mod(e);
+    }
+    if(event_code == LV_EVENT_LONG_PRESSED) {
+        _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
+        show_settings_tab(e);
+    }
 }
 
-void ui_event_IconDelay( lv_event_t * e) {
+void ui_event_IconDelay(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_SHORT_CLICKED) {
-      toggle_effect_delay( e );
+    if(event_code == LV_EVENT_SHORT_CLICKED) {
+        toggle_effect_delay(e);
+    }
+    if(event_code == LV_EVENT_LONG_PRESSED) {
+        _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
+        show_settings_tab(e);
+    }
 }
-if ( event_code == LV_EVENT_LONG_PRESSED) {
-      _ui_screen_change( &ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
-      show_settings_tab( e );
-}
-}
 
-void ui_event_IconReverb( lv_event_t * e) {
+void ui_event_IconReverb(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_SHORT_CLICKED) {
-      toggle_effect_reverb( e );
+    if(event_code == LV_EVENT_SHORT_CLICKED) {
+        toggle_effect_reverb(e);
+    }
+    if(event_code == LV_EVENT_LONG_PRESSED) {
+        _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
+        show_settings_tab(e);
+    }
 }
-if ( event_code == LV_EVENT_LONG_PRESSED) {
-      _ui_screen_change( &ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
-      show_settings_tab( e );
-}
-}
 
-void ui_event_SettingsImage( lv_event_t * e) {
+void ui_event_SettingsImage(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_CLICKED) {
-      _ui_screen_change( &ui_Settings, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Settings_screen_init);
-}
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Settings_screen_init);
+    }
 }
 
-void ui_event_BTStatusDisconn( lv_event_t * e) {
+void ui_event_BTStatusDisconn(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_LONG_PRESSED) {
-      BTBondsClearRequest( e );
+    if(event_code == LV_EVENT_LONG_PRESSED) {
+        BTBondsClearRequest(e);
+    }
 }
-}
 
-void ui_event_PresetHeadingLabel( lv_event_t * e) {
+void ui_event_PresetHeadingLabel(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_LONG_PRESSED) {
-      _ui_flag_modify( ui_LeftArrow, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
-      _ui_flag_modify( ui_RightArrow, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
-      _ui_state_modify( ui_PresetDetailsTextArea, LV_STATE_DISABLED, _UI_MODIFY_STATE_REMOVE);
-      _ui_flag_modify( ui_OKTick, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
-      _ui_flag_modify( ui_BankTitleLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
-      _ui_flag_modify( ui_BankValueLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
-      _ui_flag_modify( ui_BPMTitleLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
-      _ui_flag_modify( ui_BPMValueLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
-      _ui_flag_modify( ui_BPMIndicator, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
-}
+    if(event_code == LV_EVENT_LONG_PRESSED) {
+        _ui_flag_modify(ui_LeftArrow, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+        _ui_flag_modify(ui_RightArrow, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+        _ui_state_modify(ui_PresetDetailsTextArea, LV_STATE_DISABLED, _UI_MODIFY_STATE_REMOVE);
+        _ui_flag_modify(ui_OKTick, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+        _ui_flag_modify(ui_BankTitleLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+        _ui_flag_modify(ui_BankValueLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+        _ui_flag_modify(ui_BPMTitleLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+        _ui_flag_modify(ui_BPMValueLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+        _ui_flag_modify(ui_BPMIndicator, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+    }
 }
 
-void ui_event_PresetDetailsTextArea( lv_event_t * e) {
+void ui_event_PresetDetailsTextArea(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_PRESSED) {
-      _ui_keyboard_set_target(ui_EntryKeyboard,  ui_PresetDetailsTextArea);
-      _ui_flag_modify( ui_EntryKeyboard, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+    if(event_code == LV_EVENT_PRESSED) {
+        _ui_keyboard_set_target(ui_EntryKeyboard,  ui_PresetDetailsTextArea);
+        _ui_flag_modify(ui_EntryKeyboard, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+    }
 }
-}
 
-void ui_event_LeftArrow( lv_event_t * e) {
+void ui_event_LeftArrow(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_CLICKED) {
-      AmpSkinPrevious( e );
+    if(event_code == LV_EVENT_CLICKED) {
+        AmpSkinPrevious(e);
+    }
 }
-}
 
-void ui_event_RightArrow( lv_event_t * e) {
+void ui_event_RightArrow(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_CLICKED) {
-      AmpSkinNext( e );
-}
+    if(event_code == LV_EVENT_CLICKED) {
+        AmpSkinNext(e);
+    }
 }
 
-void ui_event_EntryKeyboard( lv_event_t * e) {
+void ui_event_EntryKeyboard(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_READY) {
-      _ui_flag_modify( ui_EntryKeyboard, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
-      PresetDescriptionChanged( e );
+    if(event_code == LV_EVENT_READY) {
+        _ui_flag_modify(ui_EntryKeyboard, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+        PresetDescriptionChanged(e);
+    }
 }
-}
 
-void ui_event_OKTick( lv_event_t * e) {
+void ui_event_OKTick(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_CLICKED) {
-      PresetDescriptionChanged( e );
-      SaveUserDataRequest( e );
-}
-if ( event_code == LV_EVENT_CLICKED) {
-      _ui_flag_modify( ui_OKTick, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
-      _ui_flag_modify( ui_EntryKeyboard, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
-      _ui_flag_modify( ui_LeftArrow, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
-      _ui_flag_modify( ui_RightArrow, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
-      _ui_state_modify( ui_PresetDetailsTextArea, LV_STATE_DISABLED, _UI_MODIFY_STATE_ADD);
-      _ui_flag_modify( ui_BankTitleLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
-      _ui_flag_modify( ui_BankValueLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
-      _ui_flag_modify( ui_BPMTitleLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
-      _ui_flag_modify( ui_BPMValueLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
-      _ui_flag_modify( ui_BPMIndicator, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+    if(event_code == LV_EVENT_CLICKED) {
+        PresetDescriptionChanged(e);
+        SaveUserDataRequest(e);
+    }
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_flag_modify(ui_OKTick, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+        _ui_flag_modify(ui_EntryKeyboard, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+        _ui_flag_modify(ui_LeftArrow, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+        _ui_flag_modify(ui_RightArrow, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_ADD);
+        _ui_state_modify(ui_PresetDetailsTextArea, LV_STATE_DISABLED, _UI_MODIFY_STATE_ADD);
+        _ui_flag_modify(ui_BankTitleLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+        _ui_flag_modify(ui_BankValueLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+        _ui_flag_modify(ui_BPMTitleLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+        _ui_flag_modify(ui_BPMValueLabel, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+        _ui_flag_modify(ui_BPMIndicator, LV_OBJ_FLAG_HIDDEN, _UI_MODIFY_FLAG_REMOVE);
+    }
 }
-}
 
-void ui_event_NoiseGateSwitch( lv_event_t * e) {
+void ui_event_NoiseGateSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_NoiseGatePostSwitch( lv_event_t * e) {
+void ui_event_NoiseGatePostSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_NoiseGateThresholdSlider( lv_event_t * e) {
+void ui_event_NoiseGateThresholdSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_NoiseGateReleaseSlider( lv_event_t * e) {
+void ui_event_NoiseGateReleaseSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_NoiseGateDepthSlider( lv_event_t * e) {
+void ui_event_NoiseGateDepthSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_CompressorEnableSwitch( lv_event_t * e) {
+void ui_event_CompressorEnableSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_CompressorPostSwitch( lv_event_t * e) {
+void ui_event_CompressorPostSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_CompressorThresholdSlider( lv_event_t * e) {
+void ui_event_CompressorThresholdSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_CompresorAttackSlider( lv_event_t * e) {
+void ui_event_CompresorAttackSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_CompressorGainSlider( lv_event_t * e) {
+void ui_event_CompressorGainSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_AmpEnableSwitch( lv_event_t * e) {
+void ui_event_AmpEnableSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_CabinetModeDropdown( lv_event_t * e) {
+void ui_event_CabinetModeDropdown(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_VALUE_CHANGED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_VALUE_CHANGED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_AmplifierGainSlider( lv_event_t * e) {
+void ui_event_AmplifierGainSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_AmplifierVolumeSlider( lv_event_t * e) {
+void ui_event_AmplifierVolumeSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_AmplifierPresenseSlider( lv_event_t * e) {
+void ui_event_AmplifierPresenseSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_AmplifierDepthSlider( lv_event_t * e) {
+void ui_event_AmplifierDepthSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_EQPostSwitch( lv_event_t * e) {
+void ui_event_EQPostSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_EQBassSlider( lv_event_t * e) {
+void ui_event_EQBassSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_EQMidSlider( lv_event_t * e) {
+void ui_event_EQMidSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_EQMidQSlider( lv_event_t * e) {
+void ui_event_EQMidQSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_EQTrebleSlider( lv_event_t * e) {
+void ui_event_EQTrebleSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_ModulationEnableSwitch( lv_event_t * e) {
+void ui_event_ModulationEnableSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_ModulationPostSwitch( lv_event_t * e) {
+void ui_event_ModulationPostSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_ModulationModelDropdown( lv_event_t * e) {
+void ui_event_ModulationModelDropdown(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_VALUE_CHANGED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_VALUE_CHANGED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_ModulationSyncSwitch( lv_event_t * e) {
+void ui_event_ModulationSyncSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_ModulationParam1Slider( lv_event_t * e) {
+void ui_event_ModulationParam1Slider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_ModulationTSDropdown( lv_event_t * e) {
+void ui_event_ModulationTSDropdown(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_VALUE_CHANGED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_VALUE_CHANGED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_ModulationParam2Slider( lv_event_t * e) {
+void ui_event_ModulationParam2Slider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_ModulationParam3Slider( lv_event_t * e) {
+void ui_event_ModulationParam3Slider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_ModulationParam4Slider( lv_event_t * e) {
+void ui_event_ModulationParam4Slider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_DelayEnableSwitch( lv_event_t * e) {
+void ui_event_DelayEnableSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_DelayPostSwitch( lv_event_t * e) {
+void ui_event_DelayPostSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_DelayModelDropdown( lv_event_t * e) {
+void ui_event_DelayModelDropdown(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_VALUE_CHANGED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_VALUE_CHANGED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_DelaySyncSwitch( lv_event_t * e) {
+void ui_event_DelaySyncSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_DelayPingPongSwitch( lv_event_t * e) {
+void ui_event_DelayPingPongSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_DelayTSSlider( lv_event_t * e) {
+void ui_event_DelayTSSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_DelayTSDropdown( lv_event_t * e) {
+void ui_event_DelayTSDropdown(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_VALUE_CHANGED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_VALUE_CHANGED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_DelayFeedbackSlider( lv_event_t * e) {
+void ui_event_DelayFeedbackSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_DelayMixSlider( lv_event_t * e) {
+void ui_event_DelayMixSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_ReverbEnableSwitch( lv_event_t * e) {
+void ui_event_ReverbEnableSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_ReverbPostSwitch( lv_event_t * e) {
+void ui_event_ReverbPostSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_ReverbModelDropdown( lv_event_t * e) {
+void ui_event_ReverbModelDropdown(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_VALUE_CHANGED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_VALUE_CHANGED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_ReverbMixSlider( lv_event_t * e) {
+void ui_event_ReverbMixSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_ReverbTimeSlider( lv_event_t * e) {
+void ui_event_ReverbTimeSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_ReverbPredelaySlider( lv_event_t * e) {
+void ui_event_ReverbPredelaySlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_ReverbColorSlider( lv_event_t * e) {
+void ui_event_ReverbColorSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_CabBypassSwitch( lv_event_t * e) {
+void ui_event_CabBypassSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_TempoSourceSwitch( lv_event_t * e) {
+void ui_event_TempoSourceSwitch(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_BPMSlider( lv_event_t * e) {
+void ui_event_BPMSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_InputTrimSlider( lv_event_t * e) {
+void ui_event_InputTrimSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
-}
 
-void ui_event_TuningReferenceSlider( lv_event_t * e) {
+void ui_event_TuningReferenceSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_RELEASED) {
-      ParameterChanged( e );
-}
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
 
-void ui_event_CloseImage( lv_event_t * e) {
+void ui_event_VolumeSlider(lv_event_t * e)
+{
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_CLICKED) {
-      _ui_screen_change( &ui_Screen1, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen1_screen_init);
+    if(event_code == LV_EVENT_RELEASED) {
+        ParameterChanged(e);
+    }
 }
+
+void ui_event_CloseImage(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_screen_change(&ui_Screen1, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Screen1_screen_init);
+    }
 }
 
 ///////////////////// SCREENS ////////////////////
 
-void ui_init( void )
+void ui_init(void)
 {
-lv_disp_t *dispp = lv_disp_get_default();
-lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), true, LV_FONT_DEFAULT);
-lv_disp_set_theme(dispp, theme);
-ui_Screen1_screen_init();
-ui_Settings_screen_init();
-ui____initial_actions0 = lv_obj_create(NULL);
-lv_disp_load_scr( ui_Screen1);
+    lv_disp_t * dispp = lv_disp_get_default();
+    lv_theme_t * theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED),
+                                               true, LV_FONT_DEFAULT);
+    lv_disp_set_theme(dispp, theme);
+    ui_Screen1_screen_init();
+    ui_Settings_screen_init();
+    ui____initial_actions0 = lv_obj_create(NULL);
+    lv_disp_load_scr(ui_Screen1);
 }

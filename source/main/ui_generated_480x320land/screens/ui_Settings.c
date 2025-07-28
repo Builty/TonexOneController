@@ -1493,6 +1493,34 @@ void ui_Settings_screen_init(void)
     lv_obj_set_style_bg_color(ui_TuningReferenceSlider, lv_color_hex(0xFB9230), LV_PART_KNOB | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_TuningReferenceSlider, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
 
+    ui_VolumeLabel = lv_label_create(ui_Global);
+    lv_obj_set_width(ui_VolumeLabel, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_VolumeLabel, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_VolumeLabel, -9);
+    lv_obj_set_y(ui_VolumeLabel, 50);
+    lv_obj_set_align(ui_VolumeLabel, LV_ALIGN_LEFT_MID);
+    lv_label_set_text(ui_VolumeLabel, "Volume");
+    lv_obj_set_style_text_font(ui_VolumeLabel, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_VolumeSlider = lv_slider_create(ui_Global);
+    lv_slider_set_range(ui_VolumeSlider, 0, 10);
+    lv_slider_set_value(ui_VolumeSlider, 5, LV_ANIM_OFF);
+    if(lv_slider_get_mode(ui_VolumeSlider) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui_VolumeSlider, 0,
+                                                                                                 LV_ANIM_OFF);
+    lv_obj_set_width(ui_VolumeSlider, 335);
+    lv_obj_set_height(ui_VolumeSlider, 15);
+    lv_obj_set_x(ui_VolumeSlider, 113);
+    lv_obj_set_y(ui_VolumeSlider, 50);
+    lv_obj_set_align(ui_VolumeSlider, LV_ALIGN_LEFT_MID);
+    lv_obj_set_style_bg_color(ui_VolumeSlider, lv_color_hex(0x424242), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_VolumeSlider, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    lv_obj_set_style_bg_color(ui_VolumeSlider, lv_color_hex(0x513D2B), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_VolumeSlider, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+
+    lv_obj_set_style_bg_color(ui_VolumeSlider, lv_color_hex(0xFB9230), LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_VolumeSlider, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
+
     ui_CloseImage = lv_img_create(ui_Settings);
     lv_img_set_src(ui_CloseImage, &ui_img_tick_png);
     lv_obj_set_width(ui_CloseImage, 86);
@@ -1555,6 +1583,7 @@ void ui_Settings_screen_init(void)
     lv_obj_add_event_cb(ui_BPMSlider, ui_event_BPMSlider, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_InputTrimSlider, ui_event_InputTrimSlider, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_TuningReferenceSlider, ui_event_TuningReferenceSlider, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_VolumeSlider, ui_event_VolumeSlider, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_CloseImage, ui_event_CloseImage, LV_EVENT_ALL, NULL);
 
 }

@@ -244,6 +244,9 @@ extern lv_obj_t * ui_InputTrimSlider;
 extern lv_obj_t * ui_TuningReferenceLabel;
 void ui_event_TuningReferenceSlider(lv_event_t * e);
 extern lv_obj_t * ui_TuningReferenceSlider;
+extern lv_obj_t * ui_VolumeLabel;
+void ui_event_VolumeSlider(lv_event_t * e);
+extern lv_obj_t * ui_VolumeSlider;
 void ui_event_CloseImage(lv_event_t * e);
 extern lv_obj_t * ui_CloseImage;
 // CUSTOM VARIABLES

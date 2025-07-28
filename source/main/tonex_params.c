@@ -179,6 +179,8 @@ static tTonexParameter TonexParameters[TONEX_GLOBAL_LAST] =
     {0,      0,      1,    "CABSIM", TONEX_PARAM_TYPE_SWITCH},              // TONEX_GLOBAL_CABSIM_BYPASS
     {0,      0,      1,    "TEMPOS", TONEX_PARAM_TYPE_SWITCH},              // TONEX_GLOBAL_TEMPO_SOURCE
     {440,    415,    465,  "TUNEREF", TONEX_PARAM_TYPE_RANGE},              // TONEX_GLOBAL_TUNING_REFERENCE
+    {0,      0,      1,    "BYPASS",  TONEX_PARAM_TYPE_SWITCH},             // TONEX_GLOBAL_BYPASS
+    {5,      0,      10,   "MVOL", TONEX_PARAM_TYPE_RANGE},                 // TONEX_GLOBAL_MASTER_VOLUME
 };
 
 static tTonexPresetColor TonexPresetColors[MAX_SUPPORTED_PRESETS];
