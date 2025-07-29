@@ -7,6 +7,20 @@ New in firmware version V1.0.7.2 is the ability to change all of the pedal param
 <br>
 ![image](https://github.com/user-attachments/assets/84ee5aff-d9fe-46bc-8309-11099a25549a)
 
+# Entering Web Control
+For the first time, it is necessary to connect to the controller in Access Point mode. Once this has been done, the WiFi mode can be changed if desired.
+<br>
+To enter Web Control:
+- Reboot the controller
+- Within 60 seconds, use a phone or PC to connect to the WiFi device "TonexConfig"
+- The password for the network is 12345678
+- The controller will automatically supply a network address for your device (DHCP is supported)
+- Note: some phones may attempt to use this network for Internet access, which will not be be available. Watch out for any messages asking you to confirm the connection
+- Open a web browser on your device
+- In the address bar of the web browser, enter "tonex.local" (without the quotation marks.) You should see the web config screen
+- Once you have saved the settings (or if you don't want to change anything) you can close the web browser
+<br>
+
 # Changing Presets
 The current preset can be changed by clicking on the white box beneath the title. A list will be shown, from 1 to 20. Select a number to select the preset.
 <br>
@@ -138,21 +152,6 @@ The default name is "tonex" which means you can access the web page via "tonex.l
 
 ![image](https://github.com/user-attachments/assets/89c068a2-71aa-4034-829c-ee2478f5615a)
 
-<br>
-
-## Entering Web Control
-For the first time, it is necessary to connect to the controller in Access Point mode. Once this has been done, the WiFi mode can be changed if desired.
-<br>
-To enter Web Control:
-- Reboot the controller
-- Within 60 seconds, use a phone or PC to connect to the WiFi device "TonexConfig"
-- The password for the network is 12345678
-- The controller will automatically supply a network address for your device (DHCP is supported)
-- Note: some phones may attempt to use this network for Internet access, which will not be be available. Watch out for any messages asking you to confirm the connection
-- Open a web browser on your device
-- In the address bar of the web browser, enter "tonex.local" (without the quotation marks.) You should see the web config screen
-- Once you have saved the settings (or if you don't want to change anything) you can close the web browser
-<br>
 
 
 
