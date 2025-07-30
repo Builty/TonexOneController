@@ -33496,8 +33496,8 @@
                         "nid": 1020,
                         "strtype": "SLIDER/Range",
                         "intarray": [
-                          0,
-                          10
+                          -40,
+                          3
                         ],
                         "InheritedType": 7
                       },
@@ -33510,7 +33510,6 @@
                       {
                         "nid": 1040,
                         "strtype": "SLIDER/Value",
-                        "integer": 5,
                         "InheritedType": 6
                       },
                       {
@@ -34663,7 +34662,7 @@
     "uiExportFolderPath": "D:\\projects\\TonexController\\TonexOneController\\source\\main\\ui_generated_480x320land",
     "projectExportFolderPath": "D:\\projects\\TonexController\\TonexOneController\\source\\main\\ui_generated_480x320land",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 711,
+    "backup_cnt": 712,
     "autosave_cnt": 0,
     "group_color_cnt": 0,
     "lvgl_version": "8.3.11",

@@ -1505,8 +1505,8 @@ void ui_Settings_screen_init(void)
     lv_obj_set_style_text_font(ui_VolumeLabel, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_VolumeSlider = lv_slider_create(ui_Global);
-    lv_slider_set_range(ui_VolumeSlider, 0, 10);
-    lv_slider_set_value(ui_VolumeSlider, 5, LV_ANIM_OFF);
+    lv_slider_set_range(ui_VolumeSlider, -40, 3);
+    lv_slider_set_value(ui_VolumeSlider, 0, LV_ANIM_OFF);
     if(lv_slider_get_mode(ui_VolumeSlider) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui_VolumeSlider, 0,
                                                                                                  LV_ANIM_OFF);
     lv_obj_set_width(ui_VolumeSlider, 569);

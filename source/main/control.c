@@ -236,6 +236,7 @@ typedef struct
     uint32_t WiFiStatus;
     tConfigData ConfigData;
     tTapTempo TapTempo;
+    uint8_t SyncComplete;
 } tControlData;
 
 static const char *TAG = "app_control";
@@ -1691,6 +1692,30 @@ void control_set_skin_previous(void)
     
         control_set_amp_skin_index(ControlData.ConfigData.SkinConfig.SkinIndex[ControlData.PresetIndex]);
     }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void control_set_sync_complete(void)
+{
+    ControlData.SyncComplete = 1;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+uint8_t control_get_sync_complete(void)
+{
+    return ControlData.SyncComplete;
 }
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY

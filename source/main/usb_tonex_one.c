@@ -600,6 +600,7 @@ static bool usb_tonex_one_handle_rx(const uint8_t* data, size_t data_len, void* 
 static esp_err_t usb_tonex_one_modify_global(uint16_t global_val, float value)
 {
     esp_err_t res = ESP_FAIL;
+    float scaled_value;
 
     switch (global_val)
     {
@@ -649,7 +650,11 @@ static esp_err_t usb_tonex_one_modify_global(uint16_t global_val, float value)
         case TONEX_GLOBAL_MASTER_VOLUME:
         {                        
             // global volume is sent with a special command
-            usb_tonex_one_send_master_volume(value);
+            // Big Tonex uses values -40 to +3, and One uses values from 0 to 10.
+            // So, scaling the One's values to match the big Tonex
+            scaled_value = ((value + 40.0f) / 43.0f) * 10.0f;
+
+            usb_tonex_one_send_master_volume(scaled_value);
 
             // bit of a hack here. Return fail code, so caller can avoid sending the state data unneccessarily
             res = ESP_FAIL;
@@ -759,6 +764,7 @@ static TonexStatus usb_tonex_one_parse_param_changed(uint8_t* unframed, uint16_t
 {
     uint16_t param_index;
     float value;
+    float scaled_value;
     tTonexParameter* param_ptr = NULL;
     uint8_t param_start_marker[] = { 0xB9, 0x04, 0x03 };
     
@@ -785,15 +791,20 @@ static TonexStatus usb_tonex_one_parse_param_changed(uint8_t* unframed, uint16_t
 
             if (param_index == 0x00)
             {
-                // global volume, save it
+                // global volume
+                // Big Tonex uses values -40 to +3, and One uses values from 0 to 10.
+                // So, scaling the One's values to match the big Tonex
+                scaled_value = ((value / 10.0f) * 43.0f) - 40.0f;
+
+                // save it
                 if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
                 {
-                    param_ptr[TONEX_GLOBAL_MASTER_VOLUME].Value = value;
+                    param_ptr[TONEX_GLOBAL_MASTER_VOLUME].Value = scaled_value;
 
                     tonex_params_release_locked_access();
                 }
 
-                ESP_LOGI(TAG, "Got global volume: %3.2f", value);
+                ESP_LOGI(TAG, "Got global volume: raw:%3.2f  scaled:%3.2f", value, scaled_value);
             }
         }
     }
@@ -1172,6 +1183,8 @@ static esp_err_t usb_tonex_one_process_single_message(uint8_t* data, uint16_t le
                             boot_global_request = 0;
                         }
 
+                        control_set_sync_complete();
+                        
                         // debug dump parameters
                         //tonex_dump_parameters();
                     }

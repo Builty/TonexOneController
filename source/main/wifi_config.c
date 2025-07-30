@@ -515,6 +515,36 @@ static void wifi_build_modeller_data_json(void)
 * RETURN:      none
 * NOTES:       none
 ****************************************************************************/
+static void wifi_build_is_sync_complete_json(void)
+{
+    // init generation of json response
+    json_gen_str_start(&pWebConfig->jstr, pWebConfig->TempBuffer, MAX_TEMP_BUFFER, NULL, NULL);
+
+    // start json object, adds {
+    json_gen_start_object(&pWebConfig->jstr);
+
+    // add response
+    json_gen_obj_set_string(&pWebConfig->jstr, "CMD", "GETSYNCCOMPLETE");
+
+    // set values
+    json_gen_obj_set_int(&pWebConfig->jstr, "SYNC", control_get_sync_complete());
+
+    // add the }
+    json_gen_end_object(&pWebConfig->jstr);
+
+    // end generation
+    json_gen_str_end(&pWebConfig->jstr);
+
+    //debug ESP_LOGI(TAG, "Json: %s", pWebConfig->TempBuffer);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      none
+* NOTES:       none
+****************************************************************************/
 static void wifi_build_preset_json(void)
 {
     // init generation of json response
@@ -720,6 +750,17 @@ static esp_err_t ws_handler(httpd_req_t *req)
 
                         // build json response
                         wifi_build_modeller_data_json();
+                        
+                        // build packet and send
+                        build_send_ws_response_packet(req, pWebConfig->TempBuffer);
+                    }
+                    else if (strcmp(str_val, "GETSYNCCOMPLETE") == 0)
+                    {
+                        // send current sync status
+                        ESP_LOGI(TAG, "is Sync request");
+
+                        // build json response
+                        wifi_build_is_sync_complete_json();
                         
                         // build packet and send
                         build_send_ws_response_packet(req, pWebConfig->TempBuffer);
@@ -1637,6 +1678,7 @@ void start_mdns_service()
     mdns_hostname_set(mdns_name);
     mdns_instance_name_set(mdns_name);
     mdns_service_add(NULL, "_http", "_tcp", 80, NULL, 0);
+    mdns_service_instance_name_set("_http", "_tcp", "Tonex Controller");
 }
 
 /****************************************************************************

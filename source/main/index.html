@@ -449,6 +449,7 @@
         var SocketConnected = 0;   
         var maxPresets = 20;
         var startPreset = 1;
+        var isSyncDone = 0;
         
         // param models
         const TONEX_REVERB_SPRING_1 = 0;
@@ -1036,8 +1037,13 @@
                 }
             }
             else {
-                // request sending of anything changed
-                sendWS({"CMD": "GETCHANGES"});
+                if (isSyncDone == 0) {
+                    sendWS({"CMD": "GETSYNCCOMPLETE"});
+                }
+                else {
+                    // request sending of anything changed
+                    sendWS({"CMD": "GETCHANGES"});
+                }
 
                 if (modal._isShown) {
                     console.log('Connected');
@@ -1061,10 +1067,7 @@
             // request config, params, and current preset
             // Get modeller data first so we now how to display the presets
             sendWS({"CMD": "GETMODELLERDATA"});
-            sendWS({"CMD": "GETPRESET"});
-            sendWS({"CMD": "GETPRESETNAMES"});
-            sendWS({"CMD": "GETPARAMS"});      
-            sendWS({"CMD": "GETCONFIG"});              
+            sendWS({"CMD": "GETSYNCCOMPLETE"});                   
         }
 
         function onClose(event) {
@@ -1988,6 +1991,24 @@
                     startPreset = data['START_PRESET'];
                     break;
 
+                case 'GETSYNCCOMPLETE':
+                    var syncState = isSyncDone;
+                    isSyncDone = data['SYNC'];
+
+                    // check for state changed
+                    if (isSyncDone != syncState) {
+                        if (isSyncDone == 1) {
+                            console.log("Sync done");
+
+                            // request all the stuff
+                            sendWS({"CMD": "GETPRESET"});
+                            sendWS({"CMD": "GETPRESETNAMES"});
+                            sendWS({"CMD": "GETPARAMS"});      
+                            sendWS({"CMD": "GETCONFIG"});       
+                        }
+                    }
+                    break;
+
                 case 'GETCONFIG':  
                     console.log("Got Config");
 
@@ -2109,14 +2130,22 @@
                     if (preset_list.options.length != item_count) {
                         console.log("Init GetPresetNames");
 
+                        // delete existing options so we don't get double-ups
+                        preset_list.options.length = 0;
+
                         // init select options
                         for (var index = 0; index < item_count; index++) {
                             const option = new Option((index + startPreset).toString(), index.toString());
                             preset_list.add(option);
                         }
 
+                        //console.log(preset_list);
+
                         // build preset order list to suit max presets
                         var preset_order_div = document.getElementById("preset-order-list");
+
+                        // delete existing items s we don't get double-ups
+                        preset_order_div.innerHTML = "";
 
                         // create top row
                         createPresetOrderRow(preset_order_div, 0, false, true);
@@ -2129,9 +2158,11 @@
                         // create last row
                         createPresetOrderRow(preset_order_div, item_count - 1, true, false);
 
-
                         // create bank indicators
                         var banks_div = document.getElementById("preset-orderbank-column");
+                        
+                        // delete existing items s we don't get double-ups
+                        //banks_div.innerHTML = "";
 
                         for (var bank = 0; bank < (item_count / 3); bank++) {
                             var bankDiv = document.createElement('div');
@@ -2154,7 +2185,7 @@
                             //console.log(bank);
                         }
                     }
-
+                   
                     // update the list to have the preset names
                     for (var index in data['PRESET_NAMES']) {
                         let name = data['PRESET_NAMES'][index];

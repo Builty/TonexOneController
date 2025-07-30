@@ -360,6 +360,7 @@ static void __attribute__((unused)) usb_tonex_dump_globals(void)
     float TempoSource;
     float TuningRef;
     float BypassMode = 0;   // unsupported
+    float MainVolume;
     
     // get the global values
     memcpy((void*)&BPM, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_BPM * 5) + 1], sizeof(float));
@@ -368,11 +369,13 @@ static void __attribute__((unused)) usb_tonex_dump_globals(void)
     memcpy((void*)&TempoSource, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_TEMPO_SOURCE * 5) + 1], sizeof(float));
     memcpy((void*)&TuningRef, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_TUNING_REFERENCE * 5) + 1], sizeof(float));
     // unsupported for now memcpy((void*)&BypassMode, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_BYPASS_MODE * 5) + 1], sizeof(float));
+    memcpy((void*)&MainVolume, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_MAIN_VOLUME * 5) + 1], sizeof(float));
 
     ESP_LOGI(TAG, "**** Tonex Global Data ****");
     ESP_LOGI(TAG, "Input Trim: %3.2f.\t\tCab Sim Bypass: %3.2f", InputTrim, CabsimBypass);
     ESP_LOGI(TAG, "Tuning Reference: %3.2f.\t\tBPM: %3.2f", TuningRef, BPM);                                                                
-    ESP_LOGI(TAG, "Tempo Source: %3.2f\t\tBypass Mode: %3.2f", TempoSource, BypassMode);     
+    ESP_LOGI(TAG, "Tempo Source: %3.2f\t\tVolume: %3.2f", TempoSource, MainVolume);     
+    ESP_LOGI(TAG, "tBypass Mode: %3.2f", BypassMode);     
 }
 
 /****************************************************************************
@@ -1118,6 +1121,8 @@ static esp_err_t usb_tonex_process_single_message(uint8_t* data, uint16_t length
                             boot_global_request = 0;
                         }
 
+                        control_set_sync_complete();
+                        
                         // debug dump parameters
                         //tonex_dump_parameters();
                     }
