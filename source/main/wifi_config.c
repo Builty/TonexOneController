@@ -1670,15 +1670,27 @@ void start_mdns_service()
     esp_err_t err = mdns_init();
     if (err) 
     {
-        ESP_LOGE(TAG, "MDNS Init failed: %d\n", err);
+        ESP_LOGE(TAG, "MDNS Init failed: %d", err);
         return;
     }
 
     control_get_config_item_string(CONFIG_ITEM_MDNS_NAME, mdns_name);
     mdns_hostname_set(mdns_name);
     mdns_instance_name_set(mdns_name);
-    mdns_service_add(NULL, "_http", "_tcp", 80, NULL, 0);
-    mdns_service_instance_name_set("_http", "_tcp", "Tonex Controller");
+
+    mdns_txt_item_t serviceTxtData[] = {
+        {"board", "ESP32-S3"},
+    };
+
+    if (mdns_service_add("Tonex-WebServer", "_http", "_tcp", 80, serviceTxtData, 1) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "MDNS mdns_service_add failed");
+    }
+    
+    if (mdns_service_subtype_add_for_host("Tonex-WebServer", "_http", "_tcp", NULL, "_server") != ESP_OK)
+    {
+        ESP_LOGE(TAG, "MDNS mdns_service_subtype_add_for_host failed");
+    }
 }
 
 /****************************************************************************
