@@ -450,6 +450,8 @@
         var maxPresets = 20;
         var startPreset = 1;
         var isSyncDone = 0;
+        var preset_order_cfg;
+        var preset_color_cfg;
         
         // param models
         const TONEX_REVERB_SPRING_1 = 0;
@@ -1067,7 +1069,8 @@
             // request config, params, and current preset
             // Get modeller data first so we now how to display the presets
             sendWS({"CMD": "GETMODELLERDATA"});
-            sendWS({"CMD": "GETSYNCCOMPLETE"});                   
+            sendWS({"CMD": "GETSYNCCOMPLETE"});
+            sendWS({"CMD": "GETCONFIG"});                      
         }
 
         function onClose(event) {
@@ -2003,8 +2006,7 @@
                             // request all the stuff
                             sendWS({"CMD": "GETPRESET"});
                             sendWS({"CMD": "GETPRESETNAMES"});
-                            sendWS({"CMD": "GETPARAMS"});      
-                            sendWS({"CMD": "GETCONFIG"});       
+                            sendWS({"CMD": "GETPARAMS"});                                      
                         }
                     }
                     break;
@@ -2108,8 +2110,9 @@
                     setExtFSValue("intfx4v1", data['INTFS_ES4_V1']);
                     setExtFSValue("intfx4v2", data['INTFS_ES4_V2']);
 
-                    setPresetOrder(data['PRESET_ORDER'], data['PRESET_COLORS']);
-                    
+                    // save these for later use (after we get the preset details)
+                    preset_order_cfg = data['PRESET_ORDER'];
+                    preset_color_cfg = data['PRESET_COLORS'];
                     break;   
                 
                 case 'GETPRESET':
@@ -2197,6 +2200,8 @@
                         //console.log(element);
                         presetOrderElementName(element).innerHTML = name;
                     }
+
+                    setPresetOrder(preset_order_cfg, preset_color_cfg);
                     break;                  
             }
         }

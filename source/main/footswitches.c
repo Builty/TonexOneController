@@ -775,6 +775,8 @@ void footswitch_task(void *arg)
     }
 #endif
 
+    ESP_LOGI(TAG, "Footswitch Internal layout: %d", (int)FootswitchControl.onboard_switch_mode);
+
     // get preset switching layout for external footswitches
     FootswitchControl.external_switch_mode = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_PRESET_LAYOUT);
 

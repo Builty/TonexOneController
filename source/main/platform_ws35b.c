@@ -579,7 +579,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     ledc_channel_config(&ledc_channel);
 
     // set brightness
-    uint8_t brightness = 70;
+    uint8_t brightness = 80;
     uint32_t duty = (brightness * (WAVESHARE_35_LCD_BL_LEDC_DUTY - 1)) / 100;
     ledc_set_duty(WAVESHARE_35_LCD_BL_LEDC_MODE, WAVESHARE_35_LCD_BL_LEDC_CHANNEL, duty);
     ledc_update_duty(WAVESHARE_35_LCD_BL_LEDC_MODE, WAVESHARE_35_LCD_BL_LEDC_CHANNEL);
