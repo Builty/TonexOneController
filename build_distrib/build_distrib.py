@@ -9,7 +9,7 @@ from zipfile import ZipFile
 dirname = Path.cwd()
 
 # set version
-version = '1.0.11.2_preview_1'
+version = '2.0.0.2_beta_1'
 
 def delete_files_in_folder(directory):
     for filename in os.listdir(directory):
@@ -82,9 +82,13 @@ build_distribution('template_cust_partition', 'build_ws169', True, zip_name)
 zip_name = 'TonexOneController_V' + version + '_Waveshare_1_69land'
 build_distribution('template_cust_partition', 'build_ws169land', True, zip_name)
 
-# Build Waveshare 1.69" Touch`
+# Build Waveshare 1.69" Touch
 zip_name = 'TonexOneController_V' + version + '_Waveshare_1_69_Touch'
 build_distribution('template_cust_partition', 'build_ws169t', True, zip_name)
+
+# Build Waveshare 1.69" Touch landscape
+zip_name = 'TonexOneController_V' + version + '_Waveshare_1_69_Touch_land'
+build_distribution('template_cust_partition', 'build_ws169tland', True, zip_name)
 
 # Build Waveshare 4.3B with Amp skins
 zip_name = 'TonexOneController_V' + version + '_Waveshare_4_3B_Display_Amp_Skins'
@@ -113,6 +117,22 @@ build_distribution('template_cust_partition', 'build_m5atoms3r', True, zip_name)
 # Build Lilygo T-Display S3
 zip_name = 'TonexOneController_V' + version + '_Lilygo_TDisplay_S3'
 build_distribution('template_cust_partition', 'build_lgtdisps3', True, zip_name)
+
+# Build Waveshare 3.5B with Amp skins
+zip_name = 'TonexOneController_V' + version + '_Waveshare_3_5B_Display_Amp_Skins'
+build_distribution('template_cust_partition', 'build_ws35b_as', True, zip_name)
+
+# Build Waveshare 3.5B with Pedal skins
+zip_name = 'TonexOneController_V' + version + '_Waveshare_3_5B_Display_Pedal_Skins'
+build_distribution('template_cust_partition', 'build_ws35b_ps', True, zip_name)
+
+# Build JC3248W ith Amp skins
+zip_name = 'TonexOneController_V' + version + '_Waveshare_JC3248W_Display_Amp_Skins'
+build_distribution('template_cust_partition', 'build_jc3248w_as', True, zip_name)
+
+# Build Waveshare 1.9
+zip_name = 'TonexOneController_V' + version + '_Waveshare_1_9'
+build_distribution('template_cust_partition', 'build_ws19t', True, zip_name)
 
 # Build Pirate Midi Polar Pico (Zero)
 zip_name = 'TonexOneController_V' + version + '_PirateMidi_PolarPico'

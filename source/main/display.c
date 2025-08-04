@@ -123,7 +123,7 @@ static QueueHandle_t ui_update_queue;
 static SemaphoreHandle_t I2CMutexHandle;
 static SemaphoreHandle_t lvgl_mux = NULL;
 static lv_disp_drv_t* disp_drv; 
-
+                
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
 
 #if CONFIG_TONEX_CONTROLLER_HAS_TOUCH
@@ -3067,6 +3067,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             char buf[128];
                             sprintf(buf, "%.1f", param_entry->Value);
                             lv_label_set_text(ui_BPMValueLabel, buf);
+                            
                             ui_BPMAnimate(ui_BPMIndicator, 1000 * 60 / param_entry->Value);
                         } break;
 
@@ -3357,12 +3358,13 @@ void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration)
 void display_task(void *arg)
 {
     tUIUpdate ui_update;
+
     ESP_LOGI(TAG, "Display task start");
 
     while (1) 
     {
         // Lock the mutex due to the LVGL APIs are not thread-safe
-        if (display_lvgl_lock(-1)) 
+        if (display_lvgl_lock(pdMS_TO_TICKS(1000))) 
         {
             lv_task_handler();
 
@@ -3376,7 +3378,11 @@ void display_task(void *arg)
             // Release the mutex
             display_lvgl_unlock();
 	    }
-        
+        else
+        {
+            ESP_LOGW(TAG, "Display lock timeout");
+        }
+
         vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
@@ -3415,14 +3421,6 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
     ESP_ERROR_CHECK(esp_timer_start_periodic(lvgl_tick_timer, DISPLAY_LVGL_TICK_PERIOD_MS * 1000));
 
     vTaskDelay(pdMS_TO_TICKS(10));
-
-    if (control_get_config_item_int(CONFIG_ITEM_SCREEN_ROTATION) == SCREEN_ROTATION_180)
-    {
-        disp_drv->rotated = LV_DISP_ROT_180;
-
-        // can only do software rotation, with a drop in frame rate
-        disp_drv->sw_rotate = 1;
-    }
 
     // init GUI
     ESP_LOGI(TAG, "Init UI");

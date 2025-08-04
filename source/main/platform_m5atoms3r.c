@@ -206,6 +206,14 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     disp_drv->user_data = lcd_panel;
 
     lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(disp_drv);
+
+    if (control_get_config_item_int(CONFIG_ITEM_SCREEN_ROTATION) == SCREEN_ROTATION_180)
+    {
+        disp_drv->rotated = LV_DISP_ROT_180;
+
+        // can only do software rotation, with a drop in frame rate
+        disp_drv->sw_rotate = 1;
+    }
 }
 
 #endif //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R

@@ -430,7 +430,16 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         indev_drv.user_data = tp;
 
         lv_indev_drv_register(&indev_drv);
-    }       
+    }     
+    
+    //to do
+    //if (control_get_config_item_int(CONFIG_ITEM_SCREEN_ROTATION) == SCREEN_ROTATION_180)
+    //{
+    //    disp_drv->rotated = LV_DISP_ROT_180;
+
+        // can only do software rotation, with a drop in frame rate
+    //    disp_drv->sw_rotate = 1;
+    //}
 }
 
 #endif //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35

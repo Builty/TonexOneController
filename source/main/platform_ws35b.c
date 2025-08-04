@@ -95,7 +95,7 @@ static const char *TAG = "platform_ws35b";
 #define BUF_SIZE                            (1024)
 #define I2C_MASTER_TIMEOUT_MS               1000
 #define I2C_AXS15231B_ADDRESS               (0x3B)
-
+#define TRANS_DONE_TIMEOUT                  100     //msec
 typedef bool (*lvgl_port_wait_cb)(void *handle);
 
 static SemaphoreHandle_t I2CMutexHandle;
@@ -112,7 +112,8 @@ static lv_color_t* trans_buf_1 = NULL;
 static lv_color_t* trans_buf_2 = NULL;
 static lv_color_t* trans_act = NULL;
 static SemaphoreHandle_t trans_done_sem = NULL;
-static lvgl_port_wait_cb draw_wait_cb;     /* Callback function for drawing */
+static lvgl_port_wait_cb draw_wait_cb = NULL;     /* Callback function for drawing */
+static int rotation_setting = LV_DISP_ROT_90;
 
 static const axs15231b_lcd_init_cmd_t lcd_init_cmds[] = {
     {0xBB, (uint8_t[]){0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x5A, 0xA5}, 8, 0},
@@ -296,8 +297,7 @@ static void lvgl_port_flush_callback(lv_disp_drv_t *drv, const lv_area_t *area, 
     int trans_count = 0;
 
     trans_act = trans_buf_1;
-    int rotate = LV_DISP_ROT_90;
-
+    
     int x_start_tmp = 0;
     int x_end_tmp = 0;
     int max_width = 0;
@@ -308,7 +308,7 @@ static void lvgl_port_flush_callback(lv_disp_drv_t *drv, const lv_area_t *area, 
     int max_height = 0;
     int trans_height = 0;
   
-    if (LV_DISP_ROT_270 == rotate || LV_DISP_ROT_90 == rotate) 
+    if (LV_DISP_ROT_270 == rotation_setting || LV_DISP_ROT_90 == rotation_setting) 
     {
         max_width = ((trans_size / height) > width) ? (width) : (trans_size / height);
         trans_count = width / max_width + (width % max_width ? (1) : (0));
@@ -327,17 +327,17 @@ static void lvgl_port_flush_callback(lv_disp_drv_t *drv, const lv_area_t *area, 
 
     for (int i = 0; i < trans_count; i++) 
     {
-        if (LV_DISP_ROT_90 == rotate) 
+        if (LV_DISP_ROT_90 == rotation_setting) 
         {
             trans_width = (x_end - x_start_tmp + 1) > max_width ? max_width : (x_end - x_start_tmp + 1);
             x_end_tmp = (x_end - x_start_tmp + 1) > max_width ? (x_start_tmp + max_width - 1) : x_end;
         } 
-        else if (LV_DISP_ROT_270 == rotate) 
+        else if (LV_DISP_ROT_270 == rotation_setting) 
         {
             trans_width = (x_end_tmp - x_start + 1) > max_width ? max_width : (x_end_tmp - x_start + 1);
             x_start_tmp = (x_end_tmp - x_start + 1) > max_width ? (x_end_tmp - trans_width + 1) : x_start;
         } 
-        else if (LV_DISP_ROT_NONE == rotate) 
+        else if (LV_DISP_ROT_NONE == rotation_setting) 
         {
             trans_height = (y_end - y_start_tmp + 1) > max_height ? max_height : (y_end - y_start_tmp + 1);
             y_end_tmp = (y_end - y_start_tmp + 1) > max_height ? (y_start_tmp + max_height - 1) : y_end;
@@ -351,7 +351,7 @@ static void lvgl_port_flush_callback(lv_disp_drv_t *drv, const lv_area_t *area, 
         trans_act = (trans_act == trans_buf_1) ? (trans_buf_2) : (trans_buf_1);
         to = trans_act;
         
-        switch (rotate) 
+        switch (rotation_setting) 
         {
             case LV_DISP_ROT_90:
                 for (int y = 0; y < height; y++) 
@@ -422,19 +422,25 @@ static void lvgl_port_flush_callback(lv_disp_drv_t *drv, const lv_area_t *area, 
             xSemaphoreGive(trans_done_sem);
         }
 
-        xSemaphoreTake(trans_done_sem, portMAX_DELAY);
-         
-        esp_lcd_panel_draw_bitmap(panel_handle, x_draw_start, y_draw_start, x_draw_end + 1, y_draw_end + 1, to);
+        if (xSemaphoreTake(trans_done_sem, pdMS_TO_TICKS(TRANS_DONE_TIMEOUT)) == pdTRUE)
+        { 
+            esp_lcd_panel_draw_bitmap(panel_handle, x_draw_start, y_draw_start, x_draw_end + 1, y_draw_end + 1, to);
+        }
+        else
+        {
+            ESP_LOGE(TAG, "Transfer sempahore timeout");
+            break;
+        }
 
-        if (LV_DISP_ROT_90 == rotate) 
+        if (LV_DISP_ROT_90 == rotation_setting) 
         {
             x_start_tmp += max_width;
         } 
-        else if (LV_DISP_ROT_270 == rotate) 
+        else if (LV_DISP_ROT_270 == rotation_setting) 
         {
             x_end_tmp -= max_width;
         } 
-        if (LV_DISP_ROT_NONE == rotate) 
+        if (LV_DISP_ROT_NONE == rotation_setting) 
         {
             y_start_tmp += max_height;
         } 
@@ -579,7 +585,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     ledc_channel_config(&ledc_channel);
 
     // set brightness
-    uint8_t brightness = 80;
+    uint8_t brightness = 100;
     uint32_t duty = (brightness * (WAVESHARE_35_LCD_BL_LEDC_DUTY - 1)) / 100;
     ledc_set_duty(WAVESHARE_35_LCD_BL_LEDC_MODE, WAVESHARE_35_LCD_BL_LEDC_CHANNEL, duty);
     ledc_update_duty(WAVESHARE_35_LCD_BL_LEDC_MODE, WAVESHARE_35_LCD_BL_LEDC_CHANNEL);
@@ -632,6 +638,11 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 
         lv_indev_drv_register(&indev_drv);
     }       
+
+    if (control_get_config_item_int(CONFIG_ITEM_SCREEN_ROTATION) == SCREEN_ROTATION_180)
+    {
+        rotation_setting = LV_DISP_ROT_180;
+    }
 }
 
 #endif //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35
