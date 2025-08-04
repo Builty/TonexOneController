@@ -78,7 +78,7 @@ static const char *TAG = "app_display";
 
 #define DISPLAY_TASK_STACK_SIZE   (6 * 1024)
 
-#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI && CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR
     static lv_anim_t *ui_BPMAnimation = NULL;
     static lv_anim_t PropertyAnimation_0;
     void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration);
@@ -3068,7 +3068,9 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             sprintf(buf, "%.1f", param_entry->Value);
                             lv_label_set_text(ui_BPMValueLabel, buf);
                             
+#if CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR                            
                             ui_BPMAnimate(ui_BPMIndicator, 1000 * 60 / param_entry->Value);
+#endif                            
                         } break;
 
                         case TONEX_GLOBAL_INPUT_TRIM:
@@ -3312,7 +3314,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
     return 1;
 }
 
-#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI && CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR
 void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration)
 {
     if (ui_BPMAnimation != NULL) {

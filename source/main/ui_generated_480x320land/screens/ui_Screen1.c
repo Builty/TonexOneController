@@ -379,6 +379,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_x(ui_BPMIndicator, 187);
     lv_obj_set_y(ui_BPMIndicator, -3);
     lv_obj_set_align(ui_BPMIndicator, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_BPMIndicator, LV_OBJ_FLAG_HIDDEN);     /// Flags
     lv_obj_clear_flag(ui_BPMIndicator, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_radius(ui_BPMIndicator, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_BPMIndicator, lv_color_hex(0xD1A60C), LV_PART_MAIN | LV_STATE_DEFAULT);
