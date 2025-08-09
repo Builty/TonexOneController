@@ -1,0 +1,92 @@
+name: ESP-IDF Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:  # Allows manual triggering from the Actions page
+
+env:
+  JSON_CONFIG_FILE: "source/esp_idf_project_configuration.json"
+
+jobs:
+  extract-config:
+    runs-on: ubuntu-latest
+    outputs:
+      platforms: ${{ steps.extract-platforms.outputs.platforms }}
+    steps:
+      - run: env | sort
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            ${{ env.JSON_CONFIG_FILE }}
+          sparse-checkout-cone-mode: false
+
+      - run: find . -type f
+
+      - run: which jq && jq --version
+
+      - name: Extract the keys (platform names) from the JSON file
+        id: extract-platforms
+        run: echo "platforms=$(jq -c 'keys' ${{ env.JSON_CONFIG_FILE }})" | tee -a ${GITHUB_OUTPUT}
+
+  build:
+    name: Build ${{ matrix.platform }}
+    needs: extract-config
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJson(needs.extract-config.outputs.platforms) }}
+
+    steps:
+      - run: env | sort
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          clean: true
+          # submodules: 'recursive'
+          sparse-checkout: |
+            source/
+
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: ${{ github.job }}-${{ matrix.platform }}
+          evict-old-files: 'job'
+
+      - run: find . -type f -and -not -path './.git/*' -not -path './.ccache/*'
+
+      - run: which jq && jq --version
+
+      - name: Set SDKCONFIG_DEFAULTS for ${{ matrix.platform }}
+        run: echo "SDKCONFIG_DEFAULTS=$(jq -r '.${{ matrix.platform }}.build.sdkconfigDefaults | join(";")' ${{ env.JSON_CONFIG_FILE }})" | tee -a ${GITHUB_ENV:?}
+
+      - run: env | sort
+
+      - name: esp-idf build
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          path: 'source'
+          # esp_idf_version: v5 # optional, default is latest
+          target: esp32s3 # optional, default is esp32
+          extra_docker_args: "-v ./.ccache:/root/.ccache -e CCACHE_DIR=/root/.ccache -e SDKCONFIG_DEFAULTS"
+          command: "idf.py build"
+
+      - run: find ./source/build -type f
+
+      - run: ccache --print-stat
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.platform }}
+          path: |
+            source/build/**/*.bin
+            source/build/flasher_args.json
+          if-no-files-found: error
