@@ -110,7 +110,6 @@ typedef struct
     uint16_t PresetIndex;
     uint8_t ParamsChanged : 1;
     uint8_t PresetChanged : 1;
-    int8_t PresetNameChanged;
     uint8_t ConfigChanged : 1;
     char wifi_ssid[MAX_WIFI_SSID_PW];
     char wifi_password[MAX_WIFI_SSID_PW];
@@ -158,9 +157,6 @@ static uint8_t process_wifi_command(tWiFiMessage* message)
     {
         case EVENT_SYNC_PARAMS:
         {
-            // send to all web sockets clients
-            //ws_send_all_clients(&http_server, &send_params_async);
-
             pWebConfig->ParamsChanged = 1;
         } break;
 
@@ -168,29 +164,17 @@ static uint8_t process_wifi_command(tWiFiMessage* message)
         {
             // save preset details
             memcpy((void*)pWebConfig->PresetNames[message->Value], (void*)message->Text, MAX_PRESET_NAME_LENGTH - 1);
-
-            // send to all web sockets clients
-            //ws_send_all_clients(&http_server, &send_preset_async);
-
-            pWebConfig->PresetNameChanged = message->Value;
         } break;
 
         case EVENT_SYNC_PRESET:
         {
             // save preset details
             pWebConfig->PresetIndex = message->Value;
-
-            // send to all web sockets clients
-            //ws_send_all_clients(&http_server, &send_preset_async);
-
             pWebConfig->PresetChanged = 1;
         } break;
 
         case EVENT_SYNC_CONFIG:
         {
-            // send to all web sockets clients
-            //ws_send_all_clients(&http_server, &send_config_async);
-            
             pWebConfig->ConfigChanged = 1;
         } break;    
     }
@@ -1208,21 +1192,6 @@ static esp_err_t ws_handler(httpd_req_t *req)
                             pWebConfig->PresetChanged = 0;
                         }
     
-                        if (pWebConfig->PresetNameChanged >= 0)
-                        {
-                            // send current preset
-                            ESP_LOGI(TAG, "Preset name update");
-
-                            // build json response
-                            uint8_t presetIndexes[] = {pWebConfig->PresetNameChanged};
-                            wifi_build_preset_names_json(presetIndexes, 1);
-                        
-                            // build packet and send
-                            build_send_ws_response_packet(req, pWebConfig->TempBuffer);
-
-                            pWebConfig->PresetNameChanged = -1;
-                        }
-             
                         if (pWebConfig->ConfigChanged)
                         {
                             // send current config
@@ -1742,7 +1711,6 @@ static void wifi_config_task(void *arg)
     // init mem
     memset((void*)pWebConfig, 0, sizeof(tWebConfigData));
     pWebConfig->PresetIndex = 0;
-    pWebConfig->PresetNameChanged = -1;
     sprintf(pWebConfig->PresetNames[0], "1");
 
     // check wifi mode

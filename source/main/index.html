@@ -2003,10 +2003,10 @@
                         if (isSyncDone == 1) {
                             console.log("Sync done");
 
-                            // request all the stuff
-                            sendWS({"CMD": "GETPRESET"});
+                            // request all the stuff                            
                             sendWS({"CMD": "GETPRESETNAMES"});
-                            sendWS({"CMD": "GETPARAMS"});                                      
+                            sendWS({"CMD": "GETPARAMS"});   
+                            sendWS({"CMD": "GETPRESET"});                                   
                         }
                     }
                     break;
@@ -2125,8 +2125,7 @@
 
                     var item_count = Object.keys(data['PRESET_NAMES']).length;
 
-                    //console.log("GetPresetNames");
-                    //console.log(data['PRESET_NAMES']);
+                    //console.log(data);
                     //console.log(item_count);
                     //console.log(preset_list.options.length);
 
@@ -2192,13 +2191,24 @@
                     // update the list to have the preset names
                     for (var index in data['PRESET_NAMES']) {
                         let name = data['PRESET_NAMES'][index];
-                        document.getElementById("set_preset").options[index].text = name;
+                        var option_entry = document.getElementById("set_preset").options[index]
 
-                        var element = document.querySelector('[id^="preset-order-"][order_value="' + index + '"]');
-                        //console.log('preset names');
-                        //console.log(index);
-                        //console.log(element);
-                        presetOrderElementName(element).innerHTML = name;
+                        if (option_entry == null) {
+                            console.log("null option_entry:")
+                            console.log(index);
+                            console.log(data);
+                        } 
+                        else {
+                            option_entry.text = name;
+                            var element = document.querySelector('[id^="preset-order-"][order_value="' + index + '"]');
+
+                            //console.log('preset names');
+                            //console.log(index);
+                            //console.log(element);
+                            if (element != null) {
+                                presetOrderElementName(element).innerHTML = name;
+                            }
+                        }                       
                     }
 
                     setPresetOrder(preset_order_cfg, preset_color_cfg);
