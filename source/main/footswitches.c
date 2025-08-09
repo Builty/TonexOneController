@@ -964,7 +964,12 @@ void footswitches_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2C
     // init GPIO
     gpio_config_t gpio_config_struct;
 
-    gpio_config_struct.pin_bit_mask = (((uint64_t)1 << FOOTSWITCH_1) | ((uint64_t)1 << FOOTSWITCH_2) | ((uint64_t)1 << FOOTSWITCH_3) | ((uint64_t)1 << FOOTSWITCH_4));
+    uint64_t pin_bit_mask = 0;
+    if (FOOTSWITCH_1 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_1);
+    if (FOOTSWITCH_2 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_2);
+    if (FOOTSWITCH_3 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_3);
+    if (FOOTSWITCH_4 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_4);
+    gpio_config_struct.pin_bit_mask = pin_bit_mask;
     gpio_config_struct.mode = GPIO_MODE_INPUT;
     gpio_config_struct.pull_up_en = GPIO_PULLUP_ENABLE;
     gpio_config_struct.pull_down_en = GPIO_PULLDOWN_DISABLE;
