@@ -323,6 +323,19 @@ static void host_lib_daemon_task(void *arg)
 
     SemaphoreHandle_t signaling_sem = (SemaphoreHandle_t)arg;
 
+    // delay here, as with the big Tonex (being self-powered) we need to give the ESP32 enough time
+    // to initialise the USB port before we try to enumerate the bus
+    vTaskDelay(500); 
+
+    //Create the USB class driver task
+    xTaskCreatePinnedToCore(class_driver_task,
+                            "class",
+                            (3 * 1024), 
+                            (void*)signaling_sem,
+                            USB_CLASS_TASK_PRIORITY,
+                            &class_driver_task_hdl,
+                            0);
+
     usb_host_config_t host_config = {
         .skip_phy_setup = false,
         .intr_flags = ESP_INTR_FLAG_LEVEL2,
@@ -511,14 +524,5 @@ void init_usb_comms(void)
                             (void*)signaling_sem,
                             USB_DAEMON_TASK_PRIORITY,
                             &daemon_task_hdl,
-                            0);
-
-    //Create the USB class driver task
-    xTaskCreatePinnedToCore(class_driver_task,
-                            "class",
-                            (3 * 1024), 
-                            (void*)signaling_sem,
-                            USB_CLASS_TASK_PRIORITY,
-                            &class_driver_task_hdl,
                             0);
 }
