@@ -1,5 +1,5 @@
-# Tonex One Controller: An open-source controller and display interface for the IK Multimedia Tonex One guitar pedal
-This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a bridge to the IK Multimedia Tonex One guitar pedal (which does not have native Midi capability.)
+# Tonex Controller: An open-source controller and display interface for the IK Multimedia Tonex One and Tonex guitar pedals
+This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a bridge to the IK Multimedia Tonex One (which does not have native Midi capability) or the bigger Tonex pedal (new in V2.0.0.2.)
 <br>It allows selection of the 20 different presets in the pedal, by any or all of touch screen, WiFi, wired footswitches, bluetooth footswitches, bluetooth servers, and midi programs.
 <br>A variety of hardware is supported, from a $6 board with no display, up to a $44 board with a 4.3" touch screen LCD and a pretty graphical user interface.
 
@@ -29,10 +29,9 @@ For example, the "GuerrilhaBox" Controller is clearly based on this project with
 
 ## ⭐ Key Features <a name="key_features"></a>
 The supported features vary a little depending on the chosen hardware platform.
-- LCD display with capactive touch screen ("4.3B" model)
-- LCD display ("1.69" model and "Atom S3R" model)
+- LCD display with capactive touch screen
 - Screen displays the name and number of the current preset (all models with displays)
-- The User can select an amplifier or pedal skin and also add descriptive text ("4.3B" model)
+- The User can select an amplifier or pedal skin and also add descriptive text ("4.3B" and "3.5" models)
 - Use of simple dual footswitches to select next/previous preset (all platforms)
 - Use of four buttons to select a preset via a banked system, or directly via binary inputs (all platforms except for the "4.3B")
 - Bluetooth Client support. Use of the "M-Vave Chocolate" bluetooth Midi footswitch device to switch presets (4 buttons, bank up/down)
@@ -40,7 +39,7 @@ The supported features vary a little depending on the chosen hardware platform.
 - Bluetooth server support. Pair your phone/tablet with the controller, and send standard Midi program changes, bridged through to the Tonex One pedal (note Server and Client cannot be used simultaneously)
 - USB host control of the Tonex pedal
 - Wired/Serial Midi support
-- New in V1.0.6: full control over all Tonex One parameters and effects, via LCD (4.3B only) and Midi (all platforms.)
+- New in V1.0.6: full control over all Tonex One parameters and effects, via LCD (4.3B and 3.5 only) and Midi (all platforms.)
 - New in V1.0.8: support for up to 16 footswitches, with configurable preset switching layouts, and up to 5 effect/parameter toggle switches
   
 ## Demonstration Videos <a name="demonstration_videos"></a>
@@ -79,6 +78,8 @@ The code could be adapted to run on other brand ESP32-S3 boards, but to make thi
 - "Zero" board with no display, is the smallest and cheapest option
 - "DevKit-C" board with no display
 - "Atom S3R" board with tiny LCD
+- 1.9" board
+- 3.5" LCD boards
 ![meet_family](https://github.com/user-attachments/assets/b707b61a-ca2c-46b3-972f-cbeb59ffa2b2)
 
 ## Hardware Platforms and Wiring <a name="hardware_platforms"></a>
@@ -129,17 +130,22 @@ For more information about the firmware development and customisation, refer to 
 - https://github.com/vit3k/tonex_controller for great work on reverse engineering the Tonex One USB protocol
 
 ## Firmware Release Notes <a name="release_notes"></a>
-V2.0.0.2 (in development, no beta yet):
-- Caution: due to structural changes, amp/pedal skins and user preset text is not maintained and will need to be entered again
+V2.0.0.2 beta 1:
+- Caution: due to structural changes, amp/pedal skins and user preset text is not maintained and will need to be entered again. And if rolling back to an older version, all config will be lost
 - Upgraded to ESP-IDF 5.4.1 
 - Added support for big Tonex pedal 
 - Added effect icons to web page, showing order and status of each effect 
-- Added new platform LilyGo T-Display S3 1.9" touch 
+- Added new platform LilyGo T-Display S3 1.9" touch (note: delayed release due to issues)
 - Added new platform Waveshare ESP32-S3 1.9" touch 
 - Added new platform Waveshare ESP32-S3 3.5B touch, with full UI as per 4.3B
 - Added new platform JC3248W535C 3.5" touch, with full UI as per 4.3B
+- Added new platform Waveshare 1.69" touch in landscape mode 
 - Code updates to better isolate hardware platforms from user interface 
 - Added left/right swipe gestures to Waveshare 1.69" Touch for next/previous preset 
+- AQdded the ability to send value 64 via Midi, to toggle the current state of any on/off parameter 
+- Added global volume support (via LCD/Web)
+- Added ability to bypass the pedal via web config (Tonex One only)
+
 
 V1.0.10.2:
 - User contribution from Mateusz: web config now allows the order of the presets to be remapped. E.g. footswitches 1,2,3,4 could now load presets 10,5,11,20 instead of having to be 1,2,3,4.
