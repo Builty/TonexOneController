@@ -20,11 +20,14 @@ To enter Web Control:
 - In the address bar of the web browser, enter "tonex.local" (without the quotation marks.) You should see the web config screen
 - Once you have saved the settings (or if you don't want to change anything) you can close the web browser
 <br>
+You can also connect to the controller by scanning the below QR code using your phone camera or QR scanning app:
+<br>
+<br>
+<img width="256" height="256" alt="TonexConfig-qrcode" src="https://github.com/user-attachments/assets/900b717c-2bc6-414c-aabf-d7855ac9cebb" />
+<br>
 
 # Changing Presets
 The current preset can be changed by clicking on the white box beneath the title. A list will be shown, from 1 to 20. Select a number to select the preset.
-<br>
-The name of the preset will be added next to the number, after a preset has been selected.
 <br>
 ![image](https://github.com/user-attachments/assets/d8edaf8c-3304-4ca8-8087-80c1bc6b600f)
 
