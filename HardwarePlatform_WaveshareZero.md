@@ -10,7 +10,9 @@
 
 This hardware platform uses this Waveshare Zero board.
 [https://www.waveshare.com/product/esp32-s3-zero.htm](https://www.waveshare.com/product/esp32-s3-zero.htm)
-
+<br><br>
+<img width="485" height="408" alt="image" src="https://github.com/user-attachments/assets/8fefe9b0-31b3-4e90-8010-f667a2aa40fe" />
+<br><br>
 **Ensure its the ESP32-S3FH4R2 with USB-C port. There are some similar boards with no USB-C or slightly different processor**
 This module is very low cost (around US$6) and does not support an LCD display. It requires a 5 volt DC power supply.
 Caution: do not directly connect a pedalboard 9v! If you do, you will probably blow up both the PCB and your Tonex One!<br>
