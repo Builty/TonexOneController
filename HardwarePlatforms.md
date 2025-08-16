@@ -7,21 +7,33 @@ They would need to meet the minimum requirements:
 - Minimum SPI Flash size: 8 MB with display, 4 MB without
 - Minimum PSRAM size: 2 MB
 - USB OTG port
-<br>
 # Officially Supported Platforms
-<br>
 ## Waveshare 4.3B
+<br>
+<img width="247" height="171" alt="image" src="https://github.com/user-attachments/assets/968b9df7-9bae-4c7f-ad04-fd4489b7ce5a" />
+<br>
 https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_Waveshare4.3B.md
-<br>
+
 ## Waveshare Zero
+<br>
+<img width="207" height="177" alt="image" src="https://github.com/user-attachments/assets/703f6701-63a5-40c7-a115-704bb7121d8d" />
+<br>
 https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_WaveshareZero.md
-<br>
+
 ## Waveshare 1.69
+<br>
+<img width="213" height="164" alt="image" src="https://github.com/user-attachments/assets/5875fd46-23f0-436c-aa72-f11f4b796579" />
+<br>
 https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_Waveshare_1.69.md
-<br>
+
 ## Espressif DevKit-C
+<br>
+<img width="220" height="178" alt="image" src="https://github.com/user-attachments/assets/e4b49d25-7149-4796-bc25-a4ff4ca3254e" />
+<br>
 https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_DevKit-C.md
-<br>
+
 ## M5Stack Atom S3R
-https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_Atom_S3R.md
 <br>
+<img width="217" height="163" alt="image" src="https://github.com/user-attachments/assets/8a0bb983-ebd9-44da-82dc-789ba611264d" />
+<br>
+https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_Atom_S3R.md
