@@ -37,3 +37,20 @@ https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_DevKit-C
 <img width="217" height="163" alt="image" src="https://github.com/user-attachments/assets/8a0bb983-ebd9-44da-82dc-789ba611264d" />
 <br>
 https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_Atom_S3R.md
+
+## Waveshare 1.9
+<img width="423" height="330" alt="image" src="https://github.com/user-attachments/assets/5a6a39cb-0fdf-4e62-a2f8-86c51a69074d" />
+<br>
+https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_Waveshare1.9.md
+
+## Waveshare 3.5B
+<img width="442" height="312" alt="image" src="https://github.com/user-attachments/assets/c2476883-f8cb-4830-85c7-4bb72e31e117" />
+<br>
+https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_Waveshare3.5B.md
+
+## JC3248W535
+<img width="391" height="369" alt="image" src="https://github.com/user-attachments/assets/ffbaf9db-2aa2-420e-b5cd-cd76f875e1b0" />
+<br>
+https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_JC3248W535.md
+
+
