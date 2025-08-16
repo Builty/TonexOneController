@@ -8,7 +8,9 @@
  5. [9 volt Power for 5 volt models](#9v_power)
 
 This hardware platform uses the Espressif ESP32-S3 Devkit-C board (8MB flash/2 MB PSRAM version and 16MB flash/8 MB PSRAM version.) 
-
+<br><br>
+<img width="511" height="427" alt="image" src="https://github.com/user-attachments/assets/837da541-583d-4e33-af03-17acd5240a1a" />
+<br><br>
 This module is low cost and does not support an LCD display. It requires a 5 volt DC power supply.
 Caution: do not directly connect a pedalboard 9v! If you do, you will probably blow up both the PCB and your Tonex One!<br>
 If you do wish to use 9v power, refer to [9 volt Power for 5 volt models](#9v_power)
