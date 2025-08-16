@@ -9,7 +9,9 @@
 
 This hardware platform uses this Waveshare 1.9" Touch LCD board.
 https://www.waveshare.com/product/esp32-s3-lcd-1.9.htm?sku=30939
-
+<br><br>
+<img width="480" height="260" alt="image" src="https://github.com/user-attachments/assets/c124f1da-2776-48ed-ae2a-a081ff282e9a" />
+<br><br>
 This module provides the microcontroller, power input suitable for 5v DC pedal board use, and LCD screen with capacitive touch.
 
 ## Connections <a name="connections"></a>
