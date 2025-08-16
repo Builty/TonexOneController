@@ -8,7 +8,11 @@
  5. [9 volt Power for 5 volt models](#9v_power)
 
 This hardware platform uses the M5Stack Atom S3R board (8MB flash, 8 MB PSRAM version.) 
-
+<br>
+https://shop.m5stack.com/products/atoms3r-dev-kit
+<br><br>
+<img width="320" height="323" alt="image" src="https://github.com/user-attachments/assets/b02bb831-21ab-4c67-9550-0e0bcce15e7c" />
+<br><br>
 This module is low cost, supports a tiny LCD display, and comes in a case. It requires a 5 volt DC power supply.
 Caution: do not directly connect a pedalboard 9v! If you do, you will probably blow up both the PCB and your Tonex One!<br>
 If you do wish to use 9v power, refer to [9 volt Power for 5 volt models](#9v_power)
