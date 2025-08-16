@@ -10,7 +10,9 @@
 
 This hardware platform uses this Waveshare ESP32-S3 1.69" LCD board.
 [https://www.waveshare.com/esp32-s3-lcd-1.69.htm](https://www.waveshare.com/esp32-s3-lcd-1.69.htm)
-
+<br><br>
+<img width="329" height="385" alt="image" src="https://github.com/user-attachments/assets/07c819e9-1271-429c-8c21-cab7750ffff4" />
+<br><br>
 **Important note**: Waveshare have a V1 and a V2 PCB. The V2 has a small sticker on the USB-C port.
 <br>The V2 works very well, but on the V1, due to an error in Waveshare's design, the onboard Buzzer will make some noise.
 <br>It is recommended to check with your supplier if the board has the V2 sticker, and try to only purchase this V2 version.
