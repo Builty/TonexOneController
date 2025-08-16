@@ -8,8 +8,13 @@
  5. [9 volt Power for 5 volt models](#9v_power)
 
 This hardware platform uses this JC3248W535 3.5" Touch LCD board.
+<br>
 https://www.aliexpress.com/item/1005007593889279.html
-
+<br><br>
+<img width="653" height="443" alt="image" src="https://github.com/user-attachments/assets/3aff346b-656e-44a4-aad6-2b5c77bd3f6a" />
+<br>
+<img width="657" height="445" alt="image" src="https://github.com/user-attachments/assets/2c875e18-cdaa-4ca8-b7e3-bf95c980b89c" />
+<br><br>
 This module provides the microcontroller, power input suitable for 5v DC pedal board use, and LCD screen with capacitive touch.
 
 ## Connections <a name="connections"></a>
@@ -53,7 +58,7 @@ The SX1509 PCB has a selectable address system. This must be set correctly in or
 The common pin of each footswitch must connect to the SX1509 ground pins. The labels "0", "1" etc are the individual switch inputs. Footswitch 1 connected to input 0. Footswitch 2 to input 1 etc.
 <br><br>
 Multiple modes are supported, configured using the web configuration.
-![external_waveshare_display](https://github.com/user-attachments/assets/0cfaa971-6afc-41d9-9ee7-74fc7572e22d)
+
 
 
 ## Wired Midi (firmware version V1.0.4.1 or above required) <a name="midi"></a>
