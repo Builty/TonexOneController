@@ -7,8 +7,14 @@
  4. [Wired Midi](#midi)
 
 This hardware platform uses this Waveshare 4.3" B LCD board.
+<br>
 https://www.waveshare.com/product/esp32-s3-touch-lcd-4.3b.htm?sku=28141
-
+<br><br>
+<img width="796" height="480" alt="image" src="https://github.com/user-attachments/assets/3782e441-cdb4-4e80-bf90-2eba26c258a2" />
+<br>
+<br>
+<img width="795" height="482" alt="image" src="https://github.com/user-attachments/assets/f72f7fb0-c5f9-4532-9376-900d975bf3fa" />
+<br><br>
 **Important note:** Waveshare have two very similar boards:
 - ESP32-S3-4.3: 2 USB-C ports. 5 volt power input. This board is **NOT RECOMMENDED** but can be made to work with a board modification (remove R19)
 - ESP32-S3-4.3**B**: 1 USB-C port and a terminal block for 9v power input. This is the recommended board and works without modification
