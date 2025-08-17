@@ -11,8 +11,10 @@ This hardware platform uses this JC3248W535 3.5" Touch LCD board.
 <br>
 https://www.aliexpress.com/item/1005007593889279.html
 <br><br>
-<img width="653" height="443" alt="image" src="https://github.com/user-attachments/assets/3aff346b-656e-44a4-aad6-2b5c77bd3f6a" />
-<br>
+<img width="606" height="400" alt="image" src="https://github.com/user-attachments/assets/5e79621b-9ef0-4ede-b479-91fd90fec8f4" />
+<br><br>
+<img width="391" height="261" alt="image" src="https://github.com/user-attachments/assets/e5066edc-f775-44a3-b780-a92b2e219742" />
+<br><br>
 <img width="657" height="445" alt="image" src="https://github.com/user-attachments/assets/2c875e18-cdaa-4ca8-b7e3-bf95c980b89c" />
 <br><br>
 This module provides the microcontroller, power input suitable for 5v DC pedal board use, and LCD screen with capacitive touch.
