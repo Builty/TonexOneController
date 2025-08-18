@@ -2498,32 +2498,67 @@
                         "VALUE": param_value});                        
             }
         }
+        
         function showValue(e) {
-            let s = document.querySelector(`label[for="${e.id}"]`);
-            s.innerText = s.innerText.replace(/ :.*/, "");
-            s.innerText += " : " + parseFloat(e.value);
-            
-            let unit = s.getAttribute("unit");
-            if (unit != null) {
-                s.innerText += unit;
+            const label = document.querySelector(`label[for="${e.id}"]`);
+            if (!label) {
+                console.error(`Label for input ${e.id} not found`);
+                return;
             }
-            s.onclick = function(e){
-                let tmp_id = e.target.getAttribute('for');
-                let value_input_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('value_input_bg'));
-                value_input_modal.show();            
-                //showvalueinput(1);
-                document.getElementById("value_input_lbl").innerText = s.innerText.replace(/:.*/, "") ;				
-                if (unit != null) {
-                    document.getElementById("value_input_lbl").innerText += "("+unit+")";
-                }
-                document.getElementById("value_input_val").value = document.getElementById(tmp_id).value
-                document.getElementById("value_input_val").step = document.getElementById(tmp_id).step;
-                document.getElementById("value_input_btn").onclick = function() {
-                    document.getElementById(tmp_id).value = document.getElementById("value_input_val").value;					
-                    document.getElementById(tmp_id).dispatchEvent(new Event('input'));
-                    value_input_modal.hide();  
-                };
+            
+            // Update label text
+            label.innerText = label.innerText.replace(/ :.*/, "") + " : " + parseFloat(e.value);
+            const unit = label.getAttribute("unit");
+            if (unit) {
+                label.innerText += unit;
+            }
 
+            // Handle label click
+            label.onclick = function(event) {
+                try {
+                    const tmp_id = event.target.getAttribute('for');
+                    if (!tmp_id) throw new Error("No 'for' attribute on label");
+                    
+                    const modalElement = document.getElementById('value_input_bg');
+                    if (!modalElement) throw new Error("Modal element 'value_input_bg' not found");
+                    
+                    const value_input_modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                    value_input_modal.show();
+
+                    const valueLabel = document.getElementById("value_input_lbl");
+                    const valueInput = document.getElementById("value_input_val");
+                    const targetInput = document.getElementById(tmp_id);
+                    const button = document.getElementById("value_input_btn");
+                    
+                    if (!valueLabel || !valueInput || !targetInput || !button) {
+                        throw new Error("Required element not found");
+                    }
+
+                    // Update modal label
+                    valueLabel.innerText = label.innerText.replace(/:.*/, "");
+                    if (unit) {
+                        valueLabel.innerText += `(${unit})`;
+                    }
+
+                    // Set input values
+                    valueInput.value = targetInput.value;
+                    valueInput.step = targetInput.step;
+
+                    // Remove existing listeners to avoid duplicates
+                    const newButton = button.cloneNode(true);
+                    button.parentNode.replaceChild(newButton, button);
+
+                    // Add click handler
+                    newButton.addEventListener("click", () => {
+                        console.log("Param change via number event");
+                        targetInput.value = valueInput.value;
+                        console.log("Dispatching input event on", tmp_id);
+                        targetInput.dispatchEvent(new InputEvent('change', { bubbles: true }));
+                        value_input_modal.hide();
+                    });
+                } catch (err) {
+                    console.error("Error in label click handler:", err);
+                }
             };
         }
          
