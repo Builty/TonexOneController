@@ -7,7 +7,34 @@ They would need to meet the minimum requirements:
 - Minimum SPI Flash size: 8 MB with display, 4 MB without
 - Minimum PSRAM size: 2 MB
 - USB OTG port
-# Officially Supported Platforms
+
+# Officially Supported Assembled Devices
+## Pirate Midi Polar Pico
+<br>
+<img width="172" height="278" alt="image" src="https://github.com/user-attachments/assets/222133ae-a755-4269-9640-8af4b40fdba4" />
+<br>
+https://piratemidi.com/en-au/products/polar
+
+## Pirate Midi Polar Mini
+<br>
+<img width="212" height="269" alt="image" src="https://github.com/user-attachments/assets/61ba8f5a-c956-4d1b-8b17-9c8911358595" />
+<br>
+https://piratemidi.com/en-au/products/polar
+
+## Pirate Midi Polar Plus
+<br>
+<img width="384" height="190" alt="image" src="https://github.com/user-attachments/assets/01a04086-093a-43c0-8750-af0148acc44c" />
+<br>
+https://piratemidi.com/en-au/products/polar
+
+## Pirate Midi Polar Max
+<br>
+<img width="456" height="395" alt="image" src="https://github.com/user-attachments/assets/6ff29440-0e3e-4643-962b-9a59039c0d1d" />
+<br>
+https://piratemidi.com/en-au/products/polar
+<br><br><br>
+
+# Officially Supported DIY Platforms
 ## Waveshare 4.3B
 <br>
 <img width="247" height="171" alt="image" src="https://github.com/user-attachments/assets/968b9df7-9bae-4c7f-ad04-fd4489b7ce5a" />

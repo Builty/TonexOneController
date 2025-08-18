@@ -14,7 +14,7 @@ For example, the "GuerrilhaBox" Controller is clearly based on this project with
 # Table of Contents
  1. [Key Features](#key_features)
  2. [Demonstration Videos](#demonstration_videos)
- 3. [Meet the Family](#meet_family)
+ 3. [Multiple Hardware Devices](#multiple_devices)
  4. [Hardware Platforms and Wiring Diagrams](#hardware_platforms)
  5. [Pre-Built Controllers from Pirate Midi](#pre-built)
  6. [Uploading/Programming Firmware Releases](#firmware_uploading)
@@ -69,8 +69,8 @@ https://www.youtube.com/watch?v=mTD-6dyGXxc<br>
 ## Articles/Tutorials written by others
 https://gsus4.com.au/blogs/news-promo/what-if-there-was-a-screen-for-ik-tonex-one-step-by-step-guide<br>
 
-## Meet the Family <a name="meet_family"></a>
-This project can run on any of four different hardware platforms, varying in size and cost. All of them are "off-the-shelf" development boards supplied either by the company "Waveshare", or Espressif.
+## Multiple Hardware Devices <a name="multiple_devices"></a>
+This project can run on a variery of different hardware platforms, varying in size and cost. All of them are "off-the-shelf" development boards supplied either by the company "Waveshare", or Espressif.
 The code could be adapted to run on other brand ESP32-S3 boards, but to make things easy, pre-built releases are provided for the supported modules.
 <br>All platforms support Bluetooth, WiFi, wired footswitches, and wired Midi.
 - 4.3" LCD board, supporting touch screen and advanced graphics including customisable amp/pedal skins and text
@@ -78,9 +78,10 @@ The code could be adapted to run on other brand ESP32-S3 boards, but to make thi
 - "Zero" board with no display, is the smallest and cheapest option
 - "DevKit-C" board with no display
 - "Atom S3R" board with tiny LCD
-- 1.9" board
-- 3.5" LCD boards
-![meet_family](https://github.com/user-attachments/assets/b707b61a-ca2c-46b3-972f-cbeb59ffa2b2)
+- 1.9" board (with or without Touch.) Displays the preset name and number
+- 3.5" LCD boards, supporting touch screen and advanced graphics including customisable amp/pedal skins and text
+<img width="803" height="868" alt="image" src="https://github.com/user-attachments/assets/73d09089-5a49-4c0c-afed-aa8eda7a0b0c" />
+
 
 ## Hardware Platforms and Wiring <a name="hardware_platforms"></a>
 For more information about the hardware platforms, refer to [Hardware Platforms](HardwarePlatforms.md)

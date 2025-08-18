@@ -10,8 +10,9 @@ This hardware platform uses this Waveshare 4.3" B LCD board.
 <br>
 https://www.waveshare.com/product/esp32-s3-touch-lcd-4.3b.htm?sku=28141
 <br><br>
-<img width="796" height="480" alt="image" src="https://github.com/user-attachments/assets/3782e441-cdb4-4e80-bf90-2eba26c258a2" />
+<img width="469" height="318" alt="image" src="https://github.com/user-attachments/assets/f2f6ec2e-ada4-4da3-b839-0d234506f14d" />
 <br>
+<img width="851" height="520" alt="image" src="https://github.com/user-attachments/assets/878aee8b-647b-4c71-8a30-202884fd8e53" />
 <br>
 <img width="795" height="482" alt="image" src="https://github.com/user-attachments/assets/f72f7fb0-c5f9-4532-9376-900d975bf3fa" />
 <br><br>
