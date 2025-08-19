@@ -578,6 +578,10 @@ static TonexStatus usb_tonex_parse_state(uint8_t* unframed, uint16_t length, uin
 
     ESP_LOGI(TAG, "Current Preset: %d", (int)TonexData->Message.CurrentPreset);
 
+    // debug
+    //ESP_LOGI(TAG, "usb_tonex_parse_state: %d", (int)length);
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, unframed, length, ESP_LOG_INFO);
+
     return STATUS_OK;
 }
 
@@ -1074,7 +1078,16 @@ static esp_err_t usb_tonex_process_single_message(uint8_t* data, uint16_t length
                     {                        
                         // grab index
                         char* index_ptr_start = temp_ptr + sizeof(TonexPresetIndexByteMarker);
+
+                        // presets 128 and over have extra 0x80 
+                        if (*index_ptr_start == 0x80)
+                        {
+                            index_ptr_start++;
+                        }
                         TonexData->Message.CurrentPreset = (uint8_t)*index_ptr_start;
+
+                        // debug
+                        //ESP_LOG_BUFFER_HEXDUMP(TAG, index_ptr_start, 4, ESP_LOG_INFO);
 
                         ESP_LOGI(TAG, "Got preset index: %d", (int)TonexData->Message.CurrentPreset);
                     }
