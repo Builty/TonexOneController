@@ -54,4 +54,27 @@ To add support for a new PCB platform, the following steps are required:
 - Edit the file "source/main/CMakeLists.txt" and enter the unique Config you created before, and use that to set the include directory to the new ui_generated folder, and add the source files from it
 - Edit display.c to add your new Config, and inside that define, perform the display initialisation
 - Update the function update_ui_element() to handle the events needed. These events are sent from other parts of the system, for things like enabling/disabling Bluetooth status icon, setting the name of the preset etc
-  
+
+
+# Wireshark Capture
+- Download and install the latest version of the free app "Wireshark" from https://www.wireshark.org/
+- Install it, ensuring the option for USB Pcap is enabled
+- Start the Wireshark app
+- Connect Tonex pedal to the same PC
+- In the Wireshark app, select the Capture interface to USBPcap
+<br>
+<img width="478" height="339" alt="image" src="https://github.com/user-attachments/assets/4e0f1296-274d-43be-b683-e0cf6bed2085" />
+<br><br>
+- Press the blue Sharkfin button to begin capturing all USB packets
+<br><br>
+<img width="438" height="168" alt="image" src="https://github.com/user-attachments/assets/ecbc74c8-8e70-47b5-8516-20a8735f9ed4" />
+<br><br>
+- Start the Tonex Editor software, and let it complete its sync process<br>
+- Press the red square button to stop capturing
+<br><br>
+<img width="753" height="348" alt="image" src="https://github.com/user-attachments/assets/75d66535-9cc0-48ba-8882-079bdd4fdfb8" />
+<br><br>
+- Use File -> Save As to save the captured data to disk
+ 
+
+    
