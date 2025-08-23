@@ -163,10 +163,11 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 
     gpio_config_t rd_gpio_config = {
         .mode = GPIO_MODE_OUTPUT,
-        .pin_bit_mask = 1ULL << LG_TDISP_S3_TFT_RD
+        .pin_bit_mask = (1ULL << LG_TDISP_S3_TFT_RD) | (1ULL << LG_TDISP_S3_POWERON)
     };
     ESP_ERROR_CHECK(gpio_config(&rd_gpio_config));
     gpio_set_level(LG_TDISP_S3_TFT_RD, 1);
+    gpio_set_level(LG_TDISP_S3_POWERON, 1);
 
     esp_lcd_i80_bus_handle_t i80_bus = NULL;
     esp_lcd_i80_bus_config_t bus_config = {
