@@ -84,7 +84,7 @@ Espressif Devkit-C to Midi Featherwing:<br>
 
 <br><br>
 ## 9 volt Power for 5 volt Models<a name="9v_power"></a>
-The Zero boards has a maximum of 5 volts input.
+The DevKit-C board has a maximum of 5 volts input.
 <br>It is still possible however to run it from a 9 volt power supply, with the additional of another low cost off-the-shelf PCB.
 <br>**Caution:** This section requires some more advanced skills, such as using a multimeter to measure voltage. Incorrect voltage setting or polarity could cause damage to the PCB and/or your Tonex pedal.
 <br><br>Various electronic shops, and also suppliers like Amazon, often have low cost "switching regulators." These are a compact circuit that can convert the 9 volt pedalboard power down to the 5 volts required by the Zero and the 1.69. Sample photos are shown below.<br>

@@ -160,6 +160,8 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 {    
     ESP_LOGI(TAG, "Platform Init");
     disp_drv = pdisp_drv;
+    __attribute__((unused)) esp_err_t ret = ESP_OK;
+    uint8_t touch_ok = 0;
 
     gpio_config_t rd_gpio_config = {
         .mode = GPIO_MODE_OUTPUT,
@@ -272,9 +274,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 
     lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(disp_drv);
 
-#if CONFIG_TONEX_CONTROLLER_HAS_TOUCH
     // note: basic version of T-Display S3 has no touch screen.
-    // code is here for possible future support of the touch version
     // init touch screen    
     const esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_CST816S_CONFIG();
     
@@ -283,13 +283,14 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         .y_max = LILYGO_TDISPLAY_S3_LCD_V_RES,
         .rst_gpio_num = TOUCH_RESET,
         .int_gpio_num = TOUCH_INT,
+        .interrupt_callback = touch_data_ready,
         .levels = {
             .reset = 0,
             .interrupt = 0,
         },
         .flags = {
             .swap_xy = 0,
-            .mirror_x = 1,
+            .mirror_x = 0,
             .mirror_y = 0,
         },
     };
@@ -303,10 +304,10 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     // Initialize touch
     ESP_LOGI(TAG, "Initialize touch controller CST816");
 
-   if (xSemaphoreTake(I2CMutexHandle, (TickType_t)10000) == pdTRUE)
+   if (xSemaphoreTake(I2CMutex, (TickType_t)10000) == pdTRUE)
     {
         ret = esp_lcd_touch_new_i2c_cst816s(tp_io_handle, &tp_cfg, &tp);
-        xSemaphoreGive(I2CMutexHandle);
+        xSemaphoreGive(I2CMutex);
     }
     else
     {
@@ -341,7 +342,6 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         // can only do software rotation, with a drop in frame rate
         disp_drv->sw_rotate = 1;
     }
-#endif    //CONFIG_TONEX_CONTROLLER_HAS_TOUCH
 }
 
 #endif //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3

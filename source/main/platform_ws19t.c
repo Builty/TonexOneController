@@ -162,7 +162,7 @@ __attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max
 *****************************************************************************/
 void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex, lv_disp_drv_t* pdisp_drv)
 {    
-     __attribute__((unused)) esp_err_t ret = ESP_OK;
+    __attribute__((unused)) esp_err_t ret = ESP_OK;
     uint8_t touch_ok = 0;
 
     ESP_LOGI(TAG, "Platform Init");

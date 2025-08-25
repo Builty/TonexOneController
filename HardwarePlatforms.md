@@ -80,4 +80,7 @@ https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_Waveshar
 <br>
 https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_JC3248W535.md
 
+## Lilygo T-Display-S3
+<br>
+https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_Lilygo_TDisplay_S3.md
 
