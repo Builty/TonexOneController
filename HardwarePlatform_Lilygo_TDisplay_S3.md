@@ -11,9 +11,7 @@ This hardware platform uses this Lilygo T-Display S3 1.9" Touch/No Touch LCD boa
 <br>
 https://lilygo.cc/products/t-display-s3
 <br><br>
-
-<br><br>
-
+<img width="418" height="367" alt="image" src="https://github.com/user-attachments/assets/3e70fa44-563e-425a-ae01-6c1d3defa87b" />
 <br><br>
 This module provides the microcontroller, power input suitable for 5v DC pedal board use, and LCD screen with optional capacitive touch.
 
@@ -57,7 +55,6 @@ The SX1509 PCB has a selectable address system. This must be set correctly in or
 The common pin of each footswitch must connect to the SX1509 ground pins. The labels "0", "1" etc are the individual switch inputs. Footswitch 1 connected to input 0. Footswitch 2 to input 1 etc.
 <br><br>
 Multiple modes are supported, configured using the web configuration.
-<img width="1286" height="1002" alt="external_waveshare_19" src="https://github.com/user-attachments/assets/4b125403-181c-4b6f-bce8-58382cdb0dfb" />
 
 ## Wired Midi (firmware version V1.0.4.1 or above required) <a name="midi"></a>
 Note: Wired Midi is disabled by default. If it is enabled without the proper hardware (detailed below) being fitted, you may get "phantom" preset changes, due to the serial input "floating".
