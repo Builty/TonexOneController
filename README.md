@@ -44,31 +44,39 @@ The supported features vary a little depending on the chosen hardware platform.
   
 ## Demonstration Videos <a name="demonstration_videos"></a>
 ### Release Videos
-https://youtu.be/j0I5G5-CXfg<br>
-https://www.youtube.com/watch?v=_nemmhjvjcc<br>
-https://www.youtube.com/watch?v=ok4EuUgWt44<br>
-https://www.youtube.com/watch?v=r5wLnxQ4IZo<br>
-https://www.youtube.com/watch?v=WF8BB_EIKBo<br>
-https://www.youtube.com/watch?v=hQ5NEcqaVeE<br>
+<a href="https://youtu.be/j0I5G5-CXfg" target="_blank"><img width="455" height="247" alt="image" src="https://github.com/user-attachments/assets/3588465b-8f2e-4e99-a2db-18d2f3ade429" />
+<a href="https://www.youtube.com/watch?v=_nemmhjvjcc" target="_blank"><img width="457" height="239" alt="image" src="https://github.com/user-attachments/assets/56fbd134-9518-4b0d-a50d-0e200f71aa5b" />
+<a href="https://www.youtube.com/watch?v=ok4EuUgWt44" target="_blank"><img width="456" height="245" alt="image" src="https://github.com/user-attachments/assets/21eb8070-3402-4968-be52-9fb582fb6848" />
+<a href="https://www.youtube.com/watch?v=r5wLnxQ4IZo" target="_blank"><img width="458" height="242" alt="image" src="https://github.com/user-attachments/assets/47747b43-f800-4fab-a444-c70403567c80" />
+<a href="https://www.youtube.com/watch?v=WF8BB_EIKBo" target="_blank"><img width="452" height="245" alt="image" src="https://github.com/user-attachments/assets/cf955f2e-9ee0-4748-92e1-cd9e1719dc26" />
+<a href="https://www.youtube.com/watch?v=hQ5NEcqaVeE" target="_blank"><img width="455" height="245" alt="image" src="https://github.com/user-attachments/assets/887427a8-481d-46b3-a4bf-5472e6e3cca0" />
+<br><br>
 
 ### Pirate Midi Videos
-https://www.youtube.com/watch?v=g_w_sGxK-ZI<br>
+<a href="https://youtu.be/j0I5G5-CXfg" target="_blank"><img width="458" height="246" alt="image" src="https://github.com/user-attachments/assets/11de8a13-4865-4f64-8b6f-6f6f91a8495f" />
+<a href="https://www.youtube.com/watch?v=dkUudtlyilI" target="_blank"><img width="456" height="244" alt="image" src="https://github.com/user-attachments/assets/3293f51a-4178-4156-9dbc-cd26233be540" />
+<a href="https://www.youtube.com/watch?v=ygJXO1M7p0s" target="_blank"><img width="455" height="238" alt="image" src="https://github.com/user-attachments/assets/35692c87-0867-47c4-a936-dc5785ffab76" />
+<a href="https://www.youtube.com/watch?v=fZ0MSDB0vW4" target="_blank"><img width="456" height="246" alt="image" src="https://github.com/user-attachments/assets/2e9e10d4-9aa1-4f4a-afb4-f66604fd4ae5" />
+<br><br>
 
 ### Review Videos (seach Youtube for more)
-https://www.youtube.com/watch?v=dL7V-3_e7Gg<br>
-https://www.youtube.com/watch?v=TLoKdBpcDJA<br>
+<a href="https://www.youtube.com/watch?v=dL7V-3_e7Gg" target="_blank"><img width="458" height="244" alt="image" src="https://github.com/user-attachments/assets/2a14750e-dee0-4431-a61f-9ea7b8657775" />
+<a href="https://www.youtube.com/watch?v=TLoKdBpcDJA" target="_blank"><img width="459" height="248" alt="image" src="https://github.com/user-attachments/assets/84677209-2114-4c6c-875f-bc49a7c3bad4" />
+<br><br>
 
 ### User Videos (search Youtube for more)
-https://www.youtube.com/watch?v=qkOs5gk3bcQ<br>
-https://www.youtube.com/watch?v=bNvzW3pwNeY<br>
-https://www.youtube.com/watch?v=pgCZfFsZD_4<br>
-https://www.youtube.com/watch?v=E56C4G4_uKk<br>
-https://www.youtube.com/watch?v=aJPtkqnd2sg<br>
-https://www.youtube.com/watch?v=M2mpE5QMi7E<br>
-https://www.youtube.com/watch?v=mTD-6dyGXxc<br>
+<a href="https://www.youtube.com/watch?v=qkOs5gk3bcQ" target="_blank"><img width="457" height="243" alt="image" src="https://github.com/user-attachments/assets/c5dda5a3-bb22-479d-9498-a1c81d499d80" />
+<a href="https://www.youtube.com/watch?v=bNvzW3pwNeY" target="_blank"><img width="459" height="240" alt="image" src="https://github.com/user-attachments/assets/59beea9c-1c10-4e26-a5dd-bf60c0c727e6" />
+<a href="https://www.youtube.com/watch?v=pgCZfFsZD_4" target="_blank"><img width="455" height="245" alt="image" src="https://github.com/user-attachments/assets/b91e90f2-6cd1-41f3-a7ae-9ce5d33ad94f" />
+<a href="https://www.youtube.com/watch?v=E56C4G4_uKk" target="_blank"><img width="458" height="244" alt="image" src="https://github.com/user-attachments/assets/9c838478-5dcb-4b57-ba2b-74d2d99b77cd" />
+<a href="https://www.youtube.com/watch?v=aJPtkqnd2sg" target="_blank"><img width="454" height="242" alt="image" src="https://github.com/user-attachments/assets/c2e260dd-3cb1-4357-a563-76871214ec00" />
+<a href="https://www.youtube.com/watch?v=M2mpE5QMi7E" target="_blank"><img width="458" height="244" alt="image" src="https://github.com/user-attachments/assets/0a00d54e-cee2-47d5-800c-4ba8e69c6029" />
+<a href="https://www.youtube.com/watch?v=mTD-6dyGXxc" target="_blank"><img width="454" height="241" alt="image" src="https://github.com/user-attachments/assets/07208ba8-67d7-4d6f-9393-5489ab415ccc" />
+<br><br>
 
 ## Articles/Tutorials written by others
-https://gsus4.com.au/blogs/news-promo/what-if-there-was-a-screen-for-ik-tonex-one-step-by-step-guide<br>
+<a href="https://gsus4.com.au/blogs/news-promo/what-if-there-was-a-screen-for-ik-tonex-one-step-by-step-guide" target="_blank"><img width="1338" height="853" alt="image" src="https://github.com/user-attachments/assets/cb3be685-4f83-420f-84f0-761e906978cb" />
+<br><br>
 
 ## Multiple Hardware Devices <a name="multiple_devices"></a>
 This project can run on a variery of different hardware platforms, varying in size and cost. All of them are "off-the-shelf" development boards supplied either by the company "Waveshare", or Espressif.
