@@ -95,12 +95,42 @@ static const char *TAG = "platform_ws43";
 #define BUF_SIZE                        (1024)
 #define I2C_MASTER_TIMEOUT_MS           1000
 
+#define GT911_CONFIG_SIZE               184
+
+// GT911 I2C registers (not covered in the ESP driver)
+#define ESP_LCD_TOUCH_GT911_CONFIG_REG          0x8047
+#define ESP_LCD_TOUCH_GT911_TOUCH_KEY_THRESH    0x804B	
+#define ESP_LCD_TOUCH_GT911_TOUCH_LEVEL         0x8053	// signal level threshold above which a touch begins to be reported. Higher numbers = less sensitive.
+#define ESP_LCD_TOUCH_GT911_LEAVE_LEVEL         0x8054	// signal level threshold below which a touch stops being reported. Higher numbers = less sensitive.
+#define ESP_LCD_TOUCH_GT911_PANEL_TX_GAIN       0x806b	// The lowest 3 bits set the DAC gain, where 0 produces the largest signal and 7 producest the smallest signal.
+#define ESP_LCD_TOUCH_GT911_PANEL_RX_GAIN       0x806b	// The lowest 3 bits set the ADC gain. It seems like 7 is the most sensitive and 0 is the least sensitive.
+
 static SemaphoreHandle_t I2CMutexHandle;
 static lv_disp_draw_buf_t disp_buf; // contains internal graphic buffer(s) called draw buffer(s)
 static lv_disp_drv_t* disp_drv;      // contains callback functions
 static esp_lcd_touch_handle_t tp = NULL;
 static esp_lcd_panel_io_handle_t tp_io_handle = NULL;
 static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static uint8_t GT911CalcChecksum(uint8_t* buf, uint16_t len) 
+{
+    uint8_t checksum = 0;
+
+    for (uint16_t i = 0; i < len; i++) 
+    {
+        checksum += buf[i];
+    }
+    
+    checksum = ~checksum + 1; // Two's complement
+    return checksum;
+}
 
 /****************************************************************************
 * NAME:        
@@ -339,6 +369,46 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         
         if (ret == ESP_OK)
         {
+            // read the current config
+            if (xSemaphoreTake(I2CMutexHandle, (TickType_t)10000) == pdTRUE)
+            {
+                // read config
+                uint8_t config[GT911_CONFIG_SIZE];
+                ret = esp_lcd_panel_io_rx_param(tp_io_handle, ESP_LCD_TOUCH_GT911_TOUCH_KEY_THRESH, config, sizeof(config));
+                
+                if (ret != ESP_OK)
+                {
+                    ESP_LOGE(TAG, "GT911 config read failed!");
+                }
+                else
+                {
+                    // config[4] has touch key threshold
+                    ESP_LOGI(TAG, "GT911 touch key threshold: %d. Filter: %d", (int)config[4], (int)config[3]);
+
+                    if (control_get_config_item_int(CONFIG_ITEM_ENABLE_HIGHER_TOUCH_SENS) != 0)
+                    {
+                        ESP_LOGI(TAG, "GT911 setting higher touch sensitivity");
+
+                        // set higher sensitivity/lower threshold
+                        config[4] = 5;
+
+                        // Set checksum at 0x80FD
+                        config[182] = GT911CalcChecksum(config, 182); 
+
+                        // Set refresh flag at 0x80FE to apply changes
+                        config[183] = 0x01; 
+
+                        ret = esp_lcd_panel_io_tx_param(tp_io_handle, ESP_LCD_TOUCH_GT911_CONFIG_REG, config, 184);
+                        if (ret != ESP_OK) 
+                        {
+                            ESP_LOGE(TAG, "GT911 Failed to write config: %s", esp_err_to_name(ret));
+                        }
+                    }
+                }
+
+                xSemaphoreGive(I2CMutexHandle);
+            }
+
             ESP_LOGI(TAG, "Touch controller init OK");
             touch_ok = 1;
             break;
@@ -361,7 +431,6 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 
     ESP_LOGI(TAG, "Initialize LVGL library");
     lv_init();
-    //??? lv_fs_if_init();
     
     void *buf1 = NULL;
     void *buf2 = NULL;

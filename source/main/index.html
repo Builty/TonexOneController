@@ -138,30 +138,41 @@
          
         /* Toast */
         #toast {
-            visibility: hidden;         /* Hidden by default. Visible on click */
-            min-width: 250px;           /* Set a default minimum width */
-            margin-left: -125px;        /* Divide value of min-width by 2 */
-            background-color: #2A2A2A;     /* Black background color */
-            color: #FFF;                /* White text color */
-            text-align: center;         /* Centered text */
-            border-radius: 10px;         /* Rounded borders */
-            padding-left: 50px;              /* Padding */
-            position: fixed;            /* Sit on top of the screen */
-            z-index: 1050;              /* Add a z-index if needed */
-            left: 50%;                  /* Center the toast */
-            bottom: 50%;               /* 30px from the bottom */
+            visibility: hidden;
+            min-width: 300px;
+            margin-left: -150px;
+            background-color: #2A2A2A;
+            color: #FFF;
+            text-align: center; /* Fallback for non-flex scenarios */
+            border-radius: 10px;
+            padding: 20px;
+            position: fixed;
+            z-index: 1050;
+            left: 50%;
+            bottom: 50%;
             font-size: 18px;
-            height: 60px;
             outline: #FB9230 solid 5px;
+            box-sizing: border-box;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: auto; 
+            min-height: 90px; 
         }
 
         .toast-container{
             display: flex;
             justify-content: center;
+            align-items: center; 
+            width: 100%; 
+            height: 100%;
         }
 
         #toast-text{
-            order: 1;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            white-space: normal;
         }
 
         /* Show the toast when clicking on a button (class added with JavaScript) */
@@ -2032,7 +2043,8 @@
                     setParamValue("mdnsname", data['MDNS_NAME']);
 
                     configureParamSelect("screenrot", data['SCREEN_ROT']);
-                    configureParamSelect("presetslot", data['PRESET_SLOT']);
+                    configureParamSelect("presetslot", data['PRESET_SLOT']);                
+                    configureParamSwitch("hitchsense", data['HIGH_TCH_SNS']);
 
                     configureParamSelect("extfslay", data['EXTFS_PS_LAYOUT']);
                                         
@@ -2265,19 +2277,9 @@
         }
 
         function setToast(msg) {
-            // Get the toast DIV
-            var t_html = '<div class="toast-container">';
-
-            t_html = t_html.concat('<div id="toast-text">'+msg+'</div>');
-            t_html = t_html.concat('</div>');
-
             var x = $('#toast');
-            x.html(t_html);
-
-            // Add the "show" class to DIV
+            x.html('<div class="toast-container"><div id="toast-text">' + msg + '</div></div>');
             x.addClass('show');
-
-            // After 3ish seconds, remove the show class from DIV
             setTimeout(function(){ x.removeClass('show'); }, 2750);
         }
         
@@ -2314,6 +2316,10 @@
                                    
                 var screenrot = document.getElementById("screenrot").value;       
                 var presetslot = document.getElementById("presetslot").value;         
+                
+                var hitchsensechk = document.getElementById("hitchsense").checked;         
+                var hitchsense = hitchsensechk ? 1 : 0;
+
                 var extfslay = document.getElementById("extfslay").value;  
 
                 var extfx1sw = document.getElementById("extfx1sw").value;  
@@ -2391,6 +2397,7 @@
                         "BT_MIDI_CC": btmidiccen,
                         "SCREEN_ROT": parseInt(screenrot),
                         "PRESET_SLOT": parseInt(presetslot),
+                        "HIGH_TCH_SNS": parseInt(hitchsense),
                         "EXTFS_PS_LAYOUT": parseInt(extfslay),                        
                         "EXTFS_ES1_SW": parseInt(extfx1sw),
                         "EXTFS_ES1_CC": parseInt(extfx1cc),
@@ -2952,6 +2959,14 @@
                         "PRESET_ORDER": presetOrder});
         }
 		
+        function onWiFiStationSelected() {
+            const selectElement = document.getElementById('wifimode');
+            const selectedValue = selectElement.value;
+
+            if (selectedValue == '1') {
+                setToast('Ensure mDNS/Bonjour is<br>enabled on your router<br>before applying Station Mode!');
+            }
+        }
     </script>
   
     <nav class="navbar navbar-dark bg-dark">
@@ -4181,7 +4196,7 @@
             <p class="lead">
                 <div class="container">
                     <label class="form-check-label" for="wifimode">WiFi Mode</label>
-                    <select class="form-select select_style" id="wifimode">
+                    <select class="form-select select_style" id="wifimode" onChange="onWiFiStationSelected()">
                         <option value="0" class="style6" selected>Access Point Timed</option>
                         <option value="1" class="style6">Station</option>
                         <option value="2" class="style6">Access Point</option>     
@@ -4213,7 +4228,7 @@
                 </div>
                 <br>
                 <div class="container">
-                    <label class="form-check-label" for="mdnsname">MDNS Name</label>
+                    <label class="form-check-label" for="mdnsname">mDNS Name</label>
                     <input type="text" id="mdnsname" name="mdnsname" class="form-control text_entry_style" maxlength="32" size="32" value="tonex">
                 </div>                
                 <br>
@@ -4259,6 +4274,13 @@
                         <option value="2" class="style6">Slot B (Dual mode)</option>
                         <option value="3" class="style6" selected>Slot C (Stomp mode)</option>
                     </select>                           
+                </div>
+                <br>
+                <div class="container">
+                    <div class="form-check form-switch">
+                       <input class="form-check-input" type="checkbox" role="switch" value="off" id="hitchsense">
+                       <label class="form-check-label" for="hitchsense">High Touch Sensitivity</label>
+                    </div> 
                 </div>
                 <br>
                 <br>

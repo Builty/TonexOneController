@@ -172,7 +172,8 @@ typedef struct __attribute__ ((packed))
     uint16_t GeneralScreenRotation: 2;
     uint16_t GeneralLoopAround: 1;
     uint16_t GeneralSavePresetToSlot: 2;
-    uint16_t GeneralSpare: 10;
+    uint16_t GeneralEnableTouchHigherSensitivity: 1;
+    uint16_t GeneralSpare: 9;
 } tGeneralConfig;
 
 typedef struct __attribute__ ((packed)) 
@@ -510,6 +511,12 @@ static uint8_t process_control_command(tControlMessage* message)
                 {
                     ESP_LOGI(TAG, "Config set save preset to slot %d", (int)message->Value);
                     ControlData.ConfigData.GeneralConfig.GeneralSavePresetToSlot = (uint8_t)message->Value & 0x03;
+                } break;
+
+                case CONFIG_ITEM_ENABLE_HIGHER_TOUCH_SENS:
+                {
+                    ESP_LOGI(TAG, "Config set higher touch sense %d", (int)message->Value);
+                    ControlData.ConfigData.GeneralConfig.GeneralEnableTouchHigherSensitivity = (uint8_t)message->Value & 0x01;
                 } break;
 
                 case CONFIG_ITEM_WIFI_TX_POWER:
@@ -1328,6 +1335,11 @@ uint32_t control_get_config_item_int(uint32_t item)
             value = ControlData.ConfigData.GeneralConfig.GeneralSavePresetToSlot;
         } break;
 
+        case CONFIG_ITEM_ENABLE_HIGHER_TOUCH_SENS:
+        {
+            value = ControlData.ConfigData.GeneralConfig.GeneralEnableTouchHigherSensitivity;
+        } break;
+
         case CONFIG_ITEM_WIFI_TX_POWER:
         {
             value = ControlData.ConfigData.WiFiConfig.WifiTxPower;
@@ -1924,6 +1936,7 @@ static uint8_t MigrateUserData(void)
                 ControlData.ConfigData.GeneralConfig.GeneralScreenRotation = LegacyConfigData->GeneralScreenRotation;
                 ControlData.ConfigData.GeneralConfig.GeneralLoopAround = LegacyConfigData->GeneralLoopAround;
                 ControlData.ConfigData.GeneralConfig.GeneralSavePresetToSlot = LegacyConfigData->GeneralSavePresetToSlot;
+                ControlData.ConfigData.GeneralConfig.GeneralEnableTouchHigherSensitivity = 0;
 
                 // WiFi
                 ControlData.ConfigData.WiFiConfig.WiFiMode = LegacyConfigData->WiFiMode;
@@ -2163,6 +2176,7 @@ static void DumpUserConfig(void)
     ESP_LOGI(TAG, "Config Screen Rotation: %d", (int)ControlData.ConfigData.GeneralConfig.GeneralScreenRotation);
     ESP_LOGI(TAG, "Config Save preset to slot: %d", (int)ControlData.ConfigData.GeneralConfig.GeneralSavePresetToSlot);
     ESP_LOGI(TAG, "Config Ext Footsw Prst Layout: %d", (int)ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchPresetLayout);
+    ESP_LOGI(TAG, "Config Higher Touch Sense: %d", (int)ControlData.ConfigData.GeneralConfig.GeneralEnableTouchHigherSensitivity);
     
     for (uint8_t loop = 0; loop < MAX_EXTERNAL_EFFECT_FOOTSWITCHES; loop++)
     {
@@ -2346,6 +2360,7 @@ void control_set_default_config(void)
 #endif    
 
     ControlData.ConfigData.GeneralConfig.GeneralSavePresetToSlot = SAVE_PRESET_SLOT_C;
+    ControlData.ConfigData.GeneralConfig.GeneralEnableTouchHigherSensitivity = 0;
     ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
     memset((void*)ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig, 0, sizeof(ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig));
     memset((void*)ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig, 0, sizeof(ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig));
