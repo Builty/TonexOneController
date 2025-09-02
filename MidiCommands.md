@@ -116,4 +116,6 @@ This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a 
 | Cab Sim Bypass | 117 | On: 127, Off: 0 |
 | Global Tempo Source | 118 | Global: 127, Local: 0 |
 | Global Tuning Reference | 119 | 0-127 |
+| Load Preset to Slot A | 120 | 0-19 |
+| Load Preset to Slot B | 121 | 0-19 |
 | Select Preset | 127 | 0-19 |
