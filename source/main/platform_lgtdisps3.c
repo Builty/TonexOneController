@@ -122,7 +122,16 @@ static lcd_cmd_t lcd_st7789v[] = {
 *****************************************************************************/
 __attribute__((unused)) void platform_adjust_touch_coords(lv_coord_t* x, lv_coord_t* y)
 {
-    // nothing needed
+     lv_coord_t xpos = *x;
+    lv_coord_t ypos = *y;
+
+    // 1.9 in landscape mode needs the co-ordinates adjusted
+    *x = LILYGO_TDISPLAY_S3_LCD_H_RES - xpos;
+
+    if (*x < 0)
+    {
+        *x = 0;
+    }
 }
 
 /****************************************************************************
@@ -289,7 +298,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
             .interrupt = 0,
         },
         .flags = {
-            .swap_xy = 0,
+            .swap_xy = 1,
             .mirror_x = 0,
             .mirror_y = 0,
         },
