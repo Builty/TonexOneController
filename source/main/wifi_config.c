@@ -51,6 +51,7 @@ limitations under the License.
 #include "tonex_params.h"
 #include "usb_comms.h"
 #include "usb_tonex_one.h"
+#include "display.h"
 
 #define WIFI_CONFIG_TASK_STACK_SIZE   (3 * 1024)
 
@@ -1520,6 +1521,11 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t e
         xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
         wifi_connect_status = 1;
         control_set_wifi_status(1);
+
+        // show toast message with IP address
+        char toast_text[50];
+        sprintf(toast_text, "Connected to WiFi:\n%s", ip_str);
+        UI_ShowToast(toast_text);
     }
 }
 
@@ -1770,7 +1776,7 @@ static void send_locater_broadcast(void)
         LocaterData.IP
         );
 
-    ssize_t sent = sendto(LocaterData.sock, LocaterData.locater_packet, strlen(LocaterData.locater_packet), 0, (struct sockaddr *)&LocaterData.broadcast_addr, sizeof(LocaterData.broadcast_addr));
+    ssize_t __attribute__((unused)) sent = sendto(LocaterData.sock, LocaterData.locater_packet, strlen(LocaterData.locater_packet), 0, (struct sockaddr *)&LocaterData.broadcast_addr, sizeof(LocaterData.broadcast_addr));
     
     // debug
     //ESP_LOGI(TAG, "Locater broadcast sent: %d", (int)sent);

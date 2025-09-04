@@ -256,6 +256,30 @@ __attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+__attribute__((unused)) const lv_font_t* platform_get_toast_font(void)
+{
+    return &lv_font_montserrat_30;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+__attribute__((unused)) uint16_t platform_get_toast_padding(void)
+{
+    return 25;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 static bool lvgl_port_flush_ready_callback(esp_lcd_panel_io_handle_t panel_io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx)
 {
     BaseType_t taskAwake = pdFALSE;

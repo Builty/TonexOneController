@@ -122,8 +122,7 @@ static lcd_cmd_t lcd_st7789v[] = {
 *****************************************************************************/
 __attribute__((unused)) void platform_adjust_touch_coords(lv_coord_t* x, lv_coord_t* y)
 {
-     lv_coord_t xpos = *x;
-    lv_coord_t ypos = *y;
+    lv_coord_t xpos = *x;
 
     // 1.9 in landscape mode needs the co-ordinates adjusted
     *x = LILYGO_TDISPLAY_S3_LCD_H_RES - xpos;
@@ -156,6 +155,30 @@ __attribute__((unused)) void platform_adjust_display_flush_area(lv_area_t *area)
 __attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max_entries)
 {
    // nothing needed
+}
+ 
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+__attribute__((unused)) const lv_font_t* platform_get_toast_font(void)
+{
+    return &lv_font_montserrat_20;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+__attribute__((unused)) uint16_t platform_get_toast_padding(void)
+{
+    return 15;
 }
 
 /****************************************************************************

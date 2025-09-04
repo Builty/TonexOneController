@@ -100,7 +100,8 @@ enum UIElements
     UI_ELEMENT_BANK_INDEX,
     UI_ELEMENT_AMP_SKIN,
     UI_ELEMENT_PRESET_DESCRIPTION,
-    UI_ELEMENT_PARAMETERS
+    UI_ELEMENT_PARAMETERS,
+    UI_ELEMENT_TOAST,
 };
 
 enum UIAction
@@ -119,12 +120,24 @@ typedef struct
     char Text[MAX_UI_TEXT];
 } tUIUpdate;
 
+typedef struct 
+{
+    lv_obj_t *mbox;
+    lv_style_t *style_main;
+    lv_style_t *style_text;
+    
+    uint32_t timer;
+    uint8_t active;
+} msgbox_data_t;
+
 static QueueHandle_t ui_update_queue;
 static SemaphoreHandle_t I2CMutexHandle;
 static SemaphoreHandle_t lvgl_mux = NULL;
 static lv_disp_drv_t* disp_drv; 
-                
+static msgbox_data_t msgbox_data;
+
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
+static void ui_show_toast(char* contents);
 
 #if CONFIG_TONEX_CONTROLLER_HAS_TOUCH
 static uint8_t __attribute__((unused)) touch_data_ready_to_read = 0;
@@ -1361,6 +1374,30 @@ void UI_SetPresetLabel(uint16_t index, char* name)
     ui_update.Action = UI_ACTION_SET_LABEL_TEXT;
     sprintf(ui_update.Text, "%d: ", (int)index + usb_get_first_preset_index_for_connected_modeller());
     strncat(ui_update.Text, name, MAX_UI_TEXT - 1);
+
+    // send to queue
+    if (xQueueSend(ui_update_queue, (void*)&ui_update, 0) != pdPASS)
+    {
+        ESP_LOGE(TAG, "UI Update queue send failed!");            
+    }
+}
+
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void UI_ShowToast(char* text)
+{
+    tUIUpdate ui_update;
+
+    // build command
+    ui_update.ElementID = UI_ELEMENT_TOAST;
+    ui_update.Action = UI_ACTION_NONE;
+    strncpy(ui_update.Text, text, MAX_UI_TEXT - 1);
 
     // send to queue
     if (xQueueSend(ui_update_queue, (void*)&ui_update, 0) != pdPASS)
@@ -3180,6 +3217,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
 #endif
         } break;
 
+        case UI_ELEMENT_TOAST:
+        {
+            ui_show_toast(update->Text);
+        } break;
+
         default:
         {
             ESP_LOGE(TAG, "Unknown display elment %d", update->ElementID);     
@@ -3357,6 +3399,93 @@ void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+static void ui_toast_close(void) 
+{
+    ESP_LOGI(TAG, "Closing message box");
+
+    // Close and delete the message box
+    lv_msgbox_close(msgbox_data.mbox);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void ui_init_toast(void) 
+{
+    // Initialize styles
+    msgbox_data.style_main = lv_mem_alloc(sizeof(lv_style_t));
+    msgbox_data.style_text = lv_mem_alloc(sizeof(lv_style_t));
+    if (!msgbox_data.style_main || !msgbox_data.style_text) 
+    {
+        ESP_LOGE(TAG, "Failed to allocate memory for styles");
+        free(msgbox_data.style_main);
+        free(msgbox_data.style_text);
+        return;
+    }
+
+    lv_style_init(msgbox_data.style_main);
+    lv_style_set_bg_color(msgbox_data.style_main, lv_color_hex(0x2A2A2A));
+    lv_style_set_border_width(msgbox_data.style_main, 6);                 
+    lv_style_set_radius(msgbox_data.style_main, 10);                      
+    lv_style_set_bg_opa(msgbox_data.style_main, LV_OPA_COVER);            
+    lv_style_set_pad_all(msgbox_data.style_main, platform_get_toast_padding());      
+    lv_style_set_border_color(msgbox_data.style_main, lv_color_hex(0x563F2A));
+
+    lv_style_init(msgbox_data.style_text);
+    lv_style_set_text_color(msgbox_data.style_text, lv_color_hex(0xFFFFFF));
+
+    // font size depends on screen size, let platform tell us
+    lv_style_set_text_font(msgbox_data.style_text, platform_get_toast_font()); 
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void ui_show_toast(char* contents) 
+{
+    if (msgbox_data.mbox != NULL)
+    {
+        lv_obj_del(msgbox_data.mbox);
+        msgbox_data.mbox = NULL;
+    }
+
+    // Create message box (no buttons for auto-close)
+    static const char *btns[] = {""}; // Empty button list
+    msgbox_data.mbox = lv_msgbox_create(NULL, NULL, contents, btns, false);
+    if (!msgbox_data.mbox) 
+    {
+        ESP_LOGE(TAG, "Failed to create message box");
+        return;
+    }
+    
+    lv_obj_center(msgbox_data.mbox);
+
+    // Apply styles
+    lv_obj_add_style(msgbox_data.mbox, msgbox_data.style_main, LV_PART_MAIN); // Style background
+    lv_obj_add_style(lv_msgbox_get_text(msgbox_data.mbox), msgbox_data.style_text, 0);  // Style message
+
+    // Create timer to close and delete message box after 3 seconds
+    msgbox_data.timer = xTaskGetTickCount() + 3000; 
+    msgbox_data.active = 1;
+
+    ESP_LOGI(TAG, "Message box created");
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void display_task(void *arg)
 {
     tUIUpdate ui_update;
@@ -3375,6 +3504,17 @@ void display_task(void *arg)
             {
                 // process it
                 update_ui_element(&ui_update);
+            }
+
+            // handle timed toast messages
+            if (msgbox_data.active)
+            {
+                if (xTaskGetTickCount() >= msgbox_data.timer)
+                {
+                    // clean up and reset
+                    ui_toast_close();
+                    msgbox_data.active = 0;
+                }
             }
 
             // Release the mutex
@@ -3427,6 +3567,12 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
     // init GUI
     ESP_LOGI(TAG, "Init UI");
     ui_init();
+
+    // init mem
+    memset((void*)&msgbox_data, 0, sizeof(msgbox_data));
+
+    // init toast
+    ui_init_toast();
 
     // create display task
     xTaskCreatePinnedToCore(display_task, "Dsp", DISPLAY_TASK_STACK_SIZE, NULL, DISPLAY_TASK_PRIORITY, NULL, 1);

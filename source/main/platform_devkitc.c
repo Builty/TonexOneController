@@ -120,6 +120,30 @@ __attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+__attribute__((unused)) const lv_font_t* platform_get_toast_font(void)
+{
+    return &lv_font_montserrat_20;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+__attribute__((unused)) uint16_t platform_get_toast_padding(void)
+{
+    return 15;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex, lv_disp_drv_t* pdisp_drv)
 {    
     ESP_LOGI(TAG, "Platform DevkitC Init");

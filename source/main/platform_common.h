@@ -21,3 +21,5 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 void platform_adjust_touch_coords(lv_coord_t* x, lv_coord_t* y);
 void platform_adjust_display_flush_area(lv_area_t *area);
 void platform_get_icon_coords(int16_t* dest, uint8_t max_entries);
+const lv_font_t* platform_get_toast_font(void);
+uint16_t platform_get_toast_padding(void);
