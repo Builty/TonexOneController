@@ -1227,6 +1227,20 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
             value = tonex_params_clamp_value(param, value);
         } break;
 
+        case 120:
+        {
+            // reserved for setting preset in slot A
+            ESP_LOGW(TAG, "CC Not implemented yet %d", change_num);
+            return ESP_FAIL;
+        } break;
+
+        case 121:
+        {
+            // reserved for setting preset in slot B
+            ESP_LOGW(TAG, "CC Not implemented yet %d", change_num);
+            return ESP_FAIL;
+        } break;
+
         case 127: 
         {
             // Custom case: use CC to change params.
