@@ -51,6 +51,7 @@ void UI_SetBankIndex(uint16_t index);
 void UI_SetAmpSkin(uint16_t index);
 void UI_SetPresetDescription(char* text);
 void UI_RefreshParameterValues(void);
+void UI_ShowToast(char* text);
 
 #ifdef __cplusplus
 } /*extern "C"*/

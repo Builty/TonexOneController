@@ -1230,11 +1230,11 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 120:
         {
             // Load preset to Slot A without switching to it
-            if (midi_value >= (usb_get_max_presets_for_connected_modeller())) 
+            if (midi_value >= (usb_get_max_presets_for_connected_modeller()))
             {
                 ESP_LOGW(TAG, "Unsupported Midi CC 120 value %d (max %d)", midi_value, usb_get_max_presets_for_connected_modeller() - 1);
-            } 
-            else 
+            }
+            else
             {
                 usb_tonex_one_load_preset_to_slot_a(midi_value);
             }
@@ -1246,11 +1246,11 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
         case 121:
         {
             // Load preset to Slot B without switching to it
-            if (midi_value >= (usb_get_max_presets_for_connected_modeller())) 
+            if (midi_value >= (usb_get_max_presets_for_connected_modeller()))
             {
                 ESP_LOGW(TAG, "Unsupported Midi CC 121 value %d (max %d)", midi_value, usb_get_max_presets_for_connected_modeller() - 1);
-            } 
-            else 
+            }
+            else
             {
                 usb_tonex_one_load_preset_to_slot_b(midi_value);
             }
@@ -1259,12 +1259,12 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
             return ESP_OK;
         } break;
 
-        case 127: 
+        case 127:
         {
             // Custom case: use CC to change params.
             if (midi_value >= (usb_get_max_presets_for_connected_modeller())) 
             {
-                ESP_LOGW(TAG, "Unsupported Midi CC 127 value %d", midi_value);
+                ESP_LOGW(TAG, "Unsupported Midi CC 127 value %d", change_num);
             } 
             else 
             {

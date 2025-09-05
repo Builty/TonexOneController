@@ -2261,7 +2261,7 @@ static uint8_t SavePresetUserText(uint16_t preset_index, char* text)
 * RETURN:      none
 * NOTES:       none
 ****************************************************************************/
-static uint8_t LoadPresetUserText(uint16_t preset_index, char* text)
+static uint8_t __attribute__((unused)) LoadPresetUserText(uint16_t preset_index, char* text)
 {
     esp_err_t err;
     nvs_handle_t my_handle;

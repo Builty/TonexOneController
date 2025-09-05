@@ -140,9 +140,9 @@ For more information about the firmware development and customisation, refer to 
 - https://github.com/vit3k/tonex_controller for great work on reverse engineering the Tonex One USB protocol
 
 ## Firmware Release Notes <a name="release_notes"></a>
-V2.0.0.2 beta 1:
+V2.0.0.2 beta 2:
 - Caution: due to structural changes, amp/pedal skins and user preset text is not maintained and will need to be entered again. And if rolling back to an older version, all config will be lost
-- Upgraded to ESP-IDF 5.4.1 
+- Upgraded to ESP-IDF 5.5.1 
 - Added support for big Tonex pedal 
 - Added effect icons to web page, showing order and status of each effect 
 - Added new platform LilyGo T-Display S3 1.9" touch (note: delayed release due to issues)
@@ -155,7 +155,11 @@ V2.0.0.2 beta 1:
 - AQdded the ability to send value 64 via Midi, to toggle the current state of any on/off parameter 
 - Added global volume support (via LCD/Web)
 - Added ability to bypass the pedal via web config (Tonex One only)
-
+- Added "toast" dialog message when connected in station mode, with IP address
+- Added UDP broadcast to help locate controllers on a network. Windows app available.
+- Fixed issue with Lilygo T-Display S3 touch screen
+- Added option to increase touch screen sensitivity on 4.3B, to help with screen protectors
+- Changed units label of the Reverb time in web config from milliseconds to seconds. Thanks Michael for finding.
 
 V1.0.10.2:
 - User contribution from Mateusz: web config now allows the order of the presets to be remapped. E.g. footswitches 1,2,3,4 could now load presets 10,5,11,20 instead of having to be 1,2,3,4.

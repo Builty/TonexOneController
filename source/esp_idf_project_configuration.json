@@ -5,8 +5,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_ws169",
       "sdkconfigDefaults": [
-        "sdkconfig.ws169",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.ws169"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_ws169"
     },
@@ -31,8 +31,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_ws169land",
       "sdkconfigDefaults": [
-        "sdkconfig.ws169land",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.ws169land"        
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_ws169land"
     },
@@ -57,8 +57,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_ws169t",
       "sdkconfigDefaults": [
-        "sdkconfig.ws169t",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.ws169t"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_ws169t"
     },
@@ -82,9 +82,9 @@
       "compileArgs": [],
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_ws169tland",
-      "sdkconfigDefaults": [
-        "sdkconfig.ws169tland",
-        "sdkconfig.defaults"
+      "sdkconfigDefaults": [        
+        "sdkconfig.defaults",
+        "sdkconfig.ws169tland"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_ws169tland"
     },
@@ -109,8 +109,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_ws43b_as",
       "sdkconfigDefaults": [
-        "sdkconfig.ws43b_as",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.ws43B_as"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_ws43b_as"
     },
@@ -135,8 +135,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_ws43b_ps",
       "sdkconfigDefaults": [
-        "sdkconfig.ws43b_ps",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.ws43B_ps"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_ws43b_ps"
     },
@@ -160,9 +160,9 @@
       "compileArgs": [],
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_ws35b_as",
-      "sdkconfigDefaults": [
-        "sdkconfig.ws35b_as",
-        "sdkconfig.defaults"
+      "sdkconfigDefaults": [        
+        "sdkconfig.defaults",
+        "sdkconfig.ws35b_as"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_ws35b_as"
     },
@@ -187,8 +187,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_ws35b_ps",
       "sdkconfigDefaults": [
-        "sdkconfig.ws35b_ps",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.ws35b_ps"       
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_ws35b_ps"
     },
@@ -213,8 +213,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_jc3248w_as",
       "sdkconfigDefaults": [
-        "sdkconfig.jc3248w_as",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.jc3248w_as"        
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_jc3248w_as"
     },
@@ -239,8 +239,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_wszero",
       "sdkconfigDefaults": [
-        "sdkconfig.wszero",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.wszero"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_wszero"
     },
@@ -265,8 +265,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_devkitc_N8R2",
       "sdkconfigDefaults": [
-        "sdkconfig.devkitc_N8R2",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.devkitc_N8R2"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_devkitc_N8R2"
     },
@@ -291,8 +291,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_devkitc_N16R8",
       "sdkconfigDefaults": [
-        "sdkconfig.devkitc_N16R8",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.devkitc_N16R8"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_devkitc_N16R8"
     },
@@ -317,8 +317,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_m5atoms3r",
       "sdkconfigDefaults": [
-        "sdkconfig.m5atoms3r",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.m5atoms3r"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_m5atoms3r"
     },
@@ -342,9 +342,9 @@
       "compileArgs": [],
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_lgtdisps3",
-      "sdkconfigDefaults": [
-        "sdkconfig.lgtdisps3",
-        "sdkconfig.defaults"
+      "sdkconfigDefaults": [        
+        "sdkconfig.defaults",
+        "sdkconfig.lgtdisps3"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_lgtdisps3"
     },
@@ -369,8 +369,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_ws19t",
       "sdkconfigDefaults": [
-        "sdkconfig.ws19t",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.ws19t"        
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_ws19t"
     },
@@ -396,7 +396,7 @@
       "buildDirectoryPath": "${workspaceFolder}/build_ws43devonly",
       "sdkconfigDefaults": [
         "sdkconfig.defaults",
-        "sdkconfig .ws43devonly"
+        "sdkconfig.ws43devonly"        
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_ws43devonly"
     },
@@ -421,8 +421,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_pirate169",
       "sdkconfigDefaults": [
-        "sdkconfig.pirate169",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.pirate169"        
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_pirate169"
     },
@@ -447,8 +447,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_pirate169land",
       "sdkconfigDefaults": [
-        "sdkconfig.pirate169land",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.pirate169land"        
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_pirate169land"
     },
@@ -473,8 +473,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_piratezero",
       "sdkconfigDefaults": [
-        "sdkconfig.piratezero",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.piratezero"        
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_piratezero"
     },
@@ -499,8 +499,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_pirate43B_as",
       "sdkconfigDefaults": [
-        "sdkconfig.pirate43B_as",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.pirate43B_as"        
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_pirate43B_as"
     },

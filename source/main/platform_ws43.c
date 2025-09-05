@@ -99,11 +99,11 @@ static const char *TAG = "platform_ws43";
 
 // GT911 I2C registers (not covered in the ESP driver)
 #define ESP_LCD_TOUCH_GT911_CONFIG_REG          0x8047
-#define ESP_LCD_TOUCH_GT911_TOUCH_KEY_THRESH    0x804B	
-#define ESP_LCD_TOUCH_GT911_TOUCH_LEVEL         0x8053	// signal level threshold above which a touch begins to be reported. Higher numbers = less sensitive.
-#define ESP_LCD_TOUCH_GT911_LEAVE_LEVEL         0x8054	// signal level threshold below which a touch stops being reported. Higher numbers = less sensitive.
-#define ESP_LCD_TOUCH_GT911_PANEL_TX_GAIN       0x806b	// The lowest 3 bits set the DAC gain, where 0 produces the largest signal and 7 producest the smallest signal.
-#define ESP_LCD_TOUCH_GT911_PANEL_RX_GAIN       0x806b	// The lowest 3 bits set the ADC gain. It seems like 7 is the most sensitive and 0 is the least sensitive.
+#define ESP_LCD_TOUCH_GT911_FILTER_OFFSET       (0x8050 - ESP_LCD_TOUCH_GT911_CONFIG_REG)              
+#define ESP_LCD_TOUCH_GT911_TOUCH_LEVEL_OFFSET  (0x8053 - ESP_LCD_TOUCH_GT911_CONFIG_REG)   // signal level threshold above which a touch begins to be reported. Higher numbers = less sensitive. 
+#define ESP_LCD_TOUCH_GT911_LEAVE_LEVEL_OFFSET  (0x8054 - ESP_LCD_TOUCH_GT911_CONFIG_REG)    // signal level threshold below which a touch stops being reported. Higher numbers = less sensitive.
+//#define ESP_LCD_TOUCH_GT911_PANEL_TX_GAIN       0x806b	// The lowest 3 bits set the DAC gain, where 0 produces the largest signal and 7 producest the smallest signal.
+//#define ESP_LCD_TOUCH_GT911_PANEL_RX_GAIN       0x806b	// The lowest 3 bits set the ADC gain. It seems like 7 is the most sensitive and 0 is the least sensitive.
 
 static SemaphoreHandle_t I2CMutexHandle;
 static lv_disp_draw_buf_t disp_buf; // contains internal graphic buffer(s) called draw buffer(s)
@@ -205,6 +205,30 @@ __attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max
         dest[6] = 135;
         dest[7] = 205;
     }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+__attribute__((unused)) const lv_font_t* platform_get_toast_font(void)
+{
+    return &lv_font_montserrat_30;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+__attribute__((unused)) uint16_t platform_get_toast_padding(void)
+{
+    return 30;
 }
 
 /****************************************************************************
@@ -374,7 +398,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
             {
                 // read config
                 uint8_t config[GT911_CONFIG_SIZE];
-                ret = esp_lcd_panel_io_rx_param(tp_io_handle, ESP_LCD_TOUCH_GT911_TOUCH_KEY_THRESH, config, sizeof(config));
+                ret = esp_lcd_panel_io_rx_param(tp_io_handle, ESP_LCD_TOUCH_GT911_CONFIG_REG, config, sizeof(config));
                 
                 if (ret != ESP_OK)
                 {
@@ -382,18 +406,18 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
                 }
                 else
                 {
-                    // config[4] has touch key threshold
-                    ESP_LOGI(TAG, "GT911 touch key threshold: %d. Filter: %d", (int)config[4], (int)config[3]);
+                    ESP_LOGI(TAG, "GT911 touch key touch level: %d. Filter: %d", (int)config[ESP_LCD_TOUCH_GT911_TOUCH_LEVEL_OFFSET], (int)config[ESP_LCD_TOUCH_GT911_FILTER_OFFSET]);
 
                     if (control_get_config_item_int(CONFIG_ITEM_ENABLE_HIGHER_TOUCH_SENS) != 0)
                     {
                         ESP_LOGI(TAG, "GT911 setting higher touch sensitivity");
 
                         // set higher sensitivity/lower threshold
-                        config[4] = 5;
+                        config[ESP_LCD_TOUCH_GT911_TOUCH_LEVEL_OFFSET] = 10;        // default is 100
+                        config[ESP_LCD_TOUCH_GT911_FILTER_OFFSET] = 15;             // default is 31
 
                         // Set checksum at 0x80FD
-                        config[182] = GT911CalcChecksum(config, 182); 
+                        config[182] = GT911CalcChecksum(config, 182);  
 
                         // Set refresh flag at 0x80FE to apply changes
                         config[183] = 0x01; 
