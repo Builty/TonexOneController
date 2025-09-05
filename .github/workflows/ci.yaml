@@ -74,7 +74,7 @@ jobs:
         uses: espressif/esp-idf-ci-action@v1
         with:
           path: 'source'
-          esp_idf_version: v5.4.1 # optional, default is latest
+          esp_idf_version: v5.5.1 # optional, default is latest
           target: esp32s3 # optional, default is esp32
           extra_docker_args: "-v ./.ccache:/root/.ccache -e CCACHE_DIR=/root/.ccache -e SDKCONFIG_DEFAULTS"
           command: "idf.py build"

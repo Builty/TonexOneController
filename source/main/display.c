@@ -1390,7 +1390,7 @@ void UI_SetPresetLabel(uint16_t index, char* name)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void UI_ShowToast(char* text)
+__attribute__((unused)) void UI_ShowToast(char* text)
 {
     tUIUpdate ui_update;
 
@@ -3399,7 +3399,7 @@ void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void ui_toast_close(void) 
+static void __attribute__((unused)) ui_toast_close(void) 
 {
     ESP_LOGI(TAG, "Closing message box");
 
@@ -3414,7 +3414,7 @@ static void ui_toast_close(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void ui_init_toast(void) 
+static void __attribute__((unused)) ui_init_toast(void) 
 {
     // Initialize styles
     msgbox_data.style_main = lv_mem_alloc(sizeof(lv_style_t));
@@ -3449,7 +3449,7 @@ static void ui_init_toast(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void ui_show_toast(char* contents) 
+static void __attribute__((unused)) ui_show_toast(char* contents) 
 {
     if (msgbox_data.mbox != NULL)
     {
