@@ -431,43 +431,6 @@ static esp_err_t __attribute__((unused)) usb_tonex_one_set_active_slot(Slot newS
     return tonex_common_transmit(cdc_dev, FramedBuffer, framed_length, TONEX_USB_TX_BUFFER_SIZE);    
 }
 
-/****************************************************************************
-* NAME:        usb_tonex_one_load_preset_to_slot_a
-* DESCRIPTION: Load a preset to Slot A without switching to it (MIDI CC 120)
-* PARAMETERS:  preset - Preset index (0-19 for presets 1-20)
-* RETURN:      ESP_OK on success, ESP_FAIL on error
-* NOTES:       Bypasses CONFIG_ITEM_SAVE_PRESET_TO_SLOT configuration
-*****************************************************************************/
-esp_err_t usb_tonex_one_load_preset_to_slot_a(uint16_t preset)
-{
-    if (preset >= MAX_PRESETS_TONEX_ONE)
-    {
-        ESP_LOGW(TAG, "Invalid preset index %d for Slot A (max %d)", preset, MAX_PRESETS_TONEX_ONE - 1);
-        return ESP_FAIL;
-    }
-
-    ESP_LOGI(TAG, "Loading preset %d to Slot A via MIDI CC 120", preset);
-    return usb_tonex_one_set_preset_in_slot(preset, A, 0);
-}
-
-/****************************************************************************
-* NAME:        usb_tonex_one_load_preset_to_slot_b
-* DESCRIPTION: Load a preset to Slot B without switching to it (MIDI CC 121)
-* PARAMETERS:  preset - Preset index (0-19 for presets 1-20)
-* RETURN:      ESP_OK on success, ESP_FAIL on error
-* NOTES:       Bypasses CONFIG_ITEM_SAVE_PRESET_TO_SLOT configuration
-*****************************************************************************/
-esp_err_t usb_tonex_one_load_preset_to_slot_b(uint16_t preset)
-{
-    if (preset >= MAX_PRESETS_TONEX_ONE)
-    {
-        ESP_LOGW(TAG, "Invalid preset index %d for Slot B (max %d)", preset, MAX_PRESETS_TONEX_ONE - 1);
-        return ESP_FAIL;
-    }
-
-    ESP_LOGI(TAG, "Loading preset %d to Slot B via MIDI CC 121", preset);
-    return usb_tonex_one_set_preset_in_slot(preset, B, 0);
-}
 
 /****************************************************************************
 * NAME:        
@@ -1353,6 +1316,38 @@ void usb_tonex_one_handle(class_driver_t* driver_obj)
                             {
                                 // failed return to queue?
                             }
+                        }
+                    } break;
+                    
+                    case USB_COMMAND_LOAD_PRESET_TO_SLOT_A:
+                    {
+                        if (message.Payload < MAX_PRESETS_TONEX_ONE)
+                        {
+                            ESP_LOGI(TAG, "Loading preset %d to Slot A via MIDI CC 120", (int)message.Payload);
+                            if (usb_tonex_one_set_preset_in_slot(message.Payload, A, 0) != ESP_OK)
+                            {
+                                ESP_LOGE(TAG, "Failed to load preset %d to Slot A", (int)message.Payload);
+                            }
+                        }
+                        else
+                        {
+                            ESP_LOGW(TAG, "Invalid preset index %d for Slot A (max %d)", (int)message.Payload, MAX_PRESETS_TONEX_ONE - 1);
+                        }
+                    } break;
+                    
+                    case USB_COMMAND_LOAD_PRESET_TO_SLOT_B:
+                    {
+                        if (message.Payload < MAX_PRESETS_TONEX_ONE)
+                        {
+                            ESP_LOGI(TAG, "Loading preset %d to Slot B via MIDI CC 121", (int)message.Payload);
+                            if (usb_tonex_one_set_preset_in_slot(message.Payload, B, 0) != ESP_OK)
+                            {
+                                ESP_LOGE(TAG, "Failed to load preset %d to Slot B", (int)message.Payload);
+                            }
+                        }
+                        else
+                        {
+                            ESP_LOGW(TAG, "Invalid preset index %d for Slot B (max %d)", (int)message.Payload, MAX_PRESETS_TONEX_ONE - 1);
                         }
                     } break;   
                     

@@ -448,6 +448,62 @@ void usb_modify_parameter(uint16_t index, float value)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+void usb_load_preset_to_slot_a(uint32_t preset)
+{
+    tUSBMessage message;
+
+    if (usb_input_queue == NULL)
+    {
+        ESP_LOGE(TAG, "usb_load_preset_to_slot_a queue null");            
+    }
+    else
+    {
+        message.Command = USB_COMMAND_LOAD_PRESET_TO_SLOT_A;
+        message.Payload = preset;
+
+        // send to queue
+        if (xQueueSend(usb_input_queue, (void*)&message, 0) != pdPASS)
+        {
+            ESP_LOGE(TAG, "usb_load_preset_to_slot_a queue send failed!");            
+        }
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void usb_load_preset_to_slot_b(uint32_t preset)
+{
+    tUSBMessage message;
+
+    if (usb_input_queue == NULL)
+    {
+        ESP_LOGE(TAG, "usb_load_preset_to_slot_b queue null");            
+    }
+    else
+    {
+        message.Command = USB_COMMAND_LOAD_PRESET_TO_SLOT_B;
+        message.Payload = preset;
+
+        // send to queue
+        if (xQueueSend(usb_input_queue, (void*)&message, 0) != pdPASS)
+        {
+            ESP_LOGE(TAG, "usb_load_preset_to_slot_b queue send failed!");            
+        }
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 uint8_t usb_get_max_presets_for_connected_modeller(void)
 {
     uint8_t max = MAX_PRESETS_TONEX_ONE;

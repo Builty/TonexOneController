@@ -1236,7 +1236,7 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
             }
             else
             {
-                usb_tonex_one_load_preset_to_slot_a(midi_value);
+                usb_load_preset_to_slot_a(midi_value);
             }
 
             // no param change needed
@@ -1252,7 +1252,7 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
             }
             else
             {
-                usb_tonex_one_load_preset_to_slot_b(midi_value);
+                usb_load_preset_to_slot_b(midi_value);
             }
 
             // no param change needed

@@ -38,7 +38,9 @@ enum AmpModellers
 enum USB_Commands
 {
     USB_COMMAND_SET_PRESET,
-    USB_COMMAND_MODIFY_PARAMETER
+    USB_COMMAND_MODIFY_PARAMETER,
+    USB_COMMAND_LOAD_PRESET_TO_SLOT_A,
+    USB_COMMAND_LOAD_PRESET_TO_SLOT_B
 };
 
 typedef struct 
@@ -61,6 +63,8 @@ void init_usb_comms(void);
 // thread safe public API
 void usb_set_preset(uint32_t preset);
 void usb_modify_parameter(uint16_t index, float value);
+void usb_load_preset_to_slot_a(uint32_t preset);
+void usb_load_preset_to_slot_b(uint32_t preset);
 uint8_t usb_get_max_presets_for_connected_modeller(void);
 uint8_t usb_get_first_preset_index_for_connected_modeller(void);
 
