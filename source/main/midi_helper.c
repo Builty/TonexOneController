@@ -1229,16 +1229,34 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
 
         case 120:
         {
-            // reserved for setting preset in slot A
-            ESP_LOGW(TAG, "CC Not implemented yet %d", change_num);
-            return ESP_FAIL;
+            // Load preset to Slot A without switching to it
+            if (midi_value >= (usb_get_max_presets_for_connected_modeller()))
+            {
+                ESP_LOGW(TAG, "Unsupported Midi CC 120 value %d (max %d)", midi_value, usb_get_max_presets_for_connected_modeller() - 1);
+            }
+            else
+            {
+                usb_load_preset_to_slot_a(midi_value);
+            }
+
+            // no param change needed
+            return ESP_OK;
         } break;
 
         case 121:
         {
-            // reserved for setting preset in slot B
-            ESP_LOGW(TAG, "CC Not implemented yet %d", change_num);
-            return ESP_FAIL;
+            // Load preset to Slot B without switching to it
+            if (midi_value >= (usb_get_max_presets_for_connected_modeller()))
+            {
+                ESP_LOGW(TAG, "Unsupported Midi CC 121 value %d (max %d)", midi_value, usb_get_max_presets_for_connected_modeller() - 1);
+            }
+            else
+            {
+                usb_load_preset_to_slot_b(midi_value);
+            }
+
+            // no param change needed
+            return ESP_OK;
         } break;
 
         case 122:
