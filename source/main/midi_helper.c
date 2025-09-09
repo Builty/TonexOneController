@@ -1259,7 +1259,14 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
             return ESP_OK;
         } break;
 
-        case 127:
+        case 122:
+        {            
+            param = TONEX_GLOBAL_MASTER_VOLUME;
+            value = midi_helper_scale_midi_to_float(param, midi_value);
+            value = tonex_params_clamp_value(param, value);
+        } break;
+
+        case 127: 
         {
             // Custom case: use CC to change params.
             if (midi_value >= (usb_get_max_presets_for_connected_modeller())) 
@@ -1935,33 +1942,48 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
             param = TONEX_PARAM_VIR_BLEND;
         } break;
 
-         // below items not supported on bigger Tonex pedal, custom for this controller
-         case 116: 
-         {
-             param = TONEX_GLOBAL_INPUT_TRIM;            
-         } break;
+        // below items not supported on bigger Tonex pedal, custom for this controller
+        case 116: 
+        {
+            param = TONEX_GLOBAL_INPUT_TRIM;            
+        } break;
 
-         case 117: 
-         {
-             param = TONEX_GLOBAL_CABSIM_BYPASS;
-         } break;
+        case 117: 
+        {
+            param = TONEX_GLOBAL_CABSIM_BYPASS;
+        } break;
          
-         case 118:
-         {
-             param = TONEX_GLOBAL_TEMPO_SOURCE;
-         } break;
+        case 118:
+        {
+            param = TONEX_GLOBAL_TEMPO_SOURCE;
+        } break;
  
-         case 119:
-         {
-             param = TONEX_GLOBAL_TUNING_REFERENCE;
-         } break;
+        case 119:
+        {
+            param = TONEX_GLOBAL_TUNING_REFERENCE;
+        } break;
 
-         case 127:
-         {
+        case 120:
+        {
+            // reserved for setting preset in slot A
+        } break;
+
+        case 121:
+        {
+            // reserved for setting preset in slot B
+        } break;
+
+        case 122:
+        {            
+            param = TONEX_GLOBAL_MASTER_VOLUME;
+        } break;
+
+        case 127:
+        {
             // Need the CC value to use this, so this won't work for
             // footswitches, and it's kind of irrelevant anyways.
             ESP_LOGW(TAG, "Unsupported Midi change number %d", change_num);
-         }
+        }
     }
 
     return param;

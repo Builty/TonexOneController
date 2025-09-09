@@ -380,12 +380,29 @@
 			display: none;
 		}
 
+        .home-label {
+            color: #ccc;
+			text-align:center;
+        }
+
         .fx_icon_container {
             display: flex;
             justify-content: space-around; /* or space-evenly */
             width: 98%;
             margin: 0 auto;
             padding: 5px;
+        }
+        
+        .oscilloscope-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 400px; 
+        }
+        canvas {
+            width: 100%; 
+            height: 300px; 
         }
     </style>
 
@@ -793,6 +810,7 @@
         midiControlChangeAssociations.set(117, { param: "CABSIM BYPASS", value: { type: "TOGGLE" } })
         midiControlChangeAssociations.set(118, { param: "TEMPO SOURCE", value: { type: "TOGGLE" } })
         midiControlChangeAssociations.set(119, { param: "TUNING REFERENCE", value: { type: "RANGE" } })
+        midiControlChangeAssociations.set(122, { param: "GLOBAL VOLUME", value: { type: "RANGE" } })
 
         // tap tempo
         let globalTapTempo = new TapTempo();
@@ -800,6 +818,22 @@
         // Init web socket when the page loads
         window.addEventListener('load', onload);
 
+        // waveform display
+        let canvas = null; 
+        let ctx = null;
+    
+        // Canvas dimensions
+        let width = 0;
+        let height = 0;
+        
+        // Signal parameters
+        let time = 0;
+        let baseAmplitude = 50; // Base amplitude for the wave
+        const baseFrequency = 0.06; // Base frequency for the wave
+        const speed = 0.3; // Faster animation speed
+        const noiseLevel = 5; // Subtle noise for audio-like randomness
+        let variationTime = 2; // For amplitude/frequency variation
+            
         function onload(event) {
             // Get the element with id="defaultOpen" and click on it
             document.getElementById("defaultOpen").click();
@@ -824,6 +858,13 @@
             populateExternalFootswitches();
             populateInternalFootswitches();
             setEffectIcons();
+            
+            // draw waveform
+            canvas = document.getElementById('oscilloscopeCanvas');
+            ctx = canvas.getContext('2d');    
+            width = canvas.width;
+            height = canvas.height;
+            drawSignal();
         }
 
         function setEffectIcons() {
@@ -2967,6 +3008,69 @@
                 setToast('Ensure mDNS/Bonjour is<br>enabled on your router<br>before applying Station Mode!');
             }
         }
+                
+        function drawSignal() {
+            // Clear the canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw oscilloscope grid
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(48, 54, 61, 0.8)';
+            ctx.lineWidth = 1;
+            
+            // Horizontal lines
+            const numHorizontal = 5;
+            const horizontalSpacing = height / (numHorizontal - 1);
+            for (let i = 0; i < numHorizontal; i++) {
+                const y = i * horizontalSpacing;
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+            }
+            
+            // Vertical lines
+            const numVertical = 10;
+            const verticalSpacing = width / (numVertical - 1);
+            for (let i = 0; i < numVertical; i++) {
+                const x = i * verticalSpacing;
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+            }
+            
+            ctx.stroke();
+            
+            // Calculate varying amplitude and frequency
+            const amplitude = baseAmplitude * (0.5 + 0.5 * Math.sin(variationTime * 0.1));
+            const frequency = baseFrequency * (0.8 + 0.4 * Math.cos(variationTime * 0.1));
+            
+            // Draw the oscilloscope signal with fewer samples
+            ctx.beginPath();
+            ctx.strokeStyle = '#FB9230'; // Vibrant orange waveform
+            ctx.lineWidth = 2;
+            
+            for (let x = 0; x < width; x += 5) { // Fewer samples with larger step size
+                // Combine multiple sine waves with noise for audio-like effect
+                const y = height / 2 + amplitude * (
+                    0.6 * Math.sin(frequency * x + time) +
+                    0.3 * Math.sin(frequency * 2 * x + time * 0.5) +
+                    0.1 * Math.sin(frequency * 4 * x + time * 0.2)
+                ) + (Math.random() - 0.5) * noiseLevel;
+                ctx.lineTo(x, y);
+            }
+            
+            ctx.stroke();
+            
+            // Update time for animation
+            time += speed;
+            variationTime += 0.6; // Faster variation
+            
+            // Reset amplitude periodically to simulate new audio input
+            if (variationTime % 100 === 0) {
+                baseAmplitude = 30 + Math.random() * 40; // Random amplitude between 30 and 70
+            }
+            
+            // Loop the animation
+            requestAnimationFrame(drawSignal);
+        }
     </script>
   
     <nav class="navbar navbar-dark bg-dark">
@@ -2991,7 +3095,8 @@
     </div> 
 
     <div class="tab" id="MainMenu">
-      <button class="tablinks" onclick="openTab(event, 'NoiseGate')" id="defaultOpen">Gate</button>
+      <button class="tablinks" onclick="openTab(event, 'Home')" id="defaultOpen">Home</button>
+      <button class="tablinks" onclick="openTab(event, 'NoiseGate')">Gate</button>
       <button class="tablinks" onclick="openTab(event, 'Compressor')">Comp</button>
       <button class="tablinks" onclick="openTab(event, 'Equalisation')">EQ</button>
       <button class="tablinks" onclick="openTab(event, 'Reverb')">Reverb</button>
@@ -3008,8 +3113,30 @@
       <button class="tablinks" onclick="openTab(event, 'Miscellaneous')">Misc</button>
     </div>
 
+    <div id="Home" class="tabcontent">
+        <div class="col py-3 text-white">
+            <div class="container" style="text-align: center;">
+                <label class="home-label">Tonex One and Tonex Pedal Controller</label>
+            </div>  
+            <div class="container" style="text-align: center;">
+                <label class="home-label">Version V2.0.0.2</label>
+            </div>  
+            <br>            
+            <div class="container" style="text-align: center; color:#FB9230;">
+                <label>https://github.com/Builty/TonexOneController</label>
+            </div>    
+            <div class="oscilloscope-container">
+                <canvas id="oscilloscopeCanvas"></canvas>
+            </div>
+            
+             <div class="container" style="text-align: center; color:#777;">
+                <label>TONEX is a registered trademark of IK Multimedia Production Srl</label>
+            </div>              
+        </div>
+    </div>
+
     <div id="NoiseGate" class="tabcontent">
-      <div class="col py-3 text-white">
+        <div class="col py-3 text-white">
             <h5 class="selected_text">Noise Gate</h5>
             <p class="lead">
                 <div class="container">
