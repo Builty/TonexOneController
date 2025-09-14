@@ -72,8 +72,6 @@ An extra PCB is required for all platforms, an "Adafruit Midi FeatherWing kit", 
 https://www.adafruit.com/product/4740 <br>
 This Midi board supports both 5-pin DIN sockets (included in kit) and 3.5mm jacks (not included in kit.)<br>
 <br>
-![image](https://github.com/user-attachments/assets/bf2ebf51-a250-4fb7-a3b0-ec1d87a9d7db)
-<br>
 Midi Featherwing:<br>
 ![midi_featherwing](https://github.com/user-attachments/assets/532d7d81-ae7e-485b-8d59-77ff6056e331)
 <img width="1286" height="1002" alt="midi_jc3248" src="https://github.com/user-attachments/assets/fceff626-bb93-44e4-b962-94fa78c4d9d2" />
