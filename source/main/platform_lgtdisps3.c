@@ -306,8 +306,19 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 
     lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(disp_drv);
 
+    
     // note: basic version of T-Display S3 has no touch screen.
     // init touch screen    
+    // Configure RST GPIO as output
+    gpio_config_t rst_io_conf = {
+        .pin_bit_mask = (1ULL << TOUCH_RESET),
+        .mode = GPIO_MODE_OUTPUT,
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE,
+    };
+    ESP_ERROR_CHECK(gpio_config(&rst_io_conf));
+
     const esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_CST816S_CONFIG();
     
     const esp_lcd_touch_config_t tp_cfg = {
@@ -336,14 +347,36 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     // Initialize touch
     ESP_LOGI(TAG, "Initialize touch controller CST816");
 
-   if (xSemaphoreTake(I2CMutex, (TickType_t)10000) == pdTRUE)
+    // try a few times
+    for (int loop = 0; loop < 5; loop++)
     {
-        ret = esp_lcd_touch_new_i2c_cst816s(tp_io_handle, &tp_cfg, &tp);
-        xSemaphoreGive(I2CMutex);
-    }
-    else
-    {
-        ESP_LOGE(TAG, "Initialize touch mutex timeout");
+        ret = ESP_FAIL;
+        
+        if (xSemaphoreTake(I2CMutex, (TickType_t)10000) == pdTRUE)
+        {
+            ret = esp_lcd_touch_new_i2c_cst816s(tp_io_handle, &tp_cfg, &tp);
+            xSemaphoreGive(I2CMutex);
+        }
+        else
+        {
+            ESP_LOGE(TAG, "Initialize touch mutex timeout");
+        }
+
+        if (ret == ESP_OK)
+        {
+            // all good
+            break;
+        }
+
+        // wait and try again
+        ESP_LOGW(TAG, "Touch controller init retry %d. Error: %s", (int)loop, esp_err_to_name(ret));        
+        vTaskDelay(pdMS_TO_TICKS(25));
+
+        // force a device reset    
+        gpio_set_level(TOUCH_RESET, 0);
+        vTaskDelay(pdMS_TO_TICKS(20));
+        gpio_set_level(TOUCH_RESET, 1);
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
         
     if (ret == ESP_OK)

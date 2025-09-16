@@ -2,8 +2,7 @@ Note: files in this directory are beta versions may contain bugs.
 <br>
 V2.0.0.2 beta 2: released 5 September 2025.
 <br><br>
-Known issues: Waveshare 3.5B and JC3248W 3.5" have an intermittent issue where the LCD/touch will freeze. The rest of the system works as normal.<br>
-The cause of the LVGL task freeze is under investigation. 
+Known issues: None
 <br><br>
 <br><br>
 Files for each platform:
