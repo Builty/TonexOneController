@@ -1271,7 +1271,7 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
             // Custom case: use CC to change params.
             if (midi_value >= (usb_get_max_presets_for_connected_modeller())) 
             {
-                ESP_LOGW(TAG, "Unsupported Midi CC 127 value %d", change_num);
+                ESP_LOGW(TAG, "Unsupported Midi CC 127 value %d", midi_value);
             } 
             else 
             {
@@ -1302,7 +1302,7 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
+uint16_t midi_helper_get_param_for_change_num(uint8_t change_num, uint8_t midi_value_1, uint8_t midi_value_2)
 {
     uint16_t param = TONEX_UNKNOWN;
     tTonexParameter* param_ptr;
@@ -1980,9 +1980,17 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num)
 
         case 127:
         {
-            // Need the CC value to use this, so this won't work for
-            // footswitches, and it's kind of irrelevant anyways.
-            ESP_LOGW(TAG, "Unsupported Midi change number %d", change_num);
+            // Custom case: use CC to change params.
+            if (midi_value_1 >= (usb_get_max_presets_for_connected_modeller())) 
+            {
+                ESP_LOGW(TAG, "Unsupported Midi CC 127 value %d", midi_value_1);
+            } 
+            else 
+            {
+                control_request_preset_index(midi_value_1);
+            }
+
+            // don't set any return param, as this one is already handled and its not a parameter
         }
     }
 

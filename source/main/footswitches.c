@@ -632,7 +632,7 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
                         if (value == 1)
                         {
                             // get the parameter that corresponds to this Midi control change value
-                            param = midi_helper_get_param_for_change_num(fx_handler[loop].config.CC);
+                            param = midi_helper_get_param_for_change_num(fx_handler[loop].config.CC, fx_handler[loop].config.Value_1, fx_handler[loop].config.Value_2);
 
                             ESP_LOGI(TAG, "Footswitch FX pressed. Index %d. Param %d", (int)loop, (int)param);
 

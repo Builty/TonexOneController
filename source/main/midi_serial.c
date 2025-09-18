@@ -115,6 +115,12 @@ static void midi_serial_task(void *arg)
             // process data
             midi_helper_process_incoming_data(midi_serial_buffer, rx_length, midi_serial_channel, 1);
 
+            if (UART_TX_PIN != -1)
+            {
+                // send it back out the TX (midi through)
+                uart_write_bytes(UART_PORT_NUM, midi_serial_buffer, rx_length);
+            }
+
             // don't hog the CPU
             vTaskDelay(pdMS_TO_TICKS(1));
         }
