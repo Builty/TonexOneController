@@ -48,10 +48,10 @@ limitations under the License.
 #include "esp_mac.h"
 #include "esp_crc.h"
 #include "esp_now.h"
-#include "driver/i2c.h"
+#include "driver/i2c_master.h"
 #include "soc/lldesc.h"
-#include "esp_lcd_touch_gt911.h"
 #include "esp_lcd_touch_cst816s.h"
+#include "esp_lcd_touch_cst328.h"
 #include "esp_lcd_gc9107.h"
 #include "esp_lcd_sh8601.h"
 #include "esp_intr_alloc.h"
@@ -79,8 +79,7 @@ static const char *TAG = "platform Lilygo T-Display S3";
 
 #define LILYGO_TDISPLAY_S3_LCD_H_RES             (320)
 #define LILYGO_TDISPLAY_S3_LCD_V_RES             (170)
-
-#define LILYGO_TDISPLAY_S3_LCD_PIXEL_CLOCK_HZ     (10 * 1000 * 1000)
+#define LILYGO_TDISPLAY_S3_LCD_PIXEL_CLOCK_HZ    (10 * 1000 * 1000)
 
 static lv_disp_draw_buf_t disp_buf; 
 static lv_disp_drv_t* disp_drv;      
@@ -318,8 +317,6 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         .intr_type = GPIO_INTR_DISABLE,
     };
     ESP_ERROR_CHECK(gpio_config(&rst_io_conf));
-
-    const esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_CST816S_CONFIG();
     
     const esp_lcd_touch_config_t tp_cfg = {
         .x_max = LILYGO_TDISPLAY_S3_LCD_H_RES,
@@ -338,20 +335,27 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         },
     };
 
-    // Touch IO handle
-    if (esp_lcd_new_panel_io_i2c(bus_handle, &tp_io_config, &tp_io_handle) != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Touch IO handle failed!");
-    }
+    // force a touch controler device reset    
+    gpio_set_level(TOUCH_RESET, 0);
+    vTaskDelay(pdMS_TO_TICKS(20));
+    gpio_set_level(TOUCH_RESET, 1);
+    vTaskDelay(pdMS_TO_TICKS(50));
     
-    // Initialize touch
-    ESP_LOGI(TAG, "Initialize touch controller CST816");
-
-    // try a few times
-    for (int loop = 0; loop < 5; loop++)
+    // some early boards had CST328 touch chip, and later has CST816. They use different I2C addresses,
+    // so probe for which one is present
+    if (i2c_master_probe(bus_handle, ESP_LCD_TOUCH_IO_I2C_CST816S_ADDRESS, 50) == ESP_OK) 
     {
-        ret = ESP_FAIL;
-        
+        const esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_CST816S_CONFIG();
+
+        // Touch IO handle
+        if (esp_lcd_new_panel_io_i2c(bus_handle, &tp_io_config, &tp_io_handle) != ESP_OK)
+        {
+            ESP_LOGE(TAG, "Touch IO handle failed!");
+        }
+    
+        // Initialize touch
+        ESP_LOGI(TAG, "Initialize touch controller CST816");
+
         if (xSemaphoreTake(I2CMutex, (TickType_t)10000) == pdTRUE)
         {
             ret = esp_lcd_touch_new_i2c_cst816s(tp_io_handle, &tp_cfg, &tp);
@@ -364,31 +368,52 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 
         if (ret == ESP_OK)
         {
-            // all good
-            break;
+            ESP_LOGI(TAG, "Touch controller init OK");
+            touch_ok = 1;
+        }
+        else
+        {
+            ESP_LOGW(TAG, "Touch controller init failed %s", esp_err_to_name(ret));
+        }
+    }
+    else if (i2c_master_probe(bus_handle, ESP_LCD_TOUCH_IO_I2C_CST328_ADDRESS, 50) == ESP_OK) 
+    {
+        const esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_CST328_CONFIG();
+
+        // Touch IO handle
+        if (esp_lcd_new_panel_io_i2c(bus_handle, &tp_io_config, &tp_io_handle) != ESP_OK)
+        {
+            ESP_LOGE(TAG, "Touch IO handle failed!");
+        }
+    
+        // Initialize touch
+        ESP_LOGI(TAG, "Initialize touch controller CST328");
+
+        if (xSemaphoreTake(I2CMutex, (TickType_t)10000) == pdTRUE)
+        {
+            ret = esp_lcd_touch_new_i2c_CST328(tp_io_handle, &tp_cfg, &tp);
+            xSemaphoreGive(I2CMutex);
+        }
+        else
+        {
+            ESP_LOGE(TAG, "Initialize touch mutex timeout");
         }
 
-        // wait and try again
-        ESP_LOGW(TAG, "Touch controller init retry %d. Error: %s", (int)loop, esp_err_to_name(ret));        
-        vTaskDelay(pdMS_TO_TICKS(25));
-
-        // force a device reset    
-        gpio_set_level(TOUCH_RESET, 0);
-        vTaskDelay(pdMS_TO_TICKS(20));
-        gpio_set_level(TOUCH_RESET, 1);
-        vTaskDelay(pdMS_TO_TICKS(50));
-    }
-        
-    if (ret == ESP_OK)
-    {
-        ESP_LOGI(TAG, "Touch controller init OK");
-        touch_ok = 1;
+        if (ret == ESP_OK)
+        {
+            ESP_LOGI(TAG, "Touch controller init OK");
+            touch_ok = 1;
+        }
+        else
+        {
+            ESP_LOGW(TAG, "Touch controller init failed %s", esp_err_to_name(ret));
+        }
     }
     else
     {
-        ESP_LOGW(TAG, "Touch controller init failed %s", esp_err_to_name(ret));
+        ESP_LOGW(TAG, "No touch controller found"); 
     }
-        
+
     if (touch_ok)
     {
         lv_indev_drv_init(&indev_drv);
