@@ -81,6 +81,13 @@ static const char *TAG = "platform Lilygo T-Display S3";
 #define LILYGO_TDISPLAY_S3_LCD_V_RES             (170)
 #define LILYGO_TDISPLAY_S3_LCD_PIXEL_CLOCK_HZ    (10 * 1000 * 1000)
 
+enum TouchChips
+{    
+    UNKNOWN,
+    CST8165S,
+    CST328
+};
+
 static lv_disp_draw_buf_t disp_buf; 
 static lv_disp_drv_t* disp_drv;      
 static esp_lcd_panel_io_handle_t lcd_io = NULL;
@@ -88,6 +95,7 @@ static esp_lcd_panel_handle_t lcd_panel = NULL;
 static esp_lcd_touch_handle_t tp = NULL;
 static esp_lcd_panel_io_handle_t tp_io_handle = NULL;
 static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
+static uint8_t touch_chip_type = UNKNOWN;
 
 typedef struct {
     uint32_t addr;
@@ -123,8 +131,11 @@ __attribute__((unused)) void platform_adjust_touch_coords(lv_coord_t* x, lv_coor
 {
     lv_coord_t xpos = *x;
 
-    // 1.9 in landscape mode needs the co-ordinates adjusted
-    *x = LILYGO_TDISPLAY_S3_LCD_H_RES - xpos;
+    if (touch_chip_type == CST8165S)
+    {
+        // CST8165S in landscape mode needs the co-ordinates adjusted
+        *x = LILYGO_TDISPLAY_S3_LCD_H_RES - xpos;
+    }
 
     if (*x < 0)
     {
@@ -340,11 +351,12 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     vTaskDelay(pdMS_TO_TICKS(20));
     gpio_set_level(TOUCH_RESET, 1);
     vTaskDelay(pdMS_TO_TICKS(50));
-    
+
     // some early boards had CST328 touch chip, and later has CST816. They use different I2C addresses,
     // so probe for which one is present
     if (i2c_master_probe(bus_handle, ESP_LCD_TOUCH_IO_I2C_CST816S_ADDRESS, 50) == ESP_OK) 
     {
+        touch_chip_type = CST8165S;
         const esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_CST816S_CONFIG();
 
         // Touch IO handle
@@ -378,6 +390,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     }
     else if (i2c_master_probe(bus_handle, ESP_LCD_TOUCH_IO_I2C_CST328_ADDRESS, 50) == ESP_OK) 
     {
+        touch_chip_type = CST328;
         const esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_CST328_CONFIG();
 
         // Touch IO handle

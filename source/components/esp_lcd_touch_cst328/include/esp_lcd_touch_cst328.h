@@ -49,7 +49,7 @@ esp_err_t esp_lcd_touch_new_i2c_CST328(const esp_lcd_panel_io_handle_t io, const
         .user_ctx = 0,                                    \
         .control_phase_bytes = 1,                         \
         .dc_bit_offset = 0,                               \
-        .lcd_cmd_bits = 8,                                \
+        .lcd_cmd_bits = 16,                                \
         .lcd_param_bits = 0,                              \
         .flags =                                          \
         {                                                 \
@@ -65,7 +65,7 @@ esp_err_t esp_lcd_touch_new_i2c_CST328(const esp_lcd_panel_io_handle_t io, const
         .user_ctx = 0,                                    \
         .control_phase_bytes = 1,                         \
         .dc_bit_offset = 0,                               \
-        .lcd_cmd_bits = 8,                                \
+        .lcd_cmd_bits = 16,                                \
         .lcd_param_bits = 0,                              \
         .flags =                                          \
         {                                                 \
