@@ -126,9 +126,13 @@ build_distribution('template_cust_partition', 'build_ws35b_as', True, zip_name)
 zip_name = 'TonexOneController_V' + version + '_Waveshare_3_5B_Display_Pedal_Skins'
 build_distribution('template_cust_partition', 'build_ws35b_ps', True, zip_name)
 
-# Build JC3248W ith Amp skins
+# Build JC3248W with Amp skins
 zip_name = 'TonexOneController_V' + version + '_JC3248W_Display_Amp_Skins'
 build_distribution('template_cust_partition', 'build_jc3248w_as', True, zip_name)
+
+# Build JC3248W with Pedal skins
+zip_name = 'TonexOneController_V' + version + '_JC3248W_Display_Pedal_Skins'
+build_distribution('template_cust_partition', 'build_jc3248w_ps', True, zip_name)
 
 # Build Waveshare 1.9
 zip_name = 'TonexOneController_V' + version + '_Waveshare_1_9'
