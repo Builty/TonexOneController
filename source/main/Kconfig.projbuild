@@ -103,6 +103,12 @@ menu "Tonex Controller Configuration"
         default "n"
         help
             Enable this option to show BPM indicator
+
+    config TONEX_CONTROLLER_ENABLE_MIDI_THRU
+       bool "Enable Midi Thru"
+        default "y"
+        help
+            Enable this option if the platform can support Midi Transmit
         
     config EXAMPLE_DOUBLE_FB
         bool "Use double Frame Buffer"
