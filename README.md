@@ -44,6 +44,7 @@ The supported features vary a little depending on the chosen hardware platform.
   
 ## Demonstration Videos <a name="demonstration_videos"></a>
 ### Release Videos
+<a href="https://www.youtube.com/watch?v=oZ8G2kJxw-A" target="_blank"><img width="454" height="248" alt="image" src="https://github.com/user-attachments/assets/ce313395-0995-4053-823d-7e84b632b3a1" />
 <a href="https://youtu.be/j0I5G5-CXfg" target="_blank"><img width="455" height="247" alt="image" src="https://github.com/user-attachments/assets/3588465b-8f2e-4e99-a2db-18d2f3ade429" />
 <a href="https://www.youtube.com/watch?v=_nemmhjvjcc" target="_blank"><img width="457" height="239" alt="image" src="https://github.com/user-attachments/assets/56fbd134-9518-4b0d-a50d-0e200f71aa5b" />
 <a href="https://www.youtube.com/watch?v=ok4EuUgWt44" target="_blank"><img width="456" height="245" alt="image" src="https://github.com/user-attachments/assets/21eb8070-3402-4968-be52-9fb582fb6848" />
@@ -62,6 +63,7 @@ The supported features vary a little depending on the chosen hardware platform.
 ### Review Videos (seach Youtube for more)
 <a href="https://www.youtube.com/watch?v=dL7V-3_e7Gg" target="_blank"><img width="458" height="244" alt="image" src="https://github.com/user-attachments/assets/2a14750e-dee0-4431-a61f-9ea7b8657775" />
 <a href="https://www.youtube.com/watch?v=TLoKdBpcDJA" target="_blank"><img width="459" height="248" alt="image" src="https://github.com/user-attachments/assets/84677209-2114-4c6c-875f-bc49a7c3bad4" />
+<a href="https://www.youtube.com/watch?v=SztXfEDaUI8)" target="_blank"><img width="450" height="252" alt="image" src="https://github.com/user-attachments/assets/7620ed23-47ea-4a06-97d4-f0265c2d19b8" />
 <br><br>
 
 ### User Videos (search Youtube for more)
@@ -140,7 +142,7 @@ For more information about the firmware development and customisation, refer to 
 - https://github.com/vit3k/tonex_controller for great work on reverse engineering the Tonex One USB protocol
 
 ## Firmware Release Notes <a name="release_notes"></a>
-V2.0.0.2 beta 4:
+V2.0.0.2 beta 3:
 - Caution: due to structural changes, amp/pedal skins and user preset text is not maintained and will need to be entered again. And if rolling back to an older version, all config will be lost
 - Upgraded to ESP-IDF 5.5.1 
 - Added support for big Tonex pedal 
@@ -152,7 +154,7 @@ V2.0.0.2 beta 4:
 - Added new platform Waveshare 1.69" touch in landscape mode 
 - Code updates to better isolate hardware platforms from user interface 
 - Added left/right swipe gestures to Waveshare 1.69" Touch for next/previous preset 
-- Added the ability to send value 64 via Midi, to toggle the current state of any on/off parameter 
+- AQdded the ability to send value 64 via Midi, to toggle the current state of any on/off parameter 
 - Added global volume support (via LCD/Web)
 - Added ability to bypass the pedal via web config (Tonex One only)
 - Added "toast" dialog message when connected in station mode, with IP address
@@ -163,10 +165,9 @@ V2.0.0.2 beta 4:
 - User contribution from Joao: Midi commands to load a preset into Tonex One slot A or B
 - Added "Home" page to web config, to help avoid accidental param changes
 - Added support for changing global volume via Midi 
-- Changed CST816S touch driver to a newer managed component
+- changed CST816S touch driver to a newer managed component
 - Added support for selecting a specific preset via effect footswitch 
-- Added CST328 touch driver, as used on old Lilygo T-Display S3
-- Added Midi Thru, where data arriving on Midi is sent back out through the transmit pin (not available on Waveshare 4.3B)
+- Added CST328 touch driver, as used on old Lilygo T-Display S3 (note: not currently working.)
 
 
 V1.0.10.2:
@@ -302,6 +303,3 @@ Donations help fund the purchase of new equipment to use in development and test
 [Donate via Paypal](https://www.paypal.com/donate/?business=RTRMTZA7L7KPC&no_recurring=0&currency_code=AUD)
 <br><br>
 ![QR code](https://github.com/user-attachments/assets/331a7b08-e877-49a4-9d27-2b19a2ff762d)
-
-    
- 
