@@ -665,7 +665,8 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 
     if (control_get_config_item_int(CONFIG_ITEM_SCREEN_ROTATION) == SCREEN_ROTATION_180)
     {
-        rotation_setting = LV_DISP_ROT_180;
+        // 270 here as normal landscape mode is 90 degrees
+        rotation_setting = LV_DISP_ROT_270;
     }
 }
 
