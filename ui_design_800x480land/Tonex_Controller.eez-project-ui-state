@@ -1,7 +1,8 @@
 {
   "navigation": {
     "selectedUserPageObject": "[Tonex_Controller.eez-project]:/userPages/0",
-    "selectedActionObject": "[Tonex_Controller.eez-project]:/actions/2",
+    "selectedActionObject": "[Tonex_Controller.eez-project]:/actions/6",
+    "selectedBitmapObject": "[Tonex_Controller.eez-project]:/bitmaps/3",
     "subnavigationSelectedItems": {
       "variables-tab/sub-navigation/selected-item": "Actions"
     }
@@ -198,12 +199,12 @@
               "children": [
                 {
                   "type": "tab",
-                  "id": "#7b30c7d6-96b2-4dbd-adc5-a83af6f5598e",
-                  "name": "ShowSettingsTab",
+                  "id": "#dfdd4991-4aaa-4a78-8702-fedb51c5da54",
+                  "name": "ParameterChanged",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[Tonex_Controller.eez-project]:/actions/2",
-                    "permanent": false
+                    "objectPath": "[Tonex_Controller.eez-project]:/actions/6",
+                    "permanent": true
                   },
                   "icon": "material:code"
                 },
@@ -467,10 +468,22 @@
               "type": "tabset",
               "id": "RUNTIME-EDITORS",
               "weight": 1,
-              "selected": -1,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
-              "children": []
+              "children": [
+                {
+                  "type": "tab",
+                  "id": "#1d2fa946-37a0-44b4-a4cb-3b55dad8499e",
+                  "name": "Screen1",
+                  "component": "editor",
+                  "config": {
+                    "objectPath": "[Tonex_Controller.eez-project]:/userPages/0",
+                    "permanent": false
+                  },
+                  "icon": "svg:page"
+                }
+              ],
+              "active": true
             },
             {
               "type": "row",
@@ -996,18 +1009,13 @@
     "[Tonex_Controller.eez-project]:/userPages/0[flow-state]": {
       "selection": {
         "0": {
-          "0": {
-            "1": {},
-            "8": {
-              "$selected": true
-            },
-            "9": {},
-            "10": {}
-          },
+          "0": {},
           "1": {},
-          "2": {}
+          "2": {},
+          "12": {}
         },
         "1": {},
+        "3": {},
         "6": {},
         "7": {},
         "8": {}
@@ -1015,7 +1023,7 @@
       "transform": {
         "translate": {
           "x": -381.964246229172,
-          "y": -399.0324397134098
+          "y": -299.03243971340976
         },
         "scale": 0.75
       },
@@ -1033,15 +1041,15 @@
             "0": {
               "$selected": true
             },
-            "1": {}
+            "7": {}
           }
         },
-        "2": {}
+        "1": {}
       },
       "transform": {
         "translate": {
           "x": -401.69180461329734,
-          "y": -313.70909430122117
+          "y": -173.9215943012212
         },
         "scale": 0.75
       },
@@ -1111,6 +1119,16 @@
         },
         "scale": 1
       }
+    },
+    "[Tonex_Controller.eez-project]:/actions/6[flow-state]": {
+      "selection": {},
+      "transform": {
+        "translate": {
+          "x": 0,
+          "y": 0
+        },
+        "scale": 1
+      }
     }
   },
   "activeOutputSection": 0,
@@ -1125,10 +1143,12 @@
   "showComponentDescriptions": true,
   "logsPanelFilter": "all",
   "selectedStylePropertyName": "",
-  "lvglPart": "MAIN",
-  "lvglState": "FOCUSED",
+  "lvglPart": "INDICATOR",
+  "lvglState": "DEFAULT",
   "lvglExpandedPropertiesGroup": [
-    "BACKGROUND"
+    "MISCELLANEOUS",
+    "MARGIN",
+    "BORDER"
   ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,
