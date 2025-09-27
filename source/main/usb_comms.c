@@ -41,7 +41,10 @@ limitations under the License.
 #include "driver/i2c.h"
 #include "esp_task_wdt.h"
 #include "usb_comms.h"
+#include "usb/cdc_acm_host.h"
+#include "usb_tonex_common.h"
 #include "usb_tonex_one.h"
+#include "usb_tonex.h"
 #include "control.h"
 #include "task_priorities.h"
 
@@ -58,12 +61,6 @@ limitations under the License.
 #define CLASS_DRIVER_ACTION_TRANSFER    4
 #define CLASS_DRIVER_ACTION_CLOSE_DEV   8
 
-// Amp Modeller types
-enum AmpModellers
-{
-    AMP_MODELLER_NONE,
-    AMP_MODELLER_TONEX_ONE
-};
 
 static const char *TAG = "app_usb";
 static TaskHandle_t daemon_task_hdl;
@@ -193,9 +190,25 @@ void class_driver_task(void *arg)
 
                 usb_tonex_one_init(&driver_obj, usb_input_queue);
             }
+            else if ((dev_desc->idVendor == IK_MULTIMEDIA_USB_VENDOR) && (dev_desc->idProduct == TONEX_PRODUCT_ID))
+            {
+                // found Tonex 
+                ESP_LOGI(TAG, "Found Tonex");
+                AmpModellerType = AMP_MODELLER_TONEX;
+
+                usb_tonex_init(&driver_obj, usb_input_queue);
+            }
             else
             {
-                ESP_LOGI(TAG, "Found unexpected USB device");
+                // check the device class
+                if (dev_desc->bDeviceClass == 0x09)
+                {
+                    ESP_LOGI(TAG, "Found USB Hub");
+                }
+                else
+                {
+                    ESP_LOGI(TAG, "Found unexpected USB device");
+                }
 
                 usb_host_device_close(driver_obj.client_hdl, driver_obj.dev_hdl);
                 driver_obj.dev_hdl = NULL;
@@ -223,6 +236,11 @@ void class_driver_task(void *arg)
                     usb_tonex_one_deinit();
                 } break;
 
+                case AMP_MODELLER_TONEX:
+                {
+                    usb_tonex_deinit();
+                } break;
+
                 default:
                 {
                     // nothing needed
@@ -247,9 +265,14 @@ void class_driver_task(void *arg)
         // handle device
         switch (AmpModellerType)
         {
-            case AMP_MODELLER_TONEX_ONE:
+            case AMP_MODELLER_TONEX_ONE:        // fallthrough
             {
                 usb_tonex_one_handle(&driver_obj);
+            } break;
+
+            case AMP_MODELLER_TONEX:
+            {
+                usb_tonex_handle(&driver_obj);
             } break;
 
             default:
@@ -299,6 +322,19 @@ static void host_lib_daemon_task(void *arg)
     ESP_LOGI(TAG, "Installing USB Host Library");
 
     SemaphoreHandle_t signaling_sem = (SemaphoreHandle_t)arg;
+
+    // delay here, as with the big Tonex (being self-powered) we need to give the ESP32 enough time
+    // to initialise the USB port before we try to enumerate the bus
+    vTaskDelay(500); 
+
+    //Create the USB class driver task
+    xTaskCreatePinnedToCore(class_driver_task,
+                            "class",
+                            (3 * 1024), 
+                            (void*)signaling_sem,
+                            USB_CLASS_TASK_PRIORITY,
+                            &class_driver_task_hdl,
+                            0);
 
     usb_host_config_t host_config = {
         .skip_phy_setup = false,
@@ -412,6 +448,116 @@ void usb_modify_parameter(uint16_t index, float value)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+void usb_load_preset_to_slot_a(uint32_t preset)
+{
+    tUSBMessage message;
+
+    if (usb_input_queue == NULL)
+    {
+        ESP_LOGE(TAG, "usb_load_preset_to_slot_a queue null");            
+    }
+    else
+    {
+        message.Command = USB_COMMAND_LOAD_PRESET_TO_SLOT_A;
+        message.Payload = preset;
+
+        // send to queue
+        if (xQueueSend(usb_input_queue, (void*)&message, 0) != pdPASS)
+        {
+            ESP_LOGE(TAG, "usb_load_preset_to_slot_a queue send failed!");            
+        }
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void usb_load_preset_to_slot_b(uint32_t preset)
+{
+    tUSBMessage message;
+
+    if (usb_input_queue == NULL)
+    {
+        ESP_LOGE(TAG, "usb_load_preset_to_slot_b queue null");            
+    }
+    else
+    {
+        message.Command = USB_COMMAND_LOAD_PRESET_TO_SLOT_B;
+        message.Payload = preset;
+
+        // send to queue
+        if (xQueueSend(usb_input_queue, (void*)&message, 0) != pdPASS)
+        {
+            ESP_LOGE(TAG, "usb_load_preset_to_slot_b queue send failed!");            
+        }
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+uint8_t usb_get_max_presets_for_connected_modeller(void)
+{
+    uint8_t max = MAX_PRESETS_TONEX_ONE;
+    switch (AmpModellerType)
+    {
+        case AMP_MODELLER_TONEX_ONE:
+        {
+            max = MAX_PRESETS_TONEX_ONE;
+        } break;
+
+        case AMP_MODELLER_TONEX:
+        {
+            max = MAX_PRESETS_TONEX;
+        } break;
+    }
+
+    return max;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+uint8_t usb_get_first_preset_index_for_connected_modeller(void)
+{
+    uint8_t first = 1;
+    
+    switch (AmpModellerType)
+    {
+        case AMP_MODELLER_TONEX_ONE:
+        {
+            first = 1;
+        } break;
+
+        case AMP_MODELLER_TONEX:
+        {
+            // big Tonex LCD uses 0-based indexing
+            first = 0;
+        } break;
+    }
+
+    return first;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void init_usb_comms(void)
 {
     // init USB
@@ -425,7 +571,7 @@ void init_usb_comms(void)
     }
 
     // reserve DMA capable large contiguous memory blocks
-    usb_tonex_one_preallocate_memory();
+    tonex_common_preallocate_memory();
 
     //Create USB daemon task
     xTaskCreatePinnedToCore(host_lib_daemon_task,
@@ -434,14 +580,5 @@ void init_usb_comms(void)
                             (void*)signaling_sem,
                             USB_DAEMON_TASK_PRIORITY,
                             &daemon_task_hdl,
-                            0);
-
-    //Create the USB class driver task
-    xTaskCreatePinnedToCore(class_driver_task,
-                            "class",
-                            (3 * 1024), 
-                            (void*)signaling_sem,
-                            USB_CLASS_TASK_PRIORITY,
-                            &class_driver_task_hdl,
                             0);
 }

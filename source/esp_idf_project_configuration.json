@@ -5,10 +5,36 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_ws169",
       "sdkconfigDefaults": [
-        "sdkconfig.ws169",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.ws169"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_ws169"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "WS169Land": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_ws169land",
+      "sdkconfigDefaults": [
+        "sdkconfig.defaults",
+        "sdkconfig.ws169land"        
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws169land"
     },
     "env": {},
     "flashBaudRate": "",
@@ -31,10 +57,36 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_ws169t",
       "sdkconfigDefaults": [
-        "sdkconfig.ws169t",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.ws169t"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_ws169t"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "WS169TOUCHLand": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_ws169tland",
+      "sdkconfigDefaults": [        
+        "sdkconfig.defaults",
+        "sdkconfig.ws169tland"
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws169tland"
     },
     "env": {},
     "flashBaudRate": "",
@@ -57,8 +109,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_ws43b_as",
       "sdkconfigDefaults": [
-        "sdkconfig.ws43b_as",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.ws43B_as"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_ws43b_as"
     },
@@ -83,10 +135,114 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_ws43b_ps",
       "sdkconfigDefaults": [
-        "sdkconfig.ws43b_ps",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.ws43B_ps"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_ws43b_ps"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "WS35B_AS": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_ws35b_as",
+      "sdkconfigDefaults": [        
+        "sdkconfig.defaults",
+        "sdkconfig.ws35b_as"
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws35b_as"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "WS35B_PS": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_ws35b_ps",
+      "sdkconfigDefaults": [
+        "sdkconfig.defaults",
+        "sdkconfig.ws35b_ps"       
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws35b_ps"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "JC3248W_AS": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_jc3248w_as",
+      "sdkconfigDefaults": [
+        "sdkconfig.defaults",
+        "sdkconfig.jc3248w_as"        
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_jc3248w_as"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "JC3248W_PS": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_jc3248w_ps",
+      "sdkconfigDefaults": [
+        "sdkconfig.defaults",
+        "sdkconfig.jc3248w_ps"        
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_jc3248w_ps"
     },
     "env": {},
     "flashBaudRate": "",
@@ -109,8 +265,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_wszero",
       "sdkconfigDefaults": [
-        "sdkconfig.wszero",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.wszero"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_wszero"
     },
@@ -135,8 +291,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_devkitc_N8R2",
       "sdkconfigDefaults": [
-        "sdkconfig.devkitc_N8R2",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.devkitc_N8R2"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_devkitc_N8R2"
     },
@@ -161,8 +317,8 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_devkitc_N16R8",
       "sdkconfigDefaults": [
-        "sdkconfig.devkitc_N16R8",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.devkitc_N16R8"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_devkitc_N16R8"
     },
@@ -187,10 +343,62 @@
       "ninjaArgs": [],
       "buildDirectoryPath": "${workspaceFolder}/build_m5atoms3r",
       "sdkconfigDefaults": [
-        "sdkconfig.m5atoms3r",
-        "sdkconfig.defaults"
+        "sdkconfig.defaults",
+        "sdkconfig.m5atoms3r"
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_m5atoms3r"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "LGTDisplayS3": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_lgtdisps3",
+      "sdkconfigDefaults": [        
+        "sdkconfig.defaults",
+        "sdkconfig.lgtdisps3"
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_lgtdisps3"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "WS19Touch": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_ws19t",
+      "sdkconfigDefaults": [
+        "sdkconfig.defaults",
+        "sdkconfig.ws19t"        
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws19t"
     },
     "env": {},
     "flashBaudRate": "",
@@ -214,9 +422,113 @@
       "buildDirectoryPath": "${workspaceFolder}/build_ws43devonly",
       "sdkconfigDefaults": [
         "sdkconfig.defaults",
-        "sdkconfig .ws43devonly"
+        "sdkconfig.ws43devonly"        
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_ws43devonly"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "Pirate169": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_pirate169",
+      "sdkconfigDefaults": [
+        "sdkconfig.defaults",
+        "sdkconfig.pirate169"        
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_pirate169"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "Pirate169land": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_pirate169land",
+      "sdkconfigDefaults": [
+        "sdkconfig.defaults",
+        "sdkconfig.pirate169land"        
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_pirate169land"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "PirateZERO": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_piratezero",
+      "sdkconfigDefaults": [
+        "sdkconfig.defaults",
+        "sdkconfig.piratezero"        
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_piratezero"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "Pirate43B_AS": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_pirate43B_as",
+      "sdkconfigDefaults": [
+        "sdkconfig.defaults",
+        "sdkconfig.pirate43B_as"        
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_pirate43B_as"
     },
     "env": {},
     "flashBaudRate": "",

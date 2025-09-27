@@ -32,7 +32,7 @@ limitations under the License.
 #include "nvs_flash.h"
 #include "sys/param.h"
 #include "esp_log.h"
-#include "driver/i2c.h"
+#include "driver/i2c_master.h"
 #include "main.h"
 #include "CH422G.h"
 #include "control.h"
@@ -41,7 +41,6 @@ limitations under the License.
 #include "usb_comms.h"
 #include "usb_tonex_one.h"
 #include "leds.h"
-#include "driver/i2c.h"
 #include "SX1509.h"
 #include "midi_helper.h"
 #include "tonex_params.h"
@@ -105,7 +104,6 @@ typedef struct
 
 static tFootswitchControl FootswitchControl;
 static SemaphoreHandle_t I2CMutexHandle;
-static i2c_port_t i2cnum;
 
 static const __attribute__((unused)) tFootswitchLayoutEntry FootswitchLayouts[FOOTSWITCH_LAYOUT_LAST] = 
 {
@@ -137,7 +135,7 @@ static const __attribute__((unused)) tFootswitchLayoutEntry FootswitchLayouts[FO
 *****************************************************************************/
 static uint8_t get_banks_count(tFootswitchLayoutEntry* layout)
 {
-    return ((MAX_PRESETS - 1) / layout->presets_per_bank) + 1;
+    return ((usb_get_max_presets_for_connected_modeller() - 1) / layout->presets_per_bank) + 1;
 }
 
 /****************************************************************************
@@ -634,7 +632,7 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
                         if (value == 1)
                         {
                             // get the parameter that corresponds to this Midi control change value
-                            param = midi_helper_get_param_for_change_num(fx_handler[loop].config.CC);
+                            param = midi_helper_get_param_for_change_num(fx_handler[loop].config.CC, fx_handler[loop].config.Value_1, fx_handler[loop].config.Value_2);
 
                             ESP_LOGI(TAG, "Footswitch FX pressed. Index %d. Param %d", (int)loop, (int)param);
 
@@ -776,6 +774,8 @@ void footswitch_task(void *arg)
         FootswitchControl.onboard_switch_mode = FOOTSWITCH_LAYOUT_1X2;
     }
 #endif
+
+    ESP_LOGI(TAG, "Footswitch Internal layout: %d", (int)FootswitchControl.onboard_switch_mode);
 
     // get preset switching layout for external footswitches
     FootswitchControl.external_switch_mode = control_get_config_item_int(CONFIG_ITEM_EXT_FOOTSW_PRESET_LAYOUT);
@@ -953,19 +953,23 @@ void footswitch_task(void *arg)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void footswitches_init(i2c_port_t i2c_num, SemaphoreHandle_t I2CMutex)
+void footswitches_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex)
 {	
     memset((void*)&FootswitchControl, 0, sizeof(FootswitchControl));
 
     // save handles
     I2CMutexHandle = I2CMutex;
-	i2cnum = i2c_num;
 
 #if CONFIG_TONEX_CONTROLLER_GPIO_FOOTSWITCHES
     // init GPIO
     gpio_config_t gpio_config_struct;
 
-    gpio_config_struct.pin_bit_mask = (((uint64_t)1 << FOOTSWITCH_1) | ((uint64_t)1 << FOOTSWITCH_2) | ((uint64_t)1 << FOOTSWITCH_3) | ((uint64_t)1 << FOOTSWITCH_4));
+    uint64_t pin_bit_mask = 0;
+    if (FOOTSWITCH_1 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_1);
+    if (FOOTSWITCH_2 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_2);
+    if (FOOTSWITCH_3 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_3);
+    if (FOOTSWITCH_4 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_4);
+    gpio_config_struct.pin_bit_mask = pin_bit_mask;
     gpio_config_struct.mode = GPIO_MODE_INPUT;
     gpio_config_struct.pull_up_en = GPIO_PULLUP_ENABLE;
     gpio_config_struct.pull_down_en = GPIO_PULLDOWN_DISABLE;
@@ -974,7 +978,7 @@ void footswitches_init(i2c_port_t i2c_num, SemaphoreHandle_t I2CMutex)
 #endif
 
     // try to init I2C IO expander
-    if (SX1509_Init(i2c_num, I2CMutex) == ESP_OK)
+    if (SX1509_Init(bus_handle, I2CMutex) == ESP_OK)
     {
         ESP_LOGI(TAG, "Found External IO Expander");
 

@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2024  Greg Smith
+ Copyright (C) 2025  Greg Smith
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@ limitations under the License.
  
 */
 
-//Tonex One device
+//***** Tonex One device *****
 //-----------------------------
 //idVendor = 0x1963
 //idProduct = 0x00D1
@@ -53,8 +53,9 @@ limitations under the License.
 #include "esp_log.h"
 #include "usb/usb_host.h"
 #include "usb/cdc_acm_host.h"
-#include "driver/i2c.h"
+#include "driver/i2c_master.h"
 #include "usb_comms.h"
+#include "usb_tonex_common.h"
 #include "usb_tonex_one.h"
 #include "control.h"
 #include "display.h"
@@ -70,13 +71,8 @@ static const uint8_t ToneOnePresetByteMarker[] = {0xB9, 0x04, 0xB9, 0x02, 0xBC, 
 #define TONEX_ONE_RESP_OFFSET_PRESET_NAME_LEN       32
 #define TONEX_ONE_CDC_INTERFACE_INDEX               0
 
-// Tonex One can send quite large data quickly, so make a generous receive buffer
-#define RX_TEMP_BUFFER_SIZE                         8192   // even multiple of 64 CDC transfer size
 #define MAX_INPUT_BUFFERS                           2
-#define USB_TX_BUFFER_SIZE                          8192 
 
-#define MAX_SHORT_PRESET_DATA                       3072
-#define MAX_FULL_PRESET_DATA                        RX_TEMP_BUFFER_SIZE
 #define MAX_STATE_DATA                              512
 
 // credit to https://github.com/vit3k/tonex_controller for some of the below details and implementation
@@ -87,14 +83,6 @@ enum CommsState
     COMMS_STATE_READY,
     COMMS_STATE_GET_STATE
 };
-
-typedef enum Status 
-{
-    STATUS_OK,
-    STATUS_INVALID_FRAME,
-    STATUS_INVALID_ESCAPE_SEQUENCE,
-    STATUS_CRC_MISMATCH
-} Status;
 
 typedef enum Type 
 {
@@ -145,7 +133,7 @@ typedef struct __attribute__ ((packed))
     uint16_t StateDataLength;
 
     // storage for current preset details data (short version)
-    uint8_t PresetData[MAX_SHORT_PRESET_DATA];
+    uint8_t PresetData[TONEX_MAX_SHORT_PRESET_DATA];
     uint16_t PresetDataLength;
     uint16_t PresetParameterStartOffset;
 } tPedalData;
@@ -168,7 +156,7 @@ typedef struct __attribute__ ((packed))
 
 typedef struct
 {
-    uint8_t Data[RX_TEMP_BUFFER_SIZE];
+    uint8_t Data[TONEX_RX_TEMP_BUFFER_SIZE];
     uint16_t Length;
     uint8_t ReadyToRead : 1;
     uint8_t ReadyToWrite : 1;
@@ -186,181 +174,18 @@ static uint8_t* TxBuffer;
 static uint8_t* FramedBuffer;
 static QueueHandle_t input_queue;
 static uint8_t boot_init_needed = 0;
+static uint8_t boot_global_request = 0;
 static uint8_t boot_preset_request = 0;
 static volatile tInputBufferEntry* InputBuffers;
-static uint8_t* PreallocatedMemory;
 
 /*
 ** Static function prototypes
 */
-static uint16_t addFraming(uint8_t* input, uint16_t inlength, uint8_t* output);
-static Status removeFraming(uint8_t* input, uint16_t inlength, uint8_t* output, uint16_t* outlength);
-static esp_err_t usb_tonex_one_transmit(uint8_t* tx_data, uint16_t tx_len);
-static Status usb_tonex_one_parse(uint8_t* message, uint16_t inlength);
+static TonexStatus usb_tonex_one_parse(uint8_t* message, uint16_t inlength);
 static esp_err_t usb_tonex_one_set_active_slot(Slot newSlot);
 static esp_err_t usb_tonex_one_set_preset_in_slot(uint16_t preset, Slot newSlot, uint8_t selectSlot);
 static uint16_t usb_tonex_one_get_current_active_preset(void);
 
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-static uint16_t calculateCRC(uint8_t* data, uint16_t length) 
-{
-    uint16_t crc = 0xFFFF;
-
-    for (uint16_t loop = 0; loop < length; loop++) 
-    {
-        crc ^= data[loop];
-
-        for (uint8_t i = 0; i < 8; ++i) 
-        {
-            if (crc & 1) 
-            {
-                crc = (crc >> 1) ^ 0x8408;  // 0x8408 is the reversed polynomial x^16 + x^12 + x^5 + 1
-            } 
-            else 
-            {
-                crc = crc >> 1;
-            }
-        }
-    }
-    
-    return ~crc;
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-static uint16_t addByteWithStuffing(uint8_t* output, uint8_t byte) 
-{
-    uint16_t length = 0;
-
-    if (byte == 0x7E || byte == 0x7D) 
-    {
-        output[length] = 0x7D;
-        length++;
-        output[length] = byte ^ 0x20;
-        length++;
-    }
-    else 
-    {
-        output[length] = byte;
-        length++;
-    }
-
-    return length;
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-static uint16_t addFraming(uint8_t* input, uint16_t inlength, uint8_t* output)
-{
-    uint16_t outlength = 0;
-
-    // Start flag
-    output[outlength] = 0x7E;
-    outlength++;
-
-    // add input bytes
-    for (uint16_t byte = 0; byte < inlength; byte++) 
-    {
-        outlength += addByteWithStuffing(&output[outlength], input[byte]);
-    }
-
-    // add CRC
-    uint16_t crc = calculateCRC(input, inlength);
-    outlength += addByteWithStuffing(&output[outlength], crc & 0xFF);
-    outlength += addByteWithStuffing(&output[outlength], (crc >> 8) & 0xFF);
-
-    // End flag
-    output[outlength] = 0x7E;
-    outlength++;
-
-    return outlength;
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-static Status removeFraming(uint8_t* input, uint16_t inlength, uint8_t* output, uint16_t* outlength)
-{
-    *outlength = 0;
-    uint8_t* output_ptr = output;
-
-    if ((inlength < 4) || (input[0] != 0x7E) || (input[inlength - 1] != 0x7E))
-    {
-        ESP_LOGE(TAG, "Invalid Frame (1)");
-        return STATUS_INVALID_FRAME;
-    }
-
-    for (uint16_t i = 1; i < inlength - 1; ++i) 
-    {
-        if (input[i] == 0x7D) 
-        {
-            if ((i + 1) >= (inlength - 1))
-            {
-                ESP_LOGE(TAG, "Invalid Escape sequence");
-                return STATUS_INVALID_ESCAPE_SEQUENCE;
-            }
-
-            *output_ptr = input[i + 1] ^ 0x20;
-            output_ptr++;
-            (*outlength)++;
-            ++i;
-        } 
-        else if (input[i] == 0x7E) 
-        {
-            break;
-        } 
-        else 
-        {
-            *output_ptr = input[i];
-            output_ptr++;
-            (*outlength)++;
-        }
-    }
-
-    if (*outlength < 2) 
-    {
-        ESP_LOGE(TAG, "Invalid Frame (2)");
-        return STATUS_INVALID_FRAME;
-    }
-
-    //ESP_LOGI(TAG, "In:");
-    //ESP_LOG_BUFFER_HEXDUMP(TAG, input, inlength, ESP_LOG_INFO);
-    //ESP_LOGI(TAG, "Out:");
-    //ESP_LOG_BUFFER_HEXDUMP(TAG, output, *outlength, ESP_LOG_INFO);
-
-    uint16_t received_crc = (output[(*outlength) - 1] << 8) | output[(*outlength) - 2];
-    (*outlength) -= 2;
-
-    uint16_t calculated_crc = calculateCRC(output, *outlength);
-
-    if (received_crc != calculated_crc) 
-    {
-        ESP_LOGE(TAG, "Crc mismatch: %X, %X", (int)received_crc, (int)calculated_crc);
-        return STATUS_CRC_MISMATCH;
-    }
-
-    return STATUS_OK;
-}
 
 /****************************************************************************
 * NAME:        
@@ -375,14 +200,13 @@ static esp_err_t usb_tonex_one_hello(void)
     
     ESP_LOGI(TAG, "Sending Hello");
 
-    // build message
     uint8_t request[] = {0xb9, 0x03, 0x00, 0x82, 0x04, 0x00, 0x80, 0x0b, 0x01, 0xb9, 0x02, 0x02, 0x0b};
 
     // add framing
-    outlength = addFraming(request, sizeof(request), FramedBuffer);
+    outlength = tonex_common_add_framing(request, sizeof(request), FramedBuffer);
 
     // send it
-    return usb_tonex_one_transmit(FramedBuffer, outlength);
+    return tonex_common_transmit(cdc_dev, FramedBuffer, outlength, TONEX_USB_TX_BUFFER_SIZE);
 }
 
 /****************************************************************************
@@ -396,14 +220,13 @@ static esp_err_t usb_tonex_one_request_state(void)
 {
     uint16_t outlength;
 
-    // build message
     uint8_t request[] = {0xb9, 0x03, 0x00, 0x82, 0x06, 0x00, 0x80, 0x0b, 0x03, 0xb9, 0x02, 0x81, 0x06, 0x03, 0x0b};
 
     // add framing
-    outlength = addFraming(request, sizeof(request), FramedBuffer);
+    outlength = tonex_common_add_framing(request, sizeof(request), FramedBuffer);
 
     // send it
-    return usb_tonex_one_transmit(FramedBuffer, outlength);
+    return tonex_common_transmit(cdc_dev, FramedBuffer, outlength, TONEX_USB_TX_BUFFER_SIZE);
 }
 
 /****************************************************************************
@@ -419,16 +242,16 @@ static esp_err_t __attribute__((unused)) usb_tonex_one_request_preset_details(ui
 
     ESP_LOGI(TAG, "Requesting full preset details for %d", (int)preset_index);
 
-    // build message                                                                                               Preset Full    
     uint8_t request[] = {0xb9, 0x03, 0x81, 0x00, 0x03, 0x82, 0x06, 0x00, 0x80, 0x0b, 0x03, 0xb9, 0x04, 0x0b, 0x01, 0x00,  0x00};  
+
     request[15] = preset_index;
     request[16] = full_details;     // 0x00 = approx 2k byte summary. 0x01 = approx 30k byte full preset details
 
     // add framing
-    outlength = addFraming(request, sizeof(request), FramedBuffer);
+    outlength = tonex_common_add_framing(request, sizeof(request), FramedBuffer);
 
     // send it
-    return usb_tonex_one_transmit(FramedBuffer, outlength);
+    return tonex_common_transmit(cdc_dev, FramedBuffer, outlength, TONEX_USB_TX_BUFFER_SIZE);
 }
 
 /****************************************************************************
@@ -447,8 +270,7 @@ static esp_err_t usb_tonex_one_send_single_parameter(uint16_t index, float value
     // Build message                                         len LSB  len MSB
     uint8_t message[] = {0xb9, 0x03, 0x81, 0x09, 0x03, 0x82, 0x0A,     0x00, 0x80, 0x0B, 0x03};
 
-    //                               0x00 here for global params???
-    // payload           unknown       |         param index             4 byte float value
+    // payload           unknown                 param index             4 byte float value
     uint8_t payload[] = {0xB9, 0x04, 0x02, 0x00, 0x00,         0x88, 0x00, 0x00, 0x00, 0x00 };
 
     // set param index
@@ -462,13 +284,78 @@ static esp_err_t usb_tonex_one_send_single_parameter(uint16_t index, float value
     memcpy((void*)&TxBuffer[sizeof(message)], (void*)payload, sizeof(payload));
 
     // add framing
-    framed_length = addFraming(TxBuffer, sizeof(message) + sizeof(payload), FramedBuffer);
+    framed_length = tonex_common_add_framing(TxBuffer, sizeof(message) + sizeof(payload), FramedBuffer);
 
     // debug
     //ESP_LOG_BUFFER_HEXDUMP(TAG, FramedBuffer, framed_length, ESP_LOG_INFO);
 
     // send it
-    return usb_tonex_one_transmit(FramedBuffer, framed_length);
+    return tonex_common_transmit(cdc_dev, FramedBuffer, framed_length, TONEX_USB_TX_BUFFER_SIZE);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static esp_err_t usb_tonex_one_send_master_volume(float value)
+{
+    uint16_t framed_length;
+
+    // NOTE: only supported in newer Pedal firmware that came with Editor support!
+
+    // Build message                                         len LSB  len MSB
+    uint8_t message[] = {0xb9, 0x03, 0x81, 0x09, 0x03, 0x82, 0x0A,     0x00, 0x80, 0x0B, 0x03};
+
+    // payload           unknown                 param index             4 byte float value
+    uint8_t payload[] = {0xB9, 0x04, 0x03, 0x00, 0x00,         0x88, 0x00, 0x00, 0x00, 0x00 };
+
+    // set value
+    memcpy((void*)&payload[6], (void*)&value, sizeof(value));
+
+    // build total message
+    memcpy((void*)TxBuffer, (void*)message, sizeof(message));
+    memcpy((void*)&TxBuffer[sizeof(message)], (void*)payload, sizeof(payload));
+
+    // add framing
+    framed_length = tonex_common_add_framing(TxBuffer, sizeof(message) + sizeof(payload), FramedBuffer);
+
+    // debug
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, FramedBuffer, framed_length, ESP_LOG_INFO);
+
+    // send it
+    return tonex_common_transmit(cdc_dev, FramedBuffer, framed_length, TONEX_USB_TX_BUFFER_SIZE);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static esp_err_t usb_tonex_one_request_master_volume(void)
+{
+    uint16_t framed_length;
+
+    // NOTE: only supported in newer Pedal firmware that came with Editor support!
+
+    // Build message                                         len LSB  len MSB
+    uint8_t message[] = {0xb9, 0x03, 0x81, 0x0D, 0x03, 0x82, 0x05,     0x00, 0x80, 0x0B, 0x03, 0xB9, 0x03, 0x03, 0x00, 0x00 };
+
+    // build total message
+    memcpy((void*)TxBuffer, (void*)message, sizeof(message));
+
+    // add framing
+    framed_length = tonex_common_add_framing(TxBuffer, sizeof(message), FramedBuffer);
+
+    // debug
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, FramedBuffer, framed_length, ESP_LOG_INFO);
+
+    // send it
+    return tonex_common_transmit(cdc_dev, FramedBuffer, framed_length, TONEX_USB_TX_BUFFER_SIZE);
 }
 
 /****************************************************************************
@@ -538,11 +425,12 @@ static esp_err_t __attribute__((unused)) usb_tonex_one_set_active_slot(Slot newS
     memcpy((void*)&TxBuffer[sizeof(message)], (void*)TonexData->Message.PedalData.StateData, TonexData->Message.PedalData.StateDataLength);
 
     // add framing
-    framed_length = addFraming(TxBuffer, sizeof(message) + TonexData->Message.PedalData.StateDataLength, FramedBuffer);
+    framed_length = tonex_common_add_framing(TxBuffer, sizeof(message) + TonexData->Message.PedalData.StateDataLength, FramedBuffer);
 
     // send it
-    return usb_tonex_one_transmit(FramedBuffer, framed_length);    
+    return tonex_common_transmit(cdc_dev, FramedBuffer, framed_length, TONEX_USB_TX_BUFFER_SIZE);    
 }
+
 
 /****************************************************************************
 * NAME:        
@@ -649,13 +537,13 @@ static esp_err_t usb_tonex_one_set_preset_in_slot(uint16_t preset, Slot newSlot,
     memcpy((void*)&TxBuffer[sizeof(message)], (void*)TonexData->Message.PedalData.StateData, TonexData->Message.PedalData.StateDataLength);
 
     // do framing
-    framed_length = addFraming(TxBuffer, sizeof(message) + TonexData->Message.PedalData.StateDataLength, FramedBuffer);
+    framed_length = tonex_common_add_framing(TxBuffer, sizeof(message) + TonexData->Message.PedalData.StateDataLength, FramedBuffer);
 
     //ESP_LOGI(TAG, "State Data after changes - framed");
     //ESP_LOG_BUFFER_HEXDUMP(TAG, FramedBuffer, framed_length, ESP_LOG_INFO);
 
     // send it
-    return usb_tonex_one_transmit(FramedBuffer, framed_length);
+    return tonex_common_transmit(cdc_dev, FramedBuffer, framed_length, TONEX_USB_TX_BUFFER_SIZE);
 }
 
 /****************************************************************************
@@ -671,7 +559,7 @@ static bool usb_tonex_one_handle_rx(const uint8_t* data, size_t data_len, void* 
     //ESP_LOGI(TAG, "CDC Data received %d", (int)data_len);
     //ESP_LOG_BUFFER_HEXDUMP(TAG, data, data_len, ESP_LOG_INFO);
 
-    if (data_len > RX_TEMP_BUFFER_SIZE)
+    if (data_len > TONEX_RX_TEMP_BUFFER_SIZE)
     {
         ESP_LOGE(TAG, "usb_tonex_one_handle_rx data too long! %d", (int)data_len);
         return false;
@@ -710,81 +598,10 @@ static bool usb_tonex_one_handle_rx(const uint8_t* data, size_t data_len, void* 
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static esp_err_t usb_tonex_one_transmit(uint8_t* tx_data, uint16_t tx_len)
-{
-    esp_err_t ret = ESP_FAIL;
-    uint16_t bytes_this_chunk = 0;
-    uint8_t* tx_ptr = tx_data;
-
-    ESP_LOGI(TAG, "Sending %d bytes over CDC", (int)tx_len);
-
-    // send lage packets in chunks
-    while (tx_len > 0)
-    {
-        bytes_this_chunk = tx_len;
-
-        if (bytes_this_chunk > USB_TX_BUFFER_SIZE)
-        {
-            bytes_this_chunk = USB_TX_BUFFER_SIZE;
-        }
-
-        ret = cdc_acm_host_data_tx_blocking(cdc_dev, tx_ptr, bytes_this_chunk, 500);
-        
-        if (ret != ESP_OK)
-        {
-            ESP_LOGE(TAG, "cdc_acm_host_data_tx_blocking() failed: %s", esp_err_to_name(ret));   
-            break;
-        }
-
-        tx_ptr += bytes_this_chunk;
-        tx_len -= bytes_this_chunk;
-    }
-
-    return ret;
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-static esp_err_t usb_tonex_one_modify_parameter(uint16_t index, float value)
-{
-    tTonexParameter* param_ptr = NULL;
-    esp_err_t res = ESP_FAIL;
-     
-    if (index >= TONEX_PARAM_LAST)
-    {
-        ESP_LOGE(TAG, "usb_tonex_one_modify_parameters invalid index %d", (int)index);   
-        return ESP_FAIL;
-    }
-        
-    if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
-    {
-        ESP_LOGI(TAG, "usb_tonex_one_modify_parameter index: %d name: %s value: %02f", (int)index, param_ptr[index].Name, value);  
-
-        // update the local copy
-        memcpy((void*)&param_ptr[index].Value, (void*)&value, sizeof(float));
-
-        tonex_params_release_locked_access();
-        res = ESP_OK;
-    }
-
-    return res;
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
 static esp_err_t usb_tonex_one_modify_global(uint16_t global_val, float value)
 {
     esp_err_t res = ESP_FAIL;
+    float scaled_value;
 
     switch (global_val)
     {
@@ -823,6 +640,26 @@ static esp_err_t usb_tonex_one_modify_global(uint16_t global_val, float value)
             memcpy((void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TUNING_REF], (void*)&freq, sizeof(uint16_t));
             res = ESP_OK;
         } break;
+
+        case TONEX_GLOBAL_BYPASS:
+        {
+            // modify bypass in state
+            TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BYPASS_MODE] = (uint8_t)value;
+            res = ESP_OK;
+        } break;
+
+        case TONEX_GLOBAL_MASTER_VOLUME:
+        {                        
+            // global volume is sent with a special command
+            // Big Tonex uses values -40 to +3, and One uses values from 0 to 10.
+            // So, scaling the One's values to match the big Tonex
+            scaled_value = ((value + 40.0f) / 43.0f) * 10.0f;
+
+            usb_tonex_one_send_master_volume(scaled_value);
+
+            // bit of a hack here. Return fail code, so caller can avoid sending the state data unneccessarily
+            res = ESP_FAIL;
+        } break;
     }
 
     return res;
@@ -835,37 +672,7 @@ static esp_err_t usb_tonex_one_modify_global(uint16_t global_val, float value)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-uint16_t usb_tonex_one_parse_value(uint8_t* message, uint8_t* index)
-{
-    uint16_t value = 0;
-    
-    if (message[*index] == 0x81 || message[*index] == 0x82)
-    {
-        value = (message[(*index) + 2] << 8) | message[(*index) + 1];
-        (*index) += 3;
-    }
-    else if (message[*index] == 0x80)
-    {
-        value = message[(*index) + 1];
-        (*index) += 2;
-    }
-    else
-    {
-        value = message[*index];
-        (*index)++;
-    }
-    
-    return value;
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-static Status usb_tonex_one_parse_state(uint8_t* unframed, uint16_t length, uint16_t index)
+static TonexStatus usb_tonex_one_parse_state(uint8_t* unframed, uint16_t length, uint16_t index)
 {
     tTonexParameter* param_ptr;
 
@@ -893,6 +700,8 @@ static Status usb_tonex_one_parse_state(uint8_t* unframed, uint16_t length, uint
         memcpy((void*)&freq, (void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TUNING_REF], sizeof(uint16_t));
         param_ptr[TONEX_GLOBAL_TUNING_REFERENCE].Value = (float)freq;
 
+        param_ptr[TONEX_GLOBAL_BYPASS].Value = (float)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BYPASS_MODE];
+
         tonex_params_release_locked_access();
     }
 
@@ -902,12 +711,12 @@ static Status usb_tonex_one_parse_state(uint8_t* unframed, uint16_t length, uint
     {
         uint8_t data_offset = TONEX_STATE_OFFSET_START_COLORS;
         data_offset += 2; // skip `ba 14` list header
-        for (uint16_t preset_index = 0; preset_index < MAX_PRESETS; preset_index++) {
+        for (uint16_t preset_index = 0; preset_index < MAX_PRESETS_TONEX_ONE; preset_index++) {
             data_offset += 2; // skip `b9 03` list header
 
-            color_ptr[preset_index].red = usb_tonex_one_parse_value(TonexData->Message.PedalData.StateData, &data_offset);
-            color_ptr[preset_index].green = usb_tonex_one_parse_value(TonexData->Message.PedalData.StateData, &data_offset);
-            color_ptr[preset_index].blue = usb_tonex_one_parse_value(TonexData->Message.PedalData.StateData, &data_offset);
+            color_ptr[preset_index].red = tonex_common_parse_value(TonexData->Message.PedalData.StateData, &data_offset);
+            color_ptr[preset_index].green = tonex_common_parse_value(TonexData->Message.PedalData.StateData, &data_offset);
+            color_ptr[preset_index].blue = tonex_common_parse_value(TonexData->Message.PedalData.StateData, &data_offset);
         }
 
         tonex_params_release_locked_access();
@@ -930,7 +739,7 @@ static Status usb_tonex_one_parse_state(uint8_t* unframed, uint16_t length, uint
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static Status usb_tonex_one_parse_preset_details(uint8_t* unframed, uint16_t length, uint16_t index)
+static TonexStatus usb_tonex_one_parse_preset_details(uint8_t* unframed, uint16_t length, uint16_t index)
 {
     TonexData->Message.Header.type = TYPE_STATE_PRESET_DETAILS;
 
@@ -941,6 +750,65 @@ static Status usb_tonex_one_parse_preset_details(uint8_t* unframed, uint16_t len
     // debug
     //ESP_LOGI(TAG, "Preset Data Rx: %d %d", (int)length, (int)index);
     //ESP_LOG_BUFFER_HEXDUMP(TAG, TonexData->Message.PedalData.PresetData, TonexData->Message.PedalData.PresetDataLength, ESP_LOG_INFO);
+
+    return STATUS_OK;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static TonexStatus usb_tonex_one_parse_param_changed(uint8_t* unframed, uint16_t length, uint16_t index)
+{
+    uint16_t param_index;
+    float value;
+    float scaled_value;
+    tTonexParameter* param_ptr = NULL;
+    uint8_t param_start_marker[] = { 0xB9, 0x04, 0x03 };
+    
+    // try to locate the start of the parameter index
+    uint8_t* temp_ptr = memmem((void*)&unframed[index], length, (void*)param_start_marker, sizeof(param_start_marker));
+    if (temp_ptr != NULL)
+    {
+        // skip the start marker
+        temp_ptr += sizeof(param_start_marker);
+        
+        // next 2 bytes are the param index
+        param_index = *temp_ptr++;
+        param_index |= (*temp_ptr << 8);
+        temp_ptr++;
+
+        // next should be float start marker
+        if (*temp_ptr == 0x88)
+        {
+            // skip it
+            temp_ptr++;
+
+            // get the value
+            memcpy((void*)&value, (void*)temp_ptr, sizeof(float));
+
+            if (param_index == 0x00)
+            {
+                // global volume
+                // Big Tonex uses values -40 to +3, and One uses values from 0 to 10.
+                // So, scaling the One's values to match the big Tonex
+                scaled_value = ((value / 10.0f) * 43.0f) - 40.0f;
+
+                // save it
+                if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
+                {
+                    param_ptr[TONEX_GLOBAL_MASTER_VOLUME].Value = scaled_value;
+
+                    tonex_params_release_locked_access();
+                }
+
+                ESP_LOGI(TAG, "Got global volume: raw:%3.2f  scaled:%3.2f", value, scaled_value);
+            }
+        }
+    }
 
     return STATUS_OK;
 }
@@ -985,7 +853,7 @@ static uint16_t usb_tonex_one_get_current_active_preset(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static Slot slot_for_saving_preset(void)
+static Slot usb_tonex_one_slot_for_saving_preset(void)
 {
     Slot slot = C;
     switch (control_get_config_item_int(CONFIG_ITEM_SAVE_PRESET_TO_SLOT))
@@ -1080,11 +948,11 @@ static void usb_tonex_one_parse_preset_parameters(uint8_t* raw_data, uint16_t le
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static Status usb_tonex_one_parse(uint8_t* message, uint16_t inlength)
+static TonexStatus usb_tonex_one_parse(uint8_t* message, uint16_t inlength)
 {
     uint16_t out_len = 0;
 
-    Status status = removeFraming(message, inlength, FramedBuffer, &out_len);
+    TonexStatus status = tonex_common_remove_framing(message, inlength, FramedBuffer, &out_len);
 
     if (status != STATUS_OK)
     {
@@ -1106,7 +974,7 @@ static Status usb_tonex_one_parse(uint8_t* message, uint16_t inlength)
     
     tHeader header;
     uint8_t index = 2;
-    uint16_t type = usb_tonex_one_parse_value(FramedBuffer, &index);
+    uint16_t type = tonex_common_parse_value(FramedBuffer, &index);
 
     switch (type)
     {
@@ -1139,13 +1007,13 @@ static Status usb_tonex_one_parse(uint8_t* message, uint16_t inlength)
 
         default:
         {
-            ESP_LOGI(TAG, "Unknown type %d", (int)type);            
+            ESP_LOGI(TAG, "Unknown type %d", (int)type);
             header.type = TYPE_UNKNOWN;
         } break;
     };
     
-    header.size = usb_tonex_one_parse_value(FramedBuffer, &index);
-    header.unknown = usb_tonex_one_parse_value(FramedBuffer, &index);
+    header.size = tonex_common_parse_value(FramedBuffer, &index);
+    header.unknown = tonex_common_parse_value(FramedBuffer, &index);
 
     ESP_LOGI(TAG, "usb_tonex_one_parse: type: %d size: %d", (int)header.type, (int)header.size);
 
@@ -1186,8 +1054,7 @@ static Status usb_tonex_one_parse(uint8_t* message, uint16_t inlength)
 
         case TYPE_PARAM_CHANGED:
         {
-            ESP_LOGI(TAG, "Param change confirmation");
-            return STATUS_OK;
+            return usb_tonex_one_parse_param_changed(FramedBuffer, out_len, index);
         } break;
 
         default:
@@ -1206,29 +1073,6 @@ static Status usb_tonex_one_parse(uint8_t* message, uint16_t inlength)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static uint16_t usb_tonex_one_locate_message_end(uint8_t* data, uint16_t length)
-{
-    // locate the 0x7E end of packet marker
-    // starting at index 1 to skip the start marker
-    for (uint16_t loop = 1; loop < length; loop++)
-    {
-        if (data[loop] == 0x7E)
-        {
-            return loop;
-        }
-    }
-
-    // not found
-    return 0;
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
 static esp_err_t usb_tonex_one_process_single_message(uint8_t* data, uint16_t length)
 {
     void* temp_ptr;  
@@ -1238,7 +1082,7 @@ static esp_err_t usb_tonex_one_process_single_message(uint8_t* data, uint16_t le
     if ((length >= 2) && (data[0] == 0x7E) && (data[length - 1] == 0x7E))
     {
         ESP_LOGI(TAG, "Processing messages len: %d", (int)length);
-        Status status = usb_tonex_one_parse(data, length);
+        TonexStatus status = usb_tonex_one_parse(data, length);
 
         if (status != STATUS_OK)
         {
@@ -1296,18 +1140,23 @@ static esp_err_t usb_tonex_one_process_single_message(uint8_t* data, uint16_t le
 
                     current_preset = usb_tonex_one_get_current_active_preset();
 
-                    if (boot_preset_request < MAX_PRESETS) {
+                    if (boot_preset_request < MAX_PRESETS_TONEX_ONE) 
+                    {
                         // save preset name 
                         control_sync_preset_name(boot_preset_request, preset_name);
 
                         // get next preset name
                         boot_preset_request++;
                         usb_tonex_one_request_preset_details(boot_preset_request, 0);
-                    } else if (boot_preset_request == MAX_PRESETS) {
+                    } 
+                    else if (boot_preset_request == MAX_PRESETS_TONEX_ONE) 
+                    {
                         // all other preset nammes grabbed, get current preset details
                         boot_preset_request++;
                         usb_tonex_one_request_preset_details(current_preset, 0);
-                    } else {
+                    } 
+                    else 
+                    {
                         ESP_LOGI(TAG, "Received State Update. Current slot: %d. Preset: %d", (int)TonexData->Message.CurrentSlot, (int)current_preset);
                         
                         // make sure we are showing the correct preset as active                
@@ -1316,7 +1165,7 @@ static esp_err_t usb_tonex_one_process_single_message(uint8_t* data, uint16_t le
                         // read the preset params
                         usb_tonex_one_parse_preset_parameters(data, length);
 
-                         // if we have messages waiting in the queue, it will trigger another
+                        // if we have messages waiting in the queue, it will trigger another
                         // change that will overwrite this one. Skip the UI refresh to save time
                         if (uxQueueMessagesWaiting(input_queue) == 0)
                         {
@@ -1327,6 +1176,16 @@ static esp_err_t usb_tonex_one_process_single_message(uint8_t* data, uint16_t le
                             wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
                         }
 
+                        if (boot_global_request)
+                        {
+                            // request global volume
+                            usb_tonex_one_request_master_volume();
+
+                            boot_global_request = 0;
+                        }
+
+                        control_set_sync_complete();
+                        
                         // debug dump parameters
                         //tonex_dump_parameters();
                     }
@@ -1342,6 +1201,7 @@ static esp_err_t usb_tonex_one_process_single_message(uint8_t* data, uint16_t le
 
                     // flag that we need to do the boot init procedure
                     boot_init_needed = 1;
+                    boot_global_request = 1;
                     boot_preset_request = 0;
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
@@ -1450,12 +1310,44 @@ void usb_tonex_one_handle(class_driver_t* driver_obj)
                 {
                     case USB_COMMAND_SET_PRESET:
                     {
-                        if (message.Payload < MAX_PRESETS)
+                        if (message.Payload < MAX_PRESETS_TONEX_ONE)
                         {
-                            if (usb_tonex_one_set_preset_in_slot(message.Payload, slot_for_saving_preset(), 1) != ESP_OK)
+                            if (usb_tonex_one_set_preset_in_slot(message.Payload, usb_tonex_one_slot_for_saving_preset(), 1) != ESP_OK)
                             {
                                 // failed return to queue?
                             }
+                        }
+                    } break;
+                    
+                    case USB_COMMAND_LOAD_PRESET_TO_SLOT_A:
+                    {
+                        if (message.Payload < MAX_PRESETS_TONEX_ONE)
+                        {
+                            ESP_LOGI(TAG, "Loading preset %d to Slot A via MIDI CC 120", (int)message.Payload);
+                            if (usb_tonex_one_set_preset_in_slot(message.Payload, A, 0) != ESP_OK)
+                            {
+                                ESP_LOGE(TAG, "Failed to load preset %d to Slot A", (int)message.Payload);
+                            }
+                        }
+                        else
+                        {
+                            ESP_LOGW(TAG, "Invalid preset index %d for Slot A (max %d)", (int)message.Payload, MAX_PRESETS_TONEX_ONE - 1);
+                        }
+                    } break;
+                    
+                    case USB_COMMAND_LOAD_PRESET_TO_SLOT_B:
+                    {
+                        if (message.Payload < MAX_PRESETS_TONEX_ONE)
+                        {
+                            ESP_LOGI(TAG, "Loading preset %d to Slot B via MIDI CC 121", (int)message.Payload);
+                            if (usb_tonex_one_set_preset_in_slot(message.Payload, B, 0) != ESP_OK)
+                            {
+                                ESP_LOGE(TAG, "Failed to load preset %d to Slot B", (int)message.Payload);
+                            }
+                        }
+                        else
+                        {
+                            ESP_LOGW(TAG, "Invalid preset index %d for Slot B (max %d)", (int)message.Payload, MAX_PRESETS_TONEX_ONE - 1);
                         }
                     } break;   
                     
@@ -1464,7 +1356,7 @@ void usb_tonex_one_handle(class_driver_t* driver_obj)
                         if (message.Payload < TONEX_PARAM_LAST)
                         {
                             // modify the param
-                            usb_tonex_one_modify_parameter(message.Payload, message.PayloadFloat);
+                            tonex_common_modify_parameter(message.Payload, message.PayloadFloat);
 
                             // send it
                             usb_tonex_one_send_single_parameter(message.Payload, message.PayloadFloat);
@@ -1472,13 +1364,14 @@ void usb_tonex_one_handle(class_driver_t* driver_obj)
                         else if (message.Payload < TONEX_GLOBAL_LAST)
                         {
                             // modify the global
-                            usb_tonex_one_modify_global(message.Payload, message.PayloadFloat);
+                            if (usb_tonex_one_modify_global(message.Payload, message.PayloadFloat) == ESP_OK)
+                            {
+                                // debug
+                                //usb_tonex_one_dump_state(&TonexData->Message.PedalData.TonexStateData);
 
-                            // debug
-                            //usb_tonex_one_dump_state(&TonexData->Message.PedalData.TonexStateData);
-
-                            // send it by setting the same preset active again, which sends the state data
-                            usb_tonex_one_set_preset_in_slot(usb_tonex_one_get_current_active_preset(), slot_for_saving_preset(), 1);
+                                // send it by setting the same preset active again, which sends the state data
+                                usb_tonex_one_set_preset_in_slot(usb_tonex_one_get_current_active_preset(), usb_tonex_one_slot_for_saving_preset(), 1);
+                            }
                         }
                         else
                         {
@@ -1514,7 +1407,7 @@ void usb_tonex_one_handle(class_driver_t* driver_obj)
             do
             {    
                 // locate the end of the message
-                end_marker_pos = usb_tonex_one_locate_message_end(rx_entry_ptr, rx_entry_length);
+                end_marker_pos = tonex_common_locate_message_end(rx_entry_ptr, rx_entry_length);
 
                 if (end_marker_pos == 0)
                 {
@@ -1577,20 +1470,20 @@ void usb_tonex_one_init(class_driver_t* driver_obj, QueueHandle_t comms_queue)
     // set all buffers as ready for writing
     for (uint8_t loop = 0; loop < MAX_INPUT_BUFFERS; loop++)
     {
-        memset((void*)InputBuffers[loop].Data, 0, RX_TEMP_BUFFER_SIZE);
+        memset((void*)InputBuffers[loop].Data, 0, TONEX_RX_TEMP_BUFFER_SIZE);
         InputBuffers[loop].ReadyToWrite = 1;
         InputBuffers[loop].ReadyToRead = 0;
     }
 
     // more big buffers in PSRAM
-    TxBuffer = heap_caps_malloc(RX_TEMP_BUFFER_SIZE, MALLOC_CAP_SPIRAM);
+    TxBuffer = heap_caps_malloc(TONEX_RX_TEMP_BUFFER_SIZE, MALLOC_CAP_SPIRAM);
     if (TxBuffer == NULL)
     {
         ESP_LOGE(TAG, "Failed to allocate TxBuffer buffer!");
         return;
     }
     
-    FramedBuffer = heap_caps_malloc(RX_TEMP_BUFFER_SIZE, MALLOC_CAP_SPIRAM);
+    FramedBuffer = heap_caps_malloc(TONEX_RX_TEMP_BUFFER_SIZE, MALLOC_CAP_SPIRAM);
     if (FramedBuffer == NULL)
     {
         ESP_LOGE(TAG, "Failed to allocate FramedBuffer buffer!");
@@ -1662,15 +1555,15 @@ void usb_tonex_one_init(class_driver_t* driver_obj, QueueHandle_t comms_queue)
     // set the config
     const cdc_acm_host_device_config_t dev_config = {
         .connection_timeout_ms = 1000,
-        .out_buffer_size = USB_TX_BUFFER_SIZE,
-        .in_buffer_size = RX_TEMP_BUFFER_SIZE,
+        .out_buffer_size = TONEX_USB_TX_BUFFER_SIZE,
+        .in_buffer_size = TONEX_RX_TEMP_BUFFER_SIZE,
         .user_arg = NULL,
         .event_cb = NULL,
         .data_cb = usb_tonex_one_handle_rx
     };
 
     // release the reserved large buffers space we malloc'd at boot
-    heap_caps_free(PreallocatedMemory);
+    tonex_common_release_memory();
 
     // debug
     //heap_caps_print_heap_info(MALLOC_CAP_DMA);
@@ -1727,26 +1620,4 @@ void usb_tonex_one_deinit(void)
 {
     //to do here: need to clean up properly if pedal disconnected
     //cdc_acm_host_close();
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-void usb_tonex_one_preallocate_memory(void)
-{
-    // note here: the Tonex One requires large CDC buffers. Not many heap areas have enough contiguous space.
-    // if we let the system boot and no Tonex is conncted, the other parts of the system allocate mem
-    // and leave us with no spaces big enough to hold the buffers.
-    // Work around here: preallocate the buffers we need, and then free them just before the CDC allocation,
-    // effectively reserving them and then other parts of system can use different heap areas.
-    // +256 here just to be sure.
-    PreallocatedMemory = heap_caps_malloc(RX_TEMP_BUFFER_SIZE + USB_TX_BUFFER_SIZE + 256, MALLOC_CAP_DMA);
-    if (PreallocatedMemory == NULL)
-    {
-        ESP_LOGE(TAG, "Failed to allocate PreallocatedMemory!");
-    } 
 }

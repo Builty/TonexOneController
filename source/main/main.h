@@ -23,7 +23,7 @@ limitations under the License.
 extern "C" {
 #endif
 
-#define APP_VERSION		"1.0.10.2"
+#define APP_VERSION		"2.0.0.2"
 
 #define I2C_MASTER_NUM_1                0          
 #define I2C_MASTER_NUM_2                1          
@@ -204,6 +204,10 @@ extern SemaphoreHandle_t I2CMutex_2;
 
     #define WAVESHARE_240_280_BUZZER                  GPIO_NUM_42
 
+    // Touch
+    #define TOUCH_RESET 		GPIO_NUM_13
+    #define TOUCH_INT           GPIO_NUM_14
+
 #elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169
     // I2C bus 1
     #define I2C_MASTER_1_SCL_IO  GPIO_NUM_10       
@@ -323,6 +327,198 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define ATOM3SR_LCD_GPIO_DC             (GPIO_NUM_42)
     #define ATOM3SR_LCD_GPIO_CS             (GPIO_NUM_14)
     // Note LCD Backlight uses led driver on I2C
+    
+#elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3
+    // I2C bus 1
+    #define I2C_MASTER_1_SCL_IO  GPIO_NUM_17       
+    #define I2C_MASTER_1_SDA_IO  GPIO_NUM_18       
+
+    // I2C bus 2
+    #define I2C_MASTER_2_SCL_IO  -1
+    #define I2C_MASTER_2_SDA_IO  -1
+
+    #define EXTERNAL_IO_EXPANDER_BUS       I2C_MASTER_NUM_1
+    #define EXTERNAL_IO_EXPANDER_MUTEX     I2CMutex_1 
+
+    // direct IO pins
+    #define FOOTSWITCH_1		GPIO_NUM_1
+    #define FOOTSWITCH_2		GPIO_NUM_2
+    #define FOOTSWITCH_3		GPIO_NUM_3
+    #define FOOTSWITCH_4		GPIO_NUM_10
+
+    // Midi
+    #define UART_RX_PIN         GPIO_NUM_11 
+    #define UART_TX_PIN         GPIO_NUM_12 
+
+    // leds
+    #define LED_OUTPUT_GPIO_NUM          -1
+
+    // battery power pin
+    #define LG_TDISP_S3_POWERON        GPIO_NUM_15
+
+    // LCD pins
+    #define LG_TDISP_S3_TFT_BL         GPIO_NUM_38
+    #define LG_TDISP_S3_TFT_DATA0      GPIO_NUM_39
+    #define LG_TDISP_S3_TFT_DATA1      GPIO_NUM_40
+    #define LG_TDISP_S3_TFT_DATA2      GPIO_NUM_41
+    #define LG_TDISP_S3_TFT_DATA3      GPIO_NUM_42
+    #define LG_TDISP_S3_TFT_DATA4      GPIO_NUM_45
+    #define LG_TDISP_S3_TFT_DATA5      GPIO_NUM_46
+    #define LG_TDISP_S3_TFT_DATA6      GPIO_NUM_47
+    #define LG_TDISP_S3_TFT_DATA7      GPIO_NUM_48
+    #define LG_TDISP_S3_TFT_RST        GPIO_NUM_5
+    #define LG_TDISP_S3_TFT_CS         GPIO_NUM_6
+    #define LG_TDISP_S3_TFT_DC         GPIO_NUM_7
+    #define LG_TDISP_S3_TFT_WR         GPIO_NUM_8
+    #define LG_TDISP_S3_TFT_RD         GPIO_NUM_9
+
+    #define LG_TDISP_S3_TOUCH_IRQ      GPIO_NUM_16
+    #define LG_TDISP_S3_TOUCH_RST      GPIO_NUM_21
+
+    // Touch
+    #define TOUCH_RESET 		       LG_TDISP_S3_TOUCH_RST
+    #define TOUCH_INT                  LG_TDISP_S3_TOUCH_IRQ
+
+#elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
+    // I2C bus 1
+    #define I2C_MASTER_1_SCL_IO  GPIO_NUM_48       
+    #define I2C_MASTER_1_SDA_IO  GPIO_NUM_47       
+
+    // I2C bus 2
+    #define I2C_MASTER_2_SCL_IO  -1
+    #define I2C_MASTER_2_SDA_IO  -1
+
+    #define EXTERNAL_IO_EXPANDER_BUS       I2C_MASTER_NUM_1
+    #define EXTERNAL_IO_EXPANDER_MUTEX     I2CMutex_1 
+
+    // direct IO pins
+    #define FOOTSWITCH_1		GPIO_NUM_1
+    #define FOOTSWITCH_2		GPIO_NUM_2
+    #define FOOTSWITCH_3		GPIO_NUM_3
+    #define FOOTSWITCH_4		GPIO_NUM_4
+
+    // Midi
+    #define UART_RX_PIN         GPIO_NUM_5 
+    #define UART_TX_PIN         GPIO_NUM_6 
+
+    // leds
+    #define LED_OUTPUT_GPIO_NUM          -1
+    
+    // LCD pins
+    #define WAVESHARE_19_LCD_GPIO_SCLK           GPIO_NUM_10
+    #define WAVESHARE_19_LCD_GPIO_MOSI           GPIO_NUM_13
+    #define WAVESHARE_19_LCD_GPIO_RST            GPIO_NUM_9
+    #define WAVESHARE_19_LCD_GPIO_DC             GPIO_NUM_11
+    #define WAVESHARE_19_LCD_GPIO_CS             GPIO_NUM_12
+    #define WAVESHARE_19_LCD_GPIO_BL             GPIO_NUM_14
+
+    // Touch
+    #define TOUCH_RESET 		                 GPIO_NUM_17
+    #define TOUCH_INT                            GPIO_NUM_21
+
+#elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35B
+    // I2C bus 1
+    #define I2C_MASTER_1_SCL_IO  GPIO_NUM_7       
+    #define I2C_MASTER_1_SDA_IO  GPIO_NUM_8       
+
+    // I2C bus 2
+    #define I2C_MASTER_2_SCL_IO  -1
+    #define I2C_MASTER_2_SDA_IO  -1
+
+    #define EXTERNAL_IO_EXPANDER_BUS       I2C_MASTER_NUM_1
+    #define EXTERNAL_IO_EXPANDER_MUTEX     I2CMutex_1 
+
+    // IO expander
+    #define CAM_PWDN       		IO_EXPANDER_PIN_0
+    #define LCD_RESET    		IO_EXPANDER_PIN_1
+    #define TOUCH_INT    		IO_EXPANDER_PIN_2
+    #define SD_CS       		IO_EXPANDER_PIN_3
+
+    #define FOOTSWITCH_1		GPIO_NUM_38
+    #define FOOTSWITCH_2		GPIO_NUM_39
+    #define FOOTSWITCH_3		GPIO_NUM_40
+    #define FOOTSWITCH_4		GPIO_NUM_41
+
+    // Midi: 
+    #define UART_RX_PIN         GPIO_NUM_17
+    #define UART_TX_PIN         GPIO_NUM_18 
+
+    // leds
+    #define LED_OUTPUT_GPIO_NUM          -1
+
+    // LCD pins
+    #define WAVESHARE_35_LCD_GPIO_SCLK           GPIO_NUM_5
+    #define WAVESHARE_35_LCD_GPIO_QSPI_0         GPIO_NUM_1
+    #define WAVESHARE_35_LCD_GPIO_QSPI_1         GPIO_NUM_2
+    #define WAVESHARE_35_LCD_GPIO_QSPI_2         GPIO_NUM_3
+    #define WAVESHARE_35_LCD_GPIO_QSPI_3         GPIO_NUM_4
+    #define WAVESHARE_35_LCD_GPIO_RST            GPIO_NUM_NC
+    #define WAVESHARE_35_LCD_GPIO_CS             GPIO_NUM_12
+    #define WAVESHARE_35_LCD_GPIO_BL             GPIO_NUM_6
+
+    // backlight
+    #define WAVESHARE_35_LCD_BL_LEDC_TIMER              LEDC_TIMER_1
+    #define WAVESHARE_35_LCD_BL_LEDC_MODE               LEDC_LOW_SPEED_MODE
+    #define WAVESHARE_35_LCD_BL_LEDC_CHANNEL            LEDC_CHANNEL_0
+    #define WAVESHARE_35_LCD_BL_LEDC_DUTY_RES           LEDC_TIMER_10_BIT // Set duty resolution to 13 bits
+    #define WAVESHARE_35_LCD_BL_LEDC_DUTY               (1024)                // Set duty to 50%. (2 ** 13) * 50% = 4096
+    #define WAVESHARE_35_LCD_BL_LEDC_FREQUENCY          (10000)          // Frequency in Hertz. Set frequency at 5 kHz
+
+
+    // Pin assignments for SD Card
+    #define PIN_NUM_MISO        GPIO_NUM9
+    #define PIN_NUM_MOSI        GPIO_NUM10
+    #define PIN_NUM_CLK         GPIO_NUM11
+
+#elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC3248W535
+    // I2C bus 1
+    #define I2C_MASTER_1_SCL_IO  GPIO_NUM_8       
+    #define I2C_MASTER_1_SDA_IO  GPIO_NUM_4       
+
+    // I2C bus 2
+    #define I2C_MASTER_2_SCL_IO  GPIO_NUM_17
+    #define I2C_MASTER_2_SDA_IO  GPIO_NUM_18
+
+    #define EXTERNAL_IO_EXPANDER_BUS       I2C_MASTER_NUM_2
+    #define EXTERNAL_IO_EXPANDER_MUTEX     I2CMutex_2 
+
+    #define FOOTSWITCH_1		GPIO_NUM_5
+    #define FOOTSWITCH_2		GPIO_NUM_6
+    #define FOOTSWITCH_3		GPIO_NUM_7
+    #define FOOTSWITCH_4		GPIO_NUM_15
+
+    // Midi: 
+    #define UART_RX_PIN         GPIO_NUM_16
+    #define UART_TX_PIN         GPIO_NUM_46 
+
+    // leds
+    #define LED_OUTPUT_GPIO_NUM          -1
+
+    // LCD pins
+    #define JC3248W_LCD_GPIO_SCLK           GPIO_NUM_47
+    #define JC3248W_LCD_GPIO_QSPI_0         GPIO_NUM_21
+    #define JC3248W_LCD_GPIO_QSPI_1         GPIO_NUM_48
+    #define JC3248W_LCD_GPIO_QSPI_2         GPIO_NUM_40
+    #define JC3248W_LCD_GPIO_QSPI_3         GPIO_NUM_39
+    #define JC3248W_LCD_GPIO_RST            GPIO_NUM_NC
+    #define JC3248W_LCD_GPIO_CS             GPIO_NUM_45
+    #define JC3248W_LCD_GPIO_BL             GPIO_NUM_1
+    #define JC3248W_LCD_GPIO_TE             GPIO_NUM_38
+    
+    // backlight
+    #define JC3248W_LCD_BL_LEDC_TIMER              LEDC_TIMER_1
+    #define JC3248W_LCD_BL_LEDC_MODE               LEDC_LOW_SPEED_MODE
+    #define JC3248W_LCD_BL_LEDC_CHANNEL            LEDC_CHANNEL_0
+    #define JC3248W_LCD_BL_LEDC_DUTY_RES           LEDC_TIMER_10_BIT // Set duty resolution to 13 bits
+    #define JC3248W_LCD_BL_LEDC_DUTY               (1024)                // Set duty to 50%. (2 ** 13) * 50% = 4096
+    #define JC3248W_LCD_BL_LEDC_FREQUENCY          (10000)          // Frequency in Hertz. Set frequency at 5 kHz
+
+
+    // Pin assignments for SD Card
+    #define PIN_NUM_MISO        GPIO_NUM13
+    #define PIN_NUM_MOSI        GPIO_NUM11
+    #define PIN_NUM_CLK         GPIO_NUM12
+    #define PIN_NUM_CS          GPIO_NUM10
 
 #else
     #error "Unknown hardware platform!"

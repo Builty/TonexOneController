@@ -38,6 +38,8 @@ limitations under the License.
 #include "esp_event.h"
 #include "lwip/err.h"
 #include "lwip/sys.h"
+#include "lwip/sockets.h"
+#include "lwip/ip_addr.h"
 #include "json_parser.h"
 #include "json_generator.h"
 #include "mdns.h"
@@ -47,7 +49,9 @@ limitations under the License.
 #include "usb_comms.h"
 #include "task_priorities.h"
 #include "tonex_params.h"
+#include "usb_comms.h"
 #include "usb_tonex_one.h"
+#include "display.h"
 
 #define WIFI_CONFIG_TASK_STACK_SIZE   (3 * 1024)
 
@@ -60,6 +64,10 @@ limitations under the License.
 #define WIFI_FAIL_BIT           BIT1
 #define MAX_TEMP_BUFFER         (20 * 1024)
 #define MAX_TEXT_LENGTH         128
+#define MAX_CONSECUTIVE_ERRORS  5
+#define MAX_LOCATER_PACKET      200
+#define LOCATER_PORT            12106
+#define LOCATER_TIMER_MSEC      3000        // ticks
 
 static int s_retry_num = 0;
 static int wifi_connect_status = 0;
@@ -69,6 +77,7 @@ static httpd_handle_t http_server = NULL;
 static httpd_config_t http_config = HTTPD_DEFAULT_CONFIG();
 static EventGroupHandle_t s_wifi_event_group;
 static QueueHandle_t wifi_input_queue;
+static uint8_t presetIndexes[MAX_SUPPORTED_PRESETS];
 
 static esp_err_t index_get_handler(httpd_req_t *req);
 static esp_err_t get_handler(httpd_req_t *req);
@@ -104,16 +113,25 @@ typedef struct
     jparse_ctx_t jctx;
     json_gen_str_t jstr;
     httpd_ws_frame_t ws_rsp;
-    char PresetNames[MAX_PRESETS_DEFAULT][MAX_TEXT_LENGTH];
+    char PresetNames[MAX_SUPPORTED_PRESETS][MAX_PRESET_NAME_LENGTH];
     uint16_t PresetIndex;
     uint8_t ParamsChanged : 1;
     uint8_t PresetChanged : 1;
-    int8_t PresetNameChanged;
     uint8_t ConfigChanged : 1;
     char wifi_ssid[MAX_WIFI_SSID_PW];
     char wifi_password[MAX_WIFI_SSID_PW];
     char TempBuffer[MAX_TEMP_BUFFER];
 } tWebConfigData;
+
+typedef struct 
+{
+    int sock;
+    int consecutive_errors;
+    struct sockaddr_in broadcast_addr;
+    esp_ip4_addr_t ip_address;
+    char IP[20];
+    char locater_packet[MAX_LOCATER_PACKET];
+} tLocaterData;
 
 static const httpd_uri_t index_get = 
 {
@@ -139,6 +157,7 @@ extern const uint8_t index_html_end[] asm("_binary_index_html_end");
 static esp_err_t stop_webserver(void);
 static void wifi_init_sta(void);
 static tWebConfigData* pWebConfig;
+static tLocaterData LocaterData;
 
 /****************************************************************************
 * NAME:        
@@ -156,39 +175,24 @@ static uint8_t process_wifi_command(tWiFiMessage* message)
     {
         case EVENT_SYNC_PARAMS:
         {
-            // send to all web sockets clients
-            //ws_send_all_clients(&http_server, &send_params_async);
-
             pWebConfig->ParamsChanged = 1;
         } break;
 
         case EVENT_SYNC_PRESET_NAME:
         {
             // save preset details
-            memcpy((void*)pWebConfig->PresetNames[message->Value], (void*)message->Text, MAX_TEXT_LENGTH - 1);
-
-            // send to all web sockets clients
-            //ws_send_all_clients(&http_server, &send_preset_async);
-
-            pWebConfig->PresetNameChanged = message->Value;
+            memcpy((void*)pWebConfig->PresetNames[message->Value], (void*)message->Text, MAX_PRESET_NAME_LENGTH - 1);
         } break;
 
         case EVENT_SYNC_PRESET:
         {
             // save preset details
             pWebConfig->PresetIndex = message->Value;
-
-            // send to all web sockets clients
-            //ws_send_all_clients(&http_server, &send_preset_async);
-
             pWebConfig->PresetChanged = 1;
         } break;
 
         case EVENT_SYNC_CONFIG:
         {
-            // send to all web sockets clients
-            //ws_send_all_clients(&http_server, &send_config_async);
-            
             pWebConfig->ConfigChanged = 1;
         } break;    
     }
@@ -222,8 +226,8 @@ void wifi_request_sync(uint8_t type, void* arg1, void* arg2)
             message.Event = EVENT_SYNC_PRESET_NAME;
 
             // get preset name
-            sprintf(message.Text, "%d: ", *(int*)arg2 + 1);
-            strncat(message.Text, arg1, MAX_TEXT_LENGTH - 1);
+            sprintf(message.Text, "%d: ", *(int*)arg2 + usb_get_first_preset_index_for_connected_modeller());
+            strncat(message.Text, arg1, MAX_PRESET_NAME_LENGTH - 1);
 
             // get preset index
             message.Value = *(uint32_t*)arg2;
@@ -374,6 +378,7 @@ static void wifi_build_config_json(void)
     json_gen_obj_set_int(&pWebConfig->jstr, "SCREEN_ROT", control_get_config_item_int(CONFIG_ITEM_SCREEN_ROTATION));
     json_gen_obj_set_int(&pWebConfig->jstr, "LOOP_AROUND", control_get_config_item_int(CONFIG_ITEM_LOOP_AROUND));
     json_gen_obj_set_int(&pWebConfig->jstr, "PRESET_SLOT", control_get_config_item_int(CONFIG_ITEM_SAVE_PRESET_TO_SLOT));
+    json_gen_obj_set_int(&pWebConfig->jstr, "HIGH_TCH_SNS", control_get_config_item_int(CONFIG_ITEM_ENABLE_HIGHER_TOUCH_SENS));
 
     control_get_config_item_string(CONFIG_ITEM_WIFI_SSID, str_val);
     json_gen_obj_set_string(&pWebConfig->jstr, "WIFI_SSID", str_val);
@@ -447,7 +452,7 @@ static void wifi_build_config_json(void)
     json_gen_obj_set_int(&pWebConfig->jstr, "INTFS_ES4_V2", control_get_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT4_VAL2));
 
     json_gen_push_array(&pWebConfig->jstr, "PRESET_COLORS");
-    for (uint8_t preset_index = 0; preset_index < MAX_PRESETS; preset_index++)
+    for (uint8_t preset_index = 0; preset_index < usb_get_max_presets_for_connected_modeller(); preset_index++)
     {
         uint32_t preset_color;
         if (tonex_params_colors_get_color(preset_index, &preset_color) == ESP_OK)
@@ -460,11 +465,72 @@ static void wifi_build_config_json(void)
     json_gen_pop_array(&pWebConfig->jstr);
     
     json_gen_push_array(&pWebConfig->jstr, "PRESET_ORDER");
-    for (uint8_t index = 0; index < MAX_PRESETS; index++)
+    for (uint8_t index = 0; index < usb_get_max_presets_for_connected_modeller(); index++)
     {
         json_gen_arr_set_int(&pWebConfig->jstr, control_get_preset_order()[index]);
     }
     json_gen_pop_array(&pWebConfig->jstr);
+
+    // add the }
+    json_gen_end_object(&pWebConfig->jstr);
+
+    // end generation
+    json_gen_str_end(&pWebConfig->jstr);
+
+    //debug ESP_LOGI(TAG, "Json: %s", pWebConfig->TempBuffer);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      none
+* NOTES:       none
+****************************************************************************/
+static void wifi_build_modeller_data_json(void)
+{
+    // init generation of json response
+    json_gen_str_start(&pWebConfig->jstr, pWebConfig->TempBuffer, MAX_TEMP_BUFFER, NULL, NULL);
+
+    // start json object, adds {
+    json_gen_start_object(&pWebConfig->jstr);
+
+    // add response
+    json_gen_obj_set_string(&pWebConfig->jstr, "CMD", "GETMODELLERDATA");
+
+    // set modeller values
+    json_gen_obj_set_int(&pWebConfig->jstr, "MAX_PRESETS", usb_get_max_presets_for_connected_modeller());
+    json_gen_obj_set_int(&pWebConfig->jstr, "START_PRESET", usb_get_first_preset_index_for_connected_modeller());
+
+    // add the }
+    json_gen_end_object(&pWebConfig->jstr);
+
+    // end generation
+    json_gen_str_end(&pWebConfig->jstr);
+
+    //debug ESP_LOGI(TAG, "Json: %s", pWebConfig->TempBuffer);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      none
+* NOTES:       none
+****************************************************************************/
+static void wifi_build_is_sync_complete_json(void)
+{
+    // init generation of json response
+    json_gen_str_start(&pWebConfig->jstr, pWebConfig->TempBuffer, MAX_TEMP_BUFFER, NULL, NULL);
+
+    // start json object, adds {
+    json_gen_start_object(&pWebConfig->jstr);
+
+    // add response
+    json_gen_obj_set_string(&pWebConfig->jstr, "CMD", "GETSYNCCOMPLETE");
+
+    // set values
+    json_gen_obj_set_int(&pWebConfig->jstr, "SYNC", control_get_sync_complete());
 
     // add the }
     json_gen_end_object(&pWebConfig->jstr);
@@ -607,6 +673,7 @@ static esp_err_t ws_handler(httpd_req_t *req)
         if (buf == NULL) 
         {
             ESP_LOGE(TAG, "Failed to calloc memory for buf");
+            heap_caps_print_heap_info(MALLOC_CAP_SPIRAM);
             return ESP_ERR_NO_MEM;
         }
         memset((void*)buf, 0, ws_pkt.len + 1);
@@ -679,14 +746,41 @@ static esp_err_t ws_handler(httpd_req_t *req)
                         // build packet and send
                         build_send_ws_response_packet(req, pWebConfig->TempBuffer);
                     }
+                    else if (strcmp(str_val, "GETMODELLERDATA") == 0)
+                    {
+                        // send current preset details
+                        ESP_LOGI(TAG, "Modeller data request");
+
+                        // build json response
+                        wifi_build_modeller_data_json();
+                        
+                        // build packet and send
+                        build_send_ws_response_packet(req, pWebConfig->TempBuffer);
+                    }
+                    else if (strcmp(str_val, "GETSYNCCOMPLETE") == 0)
+                    {
+                        // send current sync status
+                        ESP_LOGI(TAG, "is Sync request");
+
+                        // build json response
+                        wifi_build_is_sync_complete_json();
+                        
+                        // build packet and send
+                        build_send_ws_response_packet(req, pWebConfig->TempBuffer);
+                    }
                     else if (strcmp(str_val, "GETPRESETNAMES") == 0)
                     {
                         // send current preset details
                         ESP_LOGI(TAG, "Preset names request");
 
                         // build json response
-                        uint8_t presetIndexes[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
-                        wifi_build_preset_names_json(presetIndexes, 20);
+                        uint8_t max_presets = usb_get_max_presets_for_connected_modeller();
+                        
+                        for (uint8_t loop = 0; loop < max_presets; loop++)
+                        {
+                            presetIndexes[loop] = loop;
+                        }
+                        wifi_build_preset_names_json(presetIndexes, max_presets);
                         
                         // build packet and send
                         build_send_ws_response_packet(req, pWebConfig->TempBuffer);
@@ -763,7 +857,12 @@ static esp_err_t ws_handler(httpd_req_t *req)
                         {
                             control_set_config_item_int(CONFIG_ITEM_SAVE_PRESET_TO_SLOT, int_val);
                         }
-                                    
+
+                        if (json_obj_get_int(&pWebConfig->jctx, "HIGH_TCH_SNS", &int_val) == OS_SUCCESS)
+                        {
+                            control_set_config_item_int(CONFIG_ITEM_ENABLE_HIGHER_TOUCH_SENS, int_val);
+                        }
+
                         if (json_obj_get_int(&pWebConfig->jctx, "EXTFS_PS_LAYOUT", &int_val) == OS_SUCCESS)
                         {
                             control_set_config_item_int(CONFIG_ITEM_EXT_FOOTSW_PRESET_LAYOUT, int_val);
@@ -1117,21 +1216,6 @@ static esp_err_t ws_handler(httpd_req_t *req)
                             pWebConfig->PresetChanged = 0;
                         }
     
-                        if (pWebConfig->PresetNameChanged >= 0)
-                        {
-                            // send current preset
-                            ESP_LOGI(TAG, "Preset name update");
-
-                            // build json response
-                            uint8_t presetIndexes[] = {pWebConfig->PresetNameChanged};
-                            wifi_build_preset_names_json(presetIndexes, 1);
-                        
-                            // build packet and send
-                            build_send_ws_response_packet(req, pWebConfig->TempBuffer);
-
-                            pWebConfig->PresetNameChanged = -1;
-                        }
-             
                         if (pWebConfig->ConfigChanged)
                         {
                             // send current config
@@ -1155,10 +1239,12 @@ static esp_err_t ws_handler(httpd_req_t *req)
 
                         if (json_obj_get_array(&pWebConfig->jctx, "PRESET_ORDER", &preset_order_count) == OS_SUCCESS)
                         {
-                            if (preset_order_count == MAX_PRESETS)
+                            if (preset_order_count == usb_get_max_presets_for_connected_modeller())
                             {
-                                uint8_t preset_order[MAX_PRESETS];
-                                for (uint8_t i = 0; i < MAX_PRESETS; i++) {
+                                uint8_t preset_order[MAX_SUPPORTED_PRESETS];
+                                
+                                for (uint8_t i = 0; i < usb_get_max_presets_for_connected_modeller(); i++) 
+                                {
                                     int value;
                                     json_arr_get_int(&pWebConfig->jctx, i, &value);
                                     preset_order[i] = value;
@@ -1423,9 +1509,23 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t e
         ESP_LOGI(TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
         s_retry_num = 0;
 
+        // save the IP
+        LocaterData.ip_address = event->ip_info.ip;
+
+        // also save as string
+        char ip_str[16];
+        snprintf(ip_str, sizeof(ip_str), IPSTR, IP2STR(&event->ip_info.ip));
+        strncpy(LocaterData.IP, ip_str, sizeof(LocaterData.IP) - 1);
+        LocaterData.IP[sizeof(LocaterData.IP) - 1] = '\0'; // Ensure null termination
+
         xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
         wifi_connect_status = 1;
         control_set_wifi_status(1);
+
+        // show toast message with IP address
+        char toast_text[50];
+        sprintf(toast_text, "Connected to WiFi:\n%s", ip_str);
+        UI_ShowToast(toast_text);
     }
 }
 
@@ -1577,14 +1677,27 @@ void start_mdns_service()
     esp_err_t err = mdns_init();
     if (err) 
     {
-        ESP_LOGE(TAG, "MDNS Init failed: %d\n", err);
+        ESP_LOGE(TAG, "MDNS Init failed: %d", err);
         return;
     }
 
     control_get_config_item_string(CONFIG_ITEM_MDNS_NAME, mdns_name);
     mdns_hostname_set(mdns_name);
     mdns_instance_name_set(mdns_name);
-    mdns_service_add(NULL, "_http", "_tcp", 80, NULL, 0);
+
+    mdns_txt_item_t serviceTxtData[] = {
+        {"board", "ESP32-S3"},
+    };
+
+    if (mdns_service_add("Tonex-WebServer", "_http", "_tcp", 80, serviceTxtData, 1) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "MDNS mdns_service_add failed");
+    }
+    
+    if (mdns_service_subtype_add_for_host("Tonex-WebServer", "_http", "_tcp", NULL, "_server") != ESP_OK)
+    {
+        ESP_LOGE(TAG, "MDNS mdns_service_subtype_add_for_host failed");
+    }
 }
 
 /****************************************************************************
@@ -1609,12 +1722,102 @@ static void wifi_kill_all(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+static void send_locater_broadcast(void) 
+{   
+    // Recreate socket if needed or after errors
+    if (LocaterData.sock < 0 || LocaterData.consecutive_errors >= MAX_CONSECUTIVE_ERRORS) 
+    {
+        if (LocaterData.sock >= 0) 
+        {
+            close(LocaterData.sock);
+            LocaterData.sock = -1;
+        }
+        
+        LocaterData.sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+        if (LocaterData.sock < 0) 
+        {
+            ESP_LOGE(TAG, "Failed to create Locater socket, retrying...");
+            LocaterData.consecutive_errors++;
+            return;
+        }
+
+        int broadcast = 1;
+        if (setsockopt(LocaterData.sock, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast)) < 0) 
+        {
+            ESP_LOGE(TAG, "Failed to set broadcast option: %d", errno);
+            close(LocaterData.sock);
+            LocaterData.sock = -1;
+            LocaterData.consecutive_errors++;
+            return;
+        }
+        
+        LocaterData.broadcast_addr.sin_family = AF_INET;
+        LocaterData.broadcast_addr.sin_port = htons(LOCATER_PORT);
+        
+        // generate UDP broadcast address
+        esp_ip4_addr_t broadcast_addr;
+        broadcast_addr.addr = LocaterData.ip_address.addr | htonl(0x000000FF);
+        LocaterData.broadcast_addr.sin_addr.s_addr = broadcast_addr.addr; 
+        memset(LocaterData.broadcast_addr.sin_zero, 0, sizeof(LocaterData.broadcast_addr.sin_zero));
+
+        // Reset error counter on successful socket creation
+        LocaterData.consecutive_errors = 0;
+        ESP_LOGI(TAG, "Locater broadcast created to IP:" IPSTR, IP2STR(&broadcast_addr));
+        ESP_LOGI(TAG, "Locater broadcast port: %d", (int)LOCATER_PORT);
+    }
+    
+    snprintf(LocaterData.locater_packet, sizeof(LocaterData.locater_packet),
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        "<locater>\n"
+        "<server>\n"
+        "<ip>%s</ip>\n"
+        "</server>\n"
+        "</locater>",
+        LocaterData.IP
+        );
+
+    ssize_t __attribute__((unused)) sent = sendto(LocaterData.sock, LocaterData.locater_packet, strlen(LocaterData.locater_packet), 0, (struct sockaddr *)&LocaterData.broadcast_addr, sizeof(LocaterData.broadcast_addr));
+    
+    // debug
+    //ESP_LOGI(TAG, "Locater broadcast sent: %d", (int)sent);
+
+    int error = 0;
+    socklen_t err_len = sizeof(error);
+
+    // read the socket status
+    if (getsockopt(LocaterData.sock, SOL_SOCKET, SO_ERROR, &error, &err_len) < 0) 
+    {
+        ESP_LOGE(TAG, "getsockopt failed: %d (%s)", error, strerror(error));
+    } 
+    else 
+    {
+        if (error == 0) 
+        {
+            // no error
+            LocaterData.consecutive_errors = 0;
+        } 
+        else 
+        {
+            ESP_LOGE(TAG, "Locater broadcast error %s", strerror(error));
+            LocaterData.consecutive_errors++;
+        }
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 static void wifi_config_task(void *arg)
 {
     tWiFiMessage message;
     uint32_t tick_timer;
     uint8_t wifi_kill_checked = 0;
     uint8_t wifi_mode = control_get_config_item_int(CONFIG_ITEM_WIFI_MODE);
+    uint32_t locater_timer;
 
     ESP_LOGI(TAG, "Wifi config task start");
 
@@ -1628,14 +1831,18 @@ static void wifi_config_task(void *arg)
     if (pWebConfig == NULL)
     {
         ESP_LOGE(TAG, "Failed to allocate pWebConfig buffer!");
+
+        heap_caps_print_heap_info(MALLOC_CAP_SPIRAM);
         return;
     }
 
     // init mem
     memset((void*)pWebConfig, 0, sizeof(tWebConfigData));
     pWebConfig->PresetIndex = 0;
-    pWebConfig->PresetNameChanged = -1;
     sprintf(pWebConfig->PresetNames[0], "1");
+
+    memset((void*)&LocaterData, 0, sizeof(LocaterData));
+    LocaterData.sock = -1;
 
     // check wifi mode
     switch (wifi_mode)    
@@ -1689,8 +1896,9 @@ static void wifi_config_task(void *arg)
     // start web server
     http_server_init();
 
-    // reset timer
+    // reset timers
     tick_timer = xTaskGetTickCount();
+    locater_timer = xTaskGetTickCount();
 
     while (1) 
     {
@@ -1719,6 +1927,17 @@ static void wifi_config_task(void *arg)
         {
             // process it
             process_wifi_command(&message);
+        }
+
+        // check locater timer
+        if ((xTaskGetTickCount() - locater_timer) > LOCATER_TIMER_MSEC)
+        {
+            // any clients? or connected to AP in station mode?
+            if (client_connected || wifi_connect_status)
+            {
+                send_locater_broadcast();
+            }
+            locater_timer = xTaskGetTickCount();
         }
 
 		vTaskDelay(pdMS_TO_TICKS(1));

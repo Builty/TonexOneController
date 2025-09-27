@@ -208,6 +208,8 @@ enum TonexParameters
     TONEX_GLOBAL_CABSIM_BYPASS,
     TONEX_GLOBAL_TEMPO_SOURCE,
     TONEX_GLOBAL_TUNING_REFERENCE,
+    TONEX_GLOBAL_BYPASS,                // preset bypass mode
+    TONEX_GLOBAL_MASTER_VOLUME, 
 
     // must be last actual global
     TONEX_GLOBAL_LAST

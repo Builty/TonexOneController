@@ -1,0 +1,30 @@
+﻿<Window x:Class="TonexControllerLocator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TonexControllerLocator"
+        mc:Ignorable="d"
+        Title="Tonex Controller Detector" Height="309.949" Width="535.971" Icon="server.ico">
+    <StackPanel Margin="10,10,10,10">
+        <DataGrid AutoGenerateColumns="False" 
+          Height="250" 
+          HorizontalAlignment="Left" 
+          Name="serversGrid" 
+          VerticalAlignment="Top" 
+          Width="500" Margin="0,0,0,0"
+          HeadersVisibility="Column"
+          IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Controller IP Address" Binding="{Binding Path=ServerIP}" MinWidth="110" />
+                <DataGridHyperlinkColumn Header="Link (Click to Open)" Binding="{Binding Path=URL}" MinWidth="255">
+                    <DataGridHyperlinkColumn.ElementStyle>
+                        <Style>
+                            <EventSetter Event="Hyperlink.Click" Handler="DG_Hyperlink_Click"/>
+                        </Style>
+                    </DataGridHyperlinkColumn.ElementStyle>
+                </DataGridHyperlinkColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </StackPanel>
+</Window>

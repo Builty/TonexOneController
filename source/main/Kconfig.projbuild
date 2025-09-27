@@ -7,6 +7,12 @@ menu "Tonex Controller Configuration"
         config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B
             bool "Waveshare 4.3B"
 
+        config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35B
+            bool "Waveshare 3.5B"
+
+        config TONEX_CONTROLLER_HARDWARE_PLATFORM_JC3248W535
+            bool "JC3248W535 3.5"
+
         config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169
             bool "Waveshare 1.69"
 
@@ -24,7 +30,13 @@ menu "Tonex Controller Configuration"
 
         config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY            
             bool "Waveshare 4.3 Development board"   
+
+        config TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3
+            bool "LilyGo T-Display S3"   
         
+        config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
+            bool "Waveshare 1.9 Touch"
+            
     endchoice
 
     choice TONEX_CONTROLLER_SKINS
@@ -44,18 +56,60 @@ menu "Tonex Controller Configuration"
         help
             Enable this option if the platform has a display
     
+    config TONEX_CONTROLLER_HAS_TOUCH
+       bool "Touch Screen is used"
+        default "n"
+        help
+            Enable this option if the platform has a touch screen
+
     config TONEX_CONTROLLER_DISPLAY_SMALL
        bool "Small LCD display is used"
         default "n"
         help
             Enable this option if the platform has a small display
+
+    config TONEX_CONTROLLER_DISPLAY_FULL_UI
+       bool "Large LCD display with full user interface is used"
+        default "n"
+        help
+            Enable this option if the platform has a large display with full UI
     
     config TONEX_CONTROLLER_GPIO_FOOTSWITCHES
        bool "Footswitches are directly connected to GPIO"
         default "y"
         help
             Enable this option if the platform has footswitches directly connected to GPIO
-            
+           
+    config TONEX_CONTROLLER_DEFAULT_MIDI_ENABLE
+        bool "Enable Midi by default"
+        default "n"
+        help
+            Sets if Midi (serial) is enabled by default
+         
+    config TONEX_CONTROLLER_WAVESHARE_169_LANDSCAPE
+        bool "Waveshare 1.69 Landscape screen"
+        default "n"
+        help
+            Sets if the screen on the Waveshare uses Landscape mode with 90/270 degree rotation
+
+    config TONEX_CONTROLLER_SCREEN_ROTATION_DEFAULT_180
+        bool "Default 180 degree screen rotation"
+        default "n"
+        help
+            Sets if the screen defaults to 180 degree rotation
+        
+    config TONEX_CONTROLLER_SHOW_BPM_INDICATOR
+        bool "Show BPM flashing indicator on LCD (requires TONEX_CONTROLLER_DISPLAY_FULL_UI also)"
+        default "n"
+        help
+            Enable this option to show BPM indicator
+
+    config TONEX_CONTROLLER_ENABLE_MIDI_THRU
+       bool "Enable Midi Thru"
+        default "y"
+        help
+            Enable this option if the platform can support Midi Transmit
+        
     config EXAMPLE_DOUBLE_FB
         bool "Use double Frame Buffer"
         default "n"
@@ -75,5 +129,5 @@ menu "Tonex Controller Configuration"
         help
             Enable this option, the example will use a pair of semaphores to avoid the tearing effect.
             Note, if the Double Frame Buffer is used, then we can also avoid the tearing effect without the lock.
-            
+                     
 endmenu

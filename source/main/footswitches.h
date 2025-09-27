@@ -22,7 +22,7 @@ limitations under the License.
 extern "C" {
 #endif
 
-void footswitches_init(i2c_port_t i2c_num, SemaphoreHandle_t I2CMutex);
+void footswitches_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex);
 void footswitches_handle(void);
 
 #ifdef __cplusplus

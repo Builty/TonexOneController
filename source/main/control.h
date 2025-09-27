@@ -152,6 +152,7 @@ enum ConfigItems
     CONFIG_ITEM_INT_FOOTSW_EFFECT4_CC,
     CONFIG_ITEM_INT_FOOTSW_EFFECT4_VAL1,
     CONFIG_ITEM_INT_FOOTSW_EFFECT4_VAL2,
+    CONFIG_ITEM_ENABLE_HIGHER_TOUCH_SENS,
 };
 
 enum BluetoothModes
@@ -261,7 +262,8 @@ typedef struct __attribute__ ((packed))
 #define MAX_EXTERNAL_EFFECT_FOOTSWITCHES        8
 #define MAX_INTERNAL_EFFECT_FOOTSWITCHES        4
 #define SWITCH_NOT_USED                         0xFF
-#define MAX_PRESETS_DEFAULT                     20
+#define MAX_SUPPORTED_PRESETS                   150
+#define MAX_PRESET_NAME_LENGTH                  33
 
 // thread safe public API
 void control_request_preset_up(void);
@@ -279,8 +281,10 @@ void control_sync_preset_name(uint16_t index, char* name);
 void control_sync_preset_details(uint16_t index, char* name);
 void control_set_user_text(char* text);
 void control_trigger_tap_tempo(void);
-void control_set_preset_order(uint8_t order[MAX_PRESETS_DEFAULT]);
+void control_set_preset_order(uint8_t* order);
 uint8_t* control_get_preset_order(void);
+void control_set_sync_complete(void);
+uint8_t control_get_sync_complete(void);
 
 // config API
 void control_set_default_config(void);

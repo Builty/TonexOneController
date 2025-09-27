@@ -330,8 +330,8 @@ static void task_midi(void *pvParameters)
         blemidi_tick();
 
         // select one mode TODO via web config
-        footswitch_handle_dual_mode();
-        //footswitch_handle_quad_banked();
+        //footswitch_handle_dual_mode();
+        footswitch_handle_quad_banked();
         
         vTaskDelay(pdMS_TO_TICKS(20));
     }

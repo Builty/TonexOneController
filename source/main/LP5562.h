@@ -29,4 +29,4 @@ esp_err_t LP5562_engine_control(uint8_t eng1, uint8_t eng2, uint8_t eng3);
 uint8_t LP5562_get_engine_state(uint8_t engine);
 uint8_t LP5562_get_pc(uint8_t engine);
 esp_err_t LP5562_set_pc(uint8_t engine, uint8_t val);
-esp_err_t LP5562_init(i2c_port_t i2c_num, SemaphoreHandle_t I2CMutex);
+esp_err_t LP5562_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex);

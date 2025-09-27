@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2024  Greg Smith
+ Copyright (C) 2025  Greg Smith
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -23,12 +23,16 @@ limitations under the License.
 extern "C" {
 #endif
 
-#define MAX_PRESETS             20
+#define MAX_PRESETS_TONEX_ONE             20
 
 void usb_tonex_one_handle(class_driver_t* driver_obj);
 void usb_tonex_one_init(class_driver_t* driver_obj, QueueHandle_t comms_queue);
 void usb_tonex_one_deinit(void);
 void usb_tonex_one_preallocate_memory(void);
+
+// MIDI CC slot targeting functions
+esp_err_t usb_tonex_one_load_preset_to_slot_a(uint16_t preset);
+esp_err_t usb_tonex_one_load_preset_to_slot_b(uint16_t preset);
 
 #ifdef __cplusplus
 } /*extern "C"*/

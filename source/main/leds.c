@@ -31,7 +31,7 @@ limitations under the License.
 #include "nvs_flash.h"
 #include "sys/param.h"
 #include "esp_log.h"
-#include "driver/i2c.h"
+#include "driver/i2c_master.h"
 #include "driver/rmt_tx.h"
 #include "main.h"
 #include "CH422G.h"

@@ -18,7 +18,7 @@
 #include "nvs_flash.h"
 #include "sys/param.h"
 #include "esp_log.h"
-#include "driver/i2c.h"
+#include "driver/i2c_master.h"
 #include "main.h"
 #include "SX1509.h"
 
@@ -27,6 +27,7 @@
 */
 #define SX1509_IC2_ADDRESS           0x71
 #define I2C_TIMEOUT_MS          	 10
+#define DEVICE_I2C_MASTER_FREQUENCY  400000
 
 // Class flags
 #define SX1509_FLAG_PRESERVE_STATE   0x0001
@@ -88,7 +89,7 @@ static uint16_t _flags = 0;
 static uint8_t registers[LAST_USED_REGISTER];
 static const char *TAG = "app_SX1509";
 static SemaphoreHandle_t I2CMutexHandle;
-static i2c_port_t i2cnum;
+static i2c_master_dev_handle_t dev_handle;
 
 /****************************************************************************
 * NAME:        
@@ -200,8 +201,8 @@ static esp_err_t SX1509_write_register(uint8_t reg, uint8_t val)
 
     // do the transfer
     if (xSemaphoreTake(I2CMutexHandle, pdMS_TO_TICKS(200)) == pdTRUE)
-    {		
-        if (i2c_master_write_to_device(i2cnum, SX1509_IC2_ADDRESS, outbuffer, 2, pdMS_TO_TICKS(I2C_TIMEOUT_MS)) != ESP_OK)
+    {		        
+        if (i2c_master_transmit(dev_handle, outbuffer, 2, pdMS_TO_TICKS(I2C_TIMEOUT_MS)) != ESP_OK)
         {
             ESP_LOGE(TAG, "SX1509 write failed");
         }
@@ -239,7 +240,7 @@ static esp_err_t __attribute__((unused)) SX1509_write_registers(uint8_t reg, uin
     // do the transfer
     if (xSemaphoreTake(I2CMutexHandle, pdMS_TO_TICKS(200)) == pdTRUE)
     {		
-        if (i2c_master_write_to_device(i2cnum, SX1509_IC2_ADDRESS, outbuffer, len + 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS)) != ESP_OK)
+        if (i2c_master_transmit(dev_handle, outbuffer, len + 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS)) != ESP_OK)
         {
             ESP_LOGE(TAG, "SX1509 writes failed");
         }
@@ -266,12 +267,11 @@ static esp_err_t SX1509_read_register(uint8_t reg, uint8_t len)
     uint8_t outbuffer[5];
     uint8_t inbuffer[255];
 
-    outbuffer[0] = reg;
-
     // do the transfer
     if (xSemaphoreTake(I2CMutexHandle, pdMS_TO_TICKS(200)) == pdTRUE)
     {		
-        if (i2c_master_write_read_device(i2cnum, SX1509_IC2_ADDRESS, outbuffer, 1, inbuffer, len, pdMS_TO_TICKS(I2C_TIMEOUT_MS)) != ESP_OK)
+        outbuffer[0] = reg;
+        if (i2c_master_transmit_receive(dev_handle, outbuffer, 1, inbuffer, len, pdMS_TO_TICKS(I2C_TIMEOUT_MS)) != ESP_OK)
         {
             ESP_LOGE(TAG, "SX1509_read_register failed");
         }
@@ -298,15 +298,22 @@ static esp_err_t SX1509_read_register(uint8_t reg, uint8_t len)
 * RETURN:      none
 * NOTES:       none
 *****************************************************************************/
-esp_err_t SX1509_Init(i2c_port_t i2c_num, SemaphoreHandle_t I2CMutex)
+esp_err_t SX1509_Init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex)
 { 
     esp_err_t ret = ESP_FAIL;
     
     // save handles
     I2CMutexHandle = I2CMutex;
-    i2cnum = i2c_num;
 
     memset((void*)registers, 0, sizeof(registers));
+
+    // create device instance
+    i2c_device_config_t dev_config = {
+        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+        .device_address = SX1509_IC2_ADDRESS,
+        .scl_speed_hz = DEVICE_I2C_MASTER_FREQUENCY,
+    };
+    ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_config, &dev_handle));
 
     // check if chip is present by reading
     ret = SX1509_read_register(SX1509_REG_INPUT_DISABLE_B, 1);

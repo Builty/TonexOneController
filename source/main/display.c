@@ -51,82 +51,37 @@ limitations under the License.
 #include "driver/i2c.h"
 #include "soc/lldesc.h"
 #include "esp_lcd_touch_gt911.h"
+#include "esp_lcd_touch_cst816s.h"
 #include "esp_lcd_gc9107.h"
+#include "esp_lcd_sh8601.h"
 #include "esp_intr_alloc.h"
 #include "main.h"
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
     #include "ui.h"
 #endif
 #include "usb/usb_host.h"
+#include "usb/cdc_acm_host.h"
 #include "usb_comms.h"
+#include "usb_tonex_common.h"
 #include "usb_tonex_one.h"
+#include "usb_tonex.h"
 #include "display.h"
 #include "CH422G.h"
 #include "control.h"
-#include "task_priorities.h"
+#include "task_priorities.h" 
 #include "midi_control.h"
 #include "LP5562.h"
 #include "tonex_params.h"
+#include "platform_common.h"
 
 static const char *TAG = "app_display";
 
 #define DISPLAY_TASK_STACK_SIZE   (6 * 1024)
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
-    // LCD panel config
-    #define DISPLAY_LCD_PIXEL_CLOCK_HZ     (18 * 1000 * 1000)
-    #define DISPLAY_LCD_BK_LIGHT_ON_LEVEL  1
-    #define DISPLAY_LCD_BK_LIGHT_OFF_LEVEL !DISPLAY_LCD_BK_LIGHT_ON_LEVEL
-    
-    // The pixel number in horizontal and vertical
-    #define DISPLAY_LCD_H_RES              800
-    #define DISPLAY_LCD_V_RES              480
-
-    #if CONFIG_DISPLAY_DOUBLE_FB
-    #define DISPLAY_LCD_NUM_FB             2
-    #else
-    #define DISPLAY_LCD_NUM_FB             1
-    #endif // CONFIG_DISPLAY_DOUBLE_FB
-    
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI && CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR
     static lv_anim_t *ui_BPMAnimation = NULL;
+    static lv_anim_t PropertyAnimation_0;
     void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration);
-#endif
-
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH
-    #define WAVESHARE_240_280_LCD_H_RES               (240)
-    #define WAVESHARE_240_280_LCD_V_RES               (280)
-
-    /* LCD settings */
-    #define WAVESHARE_240_280_LCD_SPI_NUM             (SPI3_HOST)
-    #define WAVESHARE_240_280_LCD_PIXEL_CLK_HZ        (40 * 1000 * 1000)
-    #define WAVESHARE_240_280_LCD_CMD_BITS            (8)
-    #define WAVESHARE_240_280_LCD_PARAM_BITS          (8)
-    #define WAVESHARE_240_280_LCD_COLOR_SPACE         (ESP_LCD_COLOR_SPACE_RGB)
-    #define WAVESHARE_240_280_LCD_BITS_PER_PIXEL      (16)
-    #define WAVESHARE_240_280_LCD_DRAW_BUFF_DOUBLE    (1)
-    #define WAVESHARE_240_280_LCD_DRAW_BUFF_HEIGHT    (50)
-    #define WAVESHARE_240_280_LCD_BL_ON_LEVEL         (1)
-
-    static esp_lcd_panel_io_handle_t lcd_io = NULL;
-    static esp_lcd_panel_handle_t lcd_panel = NULL;
-#endif
-
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R
-    #define ATOM3SR_LCD_H_RES               (128)
-    #define ATOM3SR_LCD_V_RES               (128)
-
-    /* LCD settings */
-    #define ATOM3SR_LCD_SPI_NUM             (SPI3_HOST)
-    #define ATOM3SR_LCD_PIXEL_CLK_HZ        (40 * 1000 * 1000)
-    #define ATOM3SR_LCD_CMD_BITS            (8)
-    #define ATOM3SR_LCD_PARAM_BITS          (8)
-    #define ATOM3SR_LCD_COLOR_SPACE         (ESP_LCD_COLOR_SPACE_BGR)
-    #define ATOM3SR_LCD_BITS_PER_PIXEL      (16)
-    #define ATOM3SR_LCD_DRAW_BUFF_DOUBLE    (1)
-    #define ATOM3SR_LCD_DRAW_BUFF_HEIGHT    (50)
-
-    static esp_lcd_panel_io_handle_t lcd_io = NULL;
-    static esp_lcd_panel_handle_t lcd_panel = NULL;
 #endif
 
 #define DISPLAY_LVGL_TICK_PERIOD_MS     2
@@ -145,14 +100,16 @@ enum UIElements
     UI_ELEMENT_BANK_INDEX,
     UI_ELEMENT_AMP_SKIN,
     UI_ELEMENT_PRESET_DESCRIPTION,
-    UI_ELEMENT_PARAMETERS
+    UI_ELEMENT_PARAMETERS,
+    UI_ELEMENT_TOAST,
 };
 
 enum UIAction
 {
     UI_ACTION_SET_STATE,
     UI_ACTION_SET_LABEL_TEXT,
-    UI_ACTION_SET_ENTRY_TEXT
+    UI_ACTION_SET_ENTRY_TEXT,
+    UI_ACTION_NONE = 0xFF
 };
 
 typedef struct 
@@ -163,13 +120,27 @@ typedef struct
     char Text[MAX_UI_TEXT];
 } tUIUpdate;
 
+typedef struct 
+{
+    lv_obj_t *mbox;
+    lv_style_t *style_main;
+    lv_style_t *style_text;
+    
+    uint32_t timer;
+    uint8_t active;
+} msgbox_data_t;
+
 static QueueHandle_t ui_update_queue;
 static SemaphoreHandle_t I2CMutexHandle;
 static SemaphoreHandle_t lvgl_mux = NULL;
+static lv_disp_drv_t* disp_drv; 
+static msgbox_data_t msgbox_data;
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
-    static lv_disp_draw_buf_t disp_buf; // contains internal graphic buffer(s) called draw buffer(s)
-    static lv_disp_drv_t disp_drv;      // contains callback functions
+static void ui_show_toast(char* contents);
+
+#if CONFIG_TONEX_CONTROLLER_HAS_TOUCH
+static uint8_t __attribute__((unused)) touch_data_ready_to_read = 0;
 #endif
 
 /****************************************************************************
@@ -179,13 +150,22 @@ static SemaphoreHandle_t lvgl_mux = NULL;
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void __attribute__((unused)) display_lvgl_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map)
+void __attribute__((unused)) display_lvgl_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map)
 {
     esp_lcd_panel_handle_t panel_handle = (esp_lcd_panel_handle_t) drv->user_data;
-    int offsetx1 = area->x1;
-    int offsetx2 = area->x2;
-    int offsety1 = area->y1;
-    int offsety2 = area->y2;
+    int offsetx1;
+    int offsetx2;
+    int offsety1;
+    int offsety2;
+
+    // let platform adjust area
+    platform_adjust_display_flush_area((lv_area_t*)area);
+
+    offsetx1 = area->x1;
+    offsetx2 = area->x2;
+    offsety1 = area->y1;
+    offsety2 = area->y2;
+
 #if CONFIG_DISPLAY_AVOID_TEAR_EFFECT_WITH_SEM
     xSemaphoreGive(sem_gui_ready);
     xSemaphoreTake(sem_vsync_end, portMAX_DELAY);
@@ -195,12 +175,21 @@ static void __attribute__((unused)) display_lvgl_flush_cb(lv_disp_drv_t *drv, co
     lv_disp_flush_ready(drv);
 }
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
-// we use two semaphores to sync the VSYNC event and the LVGL task, to avoid potential tearing effect
-#if CONFIG_DISPLAY_AVOID_TEAR_EFFECT_WITH_SEM
-SemaphoreHandle_t sem_vsync_end;
-SemaphoreHandle_t sem_gui_ready;
-#endif
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+bool __attribute__((unused)) display_notify_lvgl_flush_ready(esp_lcd_panel_io_handle_t panel_io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx)
+{
+    lv_disp_flush_ready(disp_drv);
+    return false;
+}
+#endif  //CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
+
+#if CONFIG_TONEX_CONTROLLER_HAS_TOUCH
 
 /****************************************************************************
 * NAME:        
@@ -209,15 +198,9 @@ SemaphoreHandle_t sem_gui_ready;
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static bool display_on_vsync_event(esp_lcd_panel_handle_t panel, const esp_lcd_rgb_panel_event_data_t *event_data, void *user_data)
+void __attribute__((unused)) touch_data_ready(esp_lcd_touch_t *handle)
 {
-    BaseType_t high_task_awoken = pdFALSE;
-#if CONFIG_DISPLAY_AVOID_TEAR_EFFECT_WITH_SEM
-    if (xSemaphoreTakeFromISR(sem_gui_ready, &high_task_awoken) == pdTRUE) {
-        xSemaphoreGiveFromISR(sem_vsync_end, &high_task_awoken);
-    }
-#endif
-    return high_task_awoken == pdTRUE;
+    touch_data_ready_to_read = 1;
 }
 
 /****************************************************************************
@@ -227,13 +210,35 @@ static bool display_on_vsync_event(esp_lcd_panel_handle_t panel, const esp_lcd_r
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
+void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
 {
     uint16_t touchpad_x[1] = {0};
     uint16_t touchpad_y[1] = {0};
     uint8_t touchpad_cnt = 0;
     bool touchpad_pressed = false;
 
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
+    // CST816 driver has to set interrupt before data is valid to read
+    if (touch_data_ready_to_read)
+    {
+        if (xSemaphoreTake(I2CMutexHandle, (TickType_t)10) == pdTRUE)
+        {
+            // Read touch controller data
+            esp_lcd_touch_read_data(drv->user_data);
+
+            // Get coordinates 
+            touchpad_pressed = esp_lcd_touch_get_coordinates(drv->user_data, touchpad_x, touchpad_y, NULL, &touchpad_cnt, 1);
+
+            // reset flag
+            touch_data_ready_to_read = 0;
+
+            xSemaphoreGive(I2CMutexHandle);
+        }
+    }
+
+#else
+
+    // poll the driver chip
     if (xSemaphoreTake(I2CMutexHandle, (TickType_t)10) == pdTRUE)
     {
         /* Read touch controller data */
@@ -248,12 +253,20 @@ static void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
     {
         ESP_LOGE(TAG, "Touch cb mutex timeout");
     }
+#endif 
 
     if (touchpad_pressed && touchpad_cnt > 0) 
     {
         data->point.x = touchpad_x[0];
         data->point.y = touchpad_y[0];
+
+        // allow platform to adjust if needed
+        platform_adjust_touch_coords(&data->point.x, &data->point.y);
+
         data->state = LV_INDEV_STATE_PR;
+
+        // debug
+        //ESP_LOGI(TAG, "Touch X:%d Y:%d", (int)data->point.x, (int)data->point.y);
     } 
     else 
     {
@@ -271,7 +284,7 @@ static void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
 void PreviousClicked(lv_event_t * e)
 {
     // called from LVGL 
-    ESP_LOGI(TAG, "UI Previous Clicked");      
+    ESP_LOGI(TAG, "UI Previous Click/Swipe");      
 
     control_request_preset_down();      
 }
@@ -286,9 +299,46 @@ void PreviousClicked(lv_event_t * e)
 void NextClicked(lv_event_t * e)
 {
     // called from LVGL 
-    ESP_LOGI(TAG, "UI Next Clicked");    
+    ESP_LOGI(TAG, "UI Next Click/Swipe");    
 
     control_request_preset_up();        
+}
+
+#else   //CONFIG_TONEX_CONTROLLER_HAS_TOUCH
+
+// Dummy functions so that 1.69 and 1.69 Touch can share the same UI project
+void PreviousClicked(lv_event_t * e)
+{
+}
+
+void NextClicked(lv_event_t * e)
+{
+}
+#endif  //CONFIG_TONEX_CONTROLLER_HAS_TOUCH
+
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
+// we use two semaphores to sync the VSYNC event and the LVGL task, to avoid potential tearing effect
+#if CONFIG_DISPLAY_AVOID_TEAR_EFFECT_WITH_SEM
+SemaphoreHandle_t sem_vsync_end;
+SemaphoreHandle_t sem_gui_ready;
+#endif  //CONFIG_DISPLAY_AVOID_TEAR_EFFECT_WITH_SEM
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+bool display_on_vsync_event(esp_lcd_panel_handle_t panel, const esp_lcd_rgb_panel_event_data_t *event_data, void *user_data)
+{
+    BaseType_t high_task_awoken = pdFALSE;
+#if CONFIG_DISPLAY_AVOID_TEAR_EFFECT_WITH_SEM
+    if (xSemaphoreTakeFromISR(sem_gui_ready, &high_task_awoken) == pdTRUE) {
+        xSemaphoreGiveFromISR(sem_vsync_end, &high_task_awoken);
+    }
+#endif
+    return high_task_awoken == pdTRUE;
 }
 
 /****************************************************************************
@@ -1188,12 +1238,16 @@ void ParameterChanged(lv_event_t * e)
     {
         usb_modify_parameter(TONEX_GLOBAL_TUNING_REFERENCE, lv_slider_get_value(obj));
     }
+    else if (obj == ui_VolumeSlider)
+    {
+        usb_modify_parameter(TONEX_GLOBAL_MASTER_VOLUME, lv_slider_get_value(obj));    
+    }
     else
     {
         ESP_LOGW(TAG, "Unknown Parameter changed");    
     }
 }
-#endif
+#endif  //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
 
 /****************************************************************************
 * NAME:        
@@ -1318,8 +1372,32 @@ void UI_SetPresetLabel(uint16_t index, char* name)
     // build command
     ui_update.ElementID = UI_ELEMENT_PRESET_NAME;
     ui_update.Action = UI_ACTION_SET_LABEL_TEXT;
-    sprintf(ui_update.Text, "%d: ", (int)index + 1);
+    sprintf(ui_update.Text, "%d: ", (int)index + usb_get_first_preset_index_for_connected_modeller());
     strncat(ui_update.Text, name, MAX_UI_TEXT - 1);
+
+    // send to queue
+    if (xQueueSend(ui_update_queue, (void*)&ui_update, 0) != pdPASS)
+    {
+        ESP_LOGE(TAG, "UI Update queue send failed!");            
+    }
+}
+
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+__attribute__((unused)) void UI_ShowToast(char* text)
+{
+    tUIUpdate ui_update;
+
+    // build command
+    ui_update.ElementID = UI_ELEMENT_TOAST;
+    ui_update.Action = UI_ACTION_NONE;
+    strncpy(ui_update.Text, text, MAX_UI_TEXT - 1);
 
     // send to queue
     if (xQueueSend(ui_update_queue, (void*)&ui_update, 0) != pdPASS)
@@ -1410,6 +1488,7 @@ void UI_RefreshParameterValues(void)
     tUIUpdate ui_update;
 
     // build command
+    ui_update.Action = UI_ACTION_NONE;
     ui_update.ElementID = UI_ELEMENT_PARAMETERS;
     
     // send to queue
@@ -1420,7 +1499,7 @@ void UI_RefreshParameterValues(void)
 #endif    
 }
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY 
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
 
 /****************************************************************************
 * NAME:        
@@ -1701,7 +1780,7 @@ static lv_obj_t* ui_get_skin_image(uint16_t index)
 }
 #endif 
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY 
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
 /****************************************************************************
 * NAME:        
 * DESCRIPTION: 
@@ -1772,7 +1851,9 @@ void updateIconOrder()
         icons[index] = ui_IconReverb;
     }
     
-    const int16_t offsets[8] = {-275, -205, -135, -65, 0, 65, 135, 205};
+    // get the icon coords for this platform
+    int16_t offsets[8];
+    platform_get_icon_coords(offsets, sizeof(offsets) / sizeof(int16_t));
 
     for (uint8_t i = 0; i<8; i++)
     {
@@ -1819,28 +1900,28 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
         case UI_ELEMENT_BANK_INDEX:
         {
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             element_1 = ui_BankValueLabel;
 #endif
         } break;
 
         case UI_ELEMENT_AMP_SKIN:
         {
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             element_1 = ui_SkinImage;
 #endif            
         } break;
 
         case UI_ELEMENT_PRESET_DESCRIPTION:
         {
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY            
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             element_1 = ui_PresetDetailsTextArea;
 #endif            
         } break;
 
         case UI_ELEMENT_PARAMETERS:
         {
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY     
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             ESP_LOGI(TAG, "Syncing params to UI");
 
             tTonexParameter* param_ptr;
@@ -3021,9 +3102,12 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             lv_slider_set_value(ui_BPMSlider, round(param_entry->Value), LV_ANIM_OFF); 
 
                             char buf[128];
-                            sprintf(buf, "%d", (int)round(param_entry->Value));
+                            sprintf(buf, "%.1f", param_entry->Value);
                             lv_label_set_text(ui_BPMValueLabel, buf);
+                            
+#if CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR                            
                             ui_BPMAnimate(ui_BPMIndicator, 1000 * 60 / param_entry->Value);
+#endif                            
                         } break;
 
                         case TONEX_GLOBAL_INPUT_TRIM:
@@ -3037,6 +3121,12 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             lv_slider_set_range(ui_TuningReferenceSlider, round(param_entry->Min), round(param_entry->Max));
                             lv_slider_set_value(ui_TuningReferenceSlider, round(param_entry->Value), LV_ANIM_OFF);                                
                         } break;
+
+                        case TONEX_GLOBAL_MASTER_VOLUME:
+                        {                            
+                            lv_slider_set_range(ui_VolumeSlider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(ui_VolumeSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                        } break;
                     } 
 
                     tonex_params_release_locked_access();
@@ -3044,7 +3134,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
             }
 #endif
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 \
+    || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH \
+    || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R \
+    || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3 \
+    || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
             ESP_LOGI(TAG, "Syncing params to UI");
 
             tTonexParameter* param_ptr;
@@ -3123,6 +3217,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
 #endif
         } break;
 
+        case UI_ELEMENT_TOAST:
+        {
+            ui_show_toast(update->Text);
+        } break;
+
         default:
         {
             ESP_LOGE(TAG, "Unknown display elment %d", update->ElementID);     
@@ -3185,7 +3284,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                     lv_obj_clear_flag(ui_WiFiStatusConn, LV_OBJ_FLAG_HIDDEN);
                 }
             }
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY            
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             else if (element_1 == ui_SkinImage)
             {
                 // set skin
@@ -3203,7 +3302,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
         case UI_ACTION_SET_LABEL_TEXT:
         {
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             lv_label_set_text(element_1, update->Text);
 #elif CONFIG_TONEX_CONTROLLER_DISPLAY_SMALL
             if (element_1 == ui_PresetHeadingLabel)
@@ -3237,9 +3336,14 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
         case UI_ACTION_SET_ENTRY_TEXT:
         {
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             lv_textarea_set_text(element_1, update->Text);
 #endif            
+        } break;
+
+        case UI_ACTION_NONE:
+        {
+            // nothing needed
         } break;
 
         default:
@@ -3252,7 +3356,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
     return 1;
 }
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI && CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR
 void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration)
 {
     if (ui_BPMAnimation != NULL) {
@@ -3268,7 +3372,7 @@ void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration)
     ui_anim_user_data_t *PropertyAnimation_0_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
     PropertyAnimation_0_user_data->target = TargetObject;
     PropertyAnimation_0_user_data->val = -1;
-    lv_anim_t PropertyAnimation_0;
+    
     lv_anim_init(&PropertyAnimation_0);
     lv_anim_set_time(&PropertyAnimation_0, duration);
     lv_anim_set_user_data(&PropertyAnimation_0, PropertyAnimation_0_user_data);
@@ -3295,15 +3399,103 @@ void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+static void __attribute__((unused)) ui_toast_close(void) 
+{
+    ESP_LOGI(TAG, "Closing message box");
+
+    // Close and delete the message box
+    lv_msgbox_close(msgbox_data.mbox);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void __attribute__((unused)) ui_init_toast(void) 
+{
+    // Initialize styles
+    msgbox_data.style_main = lv_mem_alloc(sizeof(lv_style_t));
+    msgbox_data.style_text = lv_mem_alloc(sizeof(lv_style_t));
+    if (!msgbox_data.style_main || !msgbox_data.style_text) 
+    {
+        ESP_LOGE(TAG, "Failed to allocate memory for styles");
+        free(msgbox_data.style_main);
+        free(msgbox_data.style_text);
+        return;
+    }
+
+    lv_style_init(msgbox_data.style_main);
+    lv_style_set_bg_color(msgbox_data.style_main, lv_color_hex(0x2A2A2A));
+    lv_style_set_border_width(msgbox_data.style_main, 6);                 
+    lv_style_set_radius(msgbox_data.style_main, 10);                      
+    lv_style_set_bg_opa(msgbox_data.style_main, LV_OPA_COVER);            
+    lv_style_set_pad_all(msgbox_data.style_main, platform_get_toast_padding());      
+    lv_style_set_border_color(msgbox_data.style_main, lv_color_hex(0x563F2A));
+
+    lv_style_init(msgbox_data.style_text);
+    lv_style_set_text_color(msgbox_data.style_text, lv_color_hex(0xFFFFFF));
+
+    // font size depends on screen size, let platform tell us
+    lv_style_set_text_font(msgbox_data.style_text, platform_get_toast_font()); 
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void __attribute__((unused)) ui_show_toast(char* contents) 
+{
+    if (msgbox_data.mbox != NULL)
+    {
+        lv_obj_del(msgbox_data.mbox);
+        msgbox_data.mbox = NULL;
+    }
+
+    // Create message box (no buttons for auto-close)
+    static const char *btns[] = {""}; // Empty button list
+    msgbox_data.mbox = lv_msgbox_create(NULL, NULL, contents, btns, false);
+    if (!msgbox_data.mbox) 
+    {
+        ESP_LOGE(TAG, "Failed to create message box");
+        return;
+    }
+    
+    lv_obj_center(msgbox_data.mbox);
+
+    // Apply styles
+    lv_obj_add_style(msgbox_data.mbox, msgbox_data.style_main, LV_PART_MAIN); // Style background
+    lv_obj_add_style(lv_msgbox_get_text(msgbox_data.mbox), msgbox_data.style_text, 0);  // Style message
+
+    // Create timer to close and delete message box after 3 seconds
+    msgbox_data.timer = xTaskGetTickCount() + 3000; 
+    msgbox_data.active = 1;
+
+    ESP_LOGI(TAG, "Message box created");
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void display_task(void *arg)
 {
     tUIUpdate ui_update;
+
     ESP_LOGI(TAG, "Display task start");
 
     while (1) 
     {
         // Lock the mutex due to the LVGL APIs are not thread-safe
-        if (display_lvgl_lock(-1)) 
+        if (display_lvgl_lock(pdMS_TO_TICKS(1000))) 
         {
             lv_task_handler();
 
@@ -3314,10 +3506,25 @@ void display_task(void *arg)
                 update_ui_element(&ui_update);
             }
 
+            // handle timed toast messages
+            if (msgbox_data.active)
+            {
+                if (xTaskGetTickCount() >= msgbox_data.timer)
+                {
+                    // clean up and reset
+                    ui_toast_close();
+                    msgbox_data.active = 0;
+                }
+            }
+
             // Release the mutex
             display_lvgl_unlock();
 	    }
-        
+        else
+        {
+            ESP_LOGW(TAG, "Display lock timeout");
+        }
+
         vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
@@ -3329,9 +3536,10 @@ void display_task(void *arg)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
+void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex, lv_disp_drv_t* pdisp_drv)
 {    
     I2CMutexHandle = I2CMutex;
+    disp_drv = pdisp_drv;
 
     // create queue for UI updates from other threads
     ui_update_queue = xQueueCreate(20, sizeof(tUIUpdate));
@@ -3342,392 +3550,6 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
 
     lvgl_mux = xSemaphoreCreateRecursiveMutex();
     assert(lvgl_mux);
-
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY    
-    uint8_t touch_ok = 0;
-    esp_err_t ret = ESP_OK;
-    gpio_config_t gpio_config_struct;
-
-#if CONFIG_DISPLAY_AVOID_TEAR_EFFECT_WITH_SEM
-    ESP_LOGI(TAG, "Create semaphores");
-    sem_vsync_end = xSemaphoreCreateBinary();
-    assert(sem_vsync_end);
-    sem_gui_ready = xSemaphoreCreateBinary();
-    assert(sem_gui_ready);
-#endif
-
-#if DISPLAY_PIN_NUM_BK_LIGHT >= 0
-    ESP_LOGI(TAG, "Turn off LCD backlight");
-    gpio_config_t bk_gpio_config = {
-        .mode = GPIO_MODE_OUTPUT,
-        .pin_bit_mask = 1ULL << DISPLAY_PIN_NUM_BK_LIGHT
-    };
-    ESP_ERROR_CHECK(gpio_config(&bk_gpio_config));
-#endif
-
-    ESP_LOGI(TAG, "Install RGB LCD panel driver");
-    esp_lcd_panel_handle_t panel_handle = NULL;
-    esp_lcd_rgb_panel_config_t panel_config = {
-        .data_width = 16, // RGB565 in parallel mode, thus 16bit in width
-        .psram_trans_align = 64,
-        .num_fbs = DISPLAY_LCD_NUM_FB,
-#if CONFIG_DISPLAY_USE_BOUNCE_BUFFER
-        .bounce_buffer_size_px = 10 * DISPLAY_LCD_H_RES,
-#endif
-        .clk_src = LCD_CLK_SRC_DEFAULT,
-        .disp_gpio_num = DISPLAY_PIN_NUM_DISP_EN,
-        .pclk_gpio_num = DISPLAY_PIN_NUM_PCLK,
-        .vsync_gpio_num = DISPLAY_PIN_NUM_VSYNC,
-        .hsync_gpio_num = DISPLAY_PIN_NUM_HSYNC,
-        .de_gpio_num = DISPLAY_PIN_NUM_DE,
-        .data_gpio_nums = {
-            DISPLAY_PIN_NUM_DATA0,
-            DISPLAY_PIN_NUM_DATA1,
-            DISPLAY_PIN_NUM_DATA2,
-            DISPLAY_PIN_NUM_DATA3,
-            DISPLAY_PIN_NUM_DATA4,
-            DISPLAY_PIN_NUM_DATA5,
-            DISPLAY_PIN_NUM_DATA6,
-            DISPLAY_PIN_NUM_DATA7,
-            DISPLAY_PIN_NUM_DATA8,
-            DISPLAY_PIN_NUM_DATA9,
-            DISPLAY_PIN_NUM_DATA10,
-            DISPLAY_PIN_NUM_DATA11,
-            DISPLAY_PIN_NUM_DATA12,
-            DISPLAY_PIN_NUM_DATA13,
-            DISPLAY_PIN_NUM_DATA14,
-            DISPLAY_PIN_NUM_DATA15,
-        },
-        .timings = {
-            .pclk_hz = DISPLAY_LCD_PIXEL_CLOCK_HZ,
-            .h_res = DISPLAY_LCD_H_RES,
-            .v_res = DISPLAY_LCD_V_RES,
-            // The following parameters should refer to LCD spec
-            .hsync_back_porch = 8,
-            .hsync_front_porch = 8,
-            .hsync_pulse_width = 4,
-            .vsync_back_porch = 16,
-            .vsync_front_porch = 16,
-            .vsync_pulse_width = 4,
-            .flags.pclk_active_neg = true,
-        },
-        .flags.fb_in_psram = true, // allocate frame buffer in PSRAM
-    };
-    ESP_ERROR_CHECK(esp_lcd_new_rgb_panel(&panel_config, &panel_handle));
-
-    ESP_LOGI(TAG, "Register event callbacks");
-    esp_lcd_rgb_panel_event_callbacks_t cbs = {
-        .on_vsync = display_on_vsync_event,
-    };
-    ESP_ERROR_CHECK(esp_lcd_rgb_panel_register_event_callbacks(panel_handle, &cbs, &disp_drv));
-
-    ESP_LOGI(TAG, "Initialize RGB LCD panel");
-    ESP_ERROR_CHECK(esp_lcd_panel_reset(panel_handle));
-    ESP_ERROR_CHECK(esp_lcd_panel_init(panel_handle));
-
-#if DISPLAY_PIN_NUM_BK_LIGHT >= 0
-    ESP_LOGI(TAG, "Turn on LCD backlight");
-    gpio_set_level(DISPLAY_PIN_NUM_BK_LIGHT, DISPLAY_LCD_BK_LIGHT_ON_LEVEL);
-#endif
-
-    esp_lcd_touch_handle_t tp = NULL;
-    esp_lcd_panel_io_handle_t tp_io_handle = NULL;
-    esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_GT911_CONFIG();
-    
-    // set Int pin to output temporarily
-    gpio_config_struct.pin_bit_mask = (uint64_t)1 << TOUCH_INT;
-    gpio_config_struct.mode = GPIO_MODE_OUTPUT;
-    gpio_config_struct.pull_up_en = GPIO_PULLUP_DISABLE;
-    gpio_config_struct.pull_down_en = GPIO_PULLDOWN_DISABLE;
-    gpio_config_struct.intr_type = GPIO_INTR_DISABLE;
-    gpio_config(&gpio_config_struct);
-
-    // reset low
-	CH422G_write_output(TOUCH_RESET, 0);
-    esp_rom_delay_us(100 * 1000);
-
-    // set Int to low/output
-    gpio_set_level(TOUCH_INT, 0);
-    esp_rom_delay_us(100 * 1000);
-
-    // release reset
-    CH422G_write_output(TOUCH_RESET, 1);
-    esp_rom_delay_us(200 * 1000);
-
-    // set interrupt to tristate
-    gpio_config_struct.mode = GPIO_MODE_INPUT;
-    gpio_config_struct.pull_down_en = GPIO_PULLDOWN_ENABLE;
-    gpio_config(&gpio_config_struct);
-
-    // Touch IO handle
-    if (esp_lcd_new_panel_io_i2c((esp_lcd_i2c_bus_handle_t)I2CNum, &tp_io_config, &tp_io_handle) != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Touch reset 3 failed!");
-    }
-    
-    esp_lcd_touch_config_t tp_cfg = {
-            .x_max = DISPLAY_LCD_V_RES,
-            .y_max = DISPLAY_LCD_H_RES,
-            .rst_gpio_num = -1,
-            .int_gpio_num = -1,
-            .flags = {
-                .swap_xy = 0,
-                .mirror_x = 0,
-                .mirror_y = 0,
-            },
-        };
-    
-    // Initialize touch
-    ESP_LOGI(TAG, "Initialize touch controller GT911");
-
-    // try a few times
-    for (int loop = 0; loop < 5; loop++)
-    {
-        ret = ESP_FAIL;
-
-        if (xSemaphoreTake(I2CMutexHandle, (TickType_t)10000) == pdTRUE)
-        {
-            ret = (esp_lcd_touch_new_i2c_gt911(tp_io_handle, &tp_cfg, &tp));
-
-            xSemaphoreGive(I2CMutexHandle);
-        }
-        else
-        {
-            ESP_LOGE(TAG, "Initialize touch loop mutex timeout");
-        }
-        
-        if (ret == ESP_OK)
-        {
-            ESP_LOGI(TAG, "Touch controller init OK");
-            touch_ok = 1;
-            break;
-        }
-        else
-        {
-            ESP_LOGI(TAG, "Touch controller init retry %s", esp_err_to_name(ret));
-
-            // reset I2C bus
-            i2c_master_reset();
-        }
-           
-        vTaskDelay(pdMS_TO_TICKS(25));    
-    }
-
-    if (ret != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Failed to init touch screen");
-    }
-
-    ESP_LOGI(TAG, "Initialize LVGL library");
-    lv_init();
-    //??? lv_fs_if_init();
-    
-    void *buf1 = NULL;
-    void *buf2 = NULL;
-#if CONFIG_DISPLAY_DOUBLE_FB
-    ESP_LOGI(TAG, "Use frame buffers as LVGL draw buffers");
-    ESP_ERROR_CHECK(esp_lcd_rgb_panel_get_frame_buffer(panel_handle, 2, &buf1, &buf2));
-    // initialize LVGL draw buffers
-    lv_disp_draw_buf_init(&disp_buf, buf1, buf2, DISPLAY_LCD_H_RES * DISPLAY_LCD_V_RES);
-#else
-    ESP_LOGI(TAG, "Allocate separate LVGL draw buffers from PSRAM");
-    buf1 = heap_caps_malloc(DISPLAY_LCD_H_RES * 100 * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
-    assert(buf1);
-
-    // initialize LVGL draw buffers
-    lv_disp_draw_buf_init(&disp_buf, buf1, buf2, DISPLAY_LCD_H_RES * 100);
-#endif // CONFIG_DISPLAY_DOUBLE_FB
-
-    ESP_LOGI(TAG, "Register display driver to LVGL");
-    lv_disp_drv_init(&disp_drv);
-    disp_drv.hor_res = DISPLAY_LCD_H_RES;
-    disp_drv.ver_res = DISPLAY_LCD_V_RES;
-    disp_drv.flush_cb = display_lvgl_flush_cb;
-    disp_drv.draw_buf = &disp_buf;
-    disp_drv.user_data = panel_handle;
-#if CONFIG_DISPLAY_DOUBLE_FB
-    disp_drv.full_refresh = true; // the full_refresh mode can maintain the synchronization between the two frame buffers
-#endif
-    lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(&disp_drv);
-
-    ESP_LOGI(TAG, "Install LVGL tick timer");
-    
-    if (touch_ok)
-    {
-        static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
-        lv_indev_drv_init(&indev_drv);
-        indev_drv.type = LV_INDEV_TYPE_POINTER;
-        indev_drv.disp = disp;
-        indev_drv.read_cb = display_lvgl_touch_cb;
-        indev_drv.user_data = tp;
-
-        lv_indev_drv_register(&indev_drv);
-    }
-#endif  //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
-
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH
-    gpio_config_t gpio_config_struct;
-
-    // switch off the buzzer. 
-    ESP_LOGI(TAG, "Buzzer off");
-    gpio_config_struct.pin_bit_mask = (uint64_t)1 << WAVESHARE_240_280_BUZZER;
-    gpio_config_struct.mode = GPIO_MODE_OUTPUT;
-    gpio_config_struct.pull_up_en = GPIO_PULLUP_DISABLE;
-    gpio_config_struct.pull_down_en = GPIO_PULLDOWN_DISABLE;
-    gpio_config_struct.intr_type = GPIO_INTR_DISABLE;
-    gpio_config(&gpio_config_struct);
-    gpio_set_level(GPIO_NUM_42, 0);
-
-    // LCD backlight
-    gpio_config_t bk_gpio_config = {
-        .mode = GPIO_MODE_OUTPUT,
-        .pin_bit_mask = 1ULL << WAVESHARE_240_280_LCD_GPIO_BL};
-    ESP_ERROR_CHECK(gpio_config(&bk_gpio_config));
-
-    /* LCD initialization */
-    ESP_LOGD(TAG, "Initialize SPI bus");
-    const spi_bus_config_t buscfg = {
-        .sclk_io_num = WAVESHARE_240_280_LCD_GPIO_SCLK,
-        .mosi_io_num = WAVESHARE_240_280_LCD_GPIO_MOSI,
-        .miso_io_num = GPIO_NUM_NC,
-        .quadwp_io_num = GPIO_NUM_NC,
-        .quadhd_io_num = GPIO_NUM_NC,
-        // note here: this value needs to be: WAVESHARE_240_280_LCD_H_RES * WAVESHARE_240_280_LCD_DRAW_BUFF_HEIGHT * sizeof(uint16_t)
-        // however, the ESP framework uses multiples of 4092 for DMA (LLDESC_MAX_NUM_PER_DESC).
-        // this theoretical number is 49.9 times the DMA size, which gets rounded down and ends up too small.
-        // so instead, manually setting it to a little larger
-        .max_transfer_sz = 6 * LLDESC_MAX_NUM_PER_DESC, 
-    };
-    spi_bus_initialize(WAVESHARE_240_280_LCD_SPI_NUM, &buscfg, SPI_DMA_CH_AUTO);
-
-    ESP_LOGD(TAG, "Install panel IO");
-    const esp_lcd_panel_io_spi_config_t io_config = {
-        .dc_gpio_num = WAVESHARE_240_280_LCD_GPIO_DC,
-        .cs_gpio_num = WAVESHARE_240_280_LCD_GPIO_CS,
-        .pclk_hz = WAVESHARE_240_280_LCD_PIXEL_CLK_HZ,
-        .lcd_cmd_bits = WAVESHARE_240_280_LCD_CMD_BITS,
-        .lcd_param_bits = WAVESHARE_240_280_LCD_PARAM_BITS,
-        .spi_mode = 0,
-        .trans_queue_depth = 10,
-    };
-    esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)WAVESHARE_240_280_LCD_SPI_NUM, &io_config, &lcd_io);
-
-    ESP_LOGD(TAG, "Install LCD driver");
-    const esp_lcd_panel_dev_config_t panel_config = {
-        .reset_gpio_num = WAVESHARE_240_280_LCD_GPIO_RST,
-        .color_space = WAVESHARE_240_280_LCD_COLOR_SPACE,
-        .bits_per_pixel = WAVESHARE_240_280_LCD_BITS_PER_PIXEL,
-    };
-    esp_lcd_new_panel_st7789(lcd_io, &panel_config, &lcd_panel);
-
-    esp_lcd_panel_reset(lcd_panel);
-    esp_lcd_panel_init(lcd_panel);
-    esp_lcd_panel_mirror(lcd_panel, true, true);
-    esp_lcd_panel_disp_on_off(lcd_panel, true);
-
-    // LCD backlight on 
-    ESP_ERROR_CHECK(gpio_set_level(WAVESHARE_240_280_LCD_GPIO_BL, WAVESHARE_240_280_LCD_BL_ON_LEVEL));
-
-    esp_lcd_panel_set_gap(lcd_panel, 0, 20);
-    esp_lcd_panel_invert_color(lcd_panel, true);
-
-    ESP_LOGI(TAG, "Initialize LVGL library");
-    lv_init();
-
-    void *buf1 = NULL;
-    void *buf2 = NULL;
-    ESP_LOGI(TAG, "Allocate separate LVGL draw buffers from PSRAM");
-    buf1 = heap_caps_malloc(WAVESHARE_240_280_LCD_H_RES * 32 * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
-    assert(buf1);
-    buf2 = heap_caps_malloc(WAVESHARE_240_280_LCD_H_RES * 32 * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
-    assert(buf2);
-    lv_disp_draw_buf_init(&disp_buf, buf1, buf2, WAVESHARE_240_280_LCD_H_RES * 32);
-
-    ESP_LOGI(TAG, "Register display driver to LVGL");
-    lv_disp_drv_init(&disp_drv);
-    disp_drv.hor_res = WAVESHARE_240_280_LCD_H_RES;
-    disp_drv.ver_res = WAVESHARE_240_280_LCD_V_RES;
-    disp_drv.flush_cb = display_lvgl_flush_cb;
-    disp_drv.draw_buf = &disp_buf;
-    disp_drv.user_data = lcd_panel;
-
-    lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(&disp_drv);
-
-#endif //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH
-
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R
-    // LCD backlight on Led driver
-    // todo 
-
-    // LCD initialization
-    ESP_LOGD(TAG, "Initialize SPI bus");
-    const spi_bus_config_t buscfg = {
-        .sclk_io_num = ATOM3SR_LCD_GPIO_SCLK,
-        .mosi_io_num = ATOM3SR_LCD_GPIO_MOSI,
-        .miso_io_num = GPIO_NUM_NC,
-        .quadwp_io_num = GPIO_NUM_NC,
-        .quadhd_io_num = GPIO_NUM_NC,
-        // note here: this value needs to be: WAVESHARE_240_280_LCD_H_RES * WAVESHARE_240_280_LCD_DRAW_BUFF_HEIGHT * sizeof(uint16_t)
-        // however, the ESP framework uses multiples of 4092 for DMA (LLDESC_MAX_NUM_PER_DESC).
-        // this theoretical number is 49.9 times the DMA size, which gets rounded down and ends up too small.
-        // so instead, manually setting it to a little larger (50 rather than 49.9)
-        .max_transfer_sz = 50 * LLDESC_MAX_NUM_PER_DESC,
-    };
-    spi_bus_initialize(ATOM3SR_LCD_SPI_NUM, &buscfg, SPI_DMA_CH_AUTO);
-
-    ESP_LOGD(TAG, "Install panel IO");
-    const esp_lcd_panel_io_spi_config_t io_config = {
-        .dc_gpio_num = ATOM3SR_LCD_GPIO_DC,
-        .cs_gpio_num = ATOM3SR_LCD_GPIO_CS,
-        .pclk_hz = ATOM3SR_LCD_PIXEL_CLK_HZ,
-        .lcd_cmd_bits = ATOM3SR_LCD_CMD_BITS,
-        .lcd_param_bits = ATOM3SR_LCD_PARAM_BITS,
-        .spi_mode = 0,
-        .trans_queue_depth = 10,
-    };
-    esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)ATOM3SR_LCD_SPI_NUM, &io_config, &lcd_io);
-
-    ESP_LOGD(TAG, "Install LCD driver");
-    const esp_lcd_panel_dev_config_t panel_config = {
-        .reset_gpio_num = ATOM3SR_LCD_GPIO_RST,
-        .color_space = ATOM3SR_LCD_COLOR_SPACE,
-        .bits_per_pixel = ATOM3SR_LCD_BITS_PER_PIXEL,
-    };
-    esp_lcd_new_panel_gc9107(lcd_io, &panel_config, &lcd_panel);
-
-    esp_lcd_panel_reset(lcd_panel);
-    esp_lcd_panel_init(lcd_panel);
-    esp_lcd_panel_mirror(lcd_panel, true, true);
-    esp_lcd_panel_disp_on_off(lcd_panel, true);
-
-    // LCD backlight on 
-    LP5562_set_color(0, 0, 0, 180);
-
-    esp_lcd_panel_set_gap(lcd_panel, 2, 1);
-    esp_lcd_panel_invert_color(lcd_panel, true);
-
-    ESP_LOGI(TAG, "Initialize LVGL library");
-    lv_init();
-
-    void *buf1 = NULL;
-    void *buf2 = NULL;
-    ESP_LOGI(TAG, "Allocate separate LVGL draw buffers from PSRAM");
-    buf1 = heap_caps_malloc(ATOM3SR_LCD_H_RES * 32 * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
-    assert(buf1);
-    buf2 = heap_caps_malloc(ATOM3SR_LCD_H_RES * 32 * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
-    assert(buf2);
-    lv_disp_draw_buf_init(&disp_buf, buf1, buf2, ATOM3SR_LCD_H_RES * 32);
-
-    ESP_LOGI(TAG, "Register display driver to LVGL");
-    lv_disp_drv_init(&disp_drv);
-    disp_drv.hor_res = ATOM3SR_LCD_H_RES;
-    disp_drv.ver_res = ATOM3SR_LCD_V_RES;
-    disp_drv.flush_cb = display_lvgl_flush_cb;
-    disp_drv.draw_buf = &disp_buf;
-    disp_drv.user_data = lcd_panel;
-
-    lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(&disp_drv);
-#endif
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
     // Tick interface for LVGL (using esp_timer to generate 2ms periodic event)
@@ -3742,16 +3564,15 @@ void display_init(i2c_port_t I2CNum, SemaphoreHandle_t I2CMutex)
 
     vTaskDelay(pdMS_TO_TICKS(10));
 
-    if (control_get_config_item_int(CONFIG_ITEM_SCREEN_ROTATION) == SCREEN_ROTATION_180)
-    {
-        disp_drv.rotated = LV_DISP_ROT_180;
-        // can only do software rotation, with a drop in frame rate
-        disp_drv.sw_rotate = 1;
-    }
-
     // init GUI
-    ESP_LOGI(TAG, "Init scene");
+    ESP_LOGI(TAG, "Init UI");
     ui_init();
+
+    // init mem
+    memset((void*)&msgbox_data, 0, sizeof(msgbox_data));
+
+    // init toast
+    ui_init_toast();
 
     // create display task
     xTaskCreatePinnedToCore(display_task, "Dsp", DISPLAY_TASK_STACK_SIZE, NULL, DISPLAY_TASK_PRIORITY, NULL, 1);

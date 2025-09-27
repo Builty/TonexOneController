@@ -69,7 +69,7 @@ static uint8_t MidiCharacteristicUUIDByteReversed[] = {0xF3, 0x6B, 0x10, 0x9D, 0
 
 #define PROFILE_A_APP_ID            0
 #define INVALID_HANDLE              0
-#define BT_SCAN_DURATION            1800    // seconds
+#define BT_SCAN_DURATION            (7 * 24 * 60 * 60)   // 7 days, in seconds
 #define MAX_DEVICE_NAME_LENGTH      25
 #define MAX_DEVICE_NAMES            10
 
@@ -583,38 +583,10 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
         if (!param->write.is_prep)
         {
             ESP_LOGI(GATTS_TAG, "value len %d, value ", param->write.len);
-            ESP_LOG_BUFFER_HEX(GATTS_TAG, param->write.value, param->write.len);
+            //ESP_LOG_BUFFER_HEX(GATTS_TAG, param->write.value, param->write.len);
 
-            // check Midi data. Program change Should be ?? ?? 0xC0 XX (XX = preset index, 0-based)
-            // first 2 bytes are header/timestamp bytes, values depend on host. Ignoring them here
-            if (param->write.len >= 4)
-            {
-                // check channel
-                if ((param->write.value[2] & 0x0F) != midi_serial_channel)
-                {
-                    ESP_LOGI(GATTS_TAG, "BT Midi non-matching channel %d", param->write.value[2] & 0x0F);
-                }
-                else
-                {
-                    // check the command
-                    switch (param->write.value[2] & 0xF0)
-                    {
-                        case 0xC0:
-                        {
-                            // set preset
-                            control_request_preset_index(param->write.value[3]);
-                        } break;
-
-                        case 0xB0:
-                        {
-                            // control change
-                            uint8_t change_num = param->write.value[3];
-                            uint8_t value = param->write.value[4];
-                            midi_helper_adjust_param_via_midi(change_num, value);
-                        } break;
-                    }
-                }
-            }
+            // handle Midi data.
+            midi_helper_process_incoming_data(param->write.value, param->write.len, midi_serial_channel, 1);            
 
             if (gls_profile_tab[PROFILE_A_APP_ID].descr_handle == param->write.handle && param->write.len == 2)
             {
@@ -892,7 +864,7 @@ static void __attribute__((unused)) gattc_profile_a_event_handler(esp_gattc_cb_e
 
             ESP_LOGI(GATTC_TAG, "ESP_GATTC_OPEN_EVT conn_id %d, if %d, status %d, mtu %d", p_data->open.conn_id, gattc_if, p_data->open.status, p_data->open.mtu);
             ESP_LOGI(GATTC_TAG, "REMOTE BDA:");
-            esp_log_buffer_hex(GATTC_TAG, p_data->open.remote_bda, sizeof(esp_bd_addr_t));
+            ESP_LOG_BUFFER_HEX(GATTC_TAG, p_data->open.remote_bda, sizeof(esp_bd_addr_t));
             
             esp_err_t mtu_ret = esp_ble_gattc_send_mtu_req(gattc_if, p_data->open.conn_id);
             if (mtu_ret)
@@ -1099,44 +1071,11 @@ static void __attribute__((unused)) gattc_profile_a_event_handler(esp_gattc_cb_e
         }
 
         case ESP_GATTC_NOTIFY_EVT:
-            ESP_LOGI(GATTC_TAG, "ESP_GATTC_NOTIFY_EVT, Receive notify value:");
-            esp_log_buffer_hex(GATTC_TAG, p_data->notify.value, p_data->notify.value_len);
+            ESP_LOGI(GATTC_TAG, "ESP_GATTC_NOTIFY_EVT, Receive notify values. len: %d", (int)p_data->notify.value_len);
+            //ESP_LOG_BUFFER_HEX(GATTC_TAG, p_data->notify.value, p_data->notify.value_len);
 
-            // check Midi data. Program change Should be ?? ?? 0xC0 XX (XX = preset index, 0-based)
-            // first 2 bytes are header/timestamp bytes, values depend on host. Ignoring them here
-            if (p_data->notify.value_len >= 4)
-            {
-                // check channel
-                if ((p_data->notify.value[2] & 0x0F) != midi_serial_channel)
-                {
-                    ESP_LOGI(GATTC_TAG, "BT Midi non-matching channel %d", p_data->notify.value[2] & 0x0F);
-                }
-                else
-                {
-                    // check the command
-                    switch (p_data->notify.value[2] & 0xF0)
-                    {
-                        case 0xC0:
-                        {
-                            // set preset
-                            control_request_preset_index(p_data->notify.value[3]);
-                        } break;
-
-                        case 0xB0:
-                        {
-                            // note issue here with MVave chocolate pedal. Bank up/down sends 
-                            // a control change message, which would modify a different parameter
-                            if (control_get_config_item_int(CONFIG_ITEM_ENABLE_BT_MIDI_CC))
-                            {                        
-                                // control change
-                                uint8_t change_num = p_data->notify.value[3];
-                                uint8_t value = p_data->notify.value[4];
-                                midi_helper_adjust_param_via_midi(change_num, value);
-                            }
-                        } break;
-                    }
-                }
-            }
+            // handle Midi data.
+            midi_helper_process_incoming_data(p_data->notify.value, p_data->notify.value_len, midi_serial_channel, control_get_config_item_int(CONFIG_ITEM_ENABLE_BT_MIDI_CC));            
             break;
 
         case ESP_GATTC_WRITE_DESCR_EVT:
@@ -1374,7 +1313,7 @@ static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *par
             switch (scan_result->scan_rst.search_evt) 
             {
             case ESP_GAP_SEARCH_INQ_RES_EVT:
-                //esp_log_buffer_hex(GATTC_TAG, scan_result->scan_rst.bda, 6);
+                //ESP_LOG_BUFFER_HEX(GATTC_TAG, scan_result->scan_rst.bda, 6);
                 //ESP_LOGI(GATTC_TAG, "Searched Adv Data Len %d, Scan Response Len %d", scan_result->scan_rst.adv_data_len, scan_result->scan_rst.scan_rsp_len);
                 adv_name = esp_ble_resolve_adv_data(scan_result->scan_rst.ble_adv, ESP_BLE_AD_TYPE_NAME_CMPL, &adv_name_len);
                 //ESP_LOGI(GATTC_TAG, "Searched Device Name Len %d", adv_name_len);
@@ -1402,7 +1341,7 @@ static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *par
                         for (uint8_t loop = 0; loop < remote_device_names_length; loop++)
                         {       
                             //ESP_LOGI(GATTC_TAG, "Checking for device %s. len: %d %d", remote_device_names[loop], strlen(remote_device_names[loop]), adv_name_len);
-                            if ((strlen(remote_device_names[loop]) == adv_name_len) && (strncmp((char*)adv_name, remote_device_names[loop], adv_name_len)) == 0) 
+                            if (strncmp((char*)adv_name, remote_device_names[loop], adv_name_len) == 0) 
                             {
                                 if (conn_device_a == false) 
                                 {
