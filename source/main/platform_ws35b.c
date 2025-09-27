@@ -210,9 +210,21 @@ __attribute__((unused)) void platform_adjust_touch_coords(lv_coord_t* x, lv_coor
     lv_coord_t xpos = *x;
     lv_coord_t ypos = *y;
 
-    // 90 degree screen rotation
-    *x = ypos;
-    *y = WAVESHARE_35_LCD_V_RES - xpos;
+    switch (rotation_setting)
+    {
+        case LV_DISP_ROT_90:
+        default:
+        {
+            *x = ypos;
+            *y = WAVESHARE_35_LCD_V_RES - xpos;
+        } break;
+
+        case LV_DISP_ROT_270:
+        {
+            *x = WAVESHARE_35_LCD_H_RES - ypos;
+            *y = xpos;
+        } break;
+    }
 }
 
 /****************************************************************************
@@ -625,8 +637,6 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     tp_cfg.y_max = WAVESHARE_35_LCD_V_RES;
     tp_cfg.rst_gpio_num = GPIO_NUM_NC;
     tp_cfg.int_gpio_num = GPIO_NUM_NC;
-
-    // 90 degree rotation
     tp_cfg.flags.swap_xy = 0;
     tp_cfg.flags.mirror_x = 0;
     tp_cfg.flags.mirror_y = 0;
@@ -663,11 +673,12 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         lv_indev_drv_register(&indev_drv);
     }       
 
+    // set rotation
     if (control_get_config_item_int(CONFIG_ITEM_SCREEN_ROTATION) == SCREEN_ROTATION_180)
     {
         // 270 here as normal landscape mode is 90 degrees
         rotation_setting = LV_DISP_ROT_270;
-    }
+    }  
 }
 
 #endif //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35

@@ -163,9 +163,21 @@ __attribute__((unused)) void platform_adjust_touch_coords(lv_coord_t* x, lv_coor
     lv_coord_t xpos = *x;
     lv_coord_t ypos = *y;
 
-    // 90 degree screen rotation
-    *x = ypos;
-    *y = JC3248W_LCD_V_RES - xpos;
+    switch (rotation_setting)
+    {
+        case LV_DISP_ROT_90:
+        default:
+        {
+            *x = ypos;
+            *y = JC3248W_LCD_V_RES - xpos;
+        } break;
+
+        case LV_DISP_ROT_270:
+        {
+            *x = JC3248W_LCD_H_RES - ypos;
+            *y = xpos;
+        } break;
+    }
 }
 
 /****************************************************************************

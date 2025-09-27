@@ -8606,7 +8606,7 @@
                 "strtype": "OBJECT/Position",
                 "intarray": [
                   0,
-                  -53
+                  -71
                 ],
                 "InheritedType": 7
               },
@@ -8616,7 +8616,7 @@
                 "strtype": "OBJECT/Size",
                 "intarray": [
                   469,
-                  222
+                  179
                 ],
                 "InheritedType": 7
               },
@@ -34668,7 +34668,7 @@
     "uiExportFolderPath": "D:\\projects\\TonexController\\TonexOneController\\source\\main\\ui_generated_480x320land",
     "projectExportFolderPath": "D:\\projects\\TonexController\\TonexOneController\\source\\main\\ui_generated_480x320land",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 712,
+    "backup_cnt": 713,
     "autosave_cnt": 0,
     "group_color_cnt": 0,
     "lvgl_version": "8.3.11",

@@ -435,9 +435,9 @@ void ui_Screen1_screen_init(void)
 
     ui_EntryKeyboard = lv_keyboard_create(ui_Screen1);
     lv_obj_set_width(ui_EntryKeyboard, 469);
-    lv_obj_set_height(ui_EntryKeyboard, 222);
+    lv_obj_set_height(ui_EntryKeyboard, 179);
     lv_obj_set_x(ui_EntryKeyboard, 0);
-    lv_obj_set_y(ui_EntryKeyboard, -53);
+    lv_obj_set_y(ui_EntryKeyboard, -71);
     lv_obj_set_align(ui_EntryKeyboard, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_EntryKeyboard, LV_OBJ_FLAG_HIDDEN);     /// Flags
 
