@@ -7,7 +7,7 @@ idf_component_register(SRCS "midi_control.c" "control.c" "footswitches.c" "CH422
                             INCLUDE_DIRS "." "./")
                                                        
 if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY)
-    target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated")
+    target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated_800x480land")
 
     target_sources(${COMPONENT_LIB} PRIVATE "ui_generated_800x480land/ui.c" "ui_generated_800x480land/styles.c"
                             "ui_generated_800x480land/screens.c" "ui_generated_800x480land/images.c"

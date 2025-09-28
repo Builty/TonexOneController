@@ -10,7 +10,7 @@
       "lvglVersion": "8.3",
       "extensions": [],
       "imports": [],
-      "flowSupport": true,
+      "flowSupport": false,
       "displayWidth": 800,
       "displayHeight": 480,
       "displayBorderRadius": 0,
@@ -141,15 +141,6 @@
       "implementationType": "native"
     },
     {
-      "objID": "6a0489ba-0bf6-4f8d-f4c4-a83a9da4ec32",
-      "components": [],
-      "connectionLines": [],
-      "localVariables": [],
-      "userProperties": [],
-      "name": "EffectToggle",
-      "implementationType": "native"
-    },
-    {
       "objID": "f495a134-8411-4ab3-fdff-2dfea6856f7c",
       "components": [],
       "connectionLines": [],
@@ -175,6 +166,110 @@
       "userProperties": [],
       "name": "ParameterChanged",
       "implementationType": "native"
+    },
+    {
+      "objID": "7dbbab6c-e07a-43c6-c384-3f98abb55146",
+      "components": [],
+      "connectionLines": [],
+      "localVariables": [],
+      "userProperties": [],
+      "name": "CloseSettingsPage"
+    },
+    {
+      "objID": "736f2f07-ec99-41cf-da52-dbad2c442daa",
+      "components": [],
+      "connectionLines": [],
+      "localVariables": [],
+      "userProperties": [],
+      "name": "ShowSettingsPage"
+    },
+    {
+      "objID": "7b4a9cfe-2816-4750-add5-0a94239d8e95",
+      "components": [],
+      "connectionLines": [],
+      "localVariables": [],
+      "userProperties": [],
+      "name": "EnableSkinEdit"
+    },
+    {
+      "objID": "ac543e72-eb44-4ad8-f97a-83fab1dc2dd0",
+      "components": [],
+      "connectionLines": [],
+      "localVariables": [],
+      "userProperties": [],
+      "name": "SaveSkinEdit"
+    },
+    {
+      "objID": "a26a98c0-e141-4bc7-93ea-394a3bce9574",
+      "components": [],
+      "connectionLines": [],
+      "localVariables": [],
+      "userProperties": [],
+      "name": "KeyboardOK"
+    },
+    {
+      "objID": "3c89b833-6b65-453d-a156-7ace94071e3a",
+      "components": [],
+      "connectionLines": [],
+      "localVariables": [],
+      "userProperties": [],
+      "name": "PresetDescriptionPressed"
+    },
+    {
+      "objID": "ed2c4ea0-0e69-46a7-f40c-4b9499b3fd0a",
+      "components": [],
+      "connectionLines": [],
+      "localVariables": [],
+      "userProperties": [],
+      "name": "ToggleEffectGate"
+    },
+    {
+      "objID": "abd211b6-4aba-4553-e16f-aa065ef4712c",
+      "components": [],
+      "connectionLines": [],
+      "localVariables": [],
+      "userProperties": [],
+      "name": "ToggleEffectAmp"
+    },
+    {
+      "objID": "db38d8b6-e20a-45bb-b95a-53cfc843da96",
+      "components": [],
+      "connectionLines": [],
+      "localVariables": [],
+      "userProperties": [],
+      "name": "ToggleEffectCab"
+    },
+    {
+      "objID": "536b0ed9-7bfc-4d25-b3d1-e806388df8f1",
+      "components": [],
+      "connectionLines": [],
+      "localVariables": [],
+      "userProperties": [],
+      "name": "ToggleEffectComp"
+    },
+    {
+      "objID": "e333fee9-93d1-4ae8-9805-b09bd7a2e612",
+      "components": [],
+      "connectionLines": [],
+      "localVariables": [],
+      "userProperties": [],
+      "name": "ToggleEffectMod"
+    },
+    {
+      "objID": "c9ca0097-f1fd-4dc8-c979-a5b79b204ddd",
+      "components": [],
+      "connectionLines": [],
+      "localVariables": [],
+      "userProperties": [],
+      "name": "ToggleEffectDelay"
+    },
+    {
+      "objID": "d03d39d4-61d8-41d5-eb2a-5864bbeb90d6",
+      "components": [],
+      "connectionLines": [],
+      "localVariables": [],
+      "userProperties": [],
+      "name": "ToggleEffectReverb"
     }
   ],
   "userPages": [
@@ -246,7 +341,8 @@
                     {
                       "objID": "184c3292-d511-43d7-990d-eb57658a2681",
                       "eventName": "PRESSED",
-                      "handlerType": "flow",
+                      "handlerType": "action",
+                      "action": "ShowSettingsPage",
                       "userData": 0
                     }
                   ],
@@ -300,15 +396,15 @@
                     {
                       "objID": "9784880c-48cd-4a0b-d552-91856351a330",
                       "eventName": "LONG_PRESSED",
-                      "handlerType": "flow",
-                      "action": "NextClicked",
+                      "handlerType": "action",
+                      "action": "ShowSettingsPage",
                       "userData": 0
                     },
                     {
                       "objID": "dfa9c66f-f8d7-4e97-abca-a72f2fcb9665",
-                      "eventName": "PRESSED",
-                      "handlerType": "flow",
-                      "action": "NextClicked",
+                      "eventName": "SHORT_CLICKED",
+                      "handlerType": "action",
+                      "action": "ToggleEffectReverb",
                       "userData": 0
                     }
                   ],
@@ -362,15 +458,15 @@
                     {
                       "objID": "03df3209-f282-4f94-f6e2-304d3f7c36d9",
                       "eventName": "LONG_PRESSED",
-                      "handlerType": "flow",
-                      "action": "NextClicked",
+                      "handlerType": "action",
+                      "action": "ShowSettingsPage",
                       "userData": 0
                     },
                     {
                       "objID": "3af53245-1422-40ef-c262-9df66ff4a5ff",
-                      "eventName": "PRESSED",
-                      "handlerType": "flow",
-                      "action": "NextClicked",
+                      "eventName": "SHORT_CLICKED",
+                      "handlerType": "action",
+                      "action": "ToggleEffectDelay",
                       "userData": 0
                     }
                   ],
@@ -424,15 +520,15 @@
                     {
                       "objID": "35756783-99db-4a51-e26c-ab96a6e2f5a6",
                       "eventName": "LONG_PRESSED",
-                      "handlerType": "flow",
-                      "action": "NextClicked",
+                      "handlerType": "action",
+                      "action": "ShowSettingsPage",
                       "userData": 0
                     },
                     {
                       "objID": "498d8d7b-27df-42fb-a2cc-aeb92e9e5e2c",
-                      "eventName": "PRESSED",
-                      "handlerType": "flow",
-                      "action": "NextClicked",
+                      "eventName": "SHORT_CLICKED",
+                      "handlerType": "action",
+                      "action": "ToggleEffectMod",
                       "userData": 0
                     }
                   ],
@@ -486,15 +582,15 @@
                     {
                       "objID": "a01cf2a9-775f-46f4-940f-6b4d97fad088",
                       "eventName": "LONG_PRESSED",
-                      "handlerType": "flow",
-                      "action": "NextClicked",
+                      "handlerType": "action",
+                      "action": "ShowSettingsPage",
                       "userData": 0
                     },
                     {
                       "objID": "25303949-2764-479b-bc1b-0cf89809a9f5",
-                      "eventName": "PRESSED",
-                      "handlerType": "flow",
-                      "action": "NextClicked",
+                      "eventName": "SHORT_CLICKED",
+                      "handlerType": "action",
+                      "action": "ToggleEffectComp",
                       "userData": 0
                     }
                   ],
@@ -548,15 +644,15 @@
                     {
                       "objID": "e2a2424a-b9da-4964-86c8-6134635815d1",
                       "eventName": "LONG_PRESSED",
-                      "handlerType": "flow",
-                      "action": "NextClicked",
+                      "handlerType": "action",
+                      "action": "ShowSettingsPage",
                       "userData": 0
                     },
                     {
                       "objID": "6eaf8f03-9ad6-4e41-cca5-8ae31f21128b",
-                      "eventName": "PRESSED",
-                      "handlerType": "flow",
-                      "action": "NextClicked",
+                      "eventName": "SHORT_CLICKED",
+                      "handlerType": "action",
+                      "action": "ToggleEffectCab",
                       "userData": 0
                     }
                   ],
@@ -610,15 +706,15 @@
                     {
                       "objID": "743c86ee-c1af-44b4-fb68-302c9f2c2e7a",
                       "eventName": "LONG_PRESSED",
-                      "handlerType": "flow",
-                      "action": "NextClicked",
+                      "handlerType": "action",
+                      "action": "ShowSettingsPage",
                       "userData": 0
                     },
                     {
                       "objID": "4d554585-6f33-4901-86e3-6f1448f38050",
-                      "eventName": "PRESSED",
-                      "handlerType": "flow",
-                      "action": "NextClicked",
+                      "eventName": "SHORT_CLICKED",
+                      "handlerType": "action",
+                      "action": "ToggleEffectAmp",
                       "userData": 0
                     }
                   ],
@@ -672,15 +768,15 @@
                     {
                       "objID": "ef3e8a40-7be2-493f-fe75-0b0a698ce774",
                       "eventName": "LONG_PRESSED",
-                      "handlerType": "flow",
-                      "action": "NextClicked",
+                      "handlerType": "action",
+                      "action": "ShowSettingsPage",
                       "userData": 0
                     },
                     {
                       "objID": "77850b43-aeec-4e56-9858-d77a0204edae",
-                      "eventName": "PRESSED",
-                      "handlerType": "flow",
-                      "action": "NextClicked",
+                      "eventName": "SHORT_CLICKED",
+                      "handlerType": "action",
+                      "action": "ToggleEffectGate",
                       "userData": 0
                     }
                   ],
@@ -734,7 +830,7 @@
                     {
                       "objID": "44d3c897-0600-474e-fb02-f76ce9434494",
                       "eventName": "LONG_PRESSED",
-                      "handlerType": "flow",
+                      "handlerType": "action",
                       "action": "ShowSettingsTab",
                       "userData": 0
                     }
@@ -1522,7 +1618,8 @@
                 {
                   "objID": "ce4b2e08-6765-4566-ee88-3f8e1a5aafff",
                   "eventName": "LONG_PRESSED",
-                  "handlerType": "flow",
+                  "handlerType": "action",
+                  "action": "EnableSkinEdit",
                   "userData": 0
                 }
               ],
@@ -1585,8 +1682,8 @@
                 {
                   "objID": "bb8d28b8-83d5-4bb3-ce18-7789289e90cd",
                   "eventName": "PRESSED",
-                  "handlerType": "flow",
-                  "action": "NextClicked",
+                  "handlerType": "action",
+                  "action": "PresetDescriptionPressed",
                   "userData": 0
                 }
               ],
@@ -1596,7 +1693,7 @@
               "widthUnit": "px",
               "heightUnit": "px",
               "children": [],
-              "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_ON_FOCUS|SCROLL_WITH_ARROW|SNAPPABLE",
+              "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SNAPPABLE",
               "hiddenFlagType": "literal",
               "clickableFlag": true,
               "clickableFlagType": "literal",
@@ -2023,8 +2120,8 @@
                 {
                   "objID": "edcb82b5-7dee-4bef-a35e-14993c0bb8bd",
                   "eventName": "READY",
-                  "handlerType": "flow",
-                  "action": "NextClicked",
+                  "handlerType": "action",
+                  "action": "KeyboardOK",
                   "userData": 0
                 }
               ],
@@ -2083,7 +2180,8 @@
                 {
                   "objID": "18ae2bf7-d174-4fe7-c9be-49cb2defa225",
                   "eventName": "PRESSED",
-                  "handlerType": "flow",
+                  "handlerType": "action",
+                  "action": "SaveSkinEdit",
                   "userData": 0
                 }
               ],
@@ -2137,476 +2235,9 @@
             }
           },
           "groupIndex": 0
-        },
-        {
-          "objID": "3945a5f4-642b-49d3-e27d-3ed78d32e14d",
-          "type": "LVGLActionComponent",
-          "left": 811,
-          "top": 565,
-          "width": 293,
-          "height": 54,
-          "customInputs": [],
-          "customOutputs": [],
-          "description": "LoadSettings",
-          "actions": [
-            {
-              "objID": "dd1de919-e578-47fa-8a4a-44b726dfb494",
-              "action": "changeScreen",
-              "screen": "Settings",
-              "screenType": "literal",
-              "fadeMode": "NONE",
-              "fadeModeType": "literal",
-              "speed": 200,
-              "speedType": "literal",
-              "delay": 0,
-              "delayType": "literal",
-              "useStack": true,
-              "useStackType": "literal"
-            }
-          ]
-        },
-        {
-          "objID": "b19402e3-c3a6-47ce-c66d-779c2678d131",
-          "type": "LVGLActionComponent",
-          "left": 920,
-          "top": 90,
-          "width": 354,
-          "height": 206,
-          "customInputs": [],
-          "customOutputs": [],
-          "description": "SkinChooser",
-          "actions": [
-            {
-              "objID": "99035f1f-ba15-4970-f94a-fabf81fe5145",
-              "action": "objAddFlag",
-              "object": "ui_bpm_indicator",
-              "objectType": "literal",
-              "flag": "HIDDEN",
-              "flagType": "literal"
-            },
-            {
-              "objID": "14f5ac29-d0d7-4d49-84ea-e81188e7f841",
-              "action": "objSetFlagHidden",
-              "object": "ui_bpm_title_label",
-              "objectType": "literal",
-              "hidden": true,
-              "hiddenType": "literal"
-            },
-            {
-              "objID": "f35c3e4a-3df2-4b73-e557-e43c4fbcb8a7",
-              "action": "objSetFlagHidden",
-              "object": "ui_bpm_value_label",
-              "objectType": "literal",
-              "hidden": true,
-              "hiddenType": "literal"
-            },
-            {
-              "objID": "6359029d-fcd9-46b8-d39b-a22556618230",
-              "action": "objSetFlagHidden",
-              "object": "ui_bank_title_label",
-              "objectType": "literal",
-              "hidden": true,
-              "hiddenType": "literal"
-            },
-            {
-              "objID": "86f07502-2982-4994-cc76-0bcd50ef6c76",
-              "action": "objSetFlagHidden",
-              "object": "ui_bank_value_label",
-              "objectType": "literal",
-              "hidden": true,
-              "hiddenType": "literal"
-            },
-            {
-              "objID": "d7b2ea7c-b0fc-4d66-b400-5f6a664b1768",
-              "action": "objClearFlag",
-              "object": "ui_ok_tick",
-              "objectType": "literal",
-              "flag": "HIDDEN",
-              "flagType": "literal"
-            },
-            {
-              "objID": "cb4f6d92-b02c-40bf-fb36-20b5afae4777",
-              "action": "objClearState",
-              "object": "ui_preset_details_text_area",
-              "objectType": "literal",
-              "state": "DISABLED",
-              "stateType": "literal"
-            },
-            {
-              "objID": "94c544a7-5edc-49fe-9b84-d7997d8f5e0d",
-              "action": "objClearFlag",
-              "object": "ui_right_arrow",
-              "objectType": "literal",
-              "flag": "HIDDEN",
-              "flagType": "literal"
-            },
-            {
-              "objID": "c8eddfe7-9f54-4340-f74f-ce8cbfc1ca06",
-              "action": "objClearFlag",
-              "object": "ui_left_arrow",
-              "objectType": "literal",
-              "flag": "HIDDEN",
-              "flagType": "literal"
-            }
-          ]
-        },
-        {
-          "objID": "fef5bf1d-17fb-44b1-cc05-67a94509e81a",
-          "type": "LVGLActionComponent",
-          "left": 914,
-          "top": 691,
-          "width": 360,
-          "height": 225,
-          "customInputs": [],
-          "customOutputs": [],
-          "description": "OKTick",
-          "actions": [
-            {
-              "objID": "1af3107a-0070-4059-eede-77c61080ddf6",
-              "action": "objClearFlag",
-              "object": "ui_bpm_indicator",
-              "objectType": "literal",
-              "flag": "HIDDEN",
-              "flagType": "literal"
-            },
-            {
-              "objID": "0fde6c6a-9cef-4ab5-8e0c-0c10c33e6f85",
-              "action": "objClearFlag",
-              "object": "ui_bpm_title_label",
-              "objectType": "literal",
-              "flag": "HIDDEN",
-              "flagType": "literal"
-            },
-            {
-              "objID": "36840fea-604e-406e-872d-e90ed302e7c2",
-              "action": "objClearFlag",
-              "object": "ui_bpm_value_label",
-              "objectType": "literal",
-              "flag": "HIDDEN",
-              "flagType": "literal"
-            },
-            {
-              "objID": "c4c3428e-7a8c-4c57-c374-312664f2b917",
-              "action": "objClearFlag",
-              "object": "ui_bank_title_label",
-              "objectType": "literal",
-              "flag": "HIDDEN",
-              "flagType": "literal"
-            },
-            {
-              "objID": "75158a7c-6c18-4ebc-cce4-0d0bfc416a30",
-              "action": "objClearFlag",
-              "object": "ui_bank_value_label",
-              "objectType": "literal",
-              "flag": "HIDDEN",
-              "flagType": "literal"
-            },
-            {
-              "objID": "99f1086d-99c2-44da-f196-15d1caa09a3e",
-              "action": "objSetStateDisabled",
-              "object": "ui_preset_details_text_area",
-              "objectType": "literal",
-              "disabled": true,
-              "disabledType": "literal"
-            },
-            {
-              "objID": "a95b377c-b3e3-4542-9f23-1cfa2dfc1fc6",
-              "action": "objAddFlag",
-              "object": "ui_left_arrow",
-              "objectType": "literal",
-              "flag": "HIDDEN",
-              "flagType": "literal"
-            },
-            {
-              "objID": "ac77b35a-e189-4b7b-eaf3-8eb478bf4c1a",
-              "action": "objAddFlag",
-              "object": "ui_right_arrow",
-              "objectType": "literal",
-              "flag": "HIDDEN",
-              "flagType": "literal"
-            },
-            {
-              "objID": "2bcb1712-da5b-47ed-973c-aa4b8ed5eeac",
-              "action": "objAddFlag",
-              "object": "ui_entry_keyboard",
-              "objectType": "literal",
-              "flag": "HIDDEN",
-              "flagType": "literal"
-            },
-            {
-              "objID": "249dbdaa-2da3-432b-dfbd-9afb94623768",
-              "action": "objSetFlagHidden",
-              "object": "ui_ok_tick",
-              "objectType": "literal",
-              "hidden": true,
-              "hiddenType": "literal"
-            }
-          ]
-        },
-        {
-          "objID": "fa426404-e29f-4160-95bd-7bd84d4632d0",
-          "type": "LVGLActionComponent",
-          "left": 914,
-          "top": 386,
-          "width": 446,
-          "height": 73,
-          "customInputs": [],
-          "customOutputs": [],
-          "description": "PresetDescriptionPressed",
-          "actions": [
-            {
-              "objID": "a2c94db0-a8b8-4425-ea6b-a2598341669e",
-              "action": "objClearFlag",
-              "object": "ui_entry_keyboard",
-              "objectType": "literal",
-              "flag": "HIDDEN",
-              "flagType": "literal"
-            },
-            {
-              "objID": "05ea0115-6d43-4d70-b917-229356e6bebb",
-              "action": "keyboardSetTextarea",
-              "object": "ui_entry_keyboard",
-              "objectType": "literal",
-              "textarea": "ui_preset_details_text_area",
-              "textareaType": "literal"
-            }
-          ]
-        },
-        {
-          "objID": "ea40c83c-80a5-47a6-e08d-8a9e978bbac9",
-          "type": "LVGLActionComponent",
-          "left": 914,
-          "top": -70,
-          "width": 262,
-          "height": 54,
-          "customInputs": [],
-          "customOutputs": [],
-          "description": "KeyboardDone",
-          "actions": [
-            {
-              "objID": "16742078-8cc2-4f56-bf2b-f5fc54095a0c",
-              "action": "objSetFlagHidden",
-              "object": "ui_entry_keyboard",
-              "objectType": "literal",
-              "hidden": true,
-              "hiddenType": "literal"
-            }
-          ]
-        },
-        {
-          "objID": "966658d7-dbb2-4846-f4e2-bb0868665621",
-          "type": "LVGLActionComponent",
-          "left": 467,
-          "top": 692,
-          "width": 341,
-          "height": 54,
-          "customInputs": [],
-          "customOutputs": [
-            {
-              "objID": "c3c8aaa7-c5e1-49f1-9a75-c007ac242dc2",
-              "name": "widget",
-              "type": "widget"
-            }
-          ],
-          "description": "EffectIconLongPress",
-          "actions": [
-            {
-              "objID": "f7417ef0-7bbf-428d-c64e-ff601f733fe9",
-              "action": "changeScreen",
-              "screen": "Settings",
-              "screenType": "literal",
-              "fadeMode": "NONE",
-              "fadeModeType": "literal",
-              "speed": 200,
-              "speedType": "literal",
-              "delay": 0,
-              "delayType": "literal",
-              "useStack": true,
-              "useStackType": "literal"
-            }
-          ]
-        },
-        {
-          "objID": "64b2cc73-013b-4bea-c6a3-73e06119e90e",
-          "type": "CallActionActionComponent",
-          "left": 188,
-          "top": 850,
-          "width": 106,
-          "height": 24,
-          "customInputs": [],
-          "customOutputs": [],
-          "description": "EffectToggle",
-          "action": "EffectToggle",
-          "userPropertyValues": {
-            "objID": "03d32ebd-488c-4790-fe8b-8bb30094f3dc",
-            "values": {}
-          }
-        },
-        {
-          "objID": "fc5f0c34-2b8c-48dd-c081-b70dcd5c2c7f",
-          "type": "CallActionActionComponent",
-          "left": 571,
-          "top": 862,
-          "width": 133,
-          "height": 24,
-          "customInputs": [],
-          "customOutputs": [],
-          "action": "ShowSettingsTab",
-          "userPropertyValues": {
-            "objID": "98d62dcd-f3f6-4485-a30c-3e942c4d1f30",
-            "values": {}
-          }
         }
       ],
-      "connectionLines": [
-        {
-          "objID": "54700e89-50f9-4b4d-a62f-f4106306305c",
-          "source": "db56ba54-e06c-4995-8689-a3432b375c1f",
-          "output": "PRESSED",
-          "target": "3945a5f4-642b-49d3-e27d-3ed78d32e14d",
-          "input": "@seqin"
-        },
-        {
-          "objID": "42160ef0-b957-48fb-fbea-4137ff7f9750",
-          "source": "a2705887-519a-4024-f6a7-ae08bffa3cbc",
-          "output": "LONG_PRESSED",
-          "target": "b19402e3-c3a6-47ce-c66d-779c2678d131",
-          "input": "@seqin"
-        },
-        {
-          "objID": "4c751e3f-73a5-440d-c6d4-41d00f591035",
-          "source": "a7b62923-440e-4cf0-9e4e-a9583c0c7bd9",
-          "output": "PRESSED",
-          "target": "fef5bf1d-17fb-44b1-cc05-67a94509e81a",
-          "input": "@seqin"
-        },
-        {
-          "objID": "7fabb3a1-7802-48ab-bd3e-512e6335aa08",
-          "source": "65060906-8375-4923-c6ac-f6372b6e0ae5",
-          "output": "PRESSED",
-          "target": "fa426404-e29f-4160-95bd-7bd84d4632d0",
-          "input": "@seqin"
-        },
-        {
-          "objID": "23236dbd-bbab-4827-b4be-03cbd310e71b",
-          "source": "e1c9173a-62a2-4cbe-dd94-6265baa09b9f",
-          "output": "READY",
-          "target": "ea40c83c-80a5-47a6-e08d-8a9e978bbac9",
-          "input": "@seqin"
-        },
-        {
-          "objID": "2a31fc1b-a48c-4722-8f0f-39b189c016b9",
-          "source": "2172b98c-7608-4fa7-8a68-a46d5734430c",
-          "output": "LONG_PRESSED",
-          "target": "966658d7-dbb2-4846-f4e2-bb0868665621",
-          "input": "@seqin"
-        },
-        {
-          "objID": "f89acaab-4ace-4986-8237-27ccb4e8d7ac",
-          "source": "9807ab9f-0fd5-4881-a58c-5c324e9296a2",
-          "output": "LONG_PRESSED",
-          "target": "966658d7-dbb2-4846-f4e2-bb0868665621",
-          "input": "@seqin"
-        },
-        {
-          "objID": "0ce998a0-9142-4e99-b929-8b717c1aed60",
-          "source": "1d8e1ffc-0e03-4477-9e44-f55b79bd47bc",
-          "output": "LONG_PRESSED",
-          "target": "966658d7-dbb2-4846-f4e2-bb0868665621",
-          "input": "@seqin"
-        },
-        {
-          "objID": "0aacdf0e-4836-4eef-f53c-c3cf7457300e",
-          "source": "c68acabf-e17e-4cdc-e977-5cb2b8ea418f",
-          "output": "LONG_PRESSED",
-          "target": "966658d7-dbb2-4846-f4e2-bb0868665621",
-          "input": "@seqin"
-        },
-        {
-          "objID": "797a49e7-3d56-4c75-b057-011b541b12e7",
-          "source": "a23e4bcf-d00d-4bed-8315-9430fdf6b9b5",
-          "output": "LONG_PRESSED",
-          "target": "966658d7-dbb2-4846-f4e2-bb0868665621",
-          "input": "@seqin"
-        },
-        {
-          "objID": "b79af403-f214-45b3-c755-be45e6c9c50b",
-          "source": "9dcbbf14-fa95-4049-fe1e-6bdc4a0734b3",
-          "output": "LONG_PRESSED",
-          "target": "966658d7-dbb2-4846-f4e2-bb0868665621",
-          "input": "@seqin"
-        },
-        {
-          "objID": "d3516f04-a238-4b25-ae07-dc9e4f141c21",
-          "source": "9569a6e5-71b0-490d-9a33-149e31d106bc",
-          "output": "LONG_PRESSED",
-          "target": "966658d7-dbb2-4846-f4e2-bb0868665621",
-          "input": "@seqin"
-        },
-        {
-          "objID": "3e98e92f-9bbb-4ea3-dd13-8de2e1b4cfe9",
-          "source": "966658d7-dbb2-4846-f4e2-bb0868665621",
-          "output": "widget",
-          "target": "fc5f0c34-2b8c-48dd-c081-b70dcd5c2c7f",
-          "input": "@seqin"
-        },
-        {
-          "objID": "2e86130d-9c43-42cf-af1a-48213367242a",
-          "source": "9569a6e5-71b0-490d-9a33-149e31d106bc",
-          "output": "PRESSED",
-          "target": "64b2cc73-013b-4bea-c6a3-73e06119e90e",
-          "input": "@seqin"
-        },
-        {
-          "objID": "51795651-7ad1-481d-adc6-0faf1ad7d57e",
-          "source": "9dcbbf14-fa95-4049-fe1e-6bdc4a0734b3",
-          "output": "PRESSED",
-          "target": "64b2cc73-013b-4bea-c6a3-73e06119e90e",
-          "input": "@seqin"
-        },
-        {
-          "objID": "bdf992b9-c2e9-4e1b-80ff-57cd26ccc7cd",
-          "source": "a23e4bcf-d00d-4bed-8315-9430fdf6b9b5",
-          "output": "PRESSED",
-          "target": "64b2cc73-013b-4bea-c6a3-73e06119e90e",
-          "input": "@seqin"
-        },
-        {
-          "objID": "73bf9be2-b058-4ccd-948b-5fb6b7df5004",
-          "source": "c68acabf-e17e-4cdc-e977-5cb2b8ea418f",
-          "output": "PRESSED",
-          "target": "64b2cc73-013b-4bea-c6a3-73e06119e90e",
-          "input": "@seqin"
-        },
-        {
-          "objID": "1b9e3cd6-7625-4898-bad0-5ab48f7cb08a",
-          "source": "1d8e1ffc-0e03-4477-9e44-f55b79bd47bc",
-          "output": "PRESSED",
-          "target": "64b2cc73-013b-4bea-c6a3-73e06119e90e",
-          "input": "@seqin"
-        },
-        {
-          "objID": "f0b79d6d-4635-4621-8766-d772f6f6fb01",
-          "source": "9807ab9f-0fd5-4881-a58c-5c324e9296a2",
-          "output": "PRESSED",
-          "target": "64b2cc73-013b-4bea-c6a3-73e06119e90e",
-          "input": "@seqin"
-        },
-        {
-          "objID": "95ca92c4-c63a-4de7-9350-b179c07a5bf1",
-          "source": "2172b98c-7608-4fa7-8a68-a46d5734430c",
-          "output": "PRESSED",
-          "target": "64b2cc73-013b-4bea-c6a3-73e06119e90e",
-          "input": "@seqin"
-        },
-        {
-          "objID": "f4260fb6-922b-48a7-8f24-3a50ccafa9b9",
-          "source": "58dbbe30-3f2f-4ef4-d843-a2027c33f59e",
-          "output": "LONG_PRESSED",
-          "target": "966658d7-dbb2-4846-f4e2-bb0868665621",
-          "input": "@seqin"
-        }
-      ],
+      "connectionLines": [],
       "localVariables": [],
       "userProperties": [],
       "name": "Screen1",
@@ -2659,7 +2290,7 @@
               },
               "timeline": [],
               "eventHandlers": [],
-              "identifier": "SettingsTabView",
+              "identifier": "ui_SettingsTabView",
               "leftUnit": "px",
               "topUnit": "px",
               "widthUnit": "px",
@@ -2711,7 +2342,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -2760,8 +2391,8 @@
                         {
                           "objID": "0bb11922-df16-4dd4-b8b2-02dfab61b63b",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -2834,7 +2465,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -2883,8 +2514,8 @@
                         {
                           "objID": "b2c719cb-ac7a-4fd3-8e4e-cfb8ddda6ff8",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -2954,7 +2585,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -3002,8 +2633,8 @@
                         {
                           "objID": "b655d5c6-75ac-42fd-e546-e64dfe8c3f39",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -3083,7 +2714,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -3131,8 +2762,8 @@
                         {
                           "objID": "1b170528-e5e2-486c-c123-5a35ad21d65e",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -3212,7 +2843,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -3260,8 +2891,8 @@
                         {
                           "objID": "d79c6e57-36bf-437e-9a57-e4b710069fdd",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -3319,11 +2950,11 @@
                       "enableAnimation": false
                     }
                   ],
-                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SNAPPABLE",
                   "hiddenFlagType": "literal",
                   "clickableFlag": true,
                   "clickableFlagType": "literal",
-                  "flagScrollbarMode": "",
+                  "flagScrollbarMode": "off",
                   "flagScrollDirection": "",
                   "scrollSnapX": "",
                   "scrollSnapY": "",
@@ -3338,11 +2969,10 @@
                         "CHECKED": {
                           "text_color": "FB9230",
                           "text_font": "MONTSERRAT_20",
-                          "border_color": "#373737",
-                          "bg_color": "#ffffff"
+                          "border_color": "#373737"
                         },
                         "DEFAULT": {
-                          "text_font": "MONTSERRAT_20",
+                          "text_font": "MONTSERRAT_24",
                           "text_color": "#fafafa",
                           "pad_top": 0,
                           "pad_bottom": 0,
@@ -3415,7 +3045,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -3464,8 +3094,8 @@
                         {
                           "objID": "cfc3935f-8303-477b-cf48-78c3a004b5ad",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -3538,7 +3168,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -3587,8 +3217,8 @@
                         {
                           "objID": "7e06a291-4186-409a-c3af-b668bcbc105d",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -3658,7 +3288,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -3706,8 +3336,8 @@
                         {
                           "objID": "99a26f0c-1e98-4797-9de8-7a729167b8a4",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -3787,7 +3417,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -3835,8 +3465,8 @@
                         {
                           "objID": "569f0244-78f8-4de8-b100-bb882d923b08",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -3916,7 +3546,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -3964,8 +3594,8 @@
                         {
                           "objID": "8f9473f7-7b0b-454b-c1f9-8dc9826a186f",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -4023,11 +3653,11 @@
                       "enableAnimation": false
                     }
                   ],
-                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SNAPPABLE",
                   "hiddenFlagType": "literal",
                   "clickableFlag": true,
                   "clickableFlagType": "literal",
-                  "flagScrollbarMode": "",
+                  "flagScrollbarMode": "off",
                   "flagScrollDirection": "",
                   "scrollSnapX": "",
                   "scrollSnapY": "",
@@ -4108,7 +3738,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -4157,8 +3787,8 @@
                         {
                           "objID": "0615a43a-9573-4bcd-856d-97afed7db898",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -4231,7 +3861,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -4266,7 +3896,7 @@
                       "left": 168,
                       "top": 69,
                       "width": 202,
-                      "height": 48,
+                      "height": 53,
                       "customInputs": [],
                       "customOutputs": [],
                       "style": {
@@ -4280,8 +3910,8 @@
                         {
                           "objID": "7ecff53e-ab8e-4b5f-df75-535010b5fe6b",
                           "eventName": "VALUE_CHANGED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -4307,7 +3937,8 @@
                         "definition": {
                           "MAIN": {
                             "DEFAULT": {
-                              "bg_color": "#1F1F1F"
+                              "bg_color": "#1F1F1F",
+                              "text_font": "MONTSERRAT_24"
                             }
                           }
                         }
@@ -4343,7 +3974,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -4391,8 +4022,8 @@
                         {
                           "objID": "84ffca43-1d98-4570-d04a-99055877fd24",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -4472,7 +4103,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -4520,12 +4151,12 @@
                         {
                           "objID": "25f4a152-1b04-4ed4-b77c-1b29fdd92f45",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
-                      "identifier": "ui_AmplifierVolumenSlider",
+                      "identifier": "ui_AmplifierVolumeSlider",
                       "leftUnit": "px",
                       "topUnit": "px",
                       "widthUnit": "px",
@@ -4601,7 +4232,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -4649,8 +4280,8 @@
                         {
                           "objID": "b80b4e4d-11ab-441e-dd0e-24a5fc8a9801",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -4730,7 +4361,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -4778,8 +4409,8 @@
                         {
                           "objID": "0a8af56c-06b2-4e82-dcdd-5df71d90b1f8",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -4837,11 +4468,11 @@
                       "enableAnimation": false
                     }
                   ],
-                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SNAPPABLE",
                   "hiddenFlagType": "literal",
                   "clickableFlag": true,
                   "clickableFlagType": "literal",
-                  "flagScrollbarMode": "",
+                  "flagScrollbarMode": "off",
                   "flagScrollDirection": "",
                   "scrollSnapX": "",
                   "scrollSnapY": "",
@@ -4922,7 +4553,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -4971,8 +4602,8 @@
                         {
                           "objID": "b5bbca86-355d-408b-a4f3-758045f4a23b",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -5045,7 +4676,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -5093,8 +4724,8 @@
                         {
                           "objID": "28936262-d38e-4e0f-9776-e0a96a55ef32",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -5174,7 +4805,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -5222,8 +4853,8 @@
                         {
                           "objID": "4f5cea46-c408-460b-8569-122a0484b9d8",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -5303,7 +4934,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -5351,8 +4982,8 @@
                         {
                           "objID": "a92937fd-ffed-46de-c867-6c4f7c439421",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -5432,7 +5063,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -5480,8 +5111,8 @@
                         {
                           "objID": "a25705bf-a55d-4a2a-ecb0-6af6a13fcab5",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -5539,11 +5170,11 @@
                       "enableAnimation": false
                     }
                   ],
-                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SNAPPABLE",
                   "hiddenFlagType": "literal",
                   "clickableFlag": true,
                   "clickableFlagType": "literal",
-                  "flagScrollbarMode": "",
+                  "flagScrollbarMode": "off",
                   "flagScrollDirection": "",
                   "scrollSnapX": "",
                   "scrollSnapY": "",
@@ -5624,7 +5255,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -5673,8 +5304,8 @@
                         {
                           "objID": "faec9b44-9741-43c5-a9f4-c1f1766ee02d",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -5747,7 +5378,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -5796,8 +5427,8 @@
                         {
                           "objID": "b86ab7db-8c6a-4e2c-a1da-b067cb9a0058",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -5867,7 +5498,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -5902,7 +5533,7 @@
                       "left": 168,
                       "top": 69,
                       "width": 202,
-                      "height": 48,
+                      "height": 53,
                       "customInputs": [],
                       "customOutputs": [],
                       "style": {
@@ -5916,8 +5547,8 @@
                         {
                           "objID": "6f3a1434-b07d-4913-a06d-b1fd917ce804",
                           "eventName": "VALUE_CHANGED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -5943,7 +5574,8 @@
                         "definition": {
                           "MAIN": {
                             "DEFAULT": {
-                              "bg_color": "#1F1F1F"
+                              "bg_color": "#1F1F1F",
+                              "text_font": "MONTSERRAT_24"
                             }
                           }
                         }
@@ -5979,7 +5611,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -6028,8 +5660,8 @@
                         {
                           "objID": "d6481e55-4164-421e-e99f-c5e46f8c5932",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -6099,7 +5731,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -6134,7 +5766,7 @@
                       "left": 168,
                       "top": 124,
                       "width": 202,
-                      "height": 48,
+                      "height": 53,
                       "customInputs": [],
                       "customOutputs": [],
                       "style": {
@@ -6148,12 +5780,12 @@
                         {
                           "objID": "852f2af6-1827-4ad7-f053-11b62e87f6fc",
                           "eventName": "VALUE_CHANGED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
-                      "identifier": "ui_ModulationTSlDropdown",
+                      "identifier": "ui_ModulationTSDropdown",
                       "leftUnit": "px",
                       "topUnit": "px",
                       "widthUnit": "px",
@@ -6175,7 +5807,8 @@
                         "definition": {
                           "MAIN": {
                             "DEFAULT": {
-                              "bg_color": "#1F1F1F"
+                              "bg_color": "#1F1F1F",
+                              "text_font": "MONTSERRAT_24"
                             }
                           }
                         }
@@ -6208,8 +5841,8 @@
                         {
                           "objID": "e7d75f6a-0b4a-45e2-8f11-5f4e8b02ea4b",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -6289,7 +5922,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -6337,8 +5970,8 @@
                         {
                           "objID": "8a15f096-039a-4457-ba16-795faaf56d50",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -6418,7 +6051,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -6466,8 +6099,8 @@
                         {
                           "objID": "7083f18e-e118-4ea3-ddaa-3c1fa5316a28",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -6547,7 +6180,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -6595,8 +6228,8 @@
                         {
                           "objID": "8c9aac32-35ef-4f1d-cbf6-8f40047f5592",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -6654,11 +6287,11 @@
                       "enableAnimation": false
                     }
                   ],
-                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SNAPPABLE",
                   "hiddenFlagType": "literal",
                   "clickableFlag": true,
                   "clickableFlagType": "literal",
-                  "flagScrollbarMode": "",
+                  "flagScrollbarMode": "off",
                   "flagScrollDirection": "",
                   "scrollSnapX": "",
                   "scrollSnapY": "",
@@ -6739,7 +6372,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -6788,8 +6421,8 @@
                         {
                           "objID": "229bb5d1-a17f-4b02-a208-000e0d88d834",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -6862,7 +6495,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -6911,8 +6544,8 @@
                         {
                           "objID": "3dec5c06-ac93-42e2-ed58-866d1521954b",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -6982,7 +6615,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -7017,7 +6650,7 @@
                       "left": 168,
                       "top": 69,
                       "width": 202,
-                      "height": 48,
+                      "height": 53,
                       "customInputs": [],
                       "customOutputs": [],
                       "style": {
@@ -7031,8 +6664,8 @@
                         {
                           "objID": "48779c42-1972-4733-988f-1f5dd0f1c79d",
                           "eventName": "VALUE_CHANGED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -7058,7 +6691,8 @@
                         "definition": {
                           "MAIN": {
                             "DEFAULT": {
-                              "bg_color": "#1F1F1F"
+                              "bg_color": "#1F1F1F",
+                              "text_font": "MONTSERRAT_24"
                             }
                           }
                         }
@@ -7094,7 +6728,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -7143,8 +6777,8 @@
                         {
                           "objID": "5b4c879c-70fc-4e9d-a42b-28f0a63e21c1",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -7217,7 +6851,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -7266,8 +6900,8 @@
                         {
                           "objID": "4bc347eb-04f4-44ef-f5e1-f8dbd5d3c3c5",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -7337,7 +6971,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -7386,8 +7020,8 @@
                         {
                           "objID": "5fbb2a0b-b3fd-4310-8551-107740dbbdaa",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -7450,7 +7084,7 @@
                       "left": 168,
                       "top": 180,
                       "width": 202,
-                      "height": 48,
+                      "height": 53,
                       "customInputs": [],
                       "customOutputs": [],
                       "style": {
@@ -7464,12 +7098,12 @@
                         {
                           "objID": "e2fe70c2-17e6-45d6-965c-0a244367936c",
                           "eventName": "VALUE_CHANGED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
-                      "identifier": "ui_DelayTSlDropdown",
+                      "identifier": "ui_DelayTSDropdown",
                       "leftUnit": "px",
                       "topUnit": "px",
                       "widthUnit": "px",
@@ -7491,7 +7125,8 @@
                         "definition": {
                           "MAIN": {
                             "DEFAULT": {
-                              "bg_color": "#1F1F1F"
+                              "bg_color": "#1F1F1F",
+                              "text_font": "MONTSERRAT_24"
                             }
                           }
                         }
@@ -7527,7 +7162,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -7576,8 +7211,8 @@
                         {
                           "objID": "d1244ceb-b092-477d-81c6-1ea6daa49730",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -7657,7 +7292,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -7706,8 +7341,8 @@
                         {
                           "objID": "f1268c10-6357-4dd2-8661-1a2bdd21c14f",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -7765,11 +7400,11 @@
                       "enableAnimation": false
                     }
                   ],
-                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SNAPPABLE",
                   "hiddenFlagType": "literal",
                   "clickableFlag": true,
                   "clickableFlagType": "literal",
-                  "flagScrollbarMode": "",
+                  "flagScrollbarMode": "off",
                   "flagScrollDirection": "",
                   "scrollSnapX": "",
                   "scrollSnapY": "",
@@ -7850,7 +7485,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -7899,8 +7534,8 @@
                         {
                           "objID": "c5070824-583c-40bc-f6a5-39f7dee67d7a",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -7973,7 +7608,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -8022,8 +7657,8 @@
                         {
                           "objID": "33a2a729-6122-479d-c4fc-5441c556955a",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -8093,7 +7728,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -8128,7 +7763,7 @@
                       "left": 168,
                       "top": 69,
                       "width": 202,
-                      "height": 48,
+                      "height": 53,
                       "customInputs": [],
                       "customOutputs": [],
                       "style": {
@@ -8142,8 +7777,8 @@
                         {
                           "objID": "116337e6-c7ea-456a-af07-96063977414a",
                           "eventName": "VALUE_CHANGED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -8169,7 +7804,8 @@
                         "definition": {
                           "MAIN": {
                             "DEFAULT": {
-                              "bg_color": "#1F1F1F"
+                              "bg_color": "#1F1F1F",
+                              "text_font": "MONTSERRAT_24"
                             }
                           }
                         }
@@ -8205,7 +7841,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -8253,8 +7889,8 @@
                         {
                           "objID": "de4feac3-f28e-42ae-d9a2-f0a2d6e2bc19",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -8334,7 +7970,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -8382,8 +8018,8 @@
                         {
                           "objID": "3c3b762e-7fa7-43b5-f0da-84cae2da4cf2",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -8463,7 +8099,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -8511,8 +8147,8 @@
                         {
                           "objID": "ba40fa01-7560-4ab5-97b6-80f57018ff99",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -8592,7 +8228,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -8640,8 +8276,8 @@
                         {
                           "objID": "d443cc19-70fe-4617-cefe-81d5ff9662fe",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -8699,11 +8335,11 @@
                       "enableAnimation": false
                     }
                   ],
-                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SNAPPABLE",
                   "hiddenFlagType": "literal",
                   "clickableFlag": true,
                   "clickableFlagType": "literal",
-                  "flagScrollbarMode": "",
+                  "flagScrollbarMode": "off",
                   "flagScrollDirection": "",
                   "scrollSnapX": "",
                   "scrollSnapY": "",
@@ -8784,7 +8420,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -8833,8 +8469,8 @@
                         {
                           "objID": "0f21d416-57db-4d35-801a-99efebfc843f",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -8887,7 +8523,7 @@
                     {
                       "objID": "99cc6d61-e809-4bfd-8816-20c8c489f02d",
                       "type": "LVGLLabelWidget",
-                      "left": 591,
+                      "left": 574,
                       "top": -148,
                       "width": 84,
                       "height": 27,
@@ -8907,7 +8543,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -8956,8 +8592,8 @@
                         {
                           "objID": "4af0426c-9608-4984-9314-d8c299087cbb",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -9027,7 +8663,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -9075,8 +8711,8 @@
                         {
                           "objID": "c8ad1aaf-08f8-436e-df9f-311ac544cebd",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -9156,7 +8792,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -9204,8 +8840,8 @@
                         {
                           "objID": "415952ef-0b4a-4bd5-c1d2-4d78d5f3b2db",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -9285,7 +8921,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -9333,8 +8969,8 @@
                         {
                           "objID": "e4bcf9b4-c2c7-4466-c47f-0a438666ff0f",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -9414,7 +9050,7 @@
                       "widthUnit": "content",
                       "heightUnit": "content",
                       "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
@@ -9462,8 +9098,8 @@
                         {
                           "objID": "6c527ab6-07ca-4dd6-8ccd-024a7dab5138",
                           "eventName": "RELEASED",
-                          "handlerType": "flow",
-                          "action": "NextClicked",
+                          "handlerType": "action",
+                          "action": "ParameterChanged",
                           "userData": 0
                         }
                       ],
@@ -9521,11 +9157,11 @@
                       "enableAnimation": false
                     }
                   ],
-                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SNAPPABLE",
                   "hiddenFlagType": "literal",
                   "clickableFlag": true,
                   "clickableFlagType": "literal",
-                  "flagScrollbarMode": "",
+                  "flagScrollbarMode": "off",
                   "flagScrollDirection": "",
                   "scrollSnapX": "",
                   "scrollSnapY": "",
@@ -9565,7 +9201,7 @@
               "hiddenFlagType": "literal",
               "clickableFlag": true,
               "clickableFlagType": "literal",
-              "flagScrollbarMode": "",
+              "flagScrollbarMode": "off",
               "flagScrollDirection": "",
               "scrollSnapX": "",
               "scrollSnapY": "",
@@ -9579,15 +9215,16 @@
                   "MAIN": {
                     "DEFAULT": {
                       "bg_color": "1F1F1F",
-                      "text_font": "MONTSERRAT_20",
+                      "text_font": "MONTSERRAT_24",
                       "outline_color": "#563F2A",
                       "outline_width": 3,
                       "bg_opa": 255
                     },
                     "CHECKED": {
-                      "text_font": "MONTSERRAT_20",
+                      "text_font": "MONTSERRAT_24",
                       "text_color": "FB9230",
-                      "bg_color": "#1f1f1f"
+                      "bg_color": "513D2B",
+                      "bg_opa": 255
                     }
                   }
                 }
@@ -9617,8 +9254,8 @@
                 {
                   "objID": "1e291b0d-4e16-4a83-f092-df6eabd4e880",
                   "eventName": "PRESSED",
-                  "handlerType": "flow",
-                  "action": "NextClicked",
+                  "handlerType": "action",
+                  "action": "CloseSettingsPage",
                   "userData": 0
                 }
               ],
@@ -9653,7 +9290,7 @@
               "innerAlign": "CENTER"
             }
           ],
-          "widgetFlags": "CLICKABLE|PRESS_LOCK|CLICK_FOCUSABLE|GESTURE_BUBBLE|SNAPPABLE|SCROLLABLE|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER",
+          "widgetFlags": "CLICKABLE|PRESS_LOCK|CLICK_FOCUSABLE|GESTURE_BUBBLE|SNAPPABLE|SCROLL_ELASTIC",
           "hiddenFlagType": "literal",
           "clickableFlag": true,
           "clickableFlagType": "literal",
@@ -9671,423 +9308,9 @@
             }
           },
           "groupIndex": 0
-        },
-        {
-          "objID": "92345612-0ba5-476c-f167-9cd6e622c7d2",
-          "type": "LVGLActionComponent",
-          "left": 381,
-          "top": 656,
-          "width": 287,
-          "height": 54,
-          "customInputs": [],
-          "customOutputs": [],
-          "description": "ExitScreen",
-          "actions": [
-            {
-              "objID": "6455eabd-82ae-4bd7-fc9b-4f05f8906a28",
-              "action": "changeScreen",
-              "screen": "Screen1",
-              "screenType": "literal",
-              "fadeMode": "NONE",
-              "fadeModeType": "literal",
-              "speed": 200,
-              "speedType": "literal",
-              "delay": 0,
-              "delayType": "literal",
-              "useStack": true,
-              "useStackType": "literal"
-            }
-          ]
-        },
-        {
-          "objID": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "type": "CallActionActionComponent",
-          "left": 766,
-          "top": -281,
-          "width": 144,
-          "height": 24,
-          "customInputs": [],
-          "customOutputs": [],
-          "action": "ParameterChanged",
-          "userPropertyValues": {
-            "objID": "7838ba37-9fa9-4f2b-fa21-36ec81243ecd",
-            "values": {}
-          }
         }
       ],
-      "connectionLines": [
-        {
-          "objID": "9bcf802e-1a11-46b0-c18f-c25702d6cc56",
-          "source": "bae65739-be8c-4cf5-f502-b9b105d36067",
-          "output": "PRESSED",
-          "target": "92345612-0ba5-476c-f167-9cd6e622c7d2",
-          "input": "@seqin"
-        },
-        {
-          "objID": "46125ac5-2f4b-4e27-843c-511ecc52813c",
-          "source": "455bda83-01f9-4ea9-d1c4-fe2c830e4bdf",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "1ce53baf-8c0f-4b22-e2ad-aaa922b5e8c5",
-          "source": "cf5d1fac-50dd-41bd-99ef-a5ea657e7848",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "8b883188-8b7f-4fb9-e546-07ca541119fb",
-          "source": "993cdd2e-7710-4a2f-a00c-a0f4479541c5",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "a1b3b264-0956-4235-9d0d-49750827b3a9",
-          "source": "c4f70180-8903-46e5-c1c6-8eae5eee35da",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "e2f43673-adc7-42f3-be09-840431fe5c79",
-          "source": "f04b4e6f-8323-4b46-a4bb-b84120ab234a",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "885e1e35-8658-4c0c-cf93-ace4ff6a1859",
-          "source": "3472b8a5-7003-4a00-ee4f-6d34f38021d5",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "2d9c7f95-aee6-41be-f527-d3def2c22b54",
-          "source": "2eb6f7a8-e742-4b35-c84c-aad4f82195c2",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "f9caff0c-358f-4bdf-8823-547bb83995e4",
-          "source": "783d4937-fa16-4535-cfed-66379bfc27db",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "8106c786-73c3-473e-974d-4280cddd72c1",
-          "source": "db42b427-c3b7-41c8-e7f4-7cb9476bd916",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "f4e2d2fb-4d9c-4a40-b652-30a23989436d",
-          "source": "87b9b37e-1ab8-422b-b425-d1f8d9714c98",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "d3cc5ee7-95c4-4bd7-8d6b-ca2485e92f27",
-          "source": "182f2b43-0ab1-497e-fd38-ac03c03914b2",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "471b2d53-ca6d-46fc-8762-eaaac846913a",
-          "source": "95132f21-437c-4f9e-f377-ae8e842274da",
-          "output": "VALUE_CHANGED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "dc364b42-a104-4415-b42e-40a63e05b5ed",
-          "source": "cf13cc75-ad43-4c23-daf9-10ef14ca09d6",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "7410b59a-91a2-41d6-a1b9-8f62703a5830",
-          "source": "43e6c905-5d3a-4fa6-c386-bf3c9b49945f",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "12fb98b2-a1c9-4af1-e2f5-11cfad0087ce",
-          "source": "20cd894c-e6ef-4184-a320-666f4c64b539",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "ce64cf79-4c32-433d-d037-a5423ca3d4ad",
-          "source": "9e4b8fa2-ab55-42b8-a710-fad549516d4e",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "ba5c900e-dc47-42e2-c521-420e5fc4334a",
-          "source": "4f8a0279-d868-4a7a-bc93-ec29c972b4ed",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "f2806e4d-76a9-4ed5-e4c7-66fd7878760f",
-          "source": "bab8ea1d-56f1-4d12-e7cb-f110ef53552e",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "9f1caa65-322d-492f-9dd2-b8559708c213",
-          "source": "a475aff5-b006-4e3c-d849-a26106440271",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "0e79722b-a042-4350-bfd4-b6bf64ccf187",
-          "source": "09b5ff32-805f-42d4-e5bf-4f5a74a03a56",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "8d9633d0-18ae-450a-c456-600aebfc1b84",
-          "source": "5b22069b-71d7-4574-f9cf-e58160d33772",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "420beb0e-05db-43ce-b822-da08e2091f62",
-          "source": "2143430b-fed4-40e9-94d2-42a7ded2d46a",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "50cd3b74-d237-456a-97f2-31b14a931a31",
-          "source": "ed98d5d8-f08c-4fd6-8ddf-57f4a00cfc7b",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "f204f714-6ca8-4380-98f0-6a5f9ef4c405",
-          "source": "9cb2b835-fb3a-4617-b6ad-cfa6e6d92a03",
-          "output": "VALUE_CHANGED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "a0d38b90-05d1-4663-ba22-67d7c828e34d",
-          "source": "ecc0212a-fa39-4b88-ca02-ed77f5ea45fd",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "ea9f2159-85cf-4991-fc17-3372317f3679",
-          "source": "5ffb4ab0-379d-46e1-8a20-1eb73e1688df",
-          "output": "VALUE_CHANGED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "6ff7dfb8-90ad-4d28-d71c-5ad30cddc093",
-          "source": "eab902a8-6720-4137-86ae-d10437eb6a01",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "1410dec6-841d-4a02-abc9-2ac024ced802",
-          "source": "c131bb52-f9f2-4abd-af68-636a3aff8744",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "9f409aa0-52a0-4b5d-fbf9-c7fd674a3810",
-          "source": "0647ec8b-5d7a-4014-922a-cc9b26262de8",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "34053ca6-a3b0-4065-be11-e8588ac65d45",
-          "source": "dee03bf2-3cef-4c8a-ca19-09cc4df05141",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "b8e15338-e765-41f6-9e9c-e4f4dc735400",
-          "source": "1fc792f1-5ddd-430a-b155-371fe126eb65",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "2764db82-693b-4449-ea87-4f71d850d2fc",
-          "source": "eaf35ce9-03f1-4c64-8b15-b06598e2ef21",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "b7f98ea7-d028-4777-f97f-0a019537867b",
-          "source": "80250174-c5ed-40c4-d310-7a69f2ec222b",
-          "output": "VALUE_CHANGED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "013e6e57-7ae0-4e42-be19-3f488e82bf58",
-          "source": "658250e4-0ca3-4e7b-9541-7bd72d8d0d4d",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "273e8a0e-d441-4c2a-96e3-9103ad8de3f8",
-          "source": "b16b7f1f-c33e-44da-9dab-5a916785ec2f",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "b7640b57-e165-4127-bd31-63ed3c06c14c",
-          "source": "b181b49f-da5e-4d7e-c1b7-9e87f3637be0",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "d373c6a8-9106-43bf-a734-b3c7f54ad789",
-          "source": "2608f1de-fcfb-47b7-da39-a2349e5b47c6",
-          "output": "VALUE_CHANGED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "fe4ea85d-5749-48a3-e313-3e076a4f6d72",
-          "source": "7ccdba2e-8b15-48fe-81a0-1e0dde2f2677",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "9596bbec-b394-46b0-be18-db9f98072956",
-          "source": "179d8f6d-a8f7-4adc-fd5c-ab9da84ac48a",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "917ae0f4-d0d8-4647-bc0c-8ebb0752bc3b",
-          "source": "dcfc87f8-1b82-4643-a593-d9ec56901bfb",
-          "output": "VALUE_CHANGED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "2671ca3e-557c-49b8-d3a2-45fd3d048823",
-          "source": "88c55c5a-e0b5-4325-d460-12683063929f",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "dbc3a45c-931d-45ab-95c0-3368d043430d",
-          "source": "3d708911-3367-4166-f750-926170dc1b40",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "68e9bbd8-4866-4c7d-a75e-070457fec4de",
-          "source": "0a87587b-fb5f-4215-c235-32b56ca3cc7d",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "b43be84b-8497-4c98-edb6-b8abf137ad75",
-          "source": "4ba607e0-f8de-41e3-f9c5-d246e97f9079",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "46eb3a77-1375-48d8-bbbf-d72f8d229f01",
-          "source": "74b0b961-df84-4c0c-9412-75541801a604",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "5a1ac75b-55ba-4c7b-e7c4-ac30dd191c96",
-          "source": "ce024ab6-2704-483a-e35c-9a1fa3f38099",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "3e992188-036b-49ac-c2cd-c5106850c58b",
-          "source": "ff24c9b8-6fe0-4eba-c58f-04dd27789915",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "11472cd6-f6cb-4a63-800b-f8dd3a56b9a3",
-          "source": "3e39e1c1-42d2-4c11-d0fb-ceb94df9c84d",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "ed95abb5-9819-48ba-8660-f9cf1531022c",
-          "source": "7cdae175-0941-4048-f00f-7d18d6234cc3",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "6729a051-929b-493a-df1c-98b021b6a6d0",
-          "source": "a1e6179d-e5bd-44fa-b15e-846ac621e1d3",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "6a7af617-5c3a-4d65-9b50-ed5fbbdea041",
-          "source": "7029b0fa-71ae-4f3d-d22e-3d59f9ee7f3f",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        },
-        {
-          "objID": "43abee72-c3d5-4858-8bb3-0655e95a95bb",
-          "source": "60e94b33-a2a5-45bf-be50-0ad370b9c330",
-          "output": "RELEASED",
-          "target": "93118e0d-7d45-4ce0-97b3-da96dda26a01",
-          "input": "@seqin"
-        }
-      ],
+      "connectionLines": [],
       "localVariables": [],
       "userProperties": [],
       "name": "Settings",

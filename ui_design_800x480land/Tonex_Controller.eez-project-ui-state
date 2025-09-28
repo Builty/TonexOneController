@@ -1,7 +1,7 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[Tonex_Controller.eez-project]:/userPages/0",
-    "selectedActionObject": "[Tonex_Controller.eez-project]:/actions/6",
+    "selectedUserPageObject": "[Tonex_Controller.eez-project]:/userPages/1",
+    "selectedActionObject": "[Tonex_Controller.eez-project]:/actions/11",
     "selectedBitmapObject": "[Tonex_Controller.eez-project]:/bitmaps/3",
     "subnavigationSelectedItems": {
       "variables-tab/sub-navigation/selected-item": "Actions"
@@ -169,7 +169,8 @@
                       "enableClose": false,
                       "icon": "svg:hierarchy"
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
@@ -211,16 +212,15 @@
                 {
                   "type": "tab",
                   "id": "#30e00310-d229-4bd3-8d11-0a657bc85431",
-                  "name": "Screen1",
+                  "name": "Settings",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[Tonex_Controller.eez-project]:/userPages/0",
+                    "objectPath": "[Tonex_Controller.eez-project]:/userPages/1",
                     "permanent": false
                   },
                   "icon": "svg:page"
                 }
-              ],
-              "active": true
+              ]
             },
             {
               "type": "row",
@@ -254,14 +254,6 @@
                       "component": "componentsPalette",
                       "enableClose": false,
                       "icon": "svg:components"
-                    },
-                    {
-                      "type": "tab",
-                      "id": "BREAKPOINTS_PALETTE",
-                      "name": "Breakpoints",
-                      "component": "breakpointsPanel",
-                      "enableClose": false,
-                      "icon": "svg:breakpoints_panel"
                     }
                   ]
                 }
@@ -1009,16 +1001,13 @@
     "[Tonex_Controller.eez-project]:/userPages/0[flow-state]": {
       "selection": {
         "0": {
-          "0": {},
-          "1": {},
+          "0": {
+            "$selected": true
+          },
           "2": {},
-          "12": {}
-        },
-        "1": {},
-        "3": {},
-        "6": {},
-        "7": {},
-        "8": {}
+          "12": {},
+          "13": {}
+        }
       },
       "transform": {
         "translate": {
@@ -1038,13 +1027,11 @@
       "selection": {
         "0": {
           "0": {
-            "0": {
-              "$selected": true
-            },
-            "7": {}
-          }
-        },
-        "1": {}
+            "7": {},
+            "$selected": true
+          },
+          "1": {}
+        }
       },
       "transform": {
         "translate": {
@@ -1101,7 +1088,9 @@
       }
     },
     "[Tonex_Controller.eez-project]:/actions/5[flow-state]": {
-      "selection": {},
+      "selection": {
+        "$selected": true
+      },
       "transform": {
         "translate": {
           "x": 0,
@@ -1121,7 +1110,9 @@
       }
     },
     "[Tonex_Controller.eez-project]:/actions/6[flow-state]": {
-      "selection": {},
+      "selection": {
+        "$selected": true
+      },
       "transform": {
         "translate": {
           "x": 0,
@@ -1143,12 +1134,13 @@
   "showComponentDescriptions": true,
   "logsPanelFilter": "all",
   "selectedStylePropertyName": "",
-  "lvglPart": "INDICATOR",
+  "lvglPart": "MAIN",
   "lvglState": "DEFAULT",
   "lvglExpandedPropertiesGroup": [
     "MISCELLANEOUS",
     "MARGIN",
-    "BORDER"
+    "TEXT",
+    "BACKGROUND"
   ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,

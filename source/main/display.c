@@ -58,6 +58,8 @@ limitations under the License.
 #include "main.h"
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
     #include "ui.h"
+    #include "images.h"
+    #include "actions.h"
 #endif
 #include "usb/usb_host.h"
 #include "usb/cdc_acm_host.h"
@@ -281,7 +283,7 @@ void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void PreviousClicked(lv_event_t * e)
+void action_previous_clicked(lv_event_t * e)
 {
     // called from LVGL 
     ESP_LOGI(TAG, "UI Previous Click/Swipe");      
@@ -296,7 +298,7 @@ void PreviousClicked(lv_event_t * e)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void NextClicked(lv_event_t * e)
+void action_next_clicked(lv_event_t * e)
 {
     // called from LVGL 
     ESP_LOGI(TAG, "UI Next Click/Swipe");    
@@ -307,11 +309,11 @@ void NextClicked(lv_event_t * e)
 #else   //CONFIG_TONEX_CONTROLLER_HAS_TOUCH
 
 // Dummy functions so that 1.69 and 1.69 Touch can share the same UI project
-void PreviousClicked(lv_event_t * e)
+void action_previous_clicked(lv_event_t * e)
 {
 }
 
-void NextClicked(lv_event_t * e)
+void action_next_clicked(lv_event_t * e)
 {
 }
 #endif  //CONFIG_TONEX_CONTROLLER_HAS_TOUCH
@@ -348,26 +350,226 @@ bool display_on_vsync_event(esp_lcd_panel_handle_t panel, const esp_lcd_rgb_pane
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void toggle_effect_gate(lv_event_t * e)
+void action_toggle_effect_gate(lv_event_t * e)
 {
     tTonexParameter* param_ptr;
     float value;
+    lv_event_code_t event_code = lv_event_get_code(e);
 
-    // called from LVGL 
-    ESP_LOGI(TAG, "UI Toggle gate");
+    if (event_code == LV_EVENT_SHORT_CLICKED) 
+    {
+        // called from LVGL 
+        ESP_LOGI(TAG, "UI Toggle gate");
+        
+        tonex_params_get_locked_access(&param_ptr);
+        if (param_ptr[TONEX_PARAM_NOISE_GATE_ENABLE].Value == 0.0f)
+        {
+            value = 1.0f;
+        }
+        else
+        {
+            value = 0.0f;
+        }
+        tonex_params_release_locked_access();
+
+        usb_modify_parameter(TONEX_PARAM_NOISE_GATE_ENABLE, value);   
+    }
+    else if (event_code == LV_EVENT_LONG_PRESSED) 
+    {
+        //_ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
+        action_show_settings_tab(e);
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void action_toggle_effect_amp(lv_event_t * e)
+{
+    tTonexParameter* param_ptr;
+    float value;
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if (event_code == LV_EVENT_SHORT_CLICKED) 
+    {
+        // called from LVGL 
+        ESP_LOGI(TAG, "UI Toggle amp");
+        
+        tonex_params_get_locked_access(&param_ptr);
+        if (param_ptr[TONEX_PARAM_MODEL_AMP_ENABLE].Value == 0.0f)
+        {
+            value = 1.0f;
+        }
+        else
+        {
+            value = 0.0f;
+        }
+        tonex_params_release_locked_access();
+
+        usb_modify_parameter(TONEX_PARAM_MODEL_AMP_ENABLE, value);   
+    }
+    else if (event_code == LV_EVENT_LONG_PRESSED) 
+    {
+        //_ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
+        action_show_settings_tab(e);
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void action_toggle_effect_cab(lv_event_t * e)
+{
+    tTonexParameter* param_ptr;
+    float value;
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if (event_code == LV_EVENT_SHORT_CLICKED) 
+    {
+        // called from LVGL 
+        ESP_LOGI(TAG, "UI Toggle cab");
+        
+        tonex_params_get_locked_access(&param_ptr);
+        if (param_ptr[TONEX_PARAM_CABINET_TYPE].Value == TONEX_CABINET_DISABLED)
+        {
+            //todo here: this could have been a VIR cabinet
+            value = TONEX_CABINET_TONE_MODEL;
+        }
+        else
+        {
+            value = TONEX_CABINET_DISABLED;
+        }
+        tonex_params_release_locked_access();
+
+        usb_modify_parameter(TONEX_PARAM_CABINET_TYPE, value); 
+    }  
+    else if (event_code == LV_EVENT_LONG_PRESSED) 
+    {
+        //_ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
+        action_show_settings_tab(e);
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void action_toggle_effect_comp(lv_event_t * e)
+{
+    tTonexParameter* param_ptr;
+    float value;
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if (event_code == LV_EVENT_SHORT_CLICKED) 
+    {
+        // called from LVGL 
+        ESP_LOGI(TAG, "UI Toggle comp");
+        
+        tonex_params_get_locked_access(&param_ptr);
+        if (param_ptr[TONEX_PARAM_COMP_ENABLE].Value == 0.0f)
+        {
+            value = 1.0f;
+        }
+        else
+        {
+            value = 0.0f;
+        }
+        tonex_params_release_locked_access();
+
+        usb_modify_parameter(TONEX_PARAM_COMP_ENABLE, value);  
+    } 
+    else if (event_code == LV_EVENT_LONG_PRESSED) 
+    {
+        //_ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
+        action_show_settings_tab(e);
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void action_toggle_effect_mod(lv_event_t * e)
+{
+    tTonexParameter* param_ptr;
+    float value;
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if (event_code == LV_EVENT_SHORT_CLICKED) 
+    {
+        // called from LVGL 
+        ESP_LOGI(TAG, "UI Toggle mod");
+        
+        tonex_params_get_locked_access(&param_ptr);
+        if (param_ptr[TONEX_PARAM_MODULATION_ENABLE].Value == 0.0f)
+        {
+            value = 1.0f;
+        }
+        else
+        {
+            value = 0.0f;
+        }
+        tonex_params_release_locked_access();
+
+        usb_modify_parameter(TONEX_PARAM_MODULATION_ENABLE, value);  
+    } 
+    else if (event_code == LV_EVENT_LONG_PRESSED) 
+    {
+        //_ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
+        action_show_settings_tab(e);
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void action_toggle_effect_delay(lv_event_t * e)
+{
+    tTonexParameter* param_ptr;
+    float value;
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if (event_code == LV_EVENT_SHORT_CLICKED) 
+    {
+        // called from LVGL 
+        ESP_LOGI(TAG, "UI Toggle delay");
     
-    tonex_params_get_locked_access(&param_ptr);
-    if (param_ptr[TONEX_PARAM_NOISE_GATE_ENABLE].Value == 0.0f)
-    {
-        value = 1.0f;
-    }
-    else
-    {
-        value = 0.0f;
-    }
-    tonex_params_release_locked_access();
+        tonex_params_get_locked_access(&param_ptr);
+        if (param_ptr[TONEX_PARAM_DELAY_ENABLE].Value == 0.0f)
+        {
+            value = 1.0f;
+        }
+        else
+        {
+            value = 0.0f;
+        }
+        tonex_params_release_locked_access();
 
-    usb_modify_parameter(TONEX_PARAM_NOISE_GATE_ENABLE, value);   
+        usb_modify_parameter(TONEX_PARAM_DELAY_ENABLE, value);   
+    }
+    else if (event_code == LV_EVENT_LONG_PRESSED) 
+    {
+        //_ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
+        action_show_settings_tab(e);
+    }
 }
 
 /****************************************************************************
@@ -377,26 +579,35 @@ void toggle_effect_gate(lv_event_t * e)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void toggle_effect_amp(lv_event_t * e)
+void action_toggle_effect_reverb(lv_event_t * e)
 {
     tTonexParameter* param_ptr;
     float value;
+    lv_event_code_t event_code = lv_event_get_code(e);
 
-    // called from LVGL 
-    ESP_LOGI(TAG, "UI Toggle amp");
-    
-    tonex_params_get_locked_access(&param_ptr);
-    if (param_ptr[TONEX_PARAM_MODEL_AMP_ENABLE].Value == 0.0f)
+    if (event_code == LV_EVENT_SHORT_CLICKED) 
     {
-        value = 1.0f;
-    }
-    else
-    {
-        value = 0.0f;
-    }
-    tonex_params_release_locked_access();
+        // called from LVGL 
+        ESP_LOGI(TAG, "UI Toggle reverb");
 
-    usb_modify_parameter(TONEX_PARAM_MODEL_AMP_ENABLE, value);   
+        tonex_params_get_locked_access(&param_ptr);
+        if (param_ptr[TONEX_PARAM_REVERB_ENABLE].Value == 0.0f)
+        {
+            value = 1.0f;
+        }
+        else
+        {
+            value = 0.0f;
+        }
+        tonex_params_release_locked_access();
+
+        usb_modify_parameter(TONEX_PARAM_REVERB_ENABLE, value);   
+    }
+    else if (event_code == LV_EVENT_LONG_PRESSED) 
+    {
+        //_ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
+        action_show_settings_tab(e);
+    }
 }
 
 /****************************************************************************
@@ -406,190 +617,44 @@ void toggle_effect_amp(lv_event_t * e)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void toggle_effect_cab(lv_event_t * e)
-{
-    tTonexParameter* param_ptr;
-    float value;
-
-    // called from LVGL 
-    ESP_LOGI(TAG, "UI Toggle cab");
-    
-    tonex_params_get_locked_access(&param_ptr);
-    if (param_ptr[TONEX_PARAM_CABINET_TYPE].Value == TONEX_CABINET_DISABLED)
-    {
-        //todo here: this could have been a VIR cabinet
-        value = TONEX_CABINET_TONE_MODEL;
-    }
-    else
-    {
-        value = TONEX_CABINET_DISABLED;
-    }
-    tonex_params_release_locked_access();
-
-    usb_modify_parameter(TONEX_PARAM_CABINET_TYPE, value);   
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-void toggle_effect_comp(lv_event_t * e)
-{
-    tTonexParameter* param_ptr;
-    float value;
-
-    // called from LVGL 
-    ESP_LOGI(TAG, "UI Toggle comp");
-    
-    tonex_params_get_locked_access(&param_ptr);
-    if (param_ptr[TONEX_PARAM_COMP_ENABLE].Value == 0.0f)
-    {
-        value = 1.0f;
-    }
-    else
-    {
-        value = 0.0f;
-    }
-    tonex_params_release_locked_access();
-
-    usb_modify_parameter(TONEX_PARAM_COMP_ENABLE, value);   
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-void toggle_effect_mod(lv_event_t * e)
-{
-    tTonexParameter* param_ptr;
-    float value;
-
-    // called from LVGL 
-    ESP_LOGI(TAG, "UI Toggle mod");
-    
-    tonex_params_get_locked_access(&param_ptr);
-    if (param_ptr[TONEX_PARAM_MODULATION_ENABLE].Value == 0.0f)
-    {
-        value = 1.0f;
-    }
-    else
-    {
-        value = 0.0f;
-    }
-    tonex_params_release_locked_access();
-
-    usb_modify_parameter(TONEX_PARAM_MODULATION_ENABLE, value);   
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-void toggle_effect_delay(lv_event_t * e)
-{
-    tTonexParameter* param_ptr;
-    float value;
-
-    // called from LVGL 
-    ESP_LOGI(TAG, "UI Toggle delay");
-   
-    tonex_params_get_locked_access(&param_ptr);
-    if (param_ptr[TONEX_PARAM_DELAY_ENABLE].Value == 0.0f)
-    {
-        value = 1.0f;
-    }
-    else
-    {
-        value = 0.0f;
-    }
-    tonex_params_release_locked_access();
-
-    usb_modify_parameter(TONEX_PARAM_DELAY_ENABLE, value);   
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-void toggle_effect_reverb(lv_event_t * e)
-{
-    tTonexParameter* param_ptr;
-    float value;
-
-    // called from LVGL 
-    ESP_LOGI(TAG, "UI Toggle reverb");
-
-    tonex_params_get_locked_access(&param_ptr);
-    if (param_ptr[TONEX_PARAM_REVERB_ENABLE].Value == 0.0f)
-    {
-        value = 1.0f;
-    }
-    else
-    {
-        value = 0.0f;
-    }
-    tonex_params_release_locked_access();
-
-    usb_modify_parameter(TONEX_PARAM_REVERB_ENABLE, value);   
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-void show_settings_tab(lv_event_t * e)
+void action_show_settings_tab(lv_event_t * e)
 {
 	lv_obj_t* target = lv_event_get_current_target(e);
 
-    if (target == ui_IconEQ)
+    if (target == objects.ui_icon_eq)
     {
         // show EQ settings
-        lv_tabview_set_act(ui_SettingsTabview, CONFIG_TAB_EQ, LV_ANIM_OFF);
+        lv_tabview_set_act(objects.ui_settings_tab_view, CONFIG_TAB_EQ, LV_ANIM_OFF);
     }
-    else if (target == ui_IconGate)
+    else if (target == objects.ui_icon_gate)
     {
         // show gate settings
-        lv_tabview_set_act(ui_SettingsTabview, CONFIG_TAB_GATE, LV_ANIM_OFF);
+        lv_tabview_set_act(objects.ui_settings_tab_view, CONFIG_TAB_GATE, LV_ANIM_OFF);
     }
-    else if ((target == ui_IconAmp) || (target == ui_IconCab))
+    else if ((target == objects.ui_icon_amp) || (target == objects.ui_icon_cab))
     {
         // show amp settings
-        lv_tabview_set_act(ui_SettingsTabview, CONFIG_TAB_AMPLIFIER, LV_ANIM_OFF);
+        lv_tabview_set_act(objects.ui_settings_tab_view, CONFIG_TAB_AMPLIFIER, LV_ANIM_OFF);
     }
-    else if (target == ui_IconComp)
+    else if (target == objects.ui_icon_comp)
     {
         // show comnpressor settings
-        lv_tabview_set_act(ui_SettingsTabview, CONFIG_TAB_COMPRESSOR, LV_ANIM_OFF);
+        lv_tabview_set_act(objects.ui_settings_tab_view, CONFIG_TAB_COMPRESSOR, LV_ANIM_OFF);
     }
-    else if (target == ui_IconMod)
+    else if (target == objects.ui_icon_mod)
     {
         // show modulation settings
-        lv_tabview_set_act(ui_SettingsTabview, CONFIG_TAB_MODULATION, LV_ANIM_OFF);
+        lv_tabview_set_act(objects.ui_settings_tab_view, CONFIG_TAB_MODULATION, LV_ANIM_OFF);
     }
-    else if (target == ui_IconDelay)
+    else if (target == objects.ui_icon_delay)
     {
         // show delay settings
-        lv_tabview_set_act(ui_SettingsTabview, CONFIG_TAB_DELAY, LV_ANIM_OFF);
+        lv_tabview_set_act(objects.ui_settings_tab_view, CONFIG_TAB_DELAY, LV_ANIM_OFF);
     }
-    else if (target == ui_IconReverb)
+    else if (target == objects.ui_icon_reverb)
     {
         // show reverb settings
-        lv_tabview_set_act(ui_SettingsTabview, CONFIG_TAB_REVERB, LV_ANIM_OFF);
+        lv_tabview_set_act(objects.ui_settings_tab_view, CONFIG_TAB_REVERB, LV_ANIM_OFF);
     }
 }
 
@@ -600,7 +665,7 @@ void show_settings_tab(lv_event_t * e)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void AmpSkinPrevious(lv_event_t * e)
+void action_amp_skin_previous(lv_event_t * e)
 {
     control_set_skin_previous();
 }
@@ -612,7 +677,7 @@ void AmpSkinPrevious(lv_event_t * e)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void AmpSkinNext(lv_event_t * e)
+void action_amp_skin_next(lv_event_t * e)
 {
     control_set_skin_next();
 }
@@ -624,9 +689,88 @@ void AmpSkinNext(lv_event_t * e)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void SaveUserDataRequest(lv_event_t * e)
+void action_close_settings_page(lv_event_t * e)
 {
-    control_save_user_data(0);
+    lv_scr_load_anim(objects.screen1, LV_SCR_LOAD_ANIM_FADE_IN, 0, 0, false);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void action_show_settings_page(lv_event_t * e)
+{
+    lv_scr_load_anim(objects.settings, LV_SCR_LOAD_ANIM_FADE_IN, 0, 0, false);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void action_enable_skin_edit(lv_event_t * e)
+{
+    lv_obj_clear_flag(objects.ui_left_arrow, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(objects.ui_right_arrow, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_state(objects.ui_preset_details_text_area, LV_STATE_DISABLED);
+    lv_obj_clear_flag(objects.ui_ok_tick, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_bank_title_label, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_bank_value_label, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_bpm_title_label, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_bpm_value_label, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_bpm_indicator, LV_OBJ_FLAG_HIDDEN);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void action_save_skin_edit(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if (event_code == LV_EVENT_CLICKED) 
+    {
+        action_keyboard_ok(e);
+        control_save_user_data(0);
+        
+        lv_obj_add_flag(objects.ui_ok_tick, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(objects.ui_entry_keyboard, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(objects.ui_left_arrow, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(objects.ui_right_arrow, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_state(objects.ui_preset_details_text_area, LV_STATE_DISABLED);
+        lv_obj_clear_flag(objects.ui_bank_title_label, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(objects.ui_bank_value_label, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(objects.ui_bpm_title_label, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(objects.ui_bpm_value_label, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(objects.ui_bpm_indicator, LV_OBJ_FLAG_HIDDEN);
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void action_preset_description_pressed(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_PRESSED) 
+    {
+        lv_keyboard_set_textarea(objects.ui_entry_keyboard,  objects.ui_preset_details_text_area);
+        lv_obj_clear_flag(objects.ui_entry_keyboard, LV_OBJ_FLAG_HIDDEN);
+    }
 }
 
 /****************************************************************************
@@ -649,13 +793,21 @@ void BTBondsClearRequest(lv_event_t * e)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void PresetDescriptionChanged(lv_event_t * e)
+void action_keyboard_ok(lv_event_t * e)
 {
-    char* text = (char*)lv_textarea_get_text(ui_PresetDetailsTextArea);
+    lv_event_code_t event_code = lv_event_get_code(e);
 
-    ESP_LOGI(TAG, "PresetDescriptionChanged: %s", text);
+    if(event_code == LV_EVENT_READY) 
+    {
+        // hide keyboard
+        lv_obj_add_flag(objects.ui_entry_keyboard, LV_OBJ_FLAG_HIDDEN);
 
-    control_set_user_text(text);      
+        char* text = (char*)lv_textarea_get_text(objects.ui_preset_details_text_area);
+
+        ESP_LOGI(TAG, "action_keyboard_ok: %s", text);
+
+        control_set_user_text(text);  
+    }    
 }
 
 /****************************************************************************
@@ -665,7 +817,7 @@ void PresetDescriptionChanged(lv_event_t * e)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void ParameterChanged(lv_event_t * e)
+void action_parameter_changed(lv_event_t * e)
 {
     // get the object that was changed
     lv_obj_t* obj = lv_event_get_current_target(e);
@@ -673,82 +825,82 @@ void ParameterChanged(lv_event_t * e)
     ESP_LOGI(TAG, "Parameter changed");
 
     // see what it was, and update the pedal
-    if (obj == ui_NoiseGateSwitch)
+    if (obj == objects.ui_noise_gate_switch)
     {
         usb_modify_parameter(TONEX_PARAM_NOISE_GATE_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
-    else if (obj == ui_NoiseGatePostSwitch)
+    else if (obj == objects.ui_noise_gate_post_switch)
     {
         usb_modify_parameter(TONEX_PARAM_NOISE_GATE_POST, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
-    else if (obj == ui_NoiseGateThresholdSlider)
+    else if (obj == objects.ui_noise_gate_threshold_slider)
     {
         usb_modify_parameter(TONEX_PARAM_NOISE_GATE_THRESHOLD, lv_slider_get_value(obj));
     }
-    else if (obj == ui_NoiseGateReleaseSlider)
+    else if (obj == objects.ui_noise_gate_release_slider)
     {
         usb_modify_parameter(TONEX_PARAM_NOISE_GATE_RELEASE, lv_slider_get_value(obj));
     }
-    else if (obj == ui_NoiseGateDepthSlider)
+    else if (obj == objects.ui_noise_gate_depth_slider)
     {
         usb_modify_parameter(TONEX_PARAM_NOISE_GATE_DEPTH, lv_slider_get_value(obj));
     }
-    else if (obj == ui_CompressorEnableSwitch)
+    else if (obj == objects.ui_compressor_enable_switch)
     {
         usb_modify_parameter(TONEX_PARAM_COMP_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
-    else if (obj == ui_CompressorPostSwitch)
+    else if (obj == objects.ui_compressor_post_switch)
     {
         usb_modify_parameter(TONEX_PARAM_COMP_POST, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
-    else if (obj == ui_CompressorThresholdSlider)
+    else if (obj == objects.ui_compressor_threshold_slider)
     {
         usb_modify_parameter(TONEX_PARAM_COMP_THRESHOLD, lv_slider_get_value(obj));
     }
-    else if (obj == ui_CompresorAttackSlider)
+    else if (obj == objects.ui_compressor_attack_slider)
     {
         usb_modify_parameter(TONEX_PARAM_COMP_ATTACK, lv_slider_get_value(obj));
     }
-    else if (obj == ui_CompressorGainSlider)
+    else if (obj == objects.ui_compressor_gain_slider)
     {
         usb_modify_parameter(TONEX_PARAM_COMP_MAKE_UP, lv_slider_get_value(obj));
     }
-    else if (obj == ui_EQPostSwitch)
+    else if (obj == objects.ui_eq_post_switch)
     {
         usb_modify_parameter(TONEX_PARAM_EQ_POST, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
-    else if (obj == ui_EQBassSlider)
+    else if (obj == objects.ui_eq_bass_slider)
     {
         usb_modify_parameter(TONEX_PARAM_EQ_BASS, ((float)lv_slider_get_value(obj))/10.0f);
     }
-    else if (obj == ui_EQMidSlider)
+    else if (obj == objects.ui_eq_mid_slider)
     {
         usb_modify_parameter(TONEX_PARAM_EQ_MID, ((float)lv_slider_get_value(obj))/10.0f);
     }
-    else if (obj == ui_EQMidQSlider)
+    else if (obj == objects.ui_eq_mid_qslider)
     {
         usb_modify_parameter(TONEX_PARAM_EQ_MIDQ, ((float)lv_slider_get_value(obj))/10.0f);
     }
-    else if (obj == ui_EQTrebleSlider)
+    else if (obj == objects.ui_eq_treble_slider)
     {
         usb_modify_parameter(TONEX_PARAM_EQ_TREBLE, ((float)lv_slider_get_value(obj))/10.0f);
     }
-    else if (obj == ui_ReverbEnableSwitch)
+    else if (obj == objects.ui_reverb_enable_switch)
     {
         usb_modify_parameter(TONEX_PARAM_REVERB_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
-    else if (obj == ui_ReverbPostSwitch)
+    else if (obj == objects.ui_reverb_post_switch)
     {
         usb_modify_parameter(TONEX_PARAM_REVERB_POSITION, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
-    else if (obj == ui_ReverbModelDropdown)
+    else if (obj == objects.ui_reverb_model_dropdown)
     {
         usb_modify_parameter(TONEX_PARAM_REVERB_MODEL, lv_dropdown_get_selected(obj));
     }
-    else if (obj == ui_ReverbMixSlider)
+    else if (obj == objects.ui_reverb_mix_slider)
     {
         // check which model is set
-        switch (lv_dropdown_get_selected(ui_ReverbModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_reverb_model_dropdown))
         {
             case TONEX_REVERB_SPRING_1:
             {
@@ -781,10 +933,10 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }        
     }
-    else if (obj == ui_ReverbTimeSlider)
+    else if (obj == objects.ui_reverb_time_slider)
     {
         // check which model is set
-        switch (lv_dropdown_get_selected(ui_ReverbModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_reverb_model_dropdown))
         {
             case TONEX_REVERB_SPRING_1:
             {
@@ -817,10 +969,10 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }        
     }
-    else if (obj == ui_ReverbPredelaySlider)
+    else if (obj == objects.ui_reverb_predelay_slider)
     {
         // check which model is set
-        switch (lv_dropdown_get_selected(ui_ReverbModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_reverb_model_dropdown))
         {
             case TONEX_REVERB_SPRING_1:
             {
@@ -853,10 +1005,10 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }        
     }
-    else if (obj == ui_ReverbColorSlider)
+    else if (obj == objects.ui_reverb_color_slider)
     {
         // check which model is set
-        switch (lv_dropdown_get_selected(ui_ReverbModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_reverb_model_dropdown))
         {
             case TONEX_REVERB_SPRING_1:
             {
@@ -889,22 +1041,22 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }        
     }
-    else if (obj == ui_ModulationEnableSwitch)
+    else if (obj == objects.ui_modulation_enable_switch)
     {
         usb_modify_parameter(TONEX_PARAM_MODULATION_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
-    else if (obj == ui_ModulationPostSwitch)
+    else if (obj == objects.ui_modulation_post_switch)
     {
         usb_modify_parameter(TONEX_PARAM_MODULATION_POST, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
-    else if (obj == ui_ModulationModelDropdown)
+    else if (obj == objects.ui_modulation_model_dropdown)
     {
         usb_modify_parameter(TONEX_PARAM_MODULATION_MODEL, lv_dropdown_get_selected(obj));
     }
-    else if (obj == ui_ModulationSyncSwitch)
+    else if (obj == objects.ui_modulation_sync_switch)
     {
         // check which model is set
-        switch (lv_dropdown_get_selected(ui_ModulationModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_modulation_model_dropdown))
         {
             case TONEX_MODULATION_CHORUS:
             {
@@ -932,9 +1084,9 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }
     }
-    else if (obj == ui_ModulationTSDropdown)
+    else if (obj == objects.ui_modulation_ts_dropdown)
     {
-        switch (lv_dropdown_get_selected(ui_ModulationModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_modulation_model_dropdown))
         {
             case TONEX_MODULATION_CHORUS:
             {
@@ -962,10 +1114,10 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }
     }
-    else if (obj == ui_ModulationParam1Slider)
+    else if (obj == objects.ui_modulation_param1_slider)
     {
         // check which model is set
-        switch (lv_dropdown_get_selected(ui_ModulationModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_modulation_model_dropdown))
         {
             case TONEX_MODULATION_CHORUS:
             {
@@ -993,10 +1145,10 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }
     }
-    else if (obj == ui_ModulationParam2Slider)
+    else if (obj == objects.ui_modulation_param2_slider)
     {
         // check which model is set
-        switch (lv_dropdown_get_selected(ui_ModulationModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_modulation_model_dropdown))
         {
             case TONEX_MODULATION_CHORUS:
             {
@@ -1024,10 +1176,10 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }
     }
-    else if (obj == ui_ModulationParam3Slider)
+    else if (obj == objects.ui_modulation_param3_slider)
     {
         // check which model is set
-        switch (lv_dropdown_get_selected(ui_ModulationModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_modulation_model_dropdown))
         {
             case TONEX_MODULATION_CHORUS:
             {
@@ -1055,10 +1207,10 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }
     }
-    else if (obj == ui_ModulationParam4Slider)
+    else if (obj == objects.ui_modulation_param4_slider)
     {
         // check which model is set
-        switch (lv_dropdown_get_selected(ui_ModulationModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_modulation_model_dropdown))
         {
             case TONEX_MODULATION_CHORUS:
             {
@@ -1086,22 +1238,22 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }
     }
-    else if (obj == ui_DelayEnableSwitch)
+    else if (obj == objects.ui_delay_enable_switch)
     {
         usb_modify_parameter(TONEX_PARAM_DELAY_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
-    else if (obj == ui_DelayPostSwitch)
+    else if (obj == objects.ui_delay_post_switch)
     {
         usb_modify_parameter(TONEX_PARAM_DELAY_POST, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
-    else if (obj == ui_DelayModelDropdown)
+    else if (obj == objects.ui_delay_model_dropdown)
     {
         usb_modify_parameter(TONEX_PARAM_DELAY_MODEL, lv_dropdown_get_selected(obj));
     }
-    else if (obj == ui_DelaySyncSwitch)
+    else if (obj == objects.ui_delay_sync_switch)
     {
         // check which model is set
-        switch (lv_dropdown_get_selected(ui_DelayModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_delay_model_dropdown))
         {
             case TONEX_DELAY_DIGITAL:
             {
@@ -1114,10 +1266,10 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }
     }
-    else if (obj == ui_DelayPingPongSwitch)
+    else if (obj == objects.ui_delay_ping_pong_switch)
     {
         // check which model is set
-        switch (lv_dropdown_get_selected(ui_DelayModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_delay_model_dropdown))
         {
             case TONEX_DELAY_DIGITAL:
             {
@@ -1130,10 +1282,10 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }
     }
-    else if (obj == ui_DelayTSSlider)
+    else if (obj == objects.ui_delay_ts_slider)
     {
         // check which model is set
-        switch (lv_dropdown_get_selected(ui_DelayModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_delay_model_dropdown))
         {
             case TONEX_DELAY_DIGITAL:
             {
@@ -1146,10 +1298,10 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }
     }
-    else if (obj == ui_DelayTSDropdown)
+    else if (obj == objects.ui_delay_ts_dropdown)
     {
         // check which model is set
-        switch (lv_dropdown_get_selected(ui_DelayModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_delay_model_dropdown))
         {
             case TONEX_DELAY_DIGITAL:
             {
@@ -1162,10 +1314,10 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }
     }
-    else if (obj == ui_DelayFeedbackSlider)
+    else if (obj == objects.ui_delay_feedback_slider)
     {
         // check which model is set
-        switch (lv_dropdown_get_selected(ui_DelayModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_delay_model_dropdown))
         {
             case TONEX_DELAY_DIGITAL:
             {
@@ -1178,10 +1330,10 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }        
     }
-    else if (obj == ui_DelayMixSlider)
+    else if (obj == objects.ui_delay_mix_slider)
     {
         // check which model is set
-        switch (lv_dropdown_get_selected(ui_DelayModelDropdown))
+        switch (lv_dropdown_get_selected(objects.ui_delay_model_dropdown))
         {
             case TONEX_DELAY_DIGITAL:
             {
@@ -1194,51 +1346,51 @@ void ParameterChanged(lv_event_t * e)
             } break;
         }     
     }
-    else if (obj == ui_AmpEnableSwitch)
+    else if (obj == objects.ui_amp_enable_switch)
     {
         usb_modify_parameter(TONEX_PARAM_MODEL_AMP_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
-    else if (obj == ui_CabinetModeDropdown)
+    else if (obj == objects.ui_cabinet_model_dropdown)
     {
         usb_modify_parameter(TONEX_PARAM_CABINET_TYPE, lv_dropdown_get_selected(obj));
     } 
-    else if (obj == ui_AmplifierGainSlider)
+    else if (obj == objects.ui_amplifier_gain_slider)
     {
         usb_modify_parameter(TONEX_PARAM_MODEL_GAIN, ((float)lv_slider_get_value(obj))/10.0f);
     }
-    else if (obj == ui_AmplifierVolumeSlider)
+    else if (obj == objects.ui_amplifier_volume_slider)
     {
         usb_modify_parameter(TONEX_PARAM_MODEL_VOLUME, ((float)lv_slider_get_value(obj))/10.0f);
     }
-    else if (obj == ui_AmplifierPresenseSlider)
+    else if (obj == objects.ui_amplifier_presense_slider)
     {
         usb_modify_parameter(TONEX_PARAM_MODEL_PRESENCE, ((float)lv_slider_get_value(obj))/10.0f);
     }
-    else if (obj == ui_AmplifierDepthSlider)
+    else if (obj == objects.ui_amplifier_depth_slider)
     {
         usb_modify_parameter(TONEX_PARAM_MODEL_DEPTH, ((float)lv_slider_get_value(obj))/10.0f);
     }
-    else if (obj == ui_BPMSlider)
+    else if (obj == objects.ui_bpm_slider)
     {
         usb_modify_parameter(TONEX_GLOBAL_BPM, lv_slider_get_value(obj));
     }
-    else if (obj == ui_InputTrimSlider)
+    else if (obj == objects.ui_input_trim_slider)
     {
         usb_modify_parameter(TONEX_GLOBAL_INPUT_TRIM, lv_slider_get_value(obj));
     }
-    else if (obj == ui_CabBypassSwitch)
+    else if (obj == objects.ui_cab_bypass_switch)
     {
         usb_modify_parameter(TONEX_GLOBAL_CABSIM_BYPASS, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
-    else if (obj == ui_TempoSourceSwitch)
+    else if (obj == objects.ui_tempo_source_switch)
     {
         usb_modify_parameter(TONEX_GLOBAL_TEMPO_SOURCE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
     }
-    else if (obj == ui_TuningReferenceSlider)
+    else if (obj == objects.ui_tuning_reference_slider)
     {
         usb_modify_parameter(TONEX_GLOBAL_TUNING_REFERENCE, lv_slider_get_value(obj));
     }
-    else if (obj == ui_VolumeSlider)
+    else if (obj == objects.ui_volume_slider)
     {
         usb_modify_parameter(TONEX_GLOBAL_MASTER_VOLUME, lv_slider_get_value(obj));    
     }
@@ -1518,142 +1670,142 @@ static lv_obj_t* ui_get_skin_image(uint16_t index)
         // amps
         case AMP_SKIN_5150:
         {
-            result = (lv_obj_t*)&ui_img_skin_5150_png;
+            result = (lv_obj_t*)&img_skin_5150;
         } break;
 
         case AMP_SKIN_AC30:
         {
-            result = (lv_obj_t*)&ui_img_skin_ac30_png;
+            result = (lv_obj_t*)&img_skin_ac30;
         } break;
 
         case AMP_SKIN_AMPEGCHROME:
         {
-            result = (lv_obj_t*)&ui_img_skin_ampegchrome_png;
+            result = (lv_obj_t*)&img_skin_ampegchrome;
         } break;
 
         case AMP_SKIN_BA500:
         {
-            result = (lv_obj_t*)&ui_img_skin_ba500_png;
+            result = (lv_obj_t*)&img_skin_ba500;
         } break;
 
         case AMP_SKIN_DIEZEL:
         {
-            result = (lv_obj_t*)&ui_img_skin_diezel_png;
+            result = (lv_obj_t*)&img_skin_diezel;
         } break;
 
         case AMP_SKIN_ELEGANTBLUE:
         {
-            result = (lv_obj_t*)&ui_img_skin_elegantblue_png;
+            result = (lv_obj_t*)&img_skin_elegantblue;
         } break;
 
         case AMP_SKIN_EVH:
         {
-            result = (lv_obj_t*)&ui_img_skin_evh_png;
+            result = (lv_obj_t*)&img_skin_evh;
         } break;
 
         case AMP_SKIN_FENDERHOTROD:
         {
-            result = (lv_obj_t*)&ui_img_skin_fenderhotrod_png;
+            result = (lv_obj_t*)&img_skin_fenderhotrod;
         } break;
 
         case AMP_SKIN_FENDERTWEEDBIG:
         {
-            result = (lv_obj_t*)&ui_img_skin_fendertweedbig_png;
+            result = (lv_obj_t*)&img_skin_fendertweedbig;
         } break;
 
         case AMP_SKIN_FENDERTWIN:
         {
-            result = (lv_obj_t*)&ui_img_skin_fendertwin_png;
+            result = (lv_obj_t*)&img_skin_fendertwin;
         } break;
 
         case AMP_SKIN_FRIEDMANN:
         {
-            result = (lv_obj_t*)&ui_img_skin_friedmann_png;
+            result = (lv_obj_t*)&img_skin_friedmann;
         } break;
 
         case AMP_SKIN_JBDUMBLE1:
         {
-            result = (lv_obj_t*)&ui_img_skin_jbdumble1_png;
+            result = (lv_obj_t*)&img_skin_jbdumble1;
         } break;
 
         case AMP_SKIN_JCM:
         {
-            result = (lv_obj_t*)&ui_img_skin_jcm_png;
+            result = (lv_obj_t*)&img_skin_jcm;
         } break;
 
         case AMP_SKIN_JETCITY:
         {
-            result = (lv_obj_t*)&ui_img_skin_jetcity_png;
+            result = (lv_obj_t*)&img_skin_jetcity;
         } break;
 
         case AMP_SKIN_JTM:
         {
-            result = (lv_obj_t*)&ui_img_skin_jtm_png;
+            result = (lv_obj_t*)&img_skin_jtm;
         } break;
 
         case AMP_SKIN_MESABOOGIEDUAL:
         {
-            result = (lv_obj_t*)&ui_img_skin_mesaboogiedual_png;
+            result = (lv_obj_t*)&img_skin_mesaboogiedual;
         } break;
 
         case AMP_SKIN_MESAMARKV:
         {
-            result = (lv_obj_t*)&ui_img_skin_mesamarkv_png;
+            result = (lv_obj_t*)&img_skin_mesamarkv;
         } break;
 
         case AMP_SKIN_MESAMARKWOOD:
         {
-            result = (lv_obj_t*)&ui_img_skin_mesamarkwood_png;
+            result = (lv_obj_t*)&img_skin_mesamarkwood;
         } break;
 
         case AMP_SKIN_MODERNBLACKPLEXI:
         {
-            result = (lv_obj_t*)&ui_img_skin_modernblackplexi_png;
+            result = (lv_obj_t*)&img_skin_modernblackplexi;
         } break;
 
         case AMP_SKIN_MODERNWHITEPLEXI:
         {
-            result = (lv_obj_t*)&ui_img_skin_modernwhiteplexi_png;
+            result = (lv_obj_t*)&img_skin_modernwhiteplexi;
         } break;
 
         case AMP_SKIN_ORANGEOR120:
         {
-            result = (lv_obj_t*)&ui_img_skin_orangeor120_png;
+            result = (lv_obj_t*)&img_skin_orangeor120;
         } break;
 
         case AMP_SKIN_ROLANDJAZZ:
         {
-            result = (lv_obj_t*)&ui_img_skin_rolandjazz_png;
+            result = (lv_obj_t*)&img_skin_rolandjazz;
         } break;
 
         case AMP_SKIN_TONEXAMPBLACK:
         {
-            result = (lv_obj_t*)&ui_img_skin_tonexampblack_png;
+            result = (lv_obj_t*)&img_skin_tonexampblack;
         } break;
 
         case AMP_SKIN_TONEXAMPRED:
         {
-            result = (lv_obj_t*)&ui_img_skin_tonexampred_png;
+            result = (lv_obj_t*)&img_skin_tonexampred;
         } break;
 
         case AMP_SKIN_SILVERFACE:
         {
-            result = (lv_obj_t*)&ui_img_skin_silverface_png;
+            result = (lv_obj_t*)&img_skin_silverface;
         } break;
 
         case AMP_SKIN_SUPRO:
         {
-            result = (lv_obj_t*)&ui_img_skin_supro_png;
+            result = (lv_obj_t*)&img_skin_supro;
         } break;
 
         case AMP_SKIN_WHITEMODERN:
         {
-            result = (lv_obj_t*)&ui_img_skin_whitemodern_png;
+            result = (lv_obj_t*)&img_skin_whitemodern;
         } break;
 
         case AMP_SKIN_WOODAMP:
         {
-            result = (lv_obj_t*)&ui_img_skin_woodamp_png;
+            result = (lv_obj_t*)&img_skin_woodamp;
         } break;
 #endif  //CONFIG_TONEX_CONTROLLER_SKINS_AMP
 
@@ -1661,118 +1813,118 @@ static lv_obj_t* ui_get_skin_image(uint16_t index)
         // pedals
         case PEDAL_SKIN_BIGMUFF:
         {
-            result = (lv_obj_t*)&ui_img_pskin_bigmuff_png;
+            result = (lv_obj_t*)&img_pskin_bigmuff;
         } break;
 
         case PEDAL_SKIN_BOSSBLACK:
         {
-            result = (lv_obj_t*)&ui_img_pskin_bossblack_png;
+            result = (lv_obj_t*)&img_pskin_bossblack;
         } break;
 
         case PEDAL_SKIN_BOSSSILVER:
         {
-            result = (lv_obj_t*)&ui_img_pskin_bosssilver_png;
+            result = (lv_obj_t*)&img_pskin_bosssilver;
         } break;
 
         case PEDAL_SKIN_BOSSYELLOW:
         {
-            result = (lv_obj_t*)&ui_img_pskin_bossyellow_png;
+            result = (lv_obj_t*)&img_pskin_bossyellow;
         } break;
 
         case PEDAL_SKIN_FUZZRED:
         {
-            result = (lv_obj_t*)&ui_img_pskin_fuzzred_png;
+            result = (lv_obj_t*)&img_pskin_fuzzred;
         } break;
 
         case PEDAL_SKIN_FUZZSILVER:
         {
-            result = (lv_obj_t*)&ui_img_pskin_fuzzsilver_png;
+            result = (lv_obj_t*)&img_pskin_fuzzsilver;
         } break;
 
         case PEDAL_SKIN_IBANEZBLUE:
         {
-            result = (lv_obj_t*)&ui_img_pskin_ibanezblue_png;
+            result = (lv_obj_t*)&img_pskin_ibanezblue;
         } break;
 
         case PEDAL_SKIN_IBANEZDARKBLUE:
         {
-            result = (lv_obj_t*)&ui_img_pskin_ibanezdarkblue_png;
+            result = (lv_obj_t*)&img_pskin_ibanezdarkblue;
         } break;
 
         case PEDAL_SKIN_IBANEZGREEN:
         {
-            result = (lv_obj_t*)&ui_img_pskin_ibanezgreen_png;
+            result = (lv_obj_t*)&img_pskin_ibanezgreen;
         } break;
 
         case PEDAL_SKIN_IBANEZRED:
         {
-            result = (lv_obj_t*)&ui_img_pskin_ibanezred_png;
+            result = (lv_obj_t*)&img_pskin_ibanezred;
         } break;
 
         case PEDAL_SKIN_KLONGOLD:
         {
-            result = (lv_obj_t*)&ui_img_pskin_klongold_png;
+            result = (lv_obj_t*)&img_pskin_klongold;
         } break;
 
         case PEDAL_SKIN_LIFEPEDAL:
         {
-            result = (lv_obj_t*)&ui_img_pskin_lifepedal_png;
+            result = (lv_obj_t*)&img_pskin_lifepedal;
         } break;
 
         case PEDAL_SKIN_MORNINGGLORY:
         {
-            result = (lv_obj_t*)&ui_img_pskin_morningglory_png;
+            result = (lv_obj_t*)&img_pskin_morningglory;
         } break;
 
         case PEDAL_SKIN_MXRDOUBLEBLACK:
         {
-            result = (lv_obj_t*)&ui_img_pskin_mxrdoubleblack_png;
+            result = (lv_obj_t*)&img_pskin_mxrdoubleblack;
         } break;
 
         case PEDAL_SKIN_MXRDOUBLERED:
         {
-            result = (lv_obj_t*)&ui_img_pskin_mxrdoublered_png;
+            result = (lv_obj_t*)&img_pskin_mxrdoublered;
         } break;
 
         case PEDAL_SKIN_MXRSINGLEBLACK:
         {
-            result = (lv_obj_t*)&ui_img_pskin_mxrsingleblack_png;
+            result = (lv_obj_t*)&img_pskin_mxrsingleblack;
         } break;
 
         case PEDAL_SKIN_MXRSINGLEGOLD:
         {
-            result = (lv_obj_t*)&ui_img_pskin_mxrsinglegold_png;
+            result = (lv_obj_t*)&img_pskin_mxrsinglegold;
         } break;
 
         case PEDAL_SKIN_MXRSINGLEGREEN:
         {
-            result = (lv_obj_t*)&ui_img_pskin_mxrsinglegreen_png;
+            result = (lv_obj_t*)&img_pskin_mxrsinglegreen;
         } break;
 
         case PEDAL_SKIN_MXRSINGLEORANGE:
         {
-            result = (lv_obj_t*)&ui_img_pskin_mxrsingleorange_png;
+            result = (lv_obj_t*)&img_pskin_mxrsingleorange;
         } break;
 
         case PEDAL_SKIN_MXRSINGLEWHITE:
         {
-            result = (lv_obj_t*)&ui_img_pskin_mxrsinglewhite_png;
+            result = (lv_obj_t*)&img_pskin_mxrsinglewhite;
         } break;
 
         case PEDAL_SKIN_MXRSINGLEYELLOW:
         {
-            result = (lv_obj_t*)&ui_img_pskin_mxrsingleyellow_png;
+            result = (lv_obj_t*)&img_pskin_mxrsingleyellow;
         } break;
 
         case PEDAL_SKIN_RATYELLOW:
         {
-            result = (lv_obj_t*)&ui_img_pskin_ratyellow_png;
+            result = (lv_obj_t*)&img_pskin_ratyellow;
         } break;
 #endif //CONFIG_TONEX_CONTROLLER_SKINS_PEDAL
 
         default:
         {
-            result = (lv_obj_t*)&ui_img_skin_jcm_png;            
+            result = (lv_obj_t*)&img_skin_jcm;            
         } break;
     }
 
@@ -1790,65 +1942,65 @@ static lv_obj_t* ui_get_skin_image(uint16_t index)
 *****************************************************************************/
 void updateIconOrder()
 {
-    bool gatePost = lv_obj_has_state(ui_NoiseGatePostSwitch, LV_STATE_CHECKED);
-    bool compPost = lv_obj_has_state(ui_CompressorPostSwitch, LV_STATE_CHECKED);
-    bool eqPost = lv_obj_has_state(ui_EQPostSwitch, LV_STATE_CHECKED);
-    bool modPost = lv_obj_has_state(ui_ModulationPostSwitch, LV_STATE_CHECKED);
-    bool delayPost = lv_obj_has_state(ui_DelayPostSwitch, LV_STATE_CHECKED);
-    bool revPost = lv_obj_has_state(ui_ReverbPostSwitch, LV_STATE_CHECKED);
+    bool gatePost = lv_obj_has_state(objects.ui_noise_gate_post_switch, LV_STATE_CHECKED);
+    bool compPost = lv_obj_has_state(objects.ui_compressor_post_switch, LV_STATE_CHECKED);
+    bool eqPost = lv_obj_has_state(objects.ui_eq_post_switch, LV_STATE_CHECKED);
+    bool modPost = lv_obj_has_state(objects.ui_modulation_post_switch, LV_STATE_CHECKED);
+    bool delayPost = lv_obj_has_state(objects.ui_delay_post_switch, LV_STATE_CHECKED);
+    bool revPost = lv_obj_has_state(objects.ui_reverb_post_switch, LV_STATE_CHECKED);
 
     lv_obj_t *icons[8];
     uint8_t index = 0;
 
     if (!gatePost)
     {
-        icons[index++] = ui_IconGate;
+        icons[index++] = objects.ui_icon_gate;
     }
     if (!compPost)
     {
-        icons[index++] = ui_IconComp;
+        icons[index++] = objects.ui_icon_comp;
     }
     if (!modPost)
     {
-        icons[index++] = ui_IconMod;
+        icons[index++] = objects.ui_icon_mod;
     }
     if (!delayPost)
     {
-        icons[index++] = ui_IconDelay;
+        icons[index++] = objects.ui_icon_delay;
     }
     if (!eqPost)
     {
-        icons[index++] = ui_IconEQ;
+        icons[index++] = objects.ui_icon_eq;
     }
-    icons[index++] = ui_IconAmp;
-    icons[index++] = ui_IconCab;
+    icons[index++] = objects.ui_icon_amp;
+    icons[index++] = objects.ui_icon_cab;
     if (eqPost)
     {
-        icons[index++] = ui_IconEQ;
+        icons[index++] = objects.ui_icon_eq;
     }
     if (gatePost)
     {
-        icons[index++] = ui_IconGate;
+        icons[index++] = objects.ui_icon_gate;
     }
     if (compPost)
     {
-        icons[index++] = ui_IconComp;
+        icons[index++] = objects.ui_icon_comp;
     }
     if (!revPost)
     {
-        icons[index++] = ui_IconReverb;
+        icons[index++] = objects.ui_icon_reverb;
     }
     if (modPost)
     {
-        icons[index++] = ui_IconMod;
+        icons[index++] = objects.ui_icon_mod;
     }
     if (delayPost)
     {
-        icons[index++] = ui_IconDelay;
+        icons[index++] = objects.ui_icon_delay;
     }
     if (revPost)
     {
-        icons[index] = ui_IconReverb;
+        icons[index] = objects.ui_icon_reverb;
     }
     
     // get the icon coords for this platform
@@ -1880,42 +2032,42 @@ static uint8_t update_ui_element(tUIUpdate* update)
     {
         case UI_ELEMENT_USB_STATUS:
         {
-            element_1 = ui_USBStatusFail;
+            element_1 = objects.ui_usb_status_fail;
         } break;
 
         case UI_ELEMENT_BT_STATUS:
         {
-            element_1 = ui_BTStatusConn;
+            element_1 = objects.ui_bt_status_conn;
         } break;
 
         case UI_ELEMENT_WIFI_STATUS:
         {
-            element_1 = ui_WiFiStatusConn;
+            element_1 = objects.ui_wi_fi_status_conn;
         } break;
 
         case UI_ELEMENT_PRESET_NAME:
         {
-            element_1 = ui_PresetHeadingLabel;
+            element_1 = objects.ui_preset_heading_label;
         } break;
 
         case UI_ELEMENT_BANK_INDEX:
         {
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
-            element_1 = ui_BankValueLabel;
+            element_1 = objects.ui_bank_value_label;
 #endif
         } break;
 
         case UI_ELEMENT_AMP_SKIN:
         {
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
-            element_1 = ui_SkinImage;
+            element_1 = objects.ui_skin_image;
 #endif            
         } break;
 
         case UI_ELEMENT_PRESET_DESCRIPTION:
         {
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
-            element_1 = ui_PresetDetailsTextArea;
+            element_1 = objects.ui_preset_details_text_area;
 #endif            
         } break;
 
@@ -1941,11 +2093,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_add_state(ui_NoiseGatePostSwitch, LV_STATE_CHECKED);
+                                lv_obj_add_state(objects.ui_noise_gate_post_switch, LV_STATE_CHECKED);
                             }
                             else
                             {
-                                lv_obj_clear_state(ui_NoiseGatePostSwitch, LV_STATE_CHECKED);
+                                lv_obj_clear_state(objects.ui_noise_gate_post_switch, LV_STATE_CHECKED);
                             }
                             updateIconOrder();
                         } break;
@@ -1954,43 +2106,43 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_add_state(ui_NoiseGateSwitch, LV_STATE_CHECKED);
-                                lv_img_set_src(ui_IconGate, (lv_obj_t*)&ui_img_effect_icon_gate_on_png);
+                                lv_obj_add_state(objects.ui_noise_gate_switch, LV_STATE_CHECKED);
+                                lv_img_set_src(objects.ui_icon_gate, (lv_obj_t*)&img_effect_icon_gate_on);
                             }
                             else
                             {
-                                lv_obj_clear_state(ui_NoiseGateSwitch, LV_STATE_CHECKED);
-                                lv_img_set_src(ui_IconGate, (lv_obj_t*)&ui_img_effect_icon_gate_off_png);
+                                lv_obj_clear_state(objects.ui_noise_gate_switch, LV_STATE_CHECKED);
+                                lv_img_set_src(objects.ui_icon_gate, (lv_obj_t*)&img_effect_icon_gate_off);
                             }
                         } break;
 
                         case TONEX_PARAM_NOISE_GATE_THRESHOLD:
                         {                            
-                            lv_slider_set_range(ui_NoiseGateThresholdSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_NoiseGateThresholdSlider, round(param_entry->Value), LV_ANIM_OFF);
+                            lv_slider_set_range(objects.ui_noise_gate_threshold_slider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(objects.ui_noise_gate_threshold_slider, round(param_entry->Value), LV_ANIM_OFF);
                         } break;
 
                         case TONEX_PARAM_NOISE_GATE_RELEASE:
                         {
-                            lv_slider_set_range(ui_NoiseGateReleaseSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_NoiseGateReleaseSlider, round(param_entry->Value), LV_ANIM_OFF);                            
+                            lv_slider_set_range(objects.ui_noise_gate_release_slider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(objects.ui_noise_gate_release_slider, round(param_entry->Value), LV_ANIM_OFF);                            
                         } break;
 
                         case TONEX_PARAM_NOISE_GATE_DEPTH:
                         {                            
-                            lv_slider_set_range(ui_NoiseGateDepthSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_NoiseGateDepthSlider, round(param_entry->Value), LV_ANIM_OFF);
+                            lv_slider_set_range(objects.ui_noise_gate_depth_slider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(objects.ui_noise_gate_depth_slider, round(param_entry->Value), LV_ANIM_OFF);
                         } break;
 
                         case TONEX_PARAM_COMP_POST:
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_add_state(ui_CompressorPostSwitch, LV_STATE_CHECKED);
+                                lv_obj_add_state(objects.ui_compressor_post_switch, LV_STATE_CHECKED);
                             }
                             else
                             {
-                                lv_obj_clear_state(ui_CompressorPostSwitch, LV_STATE_CHECKED);
+                                lv_obj_clear_state(objects.ui_compressor_post_switch, LV_STATE_CHECKED);
                             }
                             updateIconOrder();
                         } break;
@@ -1999,51 +2151,51 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_add_state(ui_CompressorEnableSwitch, LV_STATE_CHECKED);
-                                lv_img_set_src(ui_IconComp, (lv_obj_t*)&ui_img_effect_icon_comp_on_png);
+                                lv_obj_add_state(objects.ui_compressor_enable_switch, LV_STATE_CHECKED);
+                                lv_img_set_src(objects.ui_icon_comp, (lv_obj_t*)&img_effect_icon_comp_on);
                             }
                             else
                             {
-                                lv_obj_clear_state(ui_CompressorEnableSwitch, LV_STATE_CHECKED);
-                                lv_img_set_src(ui_IconComp, (lv_obj_t*)&ui_img_effect_icon_comp_off_png);
+                                lv_obj_clear_state(objects.ui_compressor_enable_switch, LV_STATE_CHECKED);
+                                lv_img_set_src(objects.ui_icon_comp, (lv_obj_t*)&img_effect_icon_comp_off);
                             }
                         } break;
 
                         case TONEX_PARAM_COMP_THRESHOLD:
                         {                            
-                            lv_slider_set_range(ui_CompressorThresholdSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_CompressorThresholdSlider, round(param_entry->Value), LV_ANIM_OFF);
+                            lv_slider_set_range(objects.ui_compressor_threshold_slider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(objects.ui_compressor_threshold_slider, round(param_entry->Value), LV_ANIM_OFF);
                         } break;
 
                         case TONEX_PARAM_COMP_MAKE_UP:
                         {
-                            lv_slider_set_range(ui_CompressorGainSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_CompressorGainSlider, round(param_entry->Value), LV_ANIM_OFF);                            
+                            lv_slider_set_range(objects.ui_compressor_gain_slider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(objects.ui_compressor_gain_slider, round(param_entry->Value), LV_ANIM_OFF);                            
                         } break;
 
                         case TONEX_PARAM_COMP_ATTACK:
                         {
-                            lv_slider_set_range(ui_CompresorAttackSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_CompresorAttackSlider, round(param_entry->Value), LV_ANIM_OFF);                            
+                            lv_slider_set_range(objects.ui_compressor_attack_slider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(objects.ui_compressor_attack_slider, round(param_entry->Value), LV_ANIM_OFF);                            
                         } break;
 
                         case TONEX_PARAM_EQ_POST:
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_add_state(ui_EQPostSwitch, LV_STATE_CHECKED);
+                                lv_obj_add_state(objects.ui_eq_post_switch, LV_STATE_CHECKED);
                             }
                             else
                             {
-                                lv_obj_clear_state(ui_EQPostSwitch, LV_STATE_CHECKED);
+                                lv_obj_clear_state(objects.ui_eq_post_switch, LV_STATE_CHECKED);
                             }
                             updateIconOrder();
                         } break;
 
                         case TONEX_PARAM_EQ_BASS:
                         {
-                            lv_slider_set_range(ui_EQBassSlider, round(param_entry->Min), round(param_entry->Max * 10.0f));
-                            lv_slider_set_value(ui_EQBassSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                        
+                            lv_slider_set_range(objects.ui_eq_bass_slider, round(param_entry->Min), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(objects.ui_eq_bass_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                        
                         } break;
 
                         case TONEX_PARAM_EQ_BASS_FREQ:
@@ -2053,14 +2205,14 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                         case TONEX_PARAM_EQ_MID:
                         {
-                            lv_slider_set_range(ui_EQMidSlider, round(param_entry->Min), round(param_entry->Max * 10.0f));
-                            lv_slider_set_value(ui_EQMidSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
+                            lv_slider_set_range(objects.ui_eq_mid_slider, round(param_entry->Min), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(objects.ui_eq_mid_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
                         } break;
 
                         case TONEX_PARAM_EQ_MIDQ:
                         {
-                            lv_slider_set_range(ui_EQMidQSlider, round(param_entry->Min * 10.0f), round(param_entry->Max * 10.0f));
-                            lv_slider_set_value(ui_EQMidQSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
+                            lv_slider_set_range(objects.ui_eq_mid_qslider, round(param_entry->Min * 10.0f), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(objects.ui_eq_mid_qslider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
                         } break;
 
                         case TONEX_PARAM_EQ_MID_FREQ:
@@ -2070,8 +2222,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                         case TONEX_PARAM_EQ_TREBLE:
                         {                            
-                            lv_slider_set_range(ui_EQTrebleSlider, round(param_entry->Min), round(param_entry->Max * 10.0f));
-                            lv_slider_set_value(ui_EQTrebleSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);
+                            lv_slider_set_range(objects.ui_eq_treble_slider, round(param_entry->Min), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(objects.ui_eq_treble_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);
                         } break;
 
                         case TONEX_PARAM_EQ_TREBLE_FREQ:
@@ -2083,13 +2235,13 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_add_state(ui_AmpEnableSwitch, LV_STATE_CHECKED);
-                                lv_img_set_src(ui_IconAmp, (lv_obj_t*)&ui_img_effect_icon_amp_on_png);
+                                lv_obj_add_state(objects.ui_amp_enable_switch, LV_STATE_CHECKED);
+                                lv_img_set_src(objects.ui_icon_amp, (lv_obj_t*)&img_effect_icon_amp_on);
                             }
                             else
                             {
-                                lv_obj_clear_state(ui_AmpEnableSwitch, LV_STATE_CHECKED);
-                                lv_img_set_src(ui_IconAmp, (lv_obj_t*)&ui_img_effect_icon_amp_off_png);
+                                lv_obj_clear_state(objects.ui_amp_enable_switch, LV_STATE_CHECKED);
+                                lv_img_set_src(objects.ui_icon_amp, (lv_obj_t*)&img_effect_icon_amp_off);
                             }
                         } break;
 
@@ -2100,28 +2252,28 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                         case TONEX_PARAM_CABINET_TYPE:
                         {
-                            lv_dropdown_set_selected(ui_CabinetModeDropdown, param_entry->Value);
+                            lv_dropdown_set_selected(objects.ui_cabinet_model_dropdown, param_entry->Value);
 
                             if (param_entry->Value == TONEX_CABINET_DISABLED)
                             {
-                                lv_img_set_src(ui_IconCab, (lv_obj_t*)&ui_img_effect_icon_cab_off_png);
+                                lv_img_set_src(objects.ui_icon_cab, (lv_obj_t*)&img_effect_icon_cab_off);
                             }
                             else
                             {
-                                lv_img_set_src(ui_IconCab, (lv_obj_t*)&ui_img_effect_icon_cab_on_png);
+                                lv_img_set_src(objects.ui_icon_cab, (lv_obj_t*)&img_effect_icon_cab_on);
                             }
                         } break;
 
                         case TONEX_PARAM_MODEL_GAIN:
                         {
-                            lv_slider_set_range(ui_AmplifierGainSlider, round(param_entry->Min), round(param_entry->Max * 10.0f));
-                            lv_slider_set_value(ui_AmplifierGainSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
+                            lv_slider_set_range(objects.ui_amplifier_gain_slider, round(param_entry->Min), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(objects.ui_amplifier_gain_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
                         } break;
 
                         case TONEX_PARAM_MODEL_VOLUME:
                         {
-                            lv_slider_set_range(ui_AmplifierVolumeSlider, round(param_entry->Min), round(param_entry->Max * 10.0f));
-                            lv_slider_set_value(ui_AmplifierVolumeSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
+                            lv_slider_set_range(objects.ui_amplifier_volume_slider, round(param_entry->Min), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(objects.ui_amplifier_volume_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
                         } break;
 
                         case TONEX_PARAM_MODEX_MIX:
@@ -2131,8 +2283,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                         case TONEX_PARAM_MODEL_PRESENCE:
                         {                            
-                            lv_slider_set_range(ui_AmplifierPresenseSlider, round(param_entry->Min), round(param_entry->Max * 10.0f));
-                            lv_slider_set_value(ui_AmplifierPresenseSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);
+                            lv_slider_set_range(objects.ui_amplifier_presense_slider, round(param_entry->Min), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(objects.ui_amplifier_presense_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);
                         } break;
 
                         //case TONEX_PARAM_CABINET_UNKNOWN:
@@ -2147,8 +2299,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                         case TONEX_PARAM_MODEL_DEPTH:
                         {
-                            lv_slider_set_range(ui_AmplifierDepthSlider, round(param_entry->Min), round(param_entry->Max * 10.0f));
-                            lv_slider_set_value(ui_AmplifierDepthSlider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);
+                            lv_slider_set_range(objects.ui_amplifier_depth_slider, round(param_entry->Min), round(param_entry->Max * 10.0f));
+                            lv_slider_set_value(objects.ui_amplifier_depth_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);
                         } break;
 
                         case TONEX_PARAM_VIR_RESO:
@@ -2195,11 +2347,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_add_state(ui_ReverbPostSwitch, LV_STATE_CHECKED);
+                                lv_obj_add_state(objects.ui_reverb_post_switch, LV_STATE_CHECKED);
                             }
                             else
                             {
-                                lv_obj_clear_state(ui_ReverbPostSwitch, LV_STATE_CHECKED);
+                                lv_obj_clear_state(objects.ui_reverb_post_switch, LV_STATE_CHECKED);
                             }
                             updateIconOrder();
                         } break;
@@ -2208,61 +2360,61 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_add_state(ui_ReverbEnableSwitch, LV_STATE_CHECKED);
+                                lv_obj_add_state(objects.ui_reverb_enable_switch, LV_STATE_CHECKED);
 
                                 // show enabled icon with letter to indicate the type
                                 switch ((int)param_ptr[TONEX_PARAM_REVERB_MODEL].Value)
                                 {
                                     case TONEX_REVERB_SPRING_1:
                                     {
-                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_s1_png);
+                                        lv_img_set_src(objects.ui_icon_reverb, (lv_obj_t*)&img_effect_icon_reverb_on_s1);
                                     } break;
 
                                     case TONEX_REVERB_SPRING_2:
                                     {
-                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_s2_png);
+                                        lv_img_set_src(objects.ui_icon_reverb, (lv_obj_t*)&img_effect_icon_reverb_on_s2);
                                     } break;
 
                                     case TONEX_REVERB_SPRING_3:
                                     {
-                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_s3_png);
+                                        lv_img_set_src(objects.ui_icon_reverb, (lv_obj_t*)&img_effect_icon_reverb_on_s3);
                                     } break;
 
                                     case TONEX_REVERB_SPRING_4:
                                     {
-                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_s4_png);
+                                        lv_img_set_src(objects.ui_icon_reverb, (lv_obj_t*)&img_effect_icon_reverb_on_s4);
                                     } break;
 
                                     case TONEX_REVERB_ROOM:
                                     {
-                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_r_png);
+                                        lv_img_set_src(objects.ui_icon_reverb, (lv_obj_t*)&img_effect_icon_reverb_on_r);
                                     } break;
 
                                     case TONEX_REVERB_PLATE:
                                     default:
                                     {
-                                        lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_on_p_png);
+                                        lv_img_set_src(objects.ui_icon_reverb, (lv_obj_t*)&img_effect_icon_reverb_on_p);
                                     } break;
                                 }
                             }
                             else
                             {
-                                lv_obj_clear_state(ui_ReverbEnableSwitch, LV_STATE_CHECKED);
-                                lv_img_set_src(ui_IconReverb, (lv_obj_t*)&ui_img_effect_icon_reverb_off_png);
+                                lv_obj_clear_state(objects.ui_reverb_enable_switch, LV_STATE_CHECKED);
+                                lv_img_set_src(objects.ui_icon_reverb, (lv_obj_t*)&img_effect_icon_reverb_off);
                             }
                         } break;
 
                         case TONEX_PARAM_REVERB_MODEL:
                         {
-                            lv_dropdown_set_selected(ui_ReverbModelDropdown, param_entry->Value);
+                            lv_dropdown_set_selected(objects.ui_reverb_model_dropdown, param_entry->Value);
                         } break;
 
                         case TONEX_PARAM_REVERB_SPRING1_TIME:
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_1)
                             {                            
-                                lv_slider_set_range(ui_ReverbTimeSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbTimeSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_time_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2270,8 +2422,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_1)
                             {                          
-                                lv_slider_set_range(ui_ReverbPredelaySlider, round(param_entry->Min), round(param_entry->Max));  
-                                lv_slider_set_value(ui_ReverbPredelaySlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_predelay_slider, round(param_entry->Min), round(param_entry->Max));  
+                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2279,8 +2431,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_1)
                             {                            
-                                lv_slider_set_range(ui_ReverbColorSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbColorSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_color_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2288,8 +2440,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_1)
                             {                           
-                                lv_slider_set_range(ui_ReverbMixSlider, round(param_entry->Min), round(param_entry->Max)); 
-                                lv_slider_set_value(ui_ReverbMixSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_mix_slider, round(param_entry->Min), round(param_entry->Max)); 
+                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2297,8 +2449,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_2)
                             {                                                            
-                                lv_slider_set_range(ui_ReverbTimeSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbTimeSlider, round(param_entry->Value), LV_ANIM_OFF);
+                                lv_slider_set_range(objects.ui_reverb_time_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);
                             }
                         } break;
 
@@ -2306,8 +2458,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_2)
                             {                            
-                                lv_slider_set_range(ui_ReverbPredelaySlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbPredelaySlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_predelay_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2315,8 +2467,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_2)
                             {                                                            
-                                lv_slider_set_range(ui_ReverbColorSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbColorSlider, round(param_entry->Value), LV_ANIM_OFF);
+                                lv_slider_set_range(objects.ui_reverb_color_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);
                             }
                         } break;
 
@@ -2324,8 +2476,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_2)
                             {                            
-                                lv_slider_set_range(ui_ReverbMixSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbMixSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_mix_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2333,8 +2485,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_3)
                             {             
-                                lv_slider_set_range(ui_ReverbTimeSlider, round(param_entry->Min), round(param_entry->Max));               
-                                lv_slider_set_value(ui_ReverbTimeSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_time_slider, round(param_entry->Min), round(param_entry->Max));               
+                                lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2342,8 +2494,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_3)
                             {              
-                                lv_slider_set_range(ui_ReverbPredelaySlider, round(param_entry->Min), round(param_entry->Max));              
-                                lv_slider_set_value(ui_ReverbPredelaySlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_predelay_slider, round(param_entry->Min), round(param_entry->Max));              
+                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2351,8 +2503,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_3)
                             {                            
-                                lv_slider_set_range(ui_ReverbColorSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbColorSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_color_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2360,8 +2512,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_3)
                             {                            
-                                lv_slider_set_range(ui_ReverbMixSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbMixSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_mix_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2369,8 +2521,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_4)
                             {                    
-                                lv_slider_set_range(ui_ReverbTimeSlider, round(param_entry->Min), round(param_entry->Max));        
-                                lv_slider_set_value(ui_ReverbTimeSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_time_slider, round(param_entry->Min), round(param_entry->Max));        
+                                lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2378,8 +2530,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_4)
                             {                            
-                                lv_slider_set_range(ui_ReverbPredelaySlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbPredelaySlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_predelay_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2387,8 +2539,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_4)
                             {                            
-                                lv_slider_set_range(ui_ReverbColorSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbColorSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_color_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2396,8 +2548,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_4)
                             {                            
-                                lv_slider_set_range(ui_ReverbMixSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbMixSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_mix_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2405,8 +2557,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_ROOM)
                             {                        
-                                lv_slider_set_range(ui_ReverbTimeSlider, round(param_entry->Min), round(param_entry->Max));    
-                                lv_slider_set_value(ui_ReverbTimeSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_time_slider, round(param_entry->Min), round(param_entry->Max));    
+                                lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2414,8 +2566,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_ROOM)
                             {                            
-                                lv_slider_set_range(ui_ReverbPredelaySlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbPredelaySlider, round(param_entry->Value), LV_ANIM_OFF);                               
+                                lv_slider_set_range(objects.ui_reverb_predelay_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);                               
                             }
                         } break;
 
@@ -2423,8 +2575,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_ROOM)
                             {                            
-                                lv_slider_set_range(ui_ReverbColorSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbColorSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_color_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2432,8 +2584,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_ROOM)
                             {                            
-                                lv_slider_set_range(ui_ReverbMixSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbMixSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_mix_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2441,8 +2593,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_PLATE)
                             {                            
-                                lv_slider_set_range(ui_ReverbTimeSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbTimeSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_time_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2450,8 +2602,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_PLATE)
                             {                    
-                                lv_slider_set_range(ui_ReverbPredelaySlider, round(param_entry->Min), round(param_entry->Max));        
-                                lv_slider_set_value(ui_ReverbPredelaySlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_predelay_slider, round(param_entry->Min), round(param_entry->Max));        
+                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2459,8 +2611,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_PLATE)
                             {                            
-                                lv_slider_set_range(ui_ReverbColorSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbColorSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_color_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2468,8 +2620,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_PLATE)
                             {                            
-                                lv_slider_set_range(ui_ReverbMixSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ReverbMixSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_reverb_mix_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2477,11 +2629,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_add_state(ui_ModulationPostSwitch, LV_STATE_CHECKED);
+                                lv_obj_add_state(objects.ui_modulation_post_switch, LV_STATE_CHECKED);
                             }
                             else
                             {
-                                lv_obj_clear_state(ui_ModulationPostSwitch, LV_STATE_CHECKED);
+                                lv_obj_clear_state(objects.ui_modulation_post_switch, LV_STATE_CHECKED);
                             }
                             updateIconOrder();
                         } break;
@@ -2490,98 +2642,98 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_add_state(ui_ModulationEnableSwitch, LV_STATE_CHECKED);
+                                lv_obj_add_state(objects.ui_modulation_enable_switch, LV_STATE_CHECKED);
 
                                 // show enabled icon with letter to indicate the type
                                 switch ((int)param_ptr[TONEX_PARAM_MODULATION_MODEL].Value)
                                 {
                                     case TONEX_MODULATION_CHORUS:
                                     {
-                                        lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_on_chorus_png);
+                                        lv_img_set_src(objects.ui_icon_mod, (lv_obj_t*)&img_effect_icon_mod_on_chorus);
                                     } break;
 
                                     case TONEX_MODULATION_TREMOLO:
                                     {
-                                        lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_on_tremolo_png);
+                                        lv_img_set_src(objects.ui_icon_mod, (lv_obj_t*)&img_effect_icon_mod_on_tremolo);
                                     } break;
 
                                     case TONEX_MODULATION_PHASER:
                                     {
-                                        lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_on_phaser_png);
+                                        lv_img_set_src(objects.ui_icon_mod, (lv_obj_t*)&img_effect_icon_mod_on_phaser);
                                     } break;
 
                                     case TONEX_MODULATION_FLANGER:
                                     {
-                                        lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_on_flanger_png);
+                                        lv_img_set_src(objects.ui_icon_mod, (lv_obj_t*)&img_effect_icon_mod_on_flanger);
                                     } break;
 
                                     case TONEX_MODULATION_ROTARY:
                                     default:
                                     {
-                                        lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_on_rotary_png);
+                                        lv_img_set_src(objects.ui_icon_mod, (lv_obj_t*)&img_effect_icon_mod_on_rotary);
                                     } break;
                                 }
                             }
                             else
                             {
-                                lv_obj_clear_state(ui_ModulationEnableSwitch, LV_STATE_CHECKED);
-                                lv_img_set_src(ui_IconMod, (lv_obj_t*)&ui_img_effect_icon_mod_off_png);
+                                lv_obj_clear_state(objects.ui_modulation_enable_switch, LV_STATE_CHECKED);
+                                lv_img_set_src(objects.ui_icon_mod, (lv_obj_t*)&img_effect_icon_mod_off);
                             }
                         } break;
 
                         case TONEX_PARAM_MODULATION_MODEL:
                         {
-                            lv_dropdown_set_selected(ui_ModulationModelDropdown, param_entry->Value);
+                            lv_dropdown_set_selected(objects.ui_modulation_model_dropdown, param_entry->Value);
 
                             // configure the variable UI items
                             switch ((int)param_entry->Value)
                             {
                                 case TONEX_MODULATION_CHORUS:
                                 {
-                                    lv_label_set_text(ui_ModulationParam1Label, "Rate");
-                                    lv_label_set_text(ui_ModulationParam2Label, "Depth");
-                                    lv_label_set_text(ui_ModulationParam3Label, "Level");
-                                    lv_obj_add_flag(ui_ModulationParam4Label, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_add_flag(ui_ModulationParam4Slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_label_set_text(objects.ui_modulation_param1_label, "Rate");
+                                    lv_label_set_text(objects.ui_modulation_param2_label, "Depth");
+                                    lv_label_set_text(objects.ui_modulation_param3_label, "Level");
+                                    lv_obj_add_flag(objects.ui_modulation_param4_label, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_modulation_param4_slider, LV_OBJ_FLAG_HIDDEN);
                                 } break;
 
                                 case TONEX_MODULATION_TREMOLO:
                                 {
-                                    lv_label_set_text(ui_ModulationParam1Label, "Rate");
-                                    lv_label_set_text(ui_ModulationParam2Label, "Shape");
-                                    lv_label_set_text(ui_ModulationParam3Label, "Spread");
-                                    lv_label_set_text(ui_ModulationParam4Label, "Level");
-                                    lv_obj_clear_flag(ui_ModulationParam4Label, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_clear_flag(ui_ModulationParam4Slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_label_set_text(objects.ui_modulation_param1_label, "Rate");
+                                    lv_label_set_text(objects.ui_modulation_param2_label, "Shape");
+                                    lv_label_set_text(objects.ui_modulation_param3_label, "Spread");
+                                    lv_label_set_text(objects.ui_modulation_param4_label, "Level");
+                                    lv_obj_clear_flag(objects.ui_modulation_param4_label, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_param4_slider, LV_OBJ_FLAG_HIDDEN);
                                 } break;
 
                                 case TONEX_MODULATION_PHASER:
                                 {
-                                    lv_label_set_text(ui_ModulationParam1Label, "Rate");
-                                    lv_label_set_text(ui_ModulationParam2Label, "Depth");
-                                    lv_label_set_text(ui_ModulationParam3Label, "Level");
-                                    lv_obj_add_flag(ui_ModulationParam4Label, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_add_flag(ui_ModulationParam4Slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_label_set_text(objects.ui_modulation_param1_label, "Rate");
+                                    lv_label_set_text(objects.ui_modulation_param2_label, "Depth");
+                                    lv_label_set_text(objects.ui_modulation_param3_label, "Level");
+                                    lv_obj_add_flag(objects.ui_modulation_param4_label, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_modulation_param4_slider, LV_OBJ_FLAG_HIDDEN);
                                 } break;
 
                                 case TONEX_MODULATION_FLANGER:
                                 {
-                                    lv_label_set_text(ui_ModulationParam1Label, "Rate");
-                                    lv_label_set_text(ui_ModulationParam2Label, "Depth");
-                                    lv_label_set_text(ui_ModulationParam3Label, "Feedback");
-                                    lv_label_set_text(ui_ModulationParam4Label, "Level");
-                                    lv_obj_clear_flag(ui_ModulationParam4Label, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_clear_flag(ui_ModulationParam4Slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_label_set_text(objects.ui_modulation_param1_label, "Rate");
+                                    lv_label_set_text(objects.ui_modulation_param2_label, "Depth");
+                                    lv_label_set_text(objects.ui_modulation_param3_label, "Feedback");
+                                    lv_label_set_text(objects.ui_modulation_param4_label, "Level");
+                                    lv_obj_clear_flag(objects.ui_modulation_param4_label, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_param4_slider, LV_OBJ_FLAG_HIDDEN);
                                 } break;
 
                                 case TONEX_MODULATION_ROTARY:
                                 {
-                                    lv_label_set_text(ui_ModulationParam1Label, "Speed");
-                                    lv_label_set_text(ui_ModulationParam2Label, "Radius");
-                                    lv_label_set_text(ui_ModulationParam3Label, "Spread");
-                                    lv_label_set_text(ui_ModulationParam4Label, "Level");
-                                    lv_obj_clear_flag(ui_ModulationParam4Label, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_clear_flag(ui_ModulationParam4Slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_label_set_text(objects.ui_modulation_param1_label, "Speed");
+                                    lv_label_set_text(objects.ui_modulation_param2_label, "Radius");
+                                    lv_label_set_text(objects.ui_modulation_param3_label, "Spread");
+                                    lv_label_set_text(objects.ui_modulation_param4_label, "Level");
+                                    lv_obj_clear_flag(objects.ui_modulation_param4_label, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_param4_slider, LV_OBJ_FLAG_HIDDEN);
                                 } break;
 
                                 default:
@@ -2597,15 +2749,15 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {      
                                 if (param_entry->Value)
                                 {
-                                    lv_obj_add_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
-                                    lv_obj_add_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_clear_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
+                                    lv_obj_add_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
-                                    lv_obj_clear_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
-                                    lv_obj_clear_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_add_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
+                                    lv_obj_clear_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }                        
                             }
                         } break;
@@ -2614,7 +2766,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_CHORUS)
                             {
-                                lv_dropdown_set_selected(ui_ModulationTSDropdown, param_entry->Value);
+                                lv_dropdown_set_selected(objects.ui_modulation_ts_dropdown, param_entry->Value);
                             }
                         } break;
 
@@ -2622,8 +2774,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_CHORUS)
                             { 
-                                lv_slider_set_range(ui_ModulationParam1Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam1Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param1_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param1_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2631,8 +2783,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_CHORUS)
                             { 
-                                lv_slider_set_range(ui_ModulationParam2Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam2Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param2_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param2_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2640,8 +2792,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_CHORUS)
                             { 
-                                lv_slider_set_range(ui_ModulationParam3Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam3Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param3_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param3_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2651,15 +2803,15 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {      
                                 if (param_entry->Value)
                                 {
-                                    lv_obj_add_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
-                                    lv_obj_add_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_clear_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
+                                    lv_obj_add_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
-                                    lv_obj_clear_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
-                                    lv_obj_clear_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_add_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
+                                    lv_obj_clear_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }                        
                             }
                         } break;
@@ -2668,7 +2820,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_TREMOLO)
                             {
-                                lv_dropdown_set_selected(ui_ModulationTSDropdown, param_entry->Value);
+                                lv_dropdown_set_selected(objects.ui_modulation_ts_dropdown, param_entry->Value);
                             }
                         } break;
 
@@ -2676,8 +2828,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_TREMOLO)
                             { 
-                                lv_slider_set_range(ui_ModulationParam1Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam1Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param1_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param1_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2685,8 +2837,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_TREMOLO)
                             { 
-                                lv_slider_set_range(ui_ModulationParam2Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam2Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param2_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param2_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2694,8 +2846,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_TREMOLO)
                             { 
-                                lv_slider_set_range(ui_ModulationParam3Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam3Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param3_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param3_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2703,8 +2855,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_TREMOLO)
                             { 
-                                lv_slider_set_range(ui_ModulationParam4Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam4Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param4_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param4_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2714,15 +2866,15 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {      
                                 if (param_entry->Value)
                                 {
-                                    lv_obj_add_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
-                                    lv_obj_add_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_clear_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
+                                    lv_obj_add_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
-                                    lv_obj_clear_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
-                                    lv_obj_clear_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_add_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
+                                    lv_obj_clear_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }                        
                             }
                         } break;
@@ -2731,7 +2883,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_PHASER)
                             {
-                                lv_dropdown_set_selected(ui_ModulationTSDropdown, param_entry->Value);
+                                lv_dropdown_set_selected(objects.ui_modulation_ts_dropdown, param_entry->Value);
                             }
                         } break;
 
@@ -2739,8 +2891,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_PHASER)
                             { 
-                                lv_slider_set_range(ui_ModulationParam1Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam1Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param1_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param1_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2748,8 +2900,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_PHASER)
                             { 
-                                lv_slider_set_range(ui_ModulationParam2Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam2Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param2_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param2_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2757,8 +2909,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_PHASER)
                             { 
-                                lv_slider_set_range(ui_ModulationParam3Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam3Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param3_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param3_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2768,15 +2920,15 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {      
                                 if (param_entry->Value)
                                 {
-                                    lv_obj_add_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
-                                    lv_obj_add_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_clear_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
+                                    lv_obj_add_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
-                                    lv_obj_clear_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
-                                    lv_obj_clear_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_add_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
+                                    lv_obj_clear_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }                        
                             }
                         } break;
@@ -2785,7 +2937,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_FLANGER)
                             {
-                                lv_dropdown_set_selected(ui_ModulationTSDropdown, param_entry->Value);
+                                lv_dropdown_set_selected(objects.ui_modulation_ts_dropdown, param_entry->Value);
                             }
                         } break;
 
@@ -2793,8 +2945,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_FLANGER)
                             { 
-                                lv_slider_set_range(ui_ModulationParam1Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam1Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param1_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param1_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2802,8 +2954,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_FLANGER)
                             { 
-                                lv_slider_set_range(ui_ModulationParam2Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam2Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param2_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param2_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2811,8 +2963,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_FLANGER)
                             { 
-                                lv_slider_set_range(ui_ModulationParam3Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam3Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param3_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param3_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2820,8 +2972,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_FLANGER)
                             { 
-                                lv_slider_set_range(ui_ModulationParam4Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam4Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param4_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param4_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2831,15 +2983,15 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {      
                                 if (param_entry->Value)
                                 {
-                                    lv_obj_add_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
-                                    lv_obj_add_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_clear_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
+                                    lv_obj_add_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
-                                    lv_obj_clear_state(ui_ModulationSyncSwitch, LV_STATE_CHECKED);
-                                    lv_obj_clear_flag(ui_ModulationParam1Slider, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_add_flag(ui_ModulationTSDropdown, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
+                                    lv_obj_clear_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }                        
                             }
                         } break;
@@ -2848,7 +3000,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_ROTARY)
                             {
-                                lv_dropdown_set_selected(ui_ModulationTSDropdown, param_entry->Value);
+                                lv_dropdown_set_selected(objects.ui_modulation_ts_dropdown, param_entry->Value);
                             }
                         } break;
 
@@ -2856,8 +3008,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_ROTARY)
                             {                                 
-                                lv_slider_set_range(ui_ModulationParam1Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam1Slider, round(param_entry->Value), LV_ANIM_OFF);
+                                lv_slider_set_range(objects.ui_modulation_param1_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
                             }
                         } break;
 
@@ -2865,8 +3017,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_ROTARY)
                             { 
-                                lv_slider_set_range(ui_ModulationParam2Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam2Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param2_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param2_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2874,8 +3026,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_ROTARY)
                             { 
-                                lv_slider_set_range(ui_ModulationParam3Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam3Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param3_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param3_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2883,8 +3035,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_ROTARY)
                             { 
-                                lv_slider_set_range(ui_ModulationParam4Slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_ModulationParam4Slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_modulation_param4_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_modulation_param4_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
                         
@@ -2892,11 +3044,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_add_state(ui_DelayPostSwitch, LV_STATE_CHECKED);
+                                lv_obj_add_state(objects.ui_delay_post_switch, LV_STATE_CHECKED);
                             }
                             else
                             {
-                                lv_obj_clear_state(ui_DelayPostSwitch, LV_STATE_CHECKED);
+                                lv_obj_clear_state(objects.ui_delay_post_switch, LV_STATE_CHECKED);
                             }
                             updateIconOrder();
                         } break;
@@ -2905,33 +3057,33 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_add_state(ui_DelayEnableSwitch, LV_STATE_CHECKED);
+                                lv_obj_add_state(objects.ui_delay_enable_switch, LV_STATE_CHECKED);
 
                                  // show enabled icon with letter to indicate the type
                                  switch ((int)param_ptr[TONEX_PARAM_DELAY_MODEL].Value)
                                  {
                                      case TONEX_DELAY_DIGITAL:
                                      {
-                                         lv_img_set_src(ui_IconDelay, (lv_obj_t*)&ui_img_effect_icon_delay_on_d_png);
+                                         lv_img_set_src(objects.ui_icon_delay, (lv_obj_t*)&img_effect_icon_delay_on_d);
                                      } break;
  
                                      case TONEX_DELAY_TAPE:
                                      default:
                                      {
-                                         lv_img_set_src(ui_IconDelay, (lv_obj_t*)&ui_img_effect_icon_delay_on_t_png);
+                                         lv_img_set_src(objects.ui_icon_delay, (lv_obj_t*)&img_effect_icon_delay_on_t);
                                      } break;
                                  }
                             }
                             else
                             {
-                                lv_obj_clear_state(ui_DelayEnableSwitch, LV_STATE_CHECKED);
-                                lv_img_set_src(ui_IconDelay, (lv_obj_t*)&ui_img_effect_icon_delay_off_png);
+                                lv_obj_clear_state(objects.ui_delay_enable_switch, LV_STATE_CHECKED);
+                                lv_img_set_src(objects.ui_icon_delay, (lv_obj_t*)&img_effect_icon_delay_off);
                             }
                         } break;
 
                         case TONEX_PARAM_DELAY_MODEL:
                         {
-                            lv_dropdown_set_selected(ui_DelayModelDropdown, param_entry->Value);
+                            lv_dropdown_set_selected(objects.ui_delay_model_dropdown, param_entry->Value);
                         } break;
 
                         case TONEX_PARAM_DELAY_DIGITAL_SYNC:
@@ -2940,15 +3092,15 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {
                                 if (param_entry->Value)
                                 {
-                                    lv_obj_add_state(ui_DelaySyncSwitch, LV_STATE_CHECKED);
-                                    lv_obj_add_flag(ui_DelayTSSlider, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_clear_flag(ui_DelayTSDropdown, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_state(objects.ui_delay_sync_switch, LV_STATE_CHECKED);
+                                    lv_obj_add_flag(objects.ui_delay_ts_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_delay_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
-                                    lv_obj_clear_state(ui_DelaySyncSwitch, LV_STATE_CHECKED);
-                                    lv_obj_clear_flag(ui_DelayTSSlider, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_add_flag(ui_DelayTSDropdown, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_state(objects.ui_delay_sync_switch, LV_STATE_CHECKED);
+                                    lv_obj_clear_flag(objects.ui_delay_ts_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_delay_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                             }
                         } break;
@@ -2957,7 +3109,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_DIGITAL)
                             {
-                                lv_dropdown_set_selected(ui_DelayTSDropdown, param_entry->Value);
+                                lv_dropdown_set_selected(objects.ui_delay_ts_dropdown, param_entry->Value);
                             }
                         } break;
 
@@ -2965,8 +3117,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_DIGITAL)
                             { 
-                                lv_slider_set_range(ui_DelayTSSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_DelayTSSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_delay_ts_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_delay_ts_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2974,8 +3126,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_DIGITAL)
                             { 
-                                lv_slider_set_range(ui_DelayFeedbackSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_DelayFeedbackSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_delay_feedback_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_delay_feedback_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -2985,11 +3137,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {
                                 if (param_entry->Value)
                                 {
-                                    lv_obj_add_state(ui_DelayPingPongSwitch, LV_STATE_CHECKED);
+                                    lv_obj_add_state(objects.ui_delay_ping_pong_switch, LV_STATE_CHECKED);
                                 }
                                 else
                                 {
-                                    lv_obj_clear_state(ui_DelayPingPongSwitch, LV_STATE_CHECKED);
+                                    lv_obj_clear_state(objects.ui_delay_ping_pong_switch, LV_STATE_CHECKED);
                                 }
                             }
                         } break;
@@ -2998,8 +3150,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_DIGITAL)
                             { 
-                                lv_slider_set_range(ui_DelayMixSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_DelayMixSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_delay_mix_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_delay_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -3009,15 +3161,15 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {
                                 if (param_entry->Value)
                                 {
-                                    lv_obj_add_state(ui_DelaySyncSwitch, LV_STATE_CHECKED);
-                                    lv_obj_add_flag(ui_DelayTSSlider, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_clear_flag(ui_DelayTSDropdown, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_state(objects.ui_delay_sync_switch, LV_STATE_CHECKED);
+                                    lv_obj_add_flag(objects.ui_delay_ts_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_delay_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
-                                    lv_obj_clear_state(ui_DelaySyncSwitch, LV_STATE_CHECKED);
-                                    lv_obj_clear_flag(ui_DelayTSSlider, LV_OBJ_FLAG_HIDDEN);
-                                    lv_obj_add_flag(ui_DelayTSDropdown, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_state(objects.ui_delay_sync_switch, LV_STATE_CHECKED);
+                                    lv_obj_clear_flag(objects.ui_delay_ts_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_delay_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                             }
                         } break;
@@ -3026,7 +3178,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_TAPE)
                             {
-                                lv_dropdown_set_selected(ui_DelayTSDropdown, param_entry->Value);
+                                lv_dropdown_set_selected(objects.ui_delay_ts_dropdown, param_entry->Value);
                             }
                         } break;
 
@@ -3034,8 +3186,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_TAPE)
                             { 
-                                lv_slider_set_range(ui_DelayTSSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_DelayTSSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_delay_ts_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_delay_ts_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -3043,8 +3195,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_TAPE)
                             { 
-                                lv_slider_set_range(ui_DelayFeedbackSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_DelayFeedbackSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_delay_feedback_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_delay_feedback_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -3054,11 +3206,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {
                                 if (param_entry->Value)
                                 {
-                                    lv_obj_add_state(ui_DelayPingPongSwitch, LV_STATE_CHECKED);
+                                    lv_obj_add_state(objects.ui_delay_ping_pong_switch, LV_STATE_CHECKED);
                                 }
                                 else
                                 {
-                                    lv_obj_clear_state(ui_DelayPingPongSwitch, LV_STATE_CHECKED);
+                                    lv_obj_clear_state(objects.ui_delay_ping_pong_switch, LV_STATE_CHECKED);
                                 }
                             }
                         } break;
@@ -3067,8 +3219,8 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_TAPE)
                             { 
-                                lv_slider_set_range(ui_DelayMixSlider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(ui_DelayMixSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_range(objects.ui_delay_mix_slider, round(param_entry->Min), round(param_entry->Max));
+                                lv_slider_set_value(objects.ui_delay_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                             }
                         } break;
 
@@ -3076,11 +3228,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_add_state(ui_CabBypassSwitch, LV_STATE_CHECKED);
+                                lv_obj_add_state(objects.ui_cab_bypass_switch, LV_STATE_CHECKED);
                             }
                             else
                             {
-                                lv_obj_clear_state(ui_CabBypassSwitch, LV_STATE_CHECKED);
+                                lv_obj_clear_state(objects.ui_cab_bypass_switch, LV_STATE_CHECKED);
                             }
                         } break;
 
@@ -3088,44 +3240,44 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_add_state(ui_TempoSourceSwitch, LV_STATE_CHECKED);
+                                lv_obj_add_state(objects.ui_tempo_source_switch, LV_STATE_CHECKED);
                             }
                             else
                             {
-                                lv_obj_clear_state(ui_TempoSourceSwitch, LV_STATE_CHECKED);
+                                lv_obj_clear_state(objects.ui_tempo_source_switch, LV_STATE_CHECKED);
                             }
                         } break;
 
                         case TONEX_GLOBAL_BPM:
                         {
-                            lv_slider_set_range(ui_BPMSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_BPMSlider, round(param_entry->Value), LV_ANIM_OFF); 
+                            lv_slider_set_range(objects.ui_bpm_slider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(objects.ui_bpm_slider, round(param_entry->Value), LV_ANIM_OFF); 
 
                             char buf[128];
                             sprintf(buf, "%.1f", param_entry->Value);
-                            lv_label_set_text(ui_BPMValueLabel, buf);
+                            lv_label_set_text(objects.ui_bpm_value_label, buf);
                             
 #if CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR                            
-                            ui_BPMAnimate(ui_BPMIndicator, 1000 * 60 / param_entry->Value);
+                            ui_BPMAnimate(objects.ui_bpm_indicator, 1000 * 60 / param_entry->Value);
 #endif                            
                         } break;
 
                         case TONEX_GLOBAL_INPUT_TRIM:
                         {
-                            lv_slider_set_range(ui_InputTrimSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_InputTrimSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                            lv_slider_set_range(objects.ui_input_trim_slider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(objects.ui_input_trim_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                         } break;
                         
                         case TONEX_GLOBAL_TUNING_REFERENCE:
                         {                            
-                            lv_slider_set_range(ui_TuningReferenceSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_TuningReferenceSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                            lv_slider_set_range(objects.ui_tuning_reference_slider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(objects.ui_tuning_reference_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                         } break;
 
                         case TONEX_GLOBAL_MASTER_VOLUME:
                         {                            
-                            lv_slider_set_range(ui_VolumeSlider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(ui_VolumeSlider, round(param_entry->Value), LV_ANIM_OFF);                                
+                            lv_slider_set_range(objects.ui_volume_slider, round(param_entry->Min), round(param_entry->Max));
+                            lv_slider_set_value(objects.ui_volume_slider, round(param_entry->Value), LV_ANIM_OFF);                                
                         } break;
                     } 
 
@@ -3235,67 +3387,67 @@ static uint8_t update_ui_element(tUIUpdate* update)
         case UI_ACTION_SET_STATE:
         {
             // check the element
-            if (element_1 == ui_USBStatusFail)
+            if (element_1 == objects.ui_usb_status_fail)
             {
                 if (update->Value == 0)
                 {
                     // show the USB disconnected image
-                    lv_obj_add_flag(ui_USBStatusOK, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(ui_USBStatusFail, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_add_flag(objects.ui_usb_status_ok, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_usb_status_fail, LV_OBJ_FLAG_HIDDEN);
                 }
                 else
                 {
                     // show the USB connected image
-                    lv_obj_add_flag(ui_USBStatusFail, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(ui_USBStatusOK, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_add_flag(objects.ui_usb_status_fail, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_usb_status_ok, LV_OBJ_FLAG_HIDDEN);
                 }
             }
-            else if (element_1 == ui_BTStatusConn)
+            else if (element_1 == objects.ui_bt_status_conn)
             {
                 if (update->Value == 0)
                 {
                     // show the BT disconnected image
-                    lv_obj_add_flag(ui_BTStatusConn, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(ui_BTStatusDisconn, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_add_flag(objects.ui_bt_status_conn, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_bt_status_disconn, LV_OBJ_FLAG_HIDDEN);
                 }
                 else
                 {
                     // show the BT connected image
-                    lv_obj_add_flag(ui_BTStatusDisconn, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(ui_BTStatusConn, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_add_flag(objects.ui_bt_status_disconn, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_bt_status_conn, LV_OBJ_FLAG_HIDDEN);
                 }
             }
-            else if (element_1 == ui_WiFiStatusConn)
+            else if (element_1 == objects.ui_wi_fi_status_conn)
             {
                 if (update->Value == 0)
                 {
                     ESP_LOGI(TAG, "Show WiFi disconn");
 
                     // show the Wifi disconnected image
-                    lv_obj_add_flag(ui_WiFiStatusConn, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(ui_WiFiStatusDisconn, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_add_flag(objects.ui_wi_fi_status_conn, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_wi_fi_status_disconn, LV_OBJ_FLAG_HIDDEN);
                 }
                 else
                 {
                     ESP_LOGI(TAG, "Show WiFi conn");
 
                     // show the WiFi connected image
-                    lv_obj_add_flag(ui_WiFiStatusDisconn, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(ui_WiFiStatusConn, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_add_flag(objects.ui_wi_fi_status_disconn, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_wi_fi_status_conn, LV_OBJ_FLAG_HIDDEN);
                 }
             }
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
-            else if (element_1 == ui_SkinImage)
+            else if (element_1 == objects.ui_skin_image)
             {
                 // set skin
-                lv_img_set_src(ui_SkinImage, ui_get_skin_image(update->Value));
+                lv_img_set_src(objects.ui_skin_image, ui_get_skin_image(update->Value));
             }
-            else if (element_1 == ui_BankValueLabel)
+            else if (element_1 == objects.ui_bank_value_label)
             {
                 // set Bank index
                 char buf[128];
                 sprintf(buf, "%d", (int)round(update->Value) + 1);
-                lv_label_set_text(ui_BankValueLabel, buf);
+                lv_label_set_text(objects.ui_bank_value_label, buf);
             }
 #endif            
         } break;
@@ -3305,7 +3457,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             lv_label_set_text(element_1, update->Text);
 #elif CONFIG_TONEX_CONTROLLER_DISPLAY_SMALL
-            if (element_1 == ui_PresetHeadingLabel)
+            if (element_1 == objects.ui_preset_heading_label)
             {
                 // split up preset into 2 text lines.
                 // incoming has "XX: Name"
@@ -3314,7 +3466,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
 
                 // get the preset number
                 sprintf(preset_index, "%d", atoi(update->Text));
-                lv_label_set_text(ui_PresetHeadingLabel, preset_index);
+                lv_label_set_text(objects.ui_preset_heading_label, preset_index);
 
                 // get the preset name
                 for (uint8_t loop = 0; loop < 4; loop++)
@@ -3322,7 +3474,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                     if (update->Text[loop] == ':')
                     {
                         strncpy(preset_name, (const char*)&update->Text[loop + 2], sizeof(preset_name) - 1);
-                        lv_label_set_text(ui_PresetHeadingLabel2, preset_name);
+                        lv_label_set_text(objects.ui_preset_heading_label2, preset_name);
                         break;
                     }
                 }
@@ -3357,38 +3509,70 @@ static uint8_t update_ui_element(tUIUpdate* update)
 }
 
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI && CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR
-void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration)
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void ui_anim_opacity_cb(void *obj, int32_t value) 
 {
-    if (ui_BPMAnimation != NULL) {
-        if (ui_BPMAnimation->time == duration) {
-            // same BPM, no need to reset animation
-            return;
-        }
-        // could not get this to work, using `lv_anim_del_all` since it's the only animation for now
-        // lv_anim_del(ui_BPMAnimation->var, NULL);
-        lv_anim_del_all();
+    lv_obj_set_style_opa((lv_obj_t*)obj, value, 0);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void ui_anim_deleted_cb(lv_anim_t *anim) 
+{
+    if (anim->user_data) 
+    {
+        lv_mem_free(anim->user_data);
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void ui_BPMAnimate(lv_obj_t *target_obj, uint32_t duration)
+{    
+    // Delete any existing animations on the target object to avoid conflicts
+    lv_anim_del(target_obj, (lv_anim_exec_xcb_t)anim_opacity_cb);
+
+    // Allocate user data for the animation
+    void *user_data = lv_mem_alloc(sizeof(uint8_t));
+    if (!user_data) 
+    {
+        return;
     }
 
-    ui_anim_user_data_t *PropertyAnimation_0_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
-    PropertyAnimation_0_user_data->target = TargetObject;
-    PropertyAnimation_0_user_data->val = -1;
-    
-    lv_anim_init(&PropertyAnimation_0);
-    lv_anim_set_time(&PropertyAnimation_0, duration);
-    lv_anim_set_user_data(&PropertyAnimation_0, PropertyAnimation_0_user_data);
-    lv_anim_set_custom_exec_cb(&PropertyAnimation_0, _ui_anim_callback_set_opacity);
-    lv_anim_set_values(&PropertyAnimation_0, 255, 0);
-    lv_anim_set_path_cb(&PropertyAnimation_0, lv_anim_path_ease_in_out);
-    lv_anim_set_delay(&PropertyAnimation_0, 0);
-    lv_anim_set_deleted_cb(&PropertyAnimation_0, _ui_anim_callback_free_user_data);
-    lv_anim_set_playback_time(&PropertyAnimation_0, 0);
-    lv_anim_set_playback_delay(&PropertyAnimation_0, 0);
-    lv_anim_set_repeat_count(&PropertyAnimation_0, LV_ANIM_REPEAT_INFINITE);
-    lv_anim_set_repeat_delay(&PropertyAnimation_0, 0);
-    lv_anim_set_early_apply(&PropertyAnimation_0, true);
-    lv_anim_set_get_value_cb(&PropertyAnimation_0, &_ui_anim_callback_get_opacity);
-    lv_anim_start(&PropertyAnimation_0);
-    ui_BPMAnimation = &PropertyAnimation_0;
+    lv_anim_t anim;
+
+    lv_anim_init(&anim);
+    lv_anim_set_var(&anim, target_obj);
+    lv_anim_set_time(&anim, duration);
+    lv_anim_set_user_data(&anim, user_data);
+    lv_anim_set_exec_cb(&anim, ui_anim_opacity_cb);
+    lv_anim_set_values(&anim, 255, 0); // Fade from opaque to transparent
+    lv_anim_set_path_cb(&anim, lv_anim_path_ease_in_out);
+    lv_anim_set_delay(&anim, 0);
+    lv_anim_set_deleted_cb(&anim, ui_anim_deleted_cb);
+    lv_anim_set_repeat_count(&anim, LV_ANIM_REPEAT_INFINITE);
+    lv_anim_set_repeat_delay(&anim, 0);
+    lv_anim_set_early_apply(&anim, true);
+
+    // Start the animation
+    lv_anim_start(&anim);
 }
 #endif
 
@@ -3498,6 +3682,7 @@ void display_task(void *arg)
         if (display_lvgl_lock(pdMS_TO_TICKS(1000))) 
         {
             lv_task_handler();
+            ui_tick();
 
             // check for any UI update messages
             if (xQueueReceive(ui_update_queue, (void*)&ui_update, 0) == pdPASS)
