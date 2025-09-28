@@ -50,8 +50,8 @@ void create_screen_screen1() {
                     lv_obj_set_pos(obj, 549, -9);
                     lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                     lv_img_set_src(obj, &img_effect_icon_reverb_off);
-                    lv_obj_add_event_cb(obj, action_show_settings_page, LV_EVENT_LONG_PRESSED, (void *)0);
-                    lv_obj_add_event_cb(obj, action_toggle_effect_reverb, LV_EVENT_SHORT_CLICKED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                 }
                 {
@@ -61,8 +61,8 @@ void create_screen_screen1() {
                     lv_obj_set_pos(obj, 479, -9);
                     lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                     lv_img_set_src(obj, &img_effect_icon_delay_off);
-                    lv_obj_add_event_cb(obj, action_show_settings_page, LV_EVENT_LONG_PRESSED, (void *)0);
-                    lv_obj_add_event_cb(obj, action_toggle_effect_delay, LV_EVENT_SHORT_CLICKED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                 }
                 {
@@ -72,8 +72,8 @@ void create_screen_screen1() {
                     lv_obj_set_pos(obj, 416, -9);
                     lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                     lv_img_set_src(obj, &img_effect_icon_mod_off);
-                    lv_obj_add_event_cb(obj, action_show_settings_page, LV_EVENT_LONG_PRESSED, (void *)0);
-                    lv_obj_add_event_cb(obj, action_toggle_effect_mod, LV_EVENT_SHORT_CLICKED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                 }
                 {
@@ -83,8 +83,8 @@ void create_screen_screen1() {
                     lv_obj_set_pos(obj, 356, -9);
                     lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                     lv_img_set_src(obj, &img_effect_icon_comp_off);
-                    lv_obj_add_event_cb(obj, action_show_settings_page, LV_EVENT_LONG_PRESSED, (void *)0);
-                    lv_obj_add_event_cb(obj, action_toggle_effect_comp, LV_EVENT_SHORT_CLICKED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                 }
                 {
@@ -94,8 +94,8 @@ void create_screen_screen1() {
                     lv_obj_set_pos(obj, 291, -9);
                     lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                     lv_img_set_src(obj, &img_effect_icon_cab_off);
-                    lv_obj_add_event_cb(obj, action_show_settings_page, LV_EVENT_LONG_PRESSED, (void *)0);
-                    lv_obj_add_event_cb(obj, action_toggle_effect_cab, LV_EVENT_SHORT_CLICKED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                 }
                 {
@@ -105,8 +105,8 @@ void create_screen_screen1() {
                     lv_obj_set_pos(obj, 223, -9);
                     lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                     lv_img_set_src(obj, &img_effect_icon_amp_off);
-                    lv_obj_add_event_cb(obj, action_show_settings_page, LV_EVENT_LONG_PRESSED, (void *)0);
-                    lv_obj_add_event_cb(obj, action_toggle_effect_amp, LV_EVENT_SHORT_CLICKED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                 }
                 {
@@ -116,8 +116,8 @@ void create_screen_screen1() {
                     lv_obj_set_pos(obj, 156, -9);
                     lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                     lv_img_set_src(obj, &img_effect_icon_gate_off);
-                    lv_obj_add_event_cb(obj, action_show_settings_page, LV_EVENT_LONG_PRESSED, (void *)0);
-                    lv_obj_add_event_cb(obj, action_toggle_effect_gate, LV_EVENT_SHORT_CLICKED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                 }
                 {
@@ -127,7 +127,8 @@ void create_screen_screen1() {
                     lv_obj_set_pos(obj, 89, -9);
                     lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                     lv_img_set_src(obj, &img_effect_icon_eq);
-                    lv_obj_add_event_cb(obj, action_show_settings_tab, LV_EVENT_LONG_PRESSED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
+                    lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                 }
                 {
@@ -143,6 +144,7 @@ void create_screen_screen1() {
                     lv_obj_set_style_bg_opa(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_border_width(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_radius(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_add_event_cb(obj, action_next_clicked, LV_EVENT_PRESSED, (void *)0);
                     {
                         lv_obj_t *parent_obj = obj;
                         {
@@ -153,6 +155,7 @@ void create_screen_screen1() {
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_next);
                             lv_obj_add_event_cb(obj, action_next_clicked, LV_EVENT_PRESSED, (void *)0);
+                            lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                         }
                     }
                 }
@@ -169,6 +172,7 @@ void create_screen_screen1() {
                     lv_obj_set_style_bg_opa(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_border_width(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_radius(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_add_event_cb(obj, action_previous_clicked, LV_EVENT_PRESSED, (void *)0);
                     {
                         lv_obj_t *parent_obj = obj;
                         {
@@ -390,7 +394,7 @@ void create_screen_screen1() {
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_img_set_src(obj, &img_arrow_left);
             lv_obj_add_event_cb(obj, action_amp_skin_previous, LV_EVENT_PRESSED, (void *)0);
-            lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN|LV_OBJ_FLAG_CLICKABLE);
         }
         {
             // ui_RightArrow
@@ -400,7 +404,7 @@ void create_screen_screen1() {
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_img_set_src(obj, &img_arrow_right);
             lv_obj_add_event_cb(obj, action_amp_skin_next, LV_EVENT_PRESSED, (void *)0);
-            lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN|LV_OBJ_FLAG_CLICKABLE);
         }
         {
             // ui_EntryKeyboard

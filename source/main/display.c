@@ -81,8 +81,8 @@ static const char *TAG = "app_display";
 #define DISPLAY_TASK_STACK_SIZE   (6 * 1024)
 
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI && CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR
-    static lv_anim_t *ui_BPMAnimation = NULL;
-    static lv_anim_t PropertyAnimation_0;
+    //static lv_anim_t *ui_BPMAnimation = NULL;
+    //static lv_anim_t PropertyAnimation_0;
     void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration);
 #endif
 
@@ -350,274 +350,7 @@ bool display_on_vsync_event(esp_lcd_panel_handle_t panel, const esp_lcd_rgb_pane
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void action_toggle_effect_gate(lv_event_t * e)
-{
-    tTonexParameter* param_ptr;
-    float value;
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if (event_code == LV_EVENT_SHORT_CLICKED) 
-    {
-        // called from LVGL 
-        ESP_LOGI(TAG, "UI Toggle gate");
-        
-        tonex_params_get_locked_access(&param_ptr);
-        if (param_ptr[TONEX_PARAM_NOISE_GATE_ENABLE].Value == 0.0f)
-        {
-            value = 1.0f;
-        }
-        else
-        {
-            value = 0.0f;
-        }
-        tonex_params_release_locked_access();
-
-        usb_modify_parameter(TONEX_PARAM_NOISE_GATE_ENABLE, value);   
-    }
-    else if (event_code == LV_EVENT_LONG_PRESSED) 
-    {
-        //_ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
-        action_show_settings_tab(e);
-    }
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-void action_toggle_effect_amp(lv_event_t * e)
-{
-    tTonexParameter* param_ptr;
-    float value;
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if (event_code == LV_EVENT_SHORT_CLICKED) 
-    {
-        // called from LVGL 
-        ESP_LOGI(TAG, "UI Toggle amp");
-        
-        tonex_params_get_locked_access(&param_ptr);
-        if (param_ptr[TONEX_PARAM_MODEL_AMP_ENABLE].Value == 0.0f)
-        {
-            value = 1.0f;
-        }
-        else
-        {
-            value = 0.0f;
-        }
-        tonex_params_release_locked_access();
-
-        usb_modify_parameter(TONEX_PARAM_MODEL_AMP_ENABLE, value);   
-    }
-    else if (event_code == LV_EVENT_LONG_PRESSED) 
-    {
-        //_ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
-        action_show_settings_tab(e);
-    }
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-void action_toggle_effect_cab(lv_event_t * e)
-{
-    tTonexParameter* param_ptr;
-    float value;
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if (event_code == LV_EVENT_SHORT_CLICKED) 
-    {
-        // called from LVGL 
-        ESP_LOGI(TAG, "UI Toggle cab");
-        
-        tonex_params_get_locked_access(&param_ptr);
-        if (param_ptr[TONEX_PARAM_CABINET_TYPE].Value == TONEX_CABINET_DISABLED)
-        {
-            //todo here: this could have been a VIR cabinet
-            value = TONEX_CABINET_TONE_MODEL;
-        }
-        else
-        {
-            value = TONEX_CABINET_DISABLED;
-        }
-        tonex_params_release_locked_access();
-
-        usb_modify_parameter(TONEX_PARAM_CABINET_TYPE, value); 
-    }  
-    else if (event_code == LV_EVENT_LONG_PRESSED) 
-    {
-        //_ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
-        action_show_settings_tab(e);
-    }
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-void action_toggle_effect_comp(lv_event_t * e)
-{
-    tTonexParameter* param_ptr;
-    float value;
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if (event_code == LV_EVENT_SHORT_CLICKED) 
-    {
-        // called from LVGL 
-        ESP_LOGI(TAG, "UI Toggle comp");
-        
-        tonex_params_get_locked_access(&param_ptr);
-        if (param_ptr[TONEX_PARAM_COMP_ENABLE].Value == 0.0f)
-        {
-            value = 1.0f;
-        }
-        else
-        {
-            value = 0.0f;
-        }
-        tonex_params_release_locked_access();
-
-        usb_modify_parameter(TONEX_PARAM_COMP_ENABLE, value);  
-    } 
-    else if (event_code == LV_EVENT_LONG_PRESSED) 
-    {
-        //_ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
-        action_show_settings_tab(e);
-    }
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-void action_toggle_effect_mod(lv_event_t * e)
-{
-    tTonexParameter* param_ptr;
-    float value;
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if (event_code == LV_EVENT_SHORT_CLICKED) 
-    {
-        // called from LVGL 
-        ESP_LOGI(TAG, "UI Toggle mod");
-        
-        tonex_params_get_locked_access(&param_ptr);
-        if (param_ptr[TONEX_PARAM_MODULATION_ENABLE].Value == 0.0f)
-        {
-            value = 1.0f;
-        }
-        else
-        {
-            value = 0.0f;
-        }
-        tonex_params_release_locked_access();
-
-        usb_modify_parameter(TONEX_PARAM_MODULATION_ENABLE, value);  
-    } 
-    else if (event_code == LV_EVENT_LONG_PRESSED) 
-    {
-        //_ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
-        action_show_settings_tab(e);
-    }
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-void action_toggle_effect_delay(lv_event_t * e)
-{
-    tTonexParameter* param_ptr;
-    float value;
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if (event_code == LV_EVENT_SHORT_CLICKED) 
-    {
-        // called from LVGL 
-        ESP_LOGI(TAG, "UI Toggle delay");
-    
-        tonex_params_get_locked_access(&param_ptr);
-        if (param_ptr[TONEX_PARAM_DELAY_ENABLE].Value == 0.0f)
-        {
-            value = 1.0f;
-        }
-        else
-        {
-            value = 0.0f;
-        }
-        tonex_params_release_locked_access();
-
-        usb_modify_parameter(TONEX_PARAM_DELAY_ENABLE, value);   
-    }
-    else if (event_code == LV_EVENT_LONG_PRESSED) 
-    {
-        //_ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
-        action_show_settings_tab(e);
-    }
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-void action_toggle_effect_reverb(lv_event_t * e)
-{
-    tTonexParameter* param_ptr;
-    float value;
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if (event_code == LV_EVENT_SHORT_CLICKED) 
-    {
-        // called from LVGL 
-        ESP_LOGI(TAG, "UI Toggle reverb");
-
-        tonex_params_get_locked_access(&param_ptr);
-        if (param_ptr[TONEX_PARAM_REVERB_ENABLE].Value == 0.0f)
-        {
-            value = 1.0f;
-        }
-        else
-        {
-            value = 0.0f;
-        }
-        tonex_params_release_locked_access();
-
-        usb_modify_parameter(TONEX_PARAM_REVERB_ENABLE, value);   
-    }
-    else if (event_code == LV_EVENT_LONG_PRESSED) 
-    {
-        //_ui_screen_change(&ui_Settings, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Settings_screen_init);
-        action_show_settings_tab(e);
-    }
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-void action_show_settings_tab(lv_event_t * e)
+void ui_show_settings_tab(lv_event_t * e)
 {
 	lv_obj_t* target = lv_event_get_current_target(e);
 
@@ -655,6 +388,158 @@ void action_show_settings_tab(lv_event_t * e)
     {
         // show reverb settings
         lv_tabview_set_act(objects.ui_settings_tab_view, CONFIG_TAB_REVERB, LV_ANIM_OFF);
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void action_effect_icon_clicked(lv_event_t * e)
+{
+    tTonexParameter* param_ptr;
+    float value;
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t* event_object = lv_event_get_target(e);
+
+    // called from LVGL 
+    ESP_LOGI(TAG, "action_effect_icon_clicked");
+
+    if (event_code == LV_EVENT_SHORT_CLICKED) 
+    {
+        if (event_object == objects.ui_icon_reverb)
+        {
+            ESP_LOGI(TAG, "UI Toggle reverb");
+
+            tonex_params_get_locked_access(&param_ptr);
+            if (param_ptr[TONEX_PARAM_REVERB_ENABLE].Value == 0.0f)
+            {
+                value = 1.0f;
+            }
+            else
+            {
+                value = 0.0f;
+            }
+            tonex_params_release_locked_access();
+
+            usb_modify_parameter(TONEX_PARAM_REVERB_ENABLE, value);   
+        }
+        else if (event_object == objects.ui_icon_delay)
+        {
+            ESP_LOGI(TAG, "UI Toggle delay");
+        
+            tonex_params_get_locked_access(&param_ptr);
+            if (param_ptr[TONEX_PARAM_DELAY_ENABLE].Value == 0.0f)
+            {
+                value = 1.0f;
+            }
+            else
+            {
+                value = 0.0f;
+            }
+            tonex_params_release_locked_access();
+
+            usb_modify_parameter(TONEX_PARAM_DELAY_ENABLE, value);   
+        }
+        else if (event_object == objects.ui_icon_mod)
+        {
+            ESP_LOGI(TAG, "UI Toggle mod");
+            
+            tonex_params_get_locked_access(&param_ptr);
+            if (param_ptr[TONEX_PARAM_MODULATION_ENABLE].Value == 0.0f)
+            {
+                value = 1.0f;
+            }
+            else
+            {
+                value = 0.0f;
+            }
+            tonex_params_release_locked_access();
+
+            usb_modify_parameter(TONEX_PARAM_MODULATION_ENABLE, value);  
+        } 
+        else if (event_object == objects.ui_icon_comp)
+        {
+            ESP_LOGI(TAG, "UI Toggle comp");
+            
+            tonex_params_get_locked_access(&param_ptr);
+            if (param_ptr[TONEX_PARAM_COMP_ENABLE].Value == 0.0f)
+            {
+                value = 1.0f;
+            }
+            else
+            {
+                value = 0.0f;
+            }
+            tonex_params_release_locked_access();
+
+            usb_modify_parameter(TONEX_PARAM_COMP_ENABLE, value);  
+        }
+        else if (event_object == objects.ui_icon_cab)
+        {
+            ESP_LOGI(TAG, "UI Toggle cab");
+            
+            tonex_params_get_locked_access(&param_ptr);
+            if (param_ptr[TONEX_PARAM_CABINET_TYPE].Value == TONEX_CABINET_DISABLED)
+            {
+                //todo here: this could have been a VIR cabinet
+                value = TONEX_CABINET_TONE_MODEL;
+            }
+            else
+            {
+                value = TONEX_CABINET_DISABLED;
+            }
+            tonex_params_release_locked_access();
+
+            usb_modify_parameter(TONEX_PARAM_CABINET_TYPE, value); 
+        }
+        else if (event_object == objects.ui_icon_amp)
+        {
+            ESP_LOGI(TAG, "UI Toggle amp");
+            
+            tonex_params_get_locked_access(&param_ptr);
+            if (param_ptr[TONEX_PARAM_MODEL_AMP_ENABLE].Value == 0.0f)
+            {
+                value = 1.0f;
+            }
+            else
+            {
+                value = 0.0f;
+            }
+            tonex_params_release_locked_access();
+
+            usb_modify_parameter(TONEX_PARAM_MODEL_AMP_ENABLE, value); 
+        }
+        else if (event_object == objects.ui_icon_gate)
+        {
+            ESP_LOGI(TAG, "UI Toggle gate");
+            
+            tonex_params_get_locked_access(&param_ptr);
+            if (param_ptr[TONEX_PARAM_NOISE_GATE_ENABLE].Value == 0.0f)
+            {
+                value = 1.0f;
+            }
+            else
+            {
+                value = 0.0f;
+            }
+            tonex_params_release_locked_access();
+
+            usb_modify_parameter(TONEX_PARAM_NOISE_GATE_ENABLE, value);   
+        }
+        else if (event_object == objects.ui_icon_eq)
+        {   
+            // no short press action
+        } 
+    }
+    else if (event_code == LV_EVENT_LONG_PRESSED) 
+    {
+        // change to settings page and jump to relevant tab
+        action_show_settings_page(e);
+        ui_show_settings_tab(e);      
     }
 }
 
@@ -715,6 +600,8 @@ void action_show_settings_page(lv_event_t * e)
 *****************************************************************************/
 void action_enable_skin_edit(lv_event_t * e)
 {
+    ESP_LOGI(TAG, "UI Skin edit mode");
+
     lv_obj_clear_flag(objects.ui_left_arrow, LV_OBJ_FLAG_HIDDEN);
     lv_obj_clear_flag(objects.ui_right_arrow, LV_OBJ_FLAG_HIDDEN);
     lv_obj_clear_state(objects.ui_preset_details_text_area, LV_STATE_DISABLED);
@@ -735,24 +622,21 @@ void action_enable_skin_edit(lv_event_t * e)
 *****************************************************************************/
 void action_save_skin_edit(lv_event_t * e)
 {
-    lv_event_code_t event_code = lv_event_get_code(e);
+    ESP_LOGI(TAG, "UI save skin edit");
 
-    if (event_code == LV_EVENT_CLICKED) 
-    {
-        action_keyboard_ok(e);
-        control_save_user_data(0);
-        
-        lv_obj_add_flag(objects.ui_ok_tick, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_add_flag(objects.ui_entry_keyboard, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_add_flag(objects.ui_left_arrow, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_add_flag(objects.ui_right_arrow, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_add_state(objects.ui_preset_details_text_area, LV_STATE_DISABLED);
-        lv_obj_clear_flag(objects.ui_bank_title_label, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_clear_flag(objects.ui_bank_value_label, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_clear_flag(objects.ui_bpm_title_label, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_clear_flag(objects.ui_bpm_value_label, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_clear_flag(objects.ui_bpm_indicator, LV_OBJ_FLAG_HIDDEN);
-    }
+    action_keyboard_ok(e);
+    control_save_user_data(0);
+    
+    lv_obj_add_flag(objects.ui_ok_tick, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_entry_keyboard, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_left_arrow, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_right_arrow, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_state(objects.ui_preset_details_text_area, LV_STATE_DISABLED);
+    lv_obj_clear_flag(objects.ui_bank_title_label, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(objects.ui_bank_value_label, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(objects.ui_bpm_title_label, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(objects.ui_bpm_value_label, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(objects.ui_bpm_indicator, LV_OBJ_FLAG_HIDDEN);
 }
 
 /****************************************************************************
@@ -3547,7 +3431,7 @@ static void ui_anim_deleted_cb(lv_anim_t *anim)
 void ui_BPMAnimate(lv_obj_t *target_obj, uint32_t duration)
 {    
     // Delete any existing animations on the target object to avoid conflicts
-    lv_anim_del(target_obj, (lv_anim_exec_xcb_t)anim_opacity_cb);
+    lv_anim_del(target_obj, (lv_anim_exec_xcb_t)ui_anim_opacity_cb);
 
     // Allocate user data for the animation
     void *user_data = lv_mem_alloc(sizeof(uint8_t));

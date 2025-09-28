@@ -132,15 +132,6 @@
       "implementationType": "native"
     },
     {
-      "objID": "3821693f-c880-487b-fd04-3d022a65ec78",
-      "components": [],
-      "connectionLines": [],
-      "localVariables": [],
-      "userProperties": [],
-      "name": "ShowSettingsTab",
-      "implementationType": "native"
-    },
-    {
       "objID": "f495a134-8411-4ab3-fdff-2dfea6856f7c",
       "components": [],
       "connectionLines": [],
@@ -216,60 +207,12 @@
       "name": "PresetDescriptionPressed"
     },
     {
-      "objID": "ed2c4ea0-0e69-46a7-f40c-4b9499b3fd0a",
+      "objID": "4140ae63-50f3-4ffc-bbc1-1cd938c6abd2",
       "components": [],
       "connectionLines": [],
       "localVariables": [],
       "userProperties": [],
-      "name": "ToggleEffectGate"
-    },
-    {
-      "objID": "abd211b6-4aba-4553-e16f-aa065ef4712c",
-      "components": [],
-      "connectionLines": [],
-      "localVariables": [],
-      "userProperties": [],
-      "name": "ToggleEffectAmp"
-    },
-    {
-      "objID": "db38d8b6-e20a-45bb-b95a-53cfc843da96",
-      "components": [],
-      "connectionLines": [],
-      "localVariables": [],
-      "userProperties": [],
-      "name": "ToggleEffectCab"
-    },
-    {
-      "objID": "536b0ed9-7bfc-4d25-b3d1-e806388df8f1",
-      "components": [],
-      "connectionLines": [],
-      "localVariables": [],
-      "userProperties": [],
-      "name": "ToggleEffectComp"
-    },
-    {
-      "objID": "e333fee9-93d1-4ae8-9805-b09bd7a2e612",
-      "components": [],
-      "connectionLines": [],
-      "localVariables": [],
-      "userProperties": [],
-      "name": "ToggleEffectMod"
-    },
-    {
-      "objID": "c9ca0097-f1fd-4dc8-c979-a5b79b204ddd",
-      "components": [],
-      "connectionLines": [],
-      "localVariables": [],
-      "userProperties": [],
-      "name": "ToggleEffectDelay"
-    },
-    {
-      "objID": "d03d39d4-61d8-41d5-eb2a-5864bbeb90d6",
-      "components": [],
-      "connectionLines": [],
-      "localVariables": [],
-      "userProperties": [],
-      "name": "ToggleEffectReverb"
+      "name": "EffectIconClicked"
     }
   ],
   "userPages": [
@@ -397,14 +340,14 @@
                       "objID": "9784880c-48cd-4a0b-d552-91856351a330",
                       "eventName": "LONG_PRESSED",
                       "handlerType": "action",
-                      "action": "ShowSettingsPage",
+                      "action": "EffectIconClicked",
                       "userData": 0
                     },
                     {
                       "objID": "dfa9c66f-f8d7-4e97-abca-a72f2fcb9665",
                       "eventName": "SHORT_CLICKED",
                       "handlerType": "action",
-                      "action": "ToggleEffectReverb",
+                      "action": "EffectIconClicked",
                       "userData": 0
                     }
                   ],
@@ -459,14 +402,14 @@
                       "objID": "03df3209-f282-4f94-f6e2-304d3f7c36d9",
                       "eventName": "LONG_PRESSED",
                       "handlerType": "action",
-                      "action": "ShowSettingsPage",
+                      "action": "EffectIconClicked",
                       "userData": 0
                     },
                     {
                       "objID": "3af53245-1422-40ef-c262-9df66ff4a5ff",
                       "eventName": "SHORT_CLICKED",
                       "handlerType": "action",
-                      "action": "ToggleEffectDelay",
+                      "action": "EffectIconClicked",
                       "userData": 0
                     }
                   ],
@@ -521,14 +464,14 @@
                       "objID": "35756783-99db-4a51-e26c-ab96a6e2f5a6",
                       "eventName": "LONG_PRESSED",
                       "handlerType": "action",
-                      "action": "ShowSettingsPage",
+                      "action": "EffectIconClicked",
                       "userData": 0
                     },
                     {
                       "objID": "498d8d7b-27df-42fb-a2cc-aeb92e9e5e2c",
                       "eventName": "SHORT_CLICKED",
                       "handlerType": "action",
-                      "action": "ToggleEffectMod",
+                      "action": "EffectIconClicked",
                       "userData": 0
                     }
                   ],
@@ -583,14 +526,14 @@
                       "objID": "a01cf2a9-775f-46f4-940f-6b4d97fad088",
                       "eventName": "LONG_PRESSED",
                       "handlerType": "action",
-                      "action": "ShowSettingsPage",
+                      "action": "EffectIconClicked",
                       "userData": 0
                     },
                     {
                       "objID": "25303949-2764-479b-bc1b-0cf89809a9f5",
                       "eventName": "SHORT_CLICKED",
                       "handlerType": "action",
-                      "action": "ToggleEffectComp",
+                      "action": "EffectIconClicked",
                       "userData": 0
                     }
                   ],
@@ -645,14 +588,14 @@
                       "objID": "e2a2424a-b9da-4964-86c8-6134635815d1",
                       "eventName": "LONG_PRESSED",
                       "handlerType": "action",
-                      "action": "ShowSettingsPage",
+                      "action": "EffectIconClicked",
                       "userData": 0
                     },
                     {
                       "objID": "6eaf8f03-9ad6-4e41-cca5-8ae31f21128b",
                       "eventName": "SHORT_CLICKED",
                       "handlerType": "action",
-                      "action": "ToggleEffectCab",
+                      "action": "EffectIconClicked",
                       "userData": 0
                     }
                   ],
@@ -707,14 +650,14 @@
                       "objID": "743c86ee-c1af-44b4-fb68-302c9f2c2e7a",
                       "eventName": "LONG_PRESSED",
                       "handlerType": "action",
-                      "action": "ShowSettingsPage",
+                      "action": "EffectIconClicked",
                       "userData": 0
                     },
                     {
                       "objID": "4d554585-6f33-4901-86e3-6f1448f38050",
                       "eventName": "SHORT_CLICKED",
                       "handlerType": "action",
-                      "action": "ToggleEffectAmp",
+                      "action": "EffectIconClicked",
                       "userData": 0
                     }
                   ],
@@ -769,14 +712,14 @@
                       "objID": "ef3e8a40-7be2-493f-fe75-0b0a698ce774",
                       "eventName": "LONG_PRESSED",
                       "handlerType": "action",
-                      "action": "ShowSettingsPage",
+                      "action": "EffectIconClicked",
                       "userData": 0
                     },
                     {
                       "objID": "77850b43-aeec-4e56-9858-d77a0204edae",
                       "eventName": "SHORT_CLICKED",
                       "handlerType": "action",
-                      "action": "ToggleEffectGate",
+                      "action": "EffectIconClicked",
                       "userData": 0
                     }
                   ],
@@ -828,10 +771,17 @@
                   "timeline": [],
                   "eventHandlers": [
                     {
+                      "objID": "423968f2-01ee-43a8-cfaa-1ee9517fa338",
+                      "eventName": "SHORT_CLICKED",
+                      "handlerType": "action",
+                      "action": "EffectIconClicked",
+                      "userData": 0
+                    },
+                    {
                       "objID": "44d3c897-0600-474e-fb02-f76ce9434494",
                       "eventName": "LONG_PRESSED",
                       "handlerType": "action",
-                      "action": "ShowSettingsTab",
+                      "action": "EffectIconClicked",
                       "userData": 0
                     }
                   ],
@@ -881,7 +831,15 @@
                     "childStyles": []
                   },
                   "timeline": [],
-                  "eventHandlers": [],
+                  "eventHandlers": [
+                    {
+                      "objID": "e384011d-6c2c-413e-9d42-2291e859845c",
+                      "eventName": "PRESSED",
+                      "handlerType": "action",
+                      "action": "NextClicked",
+                      "userData": 0
+                    }
+                  ],
                   "identifier": "ui_NextContainer",
                   "leftUnit": "px",
                   "topUnit": "px",
@@ -921,6 +879,7 @@
                       "children": [],
                       "widgetFlags": "ADV_HITTEST|CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
                       "hiddenFlagType": "literal",
+                      "clickableFlag": true,
                       "clickableFlagType": "literal",
                       "flagScrollbarMode": "",
                       "flagScrollDirection": "",
@@ -976,7 +935,15 @@
                     "childStyles": []
                   },
                   "timeline": [],
-                  "eventHandlers": [],
+                  "eventHandlers": [
+                    {
+                      "objID": "9c88514a-4937-4c74-fccf-217425c5f0b5",
+                      "eventName": "PRESSED",
+                      "handlerType": "action",
+                      "action": "PreviousClicked",
+                      "userData": 0
+                    }
+                  ],
                   "identifier": "ui_PreviousContainer",
                   "leftUnit": "px",
                   "topUnit": "px",
@@ -2022,6 +1989,7 @@
               "widgetFlags": "ADV_HITTEST|CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
               "hiddenFlag": true,
               "hiddenFlagType": "literal",
+              "clickableFlag": true,
               "clickableFlagType": "literal",
               "flagScrollbarMode": "",
               "flagScrollDirection": "",
@@ -2078,6 +2046,7 @@
               "widgetFlags": "ADV_HITTEST|CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
               "hiddenFlag": true,
               "hiddenFlagType": "literal",
+              "clickableFlag": true,
               "clickableFlagType": "literal",
               "flagScrollbarMode": "",
               "flagScrollDirection": "",
