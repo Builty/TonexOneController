@@ -92,6 +92,7 @@ static const char *TAG = "app_display";
 #define BUF_SIZE                        (1024)
 #define I2C_MASTER_TIMEOUT_MS           1000
 #define MAX_UI_TEXT                     130
+#define MAX_SKIN_IMAGE_SIZE             180000
 
 enum UIElements
 {
@@ -144,6 +145,11 @@ static void ui_show_toast(char* contents);
 #if CONFIG_TONEX_CONTROLLER_HAS_TOUCH
 static uint8_t __attribute__((unused)) touch_data_ready_to_read = 0;
 #endif
+
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
+static uint8_t* skin_image_buffer = NULL;
+static uint16_t current_skin_image = 0xFFFF;
+#endif    
 
 /****************************************************************************
 * NAME:        
@@ -1544,157 +1550,161 @@ void UI_RefreshParameterValues(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static lv_obj_t* ui_get_skin_image(uint16_t index)
+static uint32_t ui_get_skin_image(uint16_t index, uint8_t* buffer)
 {
-    lv_obj_t* result;
+    char filename[50];
+    lv_fs_file_t file;
+    uint32_t size = 0;
+    lv_fs_res_t res;
+    uint32_t bytes_read = 0;
+    uint32_t bytes_to_read;
+    uint32_t chunk_bytes;
 
     switch (index)
     {
-#if CONFIG_TONEX_CONTROLLER_SKINS_AMP        
         // amps
         case AMP_SKIN_5150:
         {
-            result = (lv_obj_t*)&img_skin_5150;
+            sprintf(filename, "A:/spiflash/images/5150.bin");
         } break;
 
         case AMP_SKIN_AC30:
         {
-            result = (lv_obj_t*)&img_skin_ac30;
+            sprintf(filename, "A:/spiflash/images/ac30.bin");
         } break;
 
         case AMP_SKIN_AMPEGCHROME:
         {
-            result = (lv_obj_t*)&img_skin_ampegchrome;
+            sprintf(filename, "A:/spiflash/images/ampgchrm.bin");
         } break;
 
         case AMP_SKIN_BA500:
         {
-            result = (lv_obj_t*)&img_skin_ba500;
+            sprintf(filename, "A:/spiflash/images/ba500.bin");
         } break;
 
         case AMP_SKIN_DIEZEL:
         {
-            result = (lv_obj_t*)&img_skin_diezel;
+            sprintf(filename, "A:/spiflash/images/diezel.bin");
         } break;
 
         case AMP_SKIN_ELEGANTBLUE:
         {
-            result = (lv_obj_t*)&img_skin_elegantblue;
+            sprintf(filename, "A:/spiflash/images/elgntblu.bin");
         } break;
 
         case AMP_SKIN_EVH:
         {
-            result = (lv_obj_t*)&img_skin_evh;
+            sprintf(filename, "A:/spiflash/images/evh.bin");
         } break;
 
         case AMP_SKIN_FENDERHOTROD:
         {
-            result = (lv_obj_t*)&img_skin_fenderhotrod;
+            sprintf(filename, "A:/spiflash/images/fndrhtrd.bin");
         } break;
 
         case AMP_SKIN_FENDERTWEEDBIG:
         {
-            result = (lv_obj_t*)&img_skin_fendertweedbig;
+            sprintf(filename, "A:/spiflash/images/fndrtwbg.bin");
         } break;
 
         case AMP_SKIN_FENDERTWIN:
         {
-            result = (lv_obj_t*)&img_skin_fendertwin;
+            sprintf(filename, "A:/spiflash/images/fndrtwin.bin");
         } break;
 
         case AMP_SKIN_FRIEDMANN:
         {
-            result = (lv_obj_t*)&img_skin_friedmann;
+            sprintf(filename, "A:/spiflash/images/friedman.bin");
         } break;
 
         case AMP_SKIN_JBDUMBLE1:
         {
-            result = (lv_obj_t*)&img_skin_jbdumble1;
+            sprintf(filename, "A:/spiflash/images/jbdumble.bin");
         } break;
 
         case AMP_SKIN_JCM:
         {
-            result = (lv_obj_t*)&img_skin_jcm;
+            sprintf(filename, "A:/spiflash/images/jcm.bin");
         } break;
 
         case AMP_SKIN_JETCITY:
         {
-            result = (lv_obj_t*)&img_skin_jetcity;
+            sprintf(filename, "A:/spiflash/images/jetcity.bin");
         } break;
 
         case AMP_SKIN_JTM:
         {
-            result = (lv_obj_t*)&img_skin_jtm;
+            sprintf(filename, "A:/spiflash/images/jtm.bin");
         } break;
 
         case AMP_SKIN_MESABOOGIEDUAL:
         {
-            result = (lv_obj_t*)&img_skin_mesaboogiedual;
+            sprintf(filename, "A:/spiflash/images/msbogdul.bin");
         } break;
 
         case AMP_SKIN_MESAMARKV:
         {
-            result = (lv_obj_t*)&img_skin_mesamarkv;
+            sprintf(filename, "A:/spiflash/images/mesamkv.bin");
         } break;
 
         case AMP_SKIN_MESAMARKWOOD:
         {
-            result = (lv_obj_t*)&img_skin_mesamarkwood;
+            sprintf(filename, "A:/spiflash/images/msmkwd.bin");
         } break;
 
         case AMP_SKIN_MODERNBLACKPLEXI:
         {
-            result = (lv_obj_t*)&img_skin_modernblackplexi;
+            sprintf(filename, "A:/spiflash/images/mdnbkplx.bin");
         } break;
 
         case AMP_SKIN_MODERNWHITEPLEXI:
         {
-            result = (lv_obj_t*)&img_skin_modernwhiteplexi;
+            sprintf(filename, "A:/spiflash/images/mdnwhplx.bin");
         } break;
 
         case AMP_SKIN_ORANGEOR120:
         {
-            result = (lv_obj_t*)&img_skin_orangeor120;
+            sprintf(filename, "A:/spiflash/images/missing.bin");    //todo
         } break;
 
         case AMP_SKIN_ROLANDJAZZ:
         {
-            result = (lv_obj_t*)&img_skin_rolandjazz;
+            sprintf(filename, "A:/spiflash/images/rolljazz.bin");
         } break;
 
         case AMP_SKIN_TONEXAMPBLACK:
         {
-            result = (lv_obj_t*)&img_skin_tonexampblack;
+            sprintf(filename, "A:/spiflash/images/tnxablk.bin");
         } break;
 
         case AMP_SKIN_TONEXAMPRED:
         {
-            result = (lv_obj_t*)&img_skin_tonexampred;
+            sprintf(filename, "A:/spiflash/images/tnxared.bin");
         } break;
 
         case AMP_SKIN_SILVERFACE:
         {
-            result = (lv_obj_t*)&img_skin_silverface;
+            sprintf(filename, "A:/spiflash/images/slvrface.bin");
         } break;
 
         case AMP_SKIN_SUPRO:
         {
-            result = (lv_obj_t*)&img_skin_supro;
+            sprintf(filename, "A:/spiflash/images/supro.bin");
         } break;
 
         case AMP_SKIN_WHITEMODERN:
         {
-            result = (lv_obj_t*)&img_skin_whitemodern;
+            sprintf(filename, "A:/spiflash/images/whtmdrn.bin");
         } break;
 
         case AMP_SKIN_WOODAMP:
         {
-            result = (lv_obj_t*)&img_skin_woodamp;
+            sprintf(filename, "A:/spiflash/images/woodamp.bin");
         } break;
-#endif  //CONFIG_TONEX_CONTROLLER_SKINS_AMP
 
-#if CONFIG_TONEX_CONTROLLER_SKINS_PEDAL
         // pedals
+#if 0   //to do        
         case PEDAL_SKIN_BIGMUFF:
         {
             result = (lv_obj_t*)&img_pskin_bigmuff;
@@ -1804,15 +1814,97 @@ static lv_obj_t* ui_get_skin_image(uint16_t index)
         {
             result = (lv_obj_t*)&img_pskin_ratyellow;
         } break;
-#endif //CONFIG_TONEX_CONTROLLER_SKINS_PEDAL
+#endif 
 
         default:
         {
-            result = (lv_obj_t*)&img_skin_jcm;            
+            sprintf(filename, "A:/spiflash/images/jcm.bin");
         } break;
     }
 
-    return result;
+    res = lv_fs_open(&file, filename, LV_FS_MODE_RD);
+    if (res != LV_FS_RES_OK) 
+    {
+        ESP_LOGW(TAG, "Failed to open skin %s", filename);
+        return 0;
+    }
+
+    // seek to end
+    res = lv_fs_seek(&file, 0, LV_FS_SEEK_END);
+    if (res != LV_FS_RES_OK)
+    {
+        ESP_LOGW(TAG, "Failed to seek skin %s", filename);
+        return 0;
+    }
+    
+    // get file size
+    res = lv_fs_tell(&file, &size);
+    if (res != LV_FS_RES_OK) 
+    {
+        ESP_LOGW(TAG, "Failed to get file size of skin %s", filename);
+        return 0;
+    }
+
+    // seek back to start of file
+    lv_fs_seek(&file, 0, LV_FS_SEEK_SET);
+
+    bytes_to_read = size;
+    #define CHUNK_SIZE  4096
+    uint8_t* temp_buf = malloc(CHUNK_SIZE);
+
+    // read entire file into PSRAM buffer, but in chunks to help avoid DMA stalls on display
+    while (bytes_to_read > 0)
+    {
+        if (bytes_to_read > CHUNK_SIZE)
+        {
+            chunk_bytes = CHUNK_SIZE;
+        }
+        else
+        {
+            chunk_bytes = bytes_to_read;
+        }
+        
+        // read to temp buffer in IRAM
+        res = lv_fs_read(&file, (char*)temp_buf, chunk_bytes, &bytes_read);
+        if (res == LV_FS_RES_OK) 
+        {
+            // copy to PSRAM buffer
+            memcpy((void*)buffer, (void*)temp_buf, bytes_read);
+            bytes_to_read -= bytes_read;
+            buffer += bytes_read;
+            //vTaskDelay(1);
+
+            // debug
+            //ESP_LOGW(TAG, "Read chunk %d %d %d", chunk_bytes, bytes_read, bytes_to_read);
+        } 
+        else 
+        {
+            ESP_LOGW(TAG, "Failed to read skin %s", filename);
+            break;
+        }
+    }
+
+    free(temp_buf);
+
+    if (res == LV_FS_RES_OK) 
+    {
+        ESP_LOGI(TAG, "Skin %s loaded, size %d", filename, (int)size);
+    } 
+    else 
+    {
+        ESP_LOGW(TAG, "Failed to read skin %s", filename);
+    }
+
+    lv_fs_close(&file);
+
+    if (res == LV_FS_RES_OK) 
+    {
+        return size;
+    }
+    else
+    {
+        return 0;
+    }
 }
 #endif 
 
@@ -3323,8 +3415,34 @@ static uint8_t update_ui_element(tUIUpdate* update)
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             else if (element_1 == objects.ui_skin_image)
             {
-                // set skin
-                lv_img_set_src(objects.ui_skin_image, ui_get_skin_image(update->Value));
+                // is the skin image different from what we have loaded?
+                if (update->Value != current_skin_image)
+                {
+                    current_skin_image = update->Value;
+
+                    // try to load skin image
+                    uint32_t file_size = ui_get_skin_image(update->Value, skin_image_buffer);
+                    if (file_size > 0)
+                    {        
+                        // build the image descriptor
+                        lv_img_dsc_t img_dsc;
+
+                        // Copy the 4-byte header
+                        memcpy((void*)&img_dsc.header, (void*)skin_image_buffer, sizeof(lv_img_header_t));  
+
+                        // set the size
+                        img_dsc.data_size = file_size - sizeof(lv_img_header_t);
+
+                        // set the data
+                        img_dsc.data = (const uint8_t *)(skin_image_buffer + sizeof(lv_img_header_t));
+
+                        lv_img_set_src(objects.ui_skin_image, &img_dsc);
+                    }
+                    else
+                    {
+                        ESP_LOGW(TAG, "Skin image load failed");
+                    }
+                }
             }
             else if (element_1 == objects.ui_bank_value_label)
             {
@@ -3632,6 +3750,14 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
     ESP_ERROR_CHECK(esp_timer_start_periodic(lvgl_tick_timer, DISPLAY_LVGL_TICK_PERIOD_MS * 1000));
 
     vTaskDelay(pdMS_TO_TICKS(10));
+
+    // allocate buffer for Skin images
+    skin_image_buffer = (uint8_t*)heap_caps_malloc(MAX_SKIN_IMAGE_SIZE, MALLOC_CAP_SPIRAM);
+    if (skin_image_buffer == NULL)
+    {
+        ESP_LOGE(TAG, "Failed to allocate skin image buffer!");    
+    }
+    memset((void*)skin_image_buffer, 0, MAX_SKIN_IMAGE_SIZE);
 
     // init GUI
     ESP_LOGI(TAG, "Init UI");

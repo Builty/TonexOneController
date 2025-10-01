@@ -83,6 +83,8 @@ __attribute__((unused)) SemaphoreHandle_t I2CMutex_2;
 static __attribute__((unused)) lv_disp_drv_t disp_drv;  
 static __attribute__((unused)) i2c_master_bus_handle_t ic2_bus_handle_1;
 static __attribute__((unused)) i2c_master_bus_handle_t ic2_bus_handle_2;
+const char *spi_flash_fatfs_base_path = "/spiflash";
+static wl_handle_t s_wl_handle = WL_INVALID_HANDLE;
 
 static esp_err_t i2c_master_init(i2c_master_bus_handle_t *bus_handle, uint32_t port, uint32_t scl_pin, uint32_t sda_pin);
 
@@ -173,12 +175,101 @@ static esp_err_t i2c_master_init(i2c_master_bus_handle_t *bus_handle, uint32_t p
 * NAME:        
 * DESCRIPTION: 
 * PARAMETERS:  
+* RETURN:      none
+* NOTES:       none
+****************************************************************************/
+static __attribute__((unused)) void list_files(const char *path) 
+{
+    DIR *dir = opendir(path);
+    if (dir == NULL) 
+    {
+        ESP_LOGE(TAG, "Failed to open directory: %s", path);
+        return;
+    }
+
+    struct dirent *entry;
+    ESP_LOGI(TAG, "Listing files in directory: %s", path);
+    
+    while ((entry = readdir(dir)) != NULL) 
+    {
+        // Skip "." and ".." entries
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) 
+        {
+            continue;
+        }
+        
+        char full_path[300];
+        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
+        
+        // Get file information
+        struct stat stat_buf;
+        if (stat(full_path, &stat_buf) == 0) 
+        {
+            if (S_ISDIR(stat_buf.st_mode)) 
+            {
+                ESP_LOGI(TAG, "[DIR]  %s", entry->d_name);
+            } 
+            else 
+            {
+                ESP_LOGI(TAG, "[FILE] %s (%ld bytes)", entry->d_name, stat_buf.st_size);
+            }
+        } 
+        else 
+        {
+            ESP_LOGE(TAG, "Failed to stat %s", entry->d_name);
+        }
+    }
+
+    closedir(dir);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      none
+* NOTES:       none
+****************************************************************************/
+static void mount_file_system(void)
+{    
+    esp_err_t err;
+
+    ESP_LOGI(TAG, "Mounting Fat file system");
+
+    const esp_vfs_fat_mount_config_t mount_config = {
+            .max_files = 1,     // this is max open files, not max total files
+            .format_if_mount_failed = true,
+            .allocation_unit_size = CONFIG_WL_SECTOR_SIZE
+    };
+    
+    err = esp_vfs_fat_spiflash_mount_rw_wl(spi_flash_fatfs_base_path, "storage", &mount_config, &s_wl_handle);
+
+    if (err != ESP_OK) 
+    {
+        ESP_LOGE(TAG, "Failed to mount FATFS (%s)", esp_err_to_name(err));
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Mounted file system OK");
+
+        // debug
+        //list_files("/spiflash/images");
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
 void app_main(void)
 {
     ESP_LOGI(TAG, "ToneX One Controller App start");
+
+    // mount the virtual file system in flash
+    mount_file_system();
 
     // load the config first
     control_load_config();
@@ -214,9 +305,24 @@ void app_main(void)
     ESP_LOGI(TAG, "Init Control");
     control_init();
 
+
+    
+
+    // test**********************
+    void* check_hack = heap_caps_malloc(4160000, MALLOC_CAP_SPIRAM);
+
+
     // init platform
     ESP_LOGI(TAG, "Init Platform");
     platform_init(ic2_bus_handle_1, I2CMutex_1, &disp_drv);
+
+
+
+    // test**********************
+    free(check_hack);
+
+
+
 
     // init display
     ESP_LOGI(TAG, "Init Display");

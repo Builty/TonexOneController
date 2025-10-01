@@ -3,7 +3,7 @@ idf_component_register(SRCS "midi_control.c" "control.c" "footswitches.c" "CH422
                             "usb_comms.c" "usb_tonex_one.c" "usb_tonex_common.c" "usb_tonex.c" "CH422G.c" "midi_serial.c" "wifi_config.c" "leds.c" "midi_helper.c" "LP5562.c"
                             "platform_devkitc.c" "platform_lgtdisps3.c" "platform_m5atoms3r.c" "platform_ws19t.c" "platform_ws43.c" "platform_wszero.c" "platform_ws169.c" 
                             "platform_ws35b.c" "platform_jc3248w.c"
-                            EMBED_TXTFILES index.html 
+                            EMBED_TXTFILES index.html
                             INCLUDE_DIRS "." "./")
                                                        
 if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY)
@@ -30,26 +30,9 @@ if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B OR CONFIG_TONEX_CONTR
                            "ui_generated_800x480land/ui_image_effect_icon_reverb_on_s4.c" "ui_generated_800x480land/ui_image_effect_icon_reverb_on_p.c" 
                            "ui_generated_800x480land/ui_image_effect_icon_delay_on_d.c" "ui_generated_800x480land/ui_image_effect_icon_delay_on_t.c" 
                            "ui_generated_800x480land/ui_image_effect_icon_eq.c"
-                           "ui_generated_800x480land/ui_image_skin_5150.c" "ui_generated_800x480land/ui_image_skin_ac30.c" "ui_generated_800x480land/ui_image_skin_ampegchrome.c"
-                           "ui_generated_800x480land/ui_image_skin_ba500.c" "ui_generated_800x480land/ui_image_skin_diezel.c" "ui_generated_800x480land/ui_image_skin_elegantblue.c" 
-                           "ui_generated_800x480land/ui_image_skin_evh.c" "ui_generated_800x480land/ui_image_skin_fenderhotrod.c" "ui_generated_800x480land/ui_image_skin_fendertweedbig.c"
-                           "ui_generated_800x480land/ui_image_skin_fendertwin.c" "ui_generated_800x480land/ui_image_skin_friedmann.c" "ui_generated_800x480land/ui_image_skin_jbdumble1.c"
-                           "ui_generated_800x480land/ui_image_skin_jcm.c" "ui_generated_800x480land/ui_image_skin_jetcity.c" "ui_generated_800x480land/ui_image_skin_jtm.c"
-                           "ui_generated_800x480land/ui_image_skin_mesaboogiedual.c" "ui_generated_800x480land/ui_image_skin_mesamarkv.c" "ui_generated_800x480land/ui_image_skin_mesamarkwood.c"
-                           "ui_generated_800x480land/ui_image_skin_modernblackplexi.c" "ui_generated_800x480land/ui_image_skin_modernwhiteplexi.c" "ui_generated_800x480land/ui_image_skin_orangeor120.c"
-                           "ui_generated_800x480land/ui_image_skin_rolandjazz.c" "ui_generated_800x480land/ui_image_skin_tonexampblack.c" "ui_generated_800x480land/ui_image_skin_tonexampred.c"
-                           "ui_generated_800x480land/ui_image_skin_silverface.c" "ui_generated_800x480land/ui_image_skin_supro.c" "ui_generated_800x480land/ui_image_skin_whitemodern.c"
-                           "ui_generated_800x480land/ui_image_skin_woodamp.c"
-                            "ui_generated_800x480land/ui_image_arrow_left.c" "ui_generated_800x480land/ui_image_arrow_right.c" "ui_generated_800x480land/ui_image_tick.c"
-                            "ui_generated_800x480land/ui_image_bt_conn.c" "ui_generated_800x480land/ui_image_bt_disconn.c"
-                           "ui_generated_800x480land/ui_image_pskin_bigmuff.c" "ui_generated_800x480land/ui_image_pskin_bossblack.c" "ui_generated_800x480land/ui_image_pskin_bosssilver.c"
-                           "ui_generated_800x480land/ui_image_pskin_bossyellow.c" "ui_generated_800x480land/ui_image_pskin_fuzzred.c" "ui_generated_800x480land/ui_image_pskin_fuzzsilver.c"
-                           "ui_generated_800x480land/ui_image_pskin_ibanezblue.c" "ui_generated_800x480land/ui_image_pskin_ibanezdarkblue.c" "ui_generated_800x480land/ui_image_pskin_ibanezgreen.c"
-                           "ui_generated_800x480land/ui_image_pskin_ibanezred.c" "ui_generated_800x480land/ui_image_pskin_klongold.c" "ui_generated_800x480land/ui_image_pskin_lifepedal.c"
-                           "ui_generated_800x480land/ui_image_pskin_morningglory.c" "ui_generated_800x480land/ui_image_pskin_mxrdoubleblack.c" "ui_generated_800x480land/ui_image_pskin_mxrdoublered.c"
-                           "ui_generated_800x480land/ui_image_pskin_mxrsingleblack.c" "ui_generated_800x480land/ui_image_pskin_mxrsinglegold.c" "ui_generated_800x480land/ui_image_pskin_mxrsinglegreen.c"
-                           "ui_generated_800x480land/ui_image_pskin_mxrsingleorange.c" "ui_generated_800x480land/ui_image_pskin_mxrsinglewhite.c" "ui_generated_800x480land/ui_image_pskin_mxrsingleyellow.c"
-                           "ui_generated_800x480land/ui_image_pskin_ratyellow.c")
+                           "ui_generated_800x480land/ui_image_arrow_left.c" "ui_generated_800x480land/ui_image_arrow_right.c" "ui_generated_800x480land/ui_image_tick.c"
+                           "ui_generated_800x480land/ui_image_bt_conn.c" "ui_generated_800x480land/ui_image_bt_disconn.c"
+                           "ui_generated_800x480land/ui_image_skin_jcm.c")
 endif()
 
 if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35B OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC3248W535)
@@ -139,3 +122,13 @@ if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R)
 endif()
 
 target_compile_options(${COMPONENT_LIB} PRIVATE -Werror)
+
+
+if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY)
+   set(image ../fatfs_image_8MB)
+
+   # select 1 of the following 2 only
+   fatfs_create_spiflash_image(storage ${image} FLASH_IN_PROJECT PRESERVE_TIME)   # to flash Fatfs image during firmware programming
+   #fatfs_create_spiflash_image(storage ${image} PRESERVE_TIME)                     # create but don't flash
+endif()
+
