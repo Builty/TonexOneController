@@ -309,7 +309,15 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         },
         .flags.fb_in_psram = true, // allocate frame buffer in PSRAM
     };
+      
+    // hack here: if the panel is created normally, it results in massive jitter.
+    // allocating some PSRAM here before calling the esp_lcd_new_rgb_panel() function
+    // somehow fixes it, and simulates the way that older versions of the project
+    // did it (a lot of PSRAM was allocated for skin images.)
+    // If anybody figures out the root cause here I'd love to hear it.
+    void* psram_workaround_ptr = heap_caps_malloc(50000, MALLOC_CAP_SPIRAM);
     ESP_ERROR_CHECK(esp_lcd_new_rgb_panel(&panel_config, &panel_handle));
+    free(psram_workaround_ptr);   
 
     ESP_LOGI(TAG, "Register event callbacks");
     esp_lcd_rgb_panel_event_callbacks_t cbs = {

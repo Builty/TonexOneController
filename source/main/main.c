@@ -305,24 +305,9 @@ void app_main(void)
     ESP_LOGI(TAG, "Init Control");
     control_init();
 
-
-    
-
-    // test**********************
-    void* check_hack = heap_caps_malloc(4160000, MALLOC_CAP_SPIRAM);
-
-
     // init platform
     ESP_LOGI(TAG, "Init Platform");
     platform_init(ic2_bus_handle_1, I2CMutex_1, &disp_drv);
-
-
-
-    // test**********************
-    free(check_hack);
-
-
-
 
     // init display
     ESP_LOGI(TAG, "Init Display");
