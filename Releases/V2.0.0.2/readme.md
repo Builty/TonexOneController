@@ -1,6 +1,8 @@
 <br>
 V2.0.0.2 released 4 October 2025.
 <br><br>
+CAUTION: due to differences in the configuration storage, it is recommended to perform an Erase before updating from older versions. This can be done with the programming software or web page method. 
+<br>Erase the memory, then program the release as normal.
 <br><br>
 Files for each platform:
 - Espressif DevKit-C with 2 MB PSRAM (Quad SPI):<br>
