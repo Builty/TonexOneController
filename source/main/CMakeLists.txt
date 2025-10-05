@@ -3,8 +3,8 @@ idf_component_register(SRCS "midi_control.c" "control.c" "footswitches.c" "CH422
                             "usb_comms.c" "usb_tonex_one.c" "usb_tonex_common.c" "usb_tonex.c" "CH422G.c" "midi_serial.c" "wifi_config.c" "leds.c" "midi_helper.c" "LP5562.c"
                             "platform_devkitc.c" "platform_lgtdisps3.c" "platform_m5atoms3r.c" "platform_ws19t.c" "platform_ws43.c" "platform_wszero.c" "platform_ws169.c" 
                             "platform_ws35b.c" "platform_jc3248w.c"
-                            EMBED_TXTFILES index.html
-                            INCLUDE_DIRS "." "./")
+                            INCLUDE_DIRS "." "./"
+                            EMBED_TXTFILES index.html)
                                                        
 if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY)
     target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated_800x480land")
@@ -111,24 +111,4 @@ if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3 OR CONFIG_TONEX_
                                "ui_generated_19/images/ui_img_bt_conn_png.c" "ui_generated_19/images/ui_img_bt_disconn_png.c")
 endif()
 
-if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R)
-   target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated_085")
-
-   target_sources(${COMPONENT_LIB} PRIVATE "ui_generated_085/ui.c" "ui_generated_085/ui_helpers.c"
-                            "ui_generated_085/images/ui_img_smythbuilt_png.c" "ui_generated_085/screens/ui_Screen1.c" "ui_generated_085/components/ui_comp_hook.c" "ui_generated_085/images/ui_img_usb_fail_png.c"
-                            "ui_generated_085/images/ui_img_usb_ok_png.c"
-                            "ui_generated_085/images/ui_img_wifi_conn_png.c" "ui_generated_085/images/ui_img_wifi_disconn_png.c"
-                            "ui_generated_085/images/ui_img_bt_conn_png.c" "ui_generated_085/images/ui_img_bt_disconn_png.c")
-endif()
-
 target_compile_options(${COMPONENT_LIB} PRIVATE -Werror)
-
-
-if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY)
-   set(image ../fatfs_image_8MB)
-
-   # select 1 of the following 2 only
-   fatfs_create_spiflash_image(storage ${image} FLASH_IN_PROJECT PRESERVE_TIME)   # to flash Fatfs image during firmware programming
-   #fatfs_create_spiflash_image(storage ${image} PRESERVE_TIME)                     # create but don't flash
-endif()
-

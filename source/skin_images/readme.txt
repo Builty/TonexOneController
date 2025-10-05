@@ -4,3 +4,5 @@ Settings:
 LVGL v8
 CF_TRUE_COLOR_ALPHA
 Binary RGB565
+Dither not checked
+Big endian not checked

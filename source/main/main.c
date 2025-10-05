@@ -83,8 +83,6 @@ __attribute__((unused)) SemaphoreHandle_t I2CMutex_2;
 static __attribute__((unused)) lv_disp_drv_t disp_drv;  
 static __attribute__((unused)) i2c_master_bus_handle_t ic2_bus_handle_1;
 static __attribute__((unused)) i2c_master_bus_handle_t ic2_bus_handle_2;
-const char *spi_flash_fatfs_base_path = "/spiflash";
-static wl_handle_t s_wl_handle = WL_INVALID_HANDLE;
 
 static esp_err_t i2c_master_init(i2c_master_bus_handle_t *bus_handle, uint32_t port, uint32_t scl_pin, uint32_t sda_pin);
 
@@ -227,49 +225,12 @@ static __attribute__((unused)) void list_files(const char *path)
 * NAME:        
 * DESCRIPTION: 
 * PARAMETERS:  
-* RETURN:      none
-* NOTES:       none
-****************************************************************************/
-static void mount_file_system(void)
-{    
-    esp_err_t err;
-
-    ESP_LOGI(TAG, "Mounting Fat file system");
-
-    const esp_vfs_fat_mount_config_t mount_config = {
-            .max_files = 1,     // this is max open files, not max total files
-            .format_if_mount_failed = true,
-            .allocation_unit_size = CONFIG_WL_SECTOR_SIZE
-    };
-    
-    err = esp_vfs_fat_spiflash_mount_rw_wl(spi_flash_fatfs_base_path, "storage", &mount_config, &s_wl_handle);
-
-    if (err != ESP_OK) 
-    {
-        ESP_LOGE(TAG, "Failed to mount FATFS (%s)", esp_err_to_name(err));
-    }
-    else
-    {
-        ESP_LOGI(TAG, "Mounted file system OK");
-
-        // debug
-        //list_files("/spiflash/images");
-    }
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
 void app_main(void)
 {
     ESP_LOGI(TAG, "ToneX One Controller App start");
-
-    // mount the virtual file system in flash
-    mount_file_system();
 
     // load the config first
     control_load_config();

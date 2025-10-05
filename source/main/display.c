@@ -63,6 +63,7 @@ limitations under the License.
 #endif
 #include "usb/usb_host.h"
 #include "usb/cdc_acm_host.h"
+#include "esp_partition.h"
 #include "usb_comms.h"
 #include "usb_tonex_common.h"
 #include "usb_tonex_one.h"
@@ -92,7 +93,10 @@ static const char *TAG = "app_display";
 #define BUF_SIZE                        (1024)
 #define I2C_MASTER_TIMEOUT_MS           1000
 #define MAX_UI_TEXT                     130
-#define MAX_SKIN_IMAGE_SIZE             180000
+#define MAX_SKIN_IMAGES                 100
+#define SKIN_PARTITION_TYPE             0x40
+#define MAX_SKIN_IMAGE_SIZE             200000
+#define SKIN_PARTITION_NAME             "skins"
 
 enum UIElements
 {
@@ -133,6 +137,13 @@ typedef struct
     uint8_t active;
 } msgbox_data_t;
 
+typedef struct __attribute__ ((packed)) 
+{
+    uint32_t offset;
+    uint32_t length;
+} tSkinTOC;
+
+
 static QueueHandle_t ui_update_queue;
 static SemaphoreHandle_t I2CMutexHandle;
 static SemaphoreHandle_t lvgl_mux = NULL;
@@ -149,6 +160,7 @@ static uint8_t __attribute__((unused)) touch_data_ready_to_read = 0;
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
 static uint8_t* skin_image_buffer = NULL;
 static uint16_t current_skin_image = 0xFFFF;
+static tSkinTOC SkinTOC[MAX_SKIN_IMAGES];
 #endif    
 
 /****************************************************************************
@@ -1542,6 +1554,39 @@ void UI_RefreshParameterValues(void)
 }
 
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
+    
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void ui_load_skin_toc(void)
+{
+    // Find the skin partition by name
+    const esp_partition_t* partition = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, SKIN_PARTITION_TYPE, SKIN_PARTITION_NAME);
+    if (partition == NULL) 
+    {
+        ESP_LOGE(TAG, "TOC: Could not find partition 'skins'\n");
+        return;
+    }
+
+    esp_err_t err = esp_partition_read(partition, 0, (uint8_t*)&SkinTOC, sizeof(SkinTOC));
+    if (err != ESP_OK) 
+    {
+        ESP_LOGE(TAG, "TOC: Failed to read skins partition: %s\n", esp_err_to_name(err));
+        return;
+    }
+
+    ESP_LOGI(TAG, "Skin TOC loaded OK");
+    
+    // debug code to dump the skin TOC
+    //for (uint8_t index = 0; index < MAX_SKIN_IMAGES; index++)
+    //{
+    //    ESP_LOGI(TAG, "TOC: %d, %d %d", (int)index, (int)SkinTOC[index].offset, (int)SkinTOC[index].length);
+    //}
+}
 
 /****************************************************************************
 * NAME:        
@@ -1552,360 +1597,28 @@ void UI_RefreshParameterValues(void)
 *****************************************************************************/
 static uint32_t ui_get_skin_image(uint16_t index, uint8_t* buffer)
 {
-    char filename[50];
-    lv_fs_file_t file;
-    uint32_t size = 0;
-    lv_fs_res_t res;
-    uint32_t bytes_read = 0;
-    uint32_t bytes_to_read;
-    uint32_t chunk_bytes;
+    esp_err_t err;
 
-    switch (index)
+    // Find the partition by name
+    const esp_partition_t *partition = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, SKIN_PARTITION_TYPE, SKIN_PARTITION_NAME);
+    if (partition == NULL) 
     {
-        // amps
-        case AMP_SKIN_5150:
-        {
-            sprintf(filename, "A:/spiflash/images/5150.bin");
-        } break;
-
-        case AMP_SKIN_AC30:
-        {
-            sprintf(filename, "A:/spiflash/images/ac30.bin");
-        } break;
-
-        case AMP_SKIN_AMPEGCHROME:
-        {
-            sprintf(filename, "A:/spiflash/images/ampgchrm.bin");
-        } break;
-
-        case AMP_SKIN_BA500:
-        {
-            sprintf(filename, "A:/spiflash/images/ba500.bin");
-        } break;
-
-        case AMP_SKIN_DIEZEL:
-        {
-            sprintf(filename, "A:/spiflash/images/diezel.bin");
-        } break;
-
-        case AMP_SKIN_ELEGANTBLUE:
-        {
-            sprintf(filename, "A:/spiflash/images/elgntblu.bin");
-        } break;
-
-        case AMP_SKIN_EVH:
-        {
-            sprintf(filename, "A:/spiflash/images/evh.bin");
-        } break;
-
-        case AMP_SKIN_FENDERHOTROD:
-        {
-            sprintf(filename, "A:/spiflash/images/fndrhtrd.bin");
-        } break;
-
-        case AMP_SKIN_FENDERTWEEDBIG:
-        {
-            sprintf(filename, "A:/spiflash/images/fndrtwbg.bin");
-        } break;
-
-        case AMP_SKIN_FENDERTWIN:
-        {
-            sprintf(filename, "A:/spiflash/images/fndrtwin.bin");
-        } break;
-
-        case AMP_SKIN_FRIEDMANN:
-        {
-            sprintf(filename, "A:/spiflash/images/friedman.bin");
-        } break;
-
-        case AMP_SKIN_JBDUMBLE1:
-        {
-            sprintf(filename, "A:/spiflash/images/jbdumble.bin");
-        } break;
-
-        case AMP_SKIN_JCM:
-        {
-            sprintf(filename, "A:/spiflash/images/jcm.bin");
-        } break;
-
-        case AMP_SKIN_JETCITY:
-        {
-            sprintf(filename, "A:/spiflash/images/jetcity.bin");
-        } break;
-
-        case AMP_SKIN_JTM:
-        {
-            sprintf(filename, "A:/spiflash/images/jtm.bin");
-        } break;
-
-        case AMP_SKIN_MESABOOGIEDUAL:
-        {
-            sprintf(filename, "A:/spiflash/images/msbogdul.bin");
-        } break;
-
-        case AMP_SKIN_MESAMARKV:
-        {
-            sprintf(filename, "A:/spiflash/images/mesamkv.bin");
-        } break;
-
-        case AMP_SKIN_MESAMARKWOOD:
-        {
-            sprintf(filename, "A:/spiflash/images/msmkwd.bin");
-        } break;
-
-        case AMP_SKIN_MODERNBLACKPLEXI:
-        {
-            sprintf(filename, "A:/spiflash/images/mdnbkplx.bin");
-        } break;
-
-        case AMP_SKIN_MODERNWHITEPLEXI:
-        {
-            sprintf(filename, "A:/spiflash/images/mdnwhplx.bin");
-        } break;
-
-        case AMP_SKIN_ORANGEOR120:
-        {
-            sprintf(filename, "A:/spiflash/images/missing.bin");    //todo
-        } break;
-
-        case AMP_SKIN_ROLANDJAZZ:
-        {
-            sprintf(filename, "A:/spiflash/images/rolljazz.bin");
-        } break;
-
-        case AMP_SKIN_TONEXAMPBLACK:
-        {
-            sprintf(filename, "A:/spiflash/images/tnxablk.bin");
-        } break;
-
-        case AMP_SKIN_TONEXAMPRED:
-        {
-            sprintf(filename, "A:/spiflash/images/tnxared.bin");
-        } break;
-
-        case AMP_SKIN_SILVERFACE:
-        {
-            sprintf(filename, "A:/spiflash/images/slvrface.bin");
-        } break;
-
-        case AMP_SKIN_SUPRO:
-        {
-            sprintf(filename, "A:/spiflash/images/supro.bin");
-        } break;
-
-        case AMP_SKIN_WHITEMODERN:
-        {
-            sprintf(filename, "A:/spiflash/images/whtmdrn.bin");
-        } break;
-
-        case AMP_SKIN_WOODAMP:
-        {
-            sprintf(filename, "A:/spiflash/images/woodamp.bin");
-        } break;
-
-        // pedals
-#if 0   //to do        
-        case PEDAL_SKIN_BIGMUFF:
-        {
-            result = (lv_obj_t*)&img_pskin_bigmuff;
-        } break;
-
-        case PEDAL_SKIN_BOSSBLACK:
-        {
-            result = (lv_obj_t*)&img_pskin_bossblack;
-        } break;
-
-        case PEDAL_SKIN_BOSSSILVER:
-        {
-            result = (lv_obj_t*)&img_pskin_bosssilver;
-        } break;
-
-        case PEDAL_SKIN_BOSSYELLOW:
-        {
-            result = (lv_obj_t*)&img_pskin_bossyellow;
-        } break;
-
-        case PEDAL_SKIN_FUZZRED:
-        {
-            result = (lv_obj_t*)&img_pskin_fuzzred;
-        } break;
-
-        case PEDAL_SKIN_FUZZSILVER:
-        {
-            result = (lv_obj_t*)&img_pskin_fuzzsilver;
-        } break;
-
-        case PEDAL_SKIN_IBANEZBLUE:
-        {
-            result = (lv_obj_t*)&img_pskin_ibanezblue;
-        } break;
-
-        case PEDAL_SKIN_IBANEZDARKBLUE:
-        {
-            result = (lv_obj_t*)&img_pskin_ibanezdarkblue;
-        } break;
-
-        case PEDAL_SKIN_IBANEZGREEN:
-        {
-            result = (lv_obj_t*)&img_pskin_ibanezgreen;
-        } break;
-
-        case PEDAL_SKIN_IBANEZRED:
-        {
-            result = (lv_obj_t*)&img_pskin_ibanezred;
-        } break;
-
-        case PEDAL_SKIN_KLONGOLD:
-        {
-            result = (lv_obj_t*)&img_pskin_klongold;
-        } break;
-
-        case PEDAL_SKIN_LIFEPEDAL:
-        {
-            result = (lv_obj_t*)&img_pskin_lifepedal;
-        } break;
-
-        case PEDAL_SKIN_MORNINGGLORY:
-        {
-            result = (lv_obj_t*)&img_pskin_morningglory;
-        } break;
-
-        case PEDAL_SKIN_MXRDOUBLEBLACK:
-        {
-            result = (lv_obj_t*)&img_pskin_mxrdoubleblack;
-        } break;
-
-        case PEDAL_SKIN_MXRDOUBLERED:
-        {
-            result = (lv_obj_t*)&img_pskin_mxrdoublered;
-        } break;
-
-        case PEDAL_SKIN_MXRSINGLEBLACK:
-        {
-            result = (lv_obj_t*)&img_pskin_mxrsingleblack;
-        } break;
-
-        case PEDAL_SKIN_MXRSINGLEGOLD:
-        {
-            result = (lv_obj_t*)&img_pskin_mxrsinglegold;
-        } break;
-
-        case PEDAL_SKIN_MXRSINGLEGREEN:
-        {
-            result = (lv_obj_t*)&img_pskin_mxrsinglegreen;
-        } break;
-
-        case PEDAL_SKIN_MXRSINGLEORANGE:
-        {
-            result = (lv_obj_t*)&img_pskin_mxrsingleorange;
-        } break;
-
-        case PEDAL_SKIN_MXRSINGLEWHITE:
-        {
-            result = (lv_obj_t*)&img_pskin_mxrsinglewhite;
-        } break;
-
-        case PEDAL_SKIN_MXRSINGLEYELLOW:
-        {
-            result = (lv_obj_t*)&img_pskin_mxrsingleyellow;
-        } break;
-
-        case PEDAL_SKIN_RATYELLOW:
-        {
-            result = (lv_obj_t*)&img_pskin_ratyellow;
-        } break;
-#endif 
-
-        default:
-        {
-            sprintf(filename, "A:/spiflash/images/jcm.bin");
-        } break;
-    }
-
-    res = lv_fs_open(&file, filename, LV_FS_MODE_RD);
-    if (res != LV_FS_RES_OK) 
-    {
-        ESP_LOGW(TAG, "Failed to open skin %s", filename);
+        ESP_LOGE(TAG, "Could not find partition 'skins'\n");
         return 0;
     }
+        
+    // Read data from the partition
+    err = esp_partition_read(partition, SkinTOC[index].offset, buffer, SkinTOC[index].length);
 
-    // seek to end
-    res = lv_fs_seek(&file, 0, LV_FS_SEEK_END);
-    if (res != LV_FS_RES_OK)
+    if (err != ESP_OK) 
     {
-        ESP_LOGW(TAG, "Failed to seek skin %s", filename);
+        ESP_LOGE(TAG, "Failed to read partition: %s\n", esp_err_to_name(err));
         return 0;
     }
     
-    // get file size
-    res = lv_fs_tell(&file, &size);
-    if (res != LV_FS_RES_OK) 
-    {
-        ESP_LOGW(TAG, "Failed to get file size of skin %s", filename);
-        return 0;
-    }
-
-    // seek back to start of file
-    lv_fs_seek(&file, 0, LV_FS_SEEK_SET);
-
-    bytes_to_read = size;
-    #define CHUNK_SIZE  4096
-    uint8_t* temp_buf = malloc(CHUNK_SIZE);
-
-    // read entire file into PSRAM buffer, but in chunks to help avoid DMA stalls on display
-    while (bytes_to_read > 0)
-    {
-        if (bytes_to_read > CHUNK_SIZE)
-        {
-            chunk_bytes = CHUNK_SIZE;
-        }
-        else
-        {
-            chunk_bytes = bytes_to_read;
-        }
-        
-        // read to temp buffer in IRAM
-        res = lv_fs_read(&file, (char*)temp_buf, chunk_bytes, &bytes_read);
-        if (res == LV_FS_RES_OK) 
-        {
-            // copy to PSRAM buffer
-            memcpy((void*)buffer, (void*)temp_buf, bytes_read);
-            bytes_to_read -= bytes_read;
-            buffer += bytes_read;
-            //vTaskDelay(1);
-
-            // debug
-            //ESP_LOGW(TAG, "Read chunk %d %d %d", chunk_bytes, bytes_read, bytes_to_read);
-        } 
-        else 
-        {
-            ESP_LOGW(TAG, "Failed to read skin %s", filename);
-            break;
-        }
-    }
-
-    free(temp_buf);
-
-    if (res == LV_FS_RES_OK) 
-    {
-        ESP_LOGI(TAG, "Skin %s loaded, size %d", filename, (int)size);
-    } 
-    else 
-    {
-        ESP_LOGW(TAG, "Failed to read skin %s", filename);
-    }
-
-    lv_fs_close(&file);
-
-    if (res == LV_FS_RES_OK) 
-    {
-        return size;
-    }
-    else
-    {
-        return 0;
-    }
+    return SkinTOC[index].length;
 }
+
 #endif 
 
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
@@ -3420,10 +3133,9 @@ static uint8_t update_ui_element(tUIUpdate* update)
                 {
                     current_skin_image = update->Value;
 
-                    // try to load skin image
-                    uint32_t file_size = ui_get_skin_image(update->Value, skin_image_buffer);
-                    if (file_size > 0)
-                    {        
+                    uint32_t skin_len = ui_get_skin_image(update->Value, skin_image_buffer);
+                    if (skin_len > 0)
+                    {
                         // build the image descriptor
                         lv_img_dsc_t img_dsc;
 
@@ -3431,16 +3143,12 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         memcpy((void*)&img_dsc.header, (void*)skin_image_buffer, sizeof(lv_img_header_t));  
 
                         // set the size
-                        img_dsc.data_size = file_size - sizeof(lv_img_header_t);
+                        img_dsc.data_size = skin_len - sizeof(lv_img_header_t);
 
                         // set the data
                         img_dsc.data = (const uint8_t *)(skin_image_buffer + sizeof(lv_img_header_t));
 
                         lv_img_set_src(objects.ui_skin_image, &img_dsc);
-                    }
-                    else
-                    {
-                        ESP_LOGW(TAG, "Skin image load failed");
                     }
                 }
             }
@@ -3765,9 +3473,13 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
 
     // init mem
     memset((void*)&msgbox_data, 0, sizeof(msgbox_data));
-
+    memset((void*)&SkinTOC, 0, sizeof(SkinTOC));
+    
     // init toast
     ui_init_toast();
+
+    // load skin table of contents
+    ui_load_skin_toc();
 
     // create display task
     xTaskCreatePinnedToCore(display_task, "Dsp", DISPLAY_TASK_STACK_SIZE, NULL, DISPLAY_TASK_PRIORITY, NULL, 1);
