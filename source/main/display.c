@@ -95,7 +95,6 @@ static const char *TAG = "app_display";
 #define MAX_UI_TEXT                     130
 #define MAX_SKIN_IMAGES                 100
 #define SKIN_PARTITION_TYPE             0x40
-#define MAX_SKIN_IMAGE_SIZE             200000
 #define SKIN_PARTITION_NAME             "skins"
 
 enum UIElements
@@ -158,9 +157,10 @@ static uint8_t __attribute__((unused)) touch_data_ready_to_read = 0;
 #endif
 
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
-static uint8_t* skin_image_buffer = NULL;
 static uint16_t current_skin_image = 0xFFFF;
 static tSkinTOC SkinTOC[MAX_SKIN_IMAGES];
+static const void *skin_data_map_ptr;
+static esp_partition_mmap_handle_t skin_data_map_handle = 0;
 #endif    
 
 /****************************************************************************
@@ -1564,6 +1564,8 @@ void UI_RefreshParameterValues(void)
 *****************************************************************************/
 static void ui_load_skin_toc(void)
 {
+    uint8_t index;
+
     // Find the skin partition by name
     const esp_partition_t* partition = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, SKIN_PARTITION_TYPE, SKIN_PARTITION_NAME);
     if (partition == NULL) 
@@ -1579,10 +1581,26 @@ static void ui_load_skin_toc(void)
         return;
     }
 
-    ESP_LOGI(TAG, "Skin TOC loaded OK");
+    uint32_t total_size = 0;
+    for (index = 0; index < MAX_SKIN_IMAGES; index++)
+    {
+        total_size += SkinTOC[index].length;
+    }
+
+    // map the partition into memory
+    err = esp_partition_mmap(partition, 0, total_size, ESP_PARTITION_MMAP_DATA, &skin_data_map_ptr, &skin_data_map_handle);
+
+    if (err != ESP_OK) 
+    {
+        ESP_LOGE(TAG, "Failed to read partition: %s\n", esp_err_to_name(err));
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Skin TOC loaded OK");
+    }
     
     // debug code to dump the skin TOC
-    //for (uint8_t index = 0; index < MAX_SKIN_IMAGES; index++)
+    //for (index = 0; index < MAX_SKIN_IMAGES; index++)
     //{
     //    ESP_LOGI(TAG, "TOC: %d, %d %d", (int)index, (int)SkinTOC[index].offset, (int)SkinTOC[index].length);
     //}
@@ -1595,27 +1613,15 @@ static void ui_load_skin_toc(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static uint32_t ui_get_skin_image(uint16_t index, uint8_t* buffer)
+static uint32_t ui_get_skin_image(uint16_t index, uint8_t** buffer)
 {
-    esp_err_t err;
-
-    // Find the partition by name
-    const esp_partition_t *partition = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, SKIN_PARTITION_TYPE, SKIN_PARTITION_NAME);
-    if (partition == NULL) 
+    if (index > MAX_SKIN_IMAGES)
     {
-        ESP_LOGE(TAG, "Could not find partition 'skins'\n");
+        ESP_LOGW(TAG, "Invalid skin image index: %d", (int)index);
         return 0;
     }
-        
-    // Read data from the partition
-    err = esp_partition_read(partition, SkinTOC[index].offset, buffer, SkinTOC[index].length);
 
-    if (err != ESP_OK) 
-    {
-        ESP_LOGE(TAG, "Failed to read partition: %s\n", esp_err_to_name(err));
-        return 0;
-    }
-    
+    *buffer = (uint8_t*)skin_data_map_ptr + SkinTOC[index].offset;
     return SkinTOC[index].length;
 }
 
@@ -3133,21 +3139,23 @@ static uint8_t update_ui_element(tUIUpdate* update)
                 {
                     current_skin_image = update->Value;
 
-                    uint32_t skin_len = ui_get_skin_image(update->Value, skin_image_buffer);
-                    if (skin_len > 0)
+                    uint8_t* buffer = NULL;
+                    uint32_t skin_len = ui_get_skin_image(update->Value, &buffer);
+                    
+                    if ((skin_len > 0) && (buffer != NULL))
                     {
                         // build the image descriptor
                         lv_img_dsc_t img_dsc;
 
                         // Copy the 4-byte header
-                        memcpy((void*)&img_dsc.header, (void*)skin_image_buffer, sizeof(lv_img_header_t));  
+                        memcpy((void*)&img_dsc.header, (void*)buffer, sizeof(lv_img_header_t));  
 
                         // set the size
                         img_dsc.data_size = skin_len - sizeof(lv_img_header_t);
 
                         // set the data
-                        img_dsc.data = (const uint8_t *)(skin_image_buffer + sizeof(lv_img_header_t));
-
+                        img_dsc.data = (const uint8_t*)(buffer + sizeof(lv_img_header_t));
+                        
                         lv_img_set_src(objects.ui_skin_image, &img_dsc);
                     }
                 }
@@ -3459,27 +3467,22 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
 
     vTaskDelay(pdMS_TO_TICKS(10));
 
-    // allocate buffer for Skin images
-    skin_image_buffer = (uint8_t*)heap_caps_malloc(MAX_SKIN_IMAGE_SIZE, MALLOC_CAP_SPIRAM);
-    if (skin_image_buffer == NULL)
-    {
-        ESP_LOGE(TAG, "Failed to allocate skin image buffer!");    
-    }
-    memset((void*)skin_image_buffer, 0, MAX_SKIN_IMAGE_SIZE);
-
     // init GUI
     ESP_LOGI(TAG, "Init UI");
     ui_init();
 
     // init mem
     memset((void*)&msgbox_data, 0, sizeof(msgbox_data));
-    memset((void*)&SkinTOC, 0, sizeof(SkinTOC));
-    
+
     // init toast
     ui_init_toast();
 
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
+    memset((void*)&SkinTOC, 0, sizeof(SkinTOC));
+     
     // load skin table of contents
     ui_load_skin_toc();
+#endif
 
     // create display task
     xTaskCreatePinnedToCore(display_task, "Dsp", DISPLAY_TASK_STACK_SIZE, NULL, DISPLAY_TASK_PRIORITY, NULL, 1);
