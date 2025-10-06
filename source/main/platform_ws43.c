@@ -196,14 +196,14 @@ __attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max
 {
     if (max_entries <= 8)
     {
-        dest[0] = -275;
-        dest[1] = -205;
-        dest[2] = -135;
-        dest[3] = -65;
-        dest[4] = 0;
-        dest[5] = 65;
-        dest[6] = 135;
-        dest[7] = 205;
+        dest[0] = 89;
+        dest[1] = 156;
+        dest[2] = 223;
+        dest[3] = 291;
+        dest[4] = 356;
+        dest[5] = 416;
+        dest[6] = 479;
+        dest[7] = 549;
     }
 }
 

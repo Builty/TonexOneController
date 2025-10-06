@@ -1721,6 +1721,7 @@ void updateIconOrder()
 static uint8_t update_ui_element(tUIUpdate* update)
 {
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
+    char value_string[20];
     lv_obj_t* element_1 = NULL;
 
     switch (update->ElementID)
@@ -1815,18 +1816,30 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {                            
                             lv_slider_set_range(objects.ui_noise_gate_threshold_slider, round(param_entry->Min), round(param_entry->Max));
                             lv_slider_set_value(objects.ui_noise_gate_threshold_slider, round(param_entry->Value), LV_ANIM_OFF);
+
+                            // show value and units
+                            sprintf(value_string, "%d db", (int)round(param_entry->Value));
+                            lv_label_set_text(objects.ui_noise_gate_threshold_value, value_string);
                         } break;
 
                         case TONEX_PARAM_NOISE_GATE_RELEASE:
                         {
                             lv_slider_set_range(objects.ui_noise_gate_release_slider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(objects.ui_noise_gate_release_slider, round(param_entry->Value), LV_ANIM_OFF);                            
+                            lv_slider_set_value(objects.ui_noise_gate_release_slider, round(param_entry->Value), LV_ANIM_OFF); 
+                            
+                            // show value and units
+                            sprintf(value_string, "%d ms", (int)round(param_entry->Value));
+                            lv_label_set_text(objects.ui_noise_gate_release_value, value_string);
                         } break;
 
                         case TONEX_PARAM_NOISE_GATE_DEPTH:
                         {                            
                             lv_slider_set_range(objects.ui_noise_gate_depth_slider, round(param_entry->Min), round(param_entry->Max));
                             lv_slider_set_value(objects.ui_noise_gate_depth_slider, round(param_entry->Value), LV_ANIM_OFF);
+
+                            // show value and units
+                            sprintf(value_string, "%d db", (int)round(param_entry->Value));
+                            lv_label_set_text(objects.ui_noise_gate_depth_value, value_string);
                         } break;
 
                         case TONEX_PARAM_COMP_POST:
@@ -1860,18 +1873,30 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {                            
                             lv_slider_set_range(objects.ui_compressor_threshold_slider, round(param_entry->Min), round(param_entry->Max));
                             lv_slider_set_value(objects.ui_compressor_threshold_slider, round(param_entry->Value), LV_ANIM_OFF);
+
+                            // show value and units
+                            sprintf(value_string, "%1.1f db", param_entry->Value);
+                            lv_label_set_text(objects.ui_compressor_threshold_value, value_string);                            
                         } break;
 
                         case TONEX_PARAM_COMP_MAKE_UP:
                         {
                             lv_slider_set_range(objects.ui_compressor_gain_slider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(objects.ui_compressor_gain_slider, round(param_entry->Value), LV_ANIM_OFF);                            
+                            lv_slider_set_value(objects.ui_compressor_gain_slider, round(param_entry->Value), LV_ANIM_OFF);    
+
+                            // show value and units
+                            sprintf(value_string, "%d db", (int)round(param_entry->Value));
+                            lv_label_set_text(objects.ui_compressor_gain_value, value_string);                            
                         } break;
 
                         case TONEX_PARAM_COMP_ATTACK:
                         {
                             lv_slider_set_range(objects.ui_compressor_attack_slider, round(param_entry->Min), round(param_entry->Max));
                             lv_slider_set_value(objects.ui_compressor_attack_slider, round(param_entry->Value), LV_ANIM_OFF);                            
+
+                            // show value and units
+                            sprintf(value_string, "%d ms", (int)round(param_entry->Value));
+                            lv_label_set_text(objects.ui_compressor_attack_value, value_string);                            
                         } break;
 
                         case TONEX_PARAM_EQ_POST:
@@ -1890,7 +1915,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         case TONEX_PARAM_EQ_BASS:
                         {
                             lv_slider_set_range(objects.ui_eq_bass_slider, round(param_entry->Min), round(param_entry->Max * 10.0f));
-                            lv_slider_set_value(objects.ui_eq_bass_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                        
+                            lv_slider_set_value(objects.ui_eq_bass_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);   
+
+                            // show value and units
+                            sprintf(value_string, "%1.1f", param_entry->Value);
+                            lv_label_set_text(objects.ui_eq_bass_value, value_string);                            
                         } break;
 
                         case TONEX_PARAM_EQ_BASS_FREQ:
@@ -1901,13 +1930,21 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         case TONEX_PARAM_EQ_MID:
                         {
                             lv_slider_set_range(objects.ui_eq_mid_slider, round(param_entry->Min), round(param_entry->Max * 10.0f));
-                            lv_slider_set_value(objects.ui_eq_mid_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
+                            lv_slider_set_value(objects.ui_eq_mid_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);   
+
+                            // show value and units
+                            sprintf(value_string, "%1.1f", param_entry->Value);
+                            lv_label_set_text(objects.ui_eq_mid_value, value_string);                            
                         } break;
 
                         case TONEX_PARAM_EQ_MIDQ:
                         {
                             lv_slider_set_range(objects.ui_eq_mid_qslider, round(param_entry->Min * 10.0f), round(param_entry->Max * 10.0f));
                             lv_slider_set_value(objects.ui_eq_mid_qslider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
+                            
+                            // show value and units
+                            sprintf(value_string, "%1.1f", param_entry->Value);
+                            lv_label_set_text(objects.ui_eq_mid_qvalue, value_string);                            
                         } break;
 
                         case TONEX_PARAM_EQ_MID_FREQ:
@@ -1919,6 +1956,10 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {                            
                             lv_slider_set_range(objects.ui_eq_treble_slider, round(param_entry->Min), round(param_entry->Max * 10.0f));
                             lv_slider_set_value(objects.ui_eq_treble_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);
+                            
+                            // show value and units
+                            sprintf(value_string, "%1.1f", param_entry->Value);
+                            lv_label_set_text(objects.ui_eq_treble_value, value_string);                            
                         } break;
 
                         case TONEX_PARAM_EQ_TREBLE_FREQ:
@@ -1962,13 +2003,21 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         case TONEX_PARAM_MODEL_GAIN:
                         {
                             lv_slider_set_range(objects.ui_amplifier_gain_slider, round(param_entry->Min), round(param_entry->Max * 10.0f));
-                            lv_slider_set_value(objects.ui_amplifier_gain_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
+                            lv_slider_set_value(objects.ui_amplifier_gain_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);     
+
+                            // show value and units
+                            sprintf(value_string, "%1.1f", param_entry->Value);
+                            lv_label_set_text(objects.ui_amplifier_gain_value, value_string);                            
                         } break;
 
                         case TONEX_PARAM_MODEL_VOLUME:
                         {
                             lv_slider_set_range(objects.ui_amplifier_volume_slider, round(param_entry->Min), round(param_entry->Max * 10.0f));
-                            lv_slider_set_value(objects.ui_amplifier_volume_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);                            
+                            lv_slider_set_value(objects.ui_amplifier_volume_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);   
+                            
+                            // show value and units
+                            sprintf(value_string, "%1.1f", param_entry->Value);
+                            lv_label_set_text(objects.ui_amplifier_volume_value, value_string);                                                        
                         } break;
 
                         case TONEX_PARAM_MODEX_MIX:
@@ -1980,6 +2029,10 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {                            
                             lv_slider_set_range(objects.ui_amplifier_presense_slider, round(param_entry->Min), round(param_entry->Max * 10.0f));
                             lv_slider_set_value(objects.ui_amplifier_presense_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);
+
+                            // show value and units
+                            sprintf(value_string, "%1.1f", param_entry->Value);
+                            lv_label_set_text(objects.ui_amplifier_presense_value, value_string);                            
                         } break;
 
                         //case TONEX_PARAM_CABINET_UNKNOWN:
@@ -1996,6 +2049,10 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             lv_slider_set_range(objects.ui_amplifier_depth_slider, round(param_entry->Min), round(param_entry->Max * 10.0f));
                             lv_slider_set_value(objects.ui_amplifier_depth_slider, round(param_entry->Value * 10.0f), LV_ANIM_OFF);
+
+                            // show value and units
+                            sprintf(value_string, "%1.1f", param_entry->Value);
+                            lv_label_set_text(objects.ui_amplifier_depth_value, value_string);                            
                         } break;
 
                         case TONEX_PARAM_VIR_RESO:
@@ -2110,6 +2167,10 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {                            
                                 lv_slider_set_range(objects.ui_reverb_time_slider, round(param_entry->Min), round(param_entry->Max));
                                 lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                
+                                // show value and units
+                                sprintf(value_string, "%1.1f", param_entry->Value);
+                                lv_label_set_text(objects.ui_reverb_time_value, value_string);                            
                             }
                         } break;
 
@@ -2118,7 +2179,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_1)
                             {                          
                                 lv_slider_set_range(objects.ui_reverb_predelay_slider, round(param_entry->Min), round(param_entry->Max));  
-                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);  
+                                
+                                // show value and units
+                                sprintf(value_string, "%d ms", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_predelay_value, value_string);                            
                             }
                         } break;
 
@@ -2127,7 +2192,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_1)
                             {                            
                                 lv_slider_set_range(objects.ui_reverb_color_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);   
+                                
+                                // show value and units
+                                sprintf(value_string, "%d", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_color_value, value_string);                            
                             }
                         } break;
 
@@ -2136,7 +2205,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_1)
                             {                           
                                 lv_slider_set_range(objects.ui_reverb_mix_slider, round(param_entry->Min), round(param_entry->Max)); 
-                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);   
+
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_mix_value, value_string);                            
                             }
                         } break;
 
@@ -2146,6 +2219,10 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {                                                            
                                 lv_slider_set_range(objects.ui_reverb_time_slider, round(param_entry->Min), round(param_entry->Max));
                                 lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);
+
+                                // show value and units
+                                sprintf(value_string, "%1.1f", param_entry->Value);
+                                lv_label_set_text(objects.ui_reverb_time_value, value_string);                            
                             }
                         } break;
 
@@ -2154,7 +2231,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_2)
                             {                            
                                 lv_slider_set_range(objects.ui_reverb_predelay_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);  
+                                
+                                // show value and units
+                                sprintf(value_string, "%d ms", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_predelay_value, value_string);                                                            
                             }
                         } break;
 
@@ -2164,6 +2245,10 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {                                                            
                                 lv_slider_set_range(objects.ui_reverb_color_slider, round(param_entry->Min), round(param_entry->Max));
                                 lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);
+
+                                // show value and units
+                                sprintf(value_string, "%d", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_color_value, value_string);                            
                             }
                         } break;
 
@@ -2172,7 +2257,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_2)
                             {                            
                                 lv_slider_set_range(objects.ui_reverb_mix_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);       
+                                
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_mix_value, value_string);                                                            
                             }
                         } break;
 
@@ -2181,7 +2270,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_3)
                             {             
                                 lv_slider_set_range(objects.ui_reverb_time_slider, round(param_entry->Min), round(param_entry->Max));               
-                                lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);     
+
+                                // show value and units
+                                sprintf(value_string, "%1.1f", param_entry->Value);
+                                lv_label_set_text(objects.ui_reverb_time_value, value_string);                            
                             }
                         } break;
 
@@ -2190,7 +2283,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_3)
                             {              
                                 lv_slider_set_range(objects.ui_reverb_predelay_slider, round(param_entry->Min), round(param_entry->Max));              
-                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                
+                                // show value and units
+                                sprintf(value_string, "%d ms", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_predelay_value, value_string);                                                            
                             }
                         } break;
 
@@ -2199,7 +2296,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_3)
                             {                            
                                 lv_slider_set_range(objects.ui_reverb_color_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                
+                                // show value and units
+                                sprintf(value_string, "%d", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_color_value, value_string);                                                            
                             }
                         } break;
 
@@ -2208,7 +2309,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_3)
                             {                            
                                 lv_slider_set_range(objects.ui_reverb_mix_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_mix_value, value_string);                                                            
                             }
                         } break;
 
@@ -2217,7 +2322,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_4)
                             {                    
                                 lv_slider_set_range(objects.ui_reverb_time_slider, round(param_entry->Min), round(param_entry->Max));        
-                                lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                
+                                // show value and units
+                                sprintf(value_string, "%1.1f", param_entry->Value);
+                                lv_label_set_text(objects.ui_reverb_time_value, value_string);                                                            
                             }
                         } break;
 
@@ -2226,7 +2335,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_4)
                             {                            
                                 lv_slider_set_range(objects.ui_reverb_predelay_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                
+                                // show value and units
+                                sprintf(value_string, "%d ms", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_predelay_value, value_string);                                                            
                             }
                         } break;
 
@@ -2235,7 +2348,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_4)
                             {                            
                                 lv_slider_set_range(objects.ui_reverb_color_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);   
+                                
+                                // show value and units
+                                sprintf(value_string, "%d", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_color_value, value_string);                                                            
                             }
                         } break;
 
@@ -2244,7 +2361,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_SPRING_4)
                             {                            
                                 lv_slider_set_range(objects.ui_reverb_mix_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);   
+                                
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_mix_value, value_string);                                                            
                             }
                         } break;
 
@@ -2253,7 +2374,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_ROOM)
                             {                        
                                 lv_slider_set_range(objects.ui_reverb_time_slider, round(param_entry->Min), round(param_entry->Max));    
-                                lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);   
+                                
+                                // show value and units
+                                sprintf(value_string, "%1.1f", param_entry->Value);
+                                lv_label_set_text(objects.ui_reverb_time_value, value_string);                                                            
                             }
                         } break;
 
@@ -2262,7 +2387,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_ROOM)
                             {                            
                                 lv_slider_set_range(objects.ui_reverb_predelay_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);                               
+                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);   
+                                
+                                // show value and units
+                                sprintf(value_string, "%d ms", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_predelay_value, value_string);                                                            
                             }
                         } break;
 
@@ -2271,7 +2400,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_ROOM)
                             {                            
                                 lv_slider_set_range(objects.ui_reverb_color_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                
+                                // show value and units
+                                sprintf(value_string, "%d", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_color_value, value_string);                                                            
                             }
                         } break;
 
@@ -2280,7 +2413,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_ROOM)
                             {                            
                                 lv_slider_set_range(objects.ui_reverb_mix_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_mix_value, value_string);                                                            
                             }
                         } break;
 
@@ -2289,7 +2426,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_PLATE)
                             {                            
                                 lv_slider_set_range(objects.ui_reverb_time_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_time_slider, round(param_entry->Value), LV_ANIM_OFF);  
+                                
+                                // show value and units
+                                sprintf(value_string, "%1.1f", param_entry->Value);
+                                lv_label_set_text(objects.ui_reverb_time_value, value_string);                                                            
                             }
                         } break;
 
@@ -2298,7 +2439,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_PLATE)
                             {                    
                                 lv_slider_set_range(objects.ui_reverb_predelay_slider, round(param_entry->Min), round(param_entry->Max));        
-                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_predelay_slider, round(param_entry->Value), LV_ANIM_OFF);     
+                                
+                                // show value and units
+                                sprintf(value_string, "%d ms", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_predelay_value, value_string);                                                            
                             }
                         } break;
 
@@ -2307,7 +2452,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_PLATE)
                             {                            
                                 lv_slider_set_range(objects.ui_reverb_color_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_color_slider, round(param_entry->Value), LV_ANIM_OFF);   
+                                
+                                // show value and units
+                                sprintf(value_string, "%d", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_color_value, value_string);                                                            
                             }
                         } break;
 
@@ -2316,7 +2465,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_REVERB_MODEL].Value == TONEX_REVERB_PLATE)
                             {                            
                                 lv_slider_set_range(objects.ui_reverb_mix_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_reverb_mix_slider, round(param_entry->Value), LV_ANIM_OFF);  
+                                
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_reverb_mix_value, value_string);                                                            
                             }
                         } break;
 
@@ -2390,6 +2543,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                     lv_label_set_text(objects.ui_modulation_param3_label, "Level");
                                     lv_obj_add_flag(objects.ui_modulation_param4_label, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_add_flag(objects.ui_modulation_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_modulation_param4_value, LV_OBJ_FLAG_HIDDEN);
                                 } break;
 
                                 case TONEX_MODULATION_TREMOLO:
@@ -2400,6 +2554,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                     lv_label_set_text(objects.ui_modulation_param4_label, "Level");
                                     lv_obj_clear_flag(objects.ui_modulation_param4_label, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_clear_flag(objects.ui_modulation_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_param4_value, LV_OBJ_FLAG_HIDDEN);
                                 } break;
 
                                 case TONEX_MODULATION_PHASER:
@@ -2409,6 +2564,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                     lv_label_set_text(objects.ui_modulation_param3_label, "Level");
                                     lv_obj_add_flag(objects.ui_modulation_param4_label, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_add_flag(objects.ui_modulation_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_modulation_param4_value, LV_OBJ_FLAG_HIDDEN);
                                 } break;
 
                                 case TONEX_MODULATION_FLANGER:
@@ -2419,6 +2575,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                     lv_label_set_text(objects.ui_modulation_param4_label, "Level");
                                     lv_obj_clear_flag(objects.ui_modulation_param4_label, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_clear_flag(objects.ui_modulation_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_param4_value, LV_OBJ_FLAG_HIDDEN);
                                 } break;
 
                                 case TONEX_MODULATION_ROTARY:
@@ -2429,6 +2586,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                     lv_label_set_text(objects.ui_modulation_param4_label, "Level");
                                     lv_obj_clear_flag(objects.ui_modulation_param4_label, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_clear_flag(objects.ui_modulation_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_param4_value, LV_OBJ_FLAG_HIDDEN);
                                 } break;
 
                                 default:
@@ -2446,12 +2604,14 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 {
                                     lv_obj_add_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
                                     lv_obj_add_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_modulation_param1_value, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_clear_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
                                     lv_obj_clear_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
                                     lv_obj_clear_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_param1_value, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_add_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }                        
                             }
@@ -2461,7 +2621,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_CHORUS)
                             {
-                                lv_dropdown_set_selected(objects.ui_modulation_ts_dropdown, param_entry->Value);
+                                lv_dropdown_set_selected(objects.ui_modulation_ts_dropdown, param_entry->Value);              
                             }
                         } break;
 
@@ -2470,7 +2630,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_CHORUS)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param1_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param1_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param1_slider, round(param_entry->Value), LV_ANIM_OFF);   
+                                                                
+                                // show value and units
+                                sprintf(value_string, "%1.1f Hz", param_entry->Value);
+                                lv_label_set_text(objects.ui_modulation_param1_value, value_string);              
                             }
                         } break;
 
@@ -2479,7 +2643,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_CHORUS)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param2_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param2_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param2_slider, round(param_entry->Value), LV_ANIM_OFF);     
+                                                                                        
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_modulation_param2_value, value_string);                                     
                             }
                         } break;
 
@@ -2488,7 +2656,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_CHORUS)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param3_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param3_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param3_slider, round(param_entry->Value), LV_ANIM_OFF);  
+                                                                                        
+                                // show value and units
+                                sprintf(value_string, "%1.1f", param_entry->Value);
+                                lv_label_set_text(objects.ui_modulation_param3_value, value_string);                                     
                             }
                         } break;
 
@@ -2500,12 +2672,14 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 {
                                     lv_obj_add_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
                                     lv_obj_add_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_modulation_param1_value, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_clear_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
                                     lv_obj_clear_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
                                     lv_obj_clear_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_param1_value, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_add_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }                        
                             }
@@ -2524,7 +2698,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_TREMOLO)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param1_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param1_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param1_slider, round(param_entry->Value), LV_ANIM_OFF);   
+                                                                                                                            
+                                // show value and units
+                                sprintf(value_string, "%1.1f Hz", param_entry->Value);
+                                lv_label_set_text(objects.ui_modulation_param1_value, value_string);     
                             }
                         } break;
 
@@ -2533,7 +2711,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_TREMOLO)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param2_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param2_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param2_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                                                                                                                              
+                                // show value and units
+                                sprintf(value_string, "%1.1f", param_entry->Value);
+                                lv_label_set_text(objects.ui_modulation_param2_value, value_string);                                     
                             }
                         } break;
 
@@ -2542,7 +2724,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_TREMOLO)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param3_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param3_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param3_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                                                                                                                              
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_modulation_param3_value, value_string);                                 
                             }
                         } break;
 
@@ -2551,7 +2737,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_TREMOLO)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param4_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param4_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param4_slider, round(param_entry->Value), LV_ANIM_OFF); 
+                                                                                                              
+                                // show value and units
+                                sprintf(value_string, "%1.1f", param_entry->Value);
+                                lv_label_set_text(objects.ui_modulation_param4_value, value_string);                                                                    
                             }
                         } break;
 
@@ -2563,12 +2753,14 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 {
                                     lv_obj_add_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
                                     lv_obj_add_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_modulation_param1_value, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_clear_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
                                     lv_obj_clear_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
                                     lv_obj_clear_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_param1_value, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_add_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }                        
                             }
@@ -2587,7 +2779,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_PHASER)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param1_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param1_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param1_slider, round(param_entry->Value), LV_ANIM_OFF);   
+                                                                                                              
+                                // show value and units
+                                sprintf(value_string, "%1.1f Hz", param_entry->Value);
+                                lv_label_set_text(objects.ui_modulation_param1_value, value_string);                                                                  
                             }
                         } break;
 
@@ -2597,6 +2793,10 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param2_slider, round(param_entry->Min), round(param_entry->Max));
                                 lv_slider_set_value(objects.ui_modulation_param2_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                                                                                           
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_modulation_param2_value, value_string);                                          
                             }
                         } break;
 
@@ -2605,7 +2805,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_PHASER)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param3_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param3_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param3_slider, round(param_entry->Value), LV_ANIM_OFF);   
+                                                                                                           
+                                // show value and units
+                                sprintf(value_string, "%1.1f", param_entry->Value);
+                                lv_label_set_text(objects.ui_modulation_param3_value, value_string);                                                                       
                             }
                         } break;
 
@@ -2617,12 +2821,14 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 {
                                     lv_obj_add_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
                                     lv_obj_add_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_modulation_param1_value, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_clear_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
                                     lv_obj_clear_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
                                     lv_obj_clear_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_param1_value, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_add_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }                        
                             }
@@ -2641,7 +2847,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_FLANGER)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param1_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param1_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param1_slider, round(param_entry->Value), LV_ANIM_OFF);   
+                                                                                                           
+                                // show value and units
+                                sprintf(value_string, "%1.1f Hz", param_entry->Value);
+                                lv_label_set_text(objects.ui_modulation_param1_value, value_string);                                                                       
                             }
                         } break;
 
@@ -2650,7 +2860,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_FLANGER)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param2_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param2_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param2_slider, round(param_entry->Value), LV_ANIM_OFF);      
+                                                                                                          
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_modulation_param2_value, value_string);                                                                    
                             }
                         } break;
 
@@ -2659,7 +2873,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_FLANGER)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param3_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param3_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param3_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                                                                                          
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_modulation_param3_value, value_string);                                                                      
                             }
                         } break;
 
@@ -2668,7 +2886,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_FLANGER)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param4_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param4_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param4_slider, round(param_entry->Value), LV_ANIM_OFF);      
+                                                                                                          
+                                // show value and units
+                                sprintf(value_string, "%1.1f", param_entry->Value);
+                                lv_label_set_text(objects.ui_modulation_param4_value, value_string);                                                                    
                             }
                         } break;
 
@@ -2680,12 +2902,14 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 {
                                     lv_obj_add_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
                                     lv_obj_add_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_modulation_param1_value, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_clear_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
                                     lv_obj_clear_state(objects.ui_modulation_sync_switch, LV_STATE_CHECKED);
                                     lv_obj_clear_flag(objects.ui_modulation_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_modulation_param1_value, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_add_flag(objects.ui_modulation_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }                        
                             }
@@ -2705,6 +2929,10 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             {                                 
                                 lv_slider_set_range(objects.ui_modulation_param1_slider, round(param_entry->Min), round(param_entry->Max));
                                 lv_slider_set_value(objects.ui_modulation_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
+                                                                                                          
+                                // show value and units
+                                sprintf(value_string, "%d RPM", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_modulation_param1_value, value_string);                                          
                             }
                         } break;
 
@@ -2713,7 +2941,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_ROTARY)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param2_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param2_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param2_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                                                                                         
+                                // show value and units
+                                sprintf(value_string, "%d mm", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_modulation_param2_value, value_string);                                                                        
                             }
                         } break;
 
@@ -2722,7 +2954,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_ROTARY)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param3_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param3_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param3_slider, round(param_entry->Value), LV_ANIM_OFF);     
+                                                                                                         
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_modulation_param3_value, value_string);                                                                       
                             }
                         } break;
 
@@ -2731,7 +2967,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_MODULATION_MODEL].Value == TONEX_MODULATION_ROTARY)
                             { 
                                 lv_slider_set_range(objects.ui_modulation_param4_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_modulation_param4_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_modulation_param4_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                                                                                         
+                                // show value and units
+                                sprintf(value_string, "%1.1f", param_entry->Value);
+                                lv_label_set_text(objects.ui_modulation_param4_value, value_string);                                                                        
                             }
                         } break;
                         
@@ -2789,12 +3029,14 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 {
                                     lv_obj_add_state(objects.ui_delay_sync_switch, LV_STATE_CHECKED);
                                     lv_obj_add_flag(objects.ui_delay_ts_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_delay_ts_value, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_clear_flag(objects.ui_delay_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
                                     lv_obj_clear_state(objects.ui_delay_sync_switch, LV_STATE_CHECKED);
                                     lv_obj_clear_flag(objects.ui_delay_ts_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_delay_ts_value, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_add_flag(objects.ui_delay_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                             }
@@ -2813,7 +3055,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_DIGITAL)
                             { 
                                 lv_slider_set_range(objects.ui_delay_ts_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_delay_ts_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_delay_ts_slider, round(param_entry->Value), LV_ANIM_OFF);   
+                                                                                                         
+                                // show value and units
+                                sprintf(value_string, "%d ms", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_delay_ts_value, value_string);                                                                         
                             }
                         } break;
 
@@ -2822,7 +3068,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_DIGITAL)
                             { 
                                 lv_slider_set_range(objects.ui_delay_feedback_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_delay_feedback_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_delay_feedback_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                                                                                         
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_delay_feedback_value, value_string);                                                                         
                             }
                         } break;
 
@@ -2846,7 +3096,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_DIGITAL)
                             { 
                                 lv_slider_set_range(objects.ui_delay_mix_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_delay_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_delay_mix_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                                                                                                                        
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_delay_mix_value, value_string);                                                                                                         
                             }
                         } break;
 
@@ -2858,12 +3112,14 @@ static uint8_t update_ui_element(tUIUpdate* update)
                                 {
                                     lv_obj_add_state(objects.ui_delay_sync_switch, LV_STATE_CHECKED);
                                     lv_obj_add_flag(objects.ui_delay_ts_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_add_flag(objects.ui_delay_ts_value, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_clear_flag(objects.ui_delay_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 else
                                 {
                                     lv_obj_clear_state(objects.ui_delay_sync_switch, LV_STATE_CHECKED);
                                     lv_obj_clear_flag(objects.ui_delay_ts_slider, LV_OBJ_FLAG_HIDDEN);
+                                    lv_obj_clear_flag(objects.ui_delay_ts_value, LV_OBJ_FLAG_HIDDEN);
                                     lv_obj_add_flag(objects.ui_delay_ts_dropdown, LV_OBJ_FLAG_HIDDEN);
                                 }
                             }
@@ -2882,7 +3138,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_TAPE)
                             { 
                                 lv_slider_set_range(objects.ui_delay_ts_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_delay_ts_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_delay_ts_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                                                                                                                         
+                                // show value and units
+                                sprintf(value_string, "%d ms", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_delay_ts_value, value_string);                                                                                                         
                             }
                         } break;
 
@@ -2891,7 +3151,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_TAPE)
                             { 
                                 lv_slider_set_range(objects.ui_delay_feedback_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_delay_feedback_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_delay_feedback_slider, round(param_entry->Value), LV_ANIM_OFF);    
+                                                                                                                                         
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_delay_feedback_value, value_string);                                                                                                         
                             }
                         } break;
 
@@ -2915,7 +3179,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                             if (param_ptr[TONEX_PARAM_DELAY_MODEL].Value == TONEX_DELAY_TAPE)
                             { 
                                 lv_slider_set_range(objects.ui_delay_mix_slider, round(param_entry->Min), round(param_entry->Max));
-                                lv_slider_set_value(objects.ui_delay_mix_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                                lv_slider_set_value(objects.ui_delay_mix_slider, round(param_entry->Value), LV_ANIM_OFF);   
+                                                                                                                                         
+                                // show value and units
+                                sprintf(value_string, "%d%%", (int)round(param_entry->Value));
+                                lv_label_set_text(objects.ui_delay_mix_value, value_string);                                                                                                         
                             }
                         } break;
 
@@ -2947,6 +3215,10 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             lv_slider_set_range(objects.ui_bpm_slider, round(param_entry->Min), round(param_entry->Max));
                             lv_slider_set_value(objects.ui_bpm_slider, round(param_entry->Value), LV_ANIM_OFF); 
+                                                                                                                                                                     
+                            // show value and units
+                            sprintf(value_string, "%1.1f", param_entry->Value);
+                            lv_label_set_text(objects.ui_bpm_value, value_string);                                                                                                         
 
                             char buf[128];
                             sprintf(buf, "%.1f", param_entry->Value);
@@ -2960,19 +3232,31 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         case TONEX_GLOBAL_INPUT_TRIM:
                         {
                             lv_slider_set_range(objects.ui_input_trim_slider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(objects.ui_input_trim_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                            lv_slider_set_value(objects.ui_input_trim_slider, round(param_entry->Value), LV_ANIM_OFF);   
+                                                                                                                                                                     
+                            // show value and units
+                            sprintf(value_string, "%1.1f db", param_entry->Value);
+                            lv_label_set_text(objects.ui_input_trim_value, value_string);                                                                                                         
                         } break;
                         
                         case TONEX_GLOBAL_TUNING_REFERENCE:
                         {                            
                             lv_slider_set_range(objects.ui_tuning_reference_slider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(objects.ui_tuning_reference_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                            lv_slider_set_value(objects.ui_tuning_reference_slider, round(param_entry->Value), LV_ANIM_OFF);  
+                                                                                                                                                                     
+                            // show value and units
+                            sprintf(value_string, "%d Hz", (int)round(param_entry->Value));
+                            lv_label_set_text(objects.ui_tuning_reference_value, value_string);                                                                                                         
                         } break;
 
                         case TONEX_GLOBAL_MASTER_VOLUME:
                         {                            
                             lv_slider_set_range(objects.ui_volume_slider, round(param_entry->Min), round(param_entry->Max));
-                            lv_slider_set_value(objects.ui_volume_slider, round(param_entry->Value), LV_ANIM_OFF);                                
+                            lv_slider_set_value(objects.ui_volume_slider, round(param_entry->Value), LV_ANIM_OFF);   
+                                                                                                                                                                     
+                            // show value and units
+                            sprintf(value_string, "%1.1f db", param_entry->Value);
+                            lv_label_set_text(objects.ui_volume_value, value_string);                                                                                                         
                         } break;
                     } 
 

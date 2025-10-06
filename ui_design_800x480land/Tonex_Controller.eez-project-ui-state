@@ -1,6 +1,6 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[Tonex_Controller.eez-project]:/userPages/1",
+    "selectedUserPageObject": "[Tonex_Controller.eez-project]:/userPages/0",
     "selectedActionObject": "[Tonex_Controller.eez-project]:/actions/11",
     "selectedBitmapObject": "[Tonex_Controller.eez-project]:/bitmaps/3",
     "subnavigationSelectedItems": {
@@ -169,8 +169,7 @@
                       "enableClose": false,
                       "icon": "svg:hierarchy"
                     }
-                  ],
-                  "active": true
+                  ]
                 },
                 {
                   "type": "tabset",
@@ -212,15 +211,16 @@
                 {
                   "type": "tab",
                   "id": "#30e00310-d229-4bd3-8d11-0a657bc85431",
-                  "name": "Settings",
+                  "name": "Screen1",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[Tonex_Controller.eez-project]:/userPages/1",
+                    "objectPath": "[Tonex_Controller.eez-project]:/userPages/0",
                     "permanent": false
                   },
                   "icon": "svg:page"
                 }
-              ]
+              ],
+              "active": true
             },
             {
               "type": "row",
@@ -1002,14 +1002,15 @@
       "selection": {
         "0": {
           "0": {
+            "1": {
+              "$selected": true
+            },
             "9": {},
             "10": {}
           },
           "2": {},
           "12": {},
-          "13": {
-            "$selected": true
-          }
+          "13": {}
         }
       },
       "transform": {
@@ -1017,7 +1018,7 @@
           "x": -381.964246229172,
           "y": -299.03243971340976
         },
-        "scale": 0.75
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1030,21 +1031,8 @@
       "selection": {
         "0": {
           "0": {
-            "5": {
-              "5": {
-                "0": {}
-              },
-              "9": {}
-            },
-            "6": {
-              "5": {
-                "0": {}
-              },
-              "12": {
-                "0": {
-                  "$selected": true
-                }
-              }
+            "0": {
+              "$selected": true
             }
           },
           "1": {}
