@@ -47,6 +47,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_entry_keyboard;
     lv_obj_t *ui_ok_tick;
     lv_obj_t *ui_settings_tab_view;
+    lv_obj_t *obj0;
     lv_obj_t *ui_gate_tab;
     lv_obj_t *ui_noise_gate_enable_label;
     lv_obj_t *ui_noise_gate_switch;
@@ -74,6 +75,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_amp_enable_switch;
     lv_obj_t *ui_amp_cab_label;
     lv_obj_t *ui_cabinet_model_dropdown;
+    lv_obj_t *obj1;
     lv_obj_t *ui_amplifier_gain_label;
     lv_obj_t *ui_amplifier_gain_slider;
     lv_obj_t *ui_amplifier_volume_label;
@@ -100,10 +102,12 @@ typedef struct _objects_t {
     lv_obj_t *ui_modulation_post_switch;
     lv_obj_t *ui_modulation_mode_label;
     lv_obj_t *ui_modulation_model_dropdown;
+    lv_obj_t *obj2;
     lv_obj_t *ui_modulation_sync_label;
     lv_obj_t *ui_modulation_sync_switch;
     lv_obj_t *ui_modulation_param1_label;
     lv_obj_t *ui_modulation_ts_dropdown;
+    lv_obj_t *obj3;
     lv_obj_t *ui_modulation_param1_slider;
     lv_obj_t *ui_modulation_param2_label;
     lv_obj_t *ui_modulation_param2_slider;
@@ -118,6 +122,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_delay_post_switch;
     lv_obj_t *ui_delay_mode_label;
     lv_obj_t *ui_delay_model_dropdown;
+    lv_obj_t *obj4;
     lv_obj_t *ui_delay_sync_label;
     lv_obj_t *ui_delay_sync_switch;
     lv_obj_t *ui_delay_ping_pong_label;
@@ -125,6 +130,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_delay_ts_label;
     lv_obj_t *ui_delay_ts_slider;
     lv_obj_t *ui_delay_ts_dropdown;
+    lv_obj_t *obj5;
     lv_obj_t *ui_delay_feedback_label;
     lv_obj_t *ui_delay_feedback_slider;
     lv_obj_t *ui_delay_mix_label;
@@ -136,6 +142,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_reverb_post_switch;
     lv_obj_t *ui_reverb_mode_label;
     lv_obj_t *ui_reverb_model_dropdown;
+    lv_obj_t *obj6;
     lv_obj_t *ui_reverb_mix_label;
     lv_obj_t *ui_reverb_mix_slider;
     lv_obj_t *ui_reverb_time_label;
