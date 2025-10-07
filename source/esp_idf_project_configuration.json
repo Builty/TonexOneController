@@ -103,16 +103,16 @@
       "postFlash": ""
     }
   },
-  "WS43B_AS": {
+  "WS43B": {
     "build": {
       "compileArgs": [],
       "ninjaArgs": [],
-      "buildDirectoryPath": "${workspaceFolder}/build_ws43b_as",
+      "buildDirectoryPath": "${workspaceFolder}/build_ws43b",
       "sdkconfigDefaults": [
         "sdkconfig.defaults",
-        "sdkconfig.ws43B_as"
+        "sdkconfig.ws43B"
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_ws43b_as"
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws43b"
     },
     "env": {},
     "flashBaudRate": "",
@@ -129,42 +129,16 @@
       "postFlash": ""
     }
   },
-  "WS43B_PS": {
+  "WS35B": {
     "build": {
       "compileArgs": [],
       "ninjaArgs": [],
-      "buildDirectoryPath": "${workspaceFolder}/build_ws43b_ps",
-      "sdkconfigDefaults": [
-        "sdkconfig.defaults",
-        "sdkconfig.ws43B_ps"
-      ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_ws43b_ps"
-    },
-    "env": {},
-    "flashBaudRate": "",
-    "monitorBaudRate": "",
-    "openOCD": {
-      "debugLevel": 0,
-      "configs": [],
-      "args": []
-    },
-    "tasks": {
-      "preBuild": "",
-      "preFlash": "",
-      "postBuild": "",
-      "postFlash": ""
-    }
-  },
-  "WS35B_AS": {
-    "build": {
-      "compileArgs": [],
-      "ninjaArgs": [],
-      "buildDirectoryPath": "${workspaceFolder}/build_ws35b_as",
+      "buildDirectoryPath": "${workspaceFolder}/build_ws35b",
       "sdkconfigDefaults": [        
         "sdkconfig.defaults",
-        "sdkconfig.ws35b_as"
+        "sdkconfig.ws35b"
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_ws35b_as"
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws35b"
     },
     "env": {},
     "flashBaudRate": "",
@@ -181,68 +155,16 @@
       "postFlash": ""
     }
   },
-  "WS35B_PS": {
+  "JC3248W": {
     "build": {
       "compileArgs": [],
       "ninjaArgs": [],
-      "buildDirectoryPath": "${workspaceFolder}/build_ws35b_ps",
+      "buildDirectoryPath": "${workspaceFolder}/build_jc3248w",
       "sdkconfigDefaults": [
         "sdkconfig.defaults",
-        "sdkconfig.ws35b_ps"       
+        "sdkconfig.jc3248w"        
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_ws35b_ps"
-    },
-    "env": {},
-    "flashBaudRate": "",
-    "monitorBaudRate": "",
-    "openOCD": {
-      "debugLevel": 0,
-      "configs": [],
-      "args": []
-    },
-    "tasks": {
-      "preBuild": "",
-      "preFlash": "",
-      "postBuild": "",
-      "postFlash": ""
-    }
-  },
-  "JC3248W_AS": {
-    "build": {
-      "compileArgs": [],
-      "ninjaArgs": [],
-      "buildDirectoryPath": "${workspaceFolder}/build_jc3248w_as",
-      "sdkconfigDefaults": [
-        "sdkconfig.defaults",
-        "sdkconfig.jc3248w_as"        
-      ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_jc3248w_as"
-    },
-    "env": {},
-    "flashBaudRate": "",
-    "monitorBaudRate": "",
-    "openOCD": {
-      "debugLevel": 0,
-      "configs": [],
-      "args": []
-    },
-    "tasks": {
-      "preBuild": "",
-      "preFlash": "",
-      "postBuild": "",
-      "postFlash": ""
-    }
-  },
-  "JC3248W_PS": {
-    "build": {
-      "compileArgs": [],
-      "ninjaArgs": [],
-      "buildDirectoryPath": "${workspaceFolder}/build_jc3248w_ps",
-      "sdkconfigDefaults": [
-        "sdkconfig.defaults",
-        "sdkconfig.jc3248w_ps"        
-      ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_jc3248w_ps"
+      "sdkconfigFilePath": "${workspaceFolder}/build_jc3248w"
     },
     "env": {},
     "flashBaudRate": "",
@@ -519,16 +441,16 @@
       "postFlash": ""
     }
   },
-  "Pirate43B_AS": {
+  "Pirate43B": {
     "build": {
       "compileArgs": [],
       "ninjaArgs": [],
-      "buildDirectoryPath": "${workspaceFolder}/build_pirate43B_as",
+      "buildDirectoryPath": "${workspaceFolder}/build_pirate43B",
       "sdkconfigDefaults": [
         "sdkconfig.defaults",
-        "sdkconfig.pirate43B_as"        
+        "sdkconfig.pirate43B"        
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_pirate43B_as"
+      "sdkconfigFilePath": "${workspaceFolder}/build_pirate43B"
     },
     "env": {},
     "flashBaudRate": "",

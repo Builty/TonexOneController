@@ -1,6 +1,6 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[Tonex_Controller_480_320.eez-project]:/userPages/1",
+    "selectedUserPageObject": "[Tonex_Controller_480_320.eez-project]:/userPages/0",
     "subnavigationSelectedItems": {}
   },
   "layoutModel": {
@@ -68,6 +68,7 @@
           },
           {
             "type": "border",
+            "selected": 0,
             "location": "bottom",
             "children": [
               {
@@ -119,7 +120,7 @@
                 {
                   "type": "tabset",
                   "id": "#e9c1201a-3c4b-425c-bf27-cc604f16dbe9",
-                  "weight": 1,
+                  "weight": 0.557257000659591,
                   "enableClose": false,
                   "children": [
                     {
@@ -151,7 +152,7 @@
                 {
                   "type": "tabset",
                   "id": "#0fbe2fd7-1c03-4b4c-bdf8-608c3733fd20",
-                  "weight": 1,
+                  "weight": 1.9412139473526413,
                   "enableClose": false,
                   "children": [
                     {
@@ -168,7 +169,7 @@
                 {
                   "type": "tabset",
                   "id": "#62cf7ec7-919e-4384-af3d-7d918a99c908",
-                  "weight": 1,
+                  "weight": 0.5015290519877675,
                   "enableClose": false,
                   "children": [
                     {
@@ -193,10 +194,10 @@
                 {
                   "type": "tab",
                   "id": "#dee75bb2-f325-4341-bdaa-55bf02902407",
-                  "name": "Settings",
+                  "name": "Screen1",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[Tonex_Controller_480_320.eez-project]:/userPages/1",
+                    "objectPath": "[Tonex_Controller_480_320.eez-project]:/userPages/0",
                     "permanent": false
                   },
                   "icon": "svg:page"
@@ -969,18 +970,18 @@
     "[Tonex_Controller_480_320.eez-project]:/userPages/0[flow-state]": {
       "selection": {
         "0": {
-          "0": {
-            "9": {},
-            "10": {}
+          "4": {},
+          "9": {
+            "$selected": true
           }
         }
       },
       "transform": {
         "translate": {
-          "x": -403.82840909091004,
-          "y": -323.6741161616159
+          "x": -464.4660714285723,
+          "y": -349.9061507936503
         },
-        "scale": 1.75
+        "scale": 2
       },
       "timeline": {
         "isEditorActive": false,
@@ -993,18 +994,19 @@
       "selection": {
         "0": {
           "0": {
-            "0": {
+            "7": {
               "$selected": true
             }
-          }
+          },
+          "2": {}
         }
       },
       "transform": {
         "translate": {
-          "x": -540.3755411255411,
-          "y": -165.18804112554116
+          "x": -463.8108225108226,
+          "y": -332.91341991342006
         },
-        "scale": 1.25
+        "scale": 2
       },
       "timeline": {
         "isEditorActive": false,
@@ -1025,13 +1027,13 @@
   "showComponentDescriptions": true,
   "logsPanelFilter": "all",
   "selectedStylePropertyName": "",
-  "lvglPart": "MAIN",
-  "lvglState": "DEFAULT",
+  "lvglPart": "SELECTED",
+  "lvglState": "CHECKED",
   "lvglExpandedPropertiesGroup": [
     "TEXT"
   ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,
-  "flowZoom": 1.25,
+  "flowZoom": 2,
   "implementationLanguage": "C"
 }

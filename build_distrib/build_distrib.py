@@ -90,13 +90,9 @@ build_distribution('template_cust_partition', 'build_ws169t', True, zip_name)
 zip_name = 'TonexOneController_V' + version + '_Waveshare_1_69_Touch_land'
 build_distribution('template_cust_partition', 'build_ws169tland', True, zip_name)
 
-# Build Waveshare 4.3B with Amp skins
-zip_name = 'TonexOneController_V' + version + '_Waveshare_4_3B_Display_Amp_Skins'
-build_distribution('template_cust_partition', 'build_ws43b_as', True, zip_name)
-
-# Build Waveshare 4.3B with Pedal skins
-zip_name = 'TonexOneController_V' + version + '_Waveshare_4_3B_Display_Pedal_Skins'
-build_distribution('template_cust_partition', 'build_ws43b_ps', True, zip_name)
+# Build Waveshare 4.3B
+zip_name = 'TonexOneController_V' + version + '_Waveshare_4_3B'
+build_distribution('template_cust_partition', 'build_ws43b', True, zip_name)
 
 # Build Waveshare Zero
 zip_name = 'TonexOneController_V' + version + '_Waveshare_Zero'
@@ -118,21 +114,13 @@ build_distribution('template_cust_partition', 'build_m5atoms3r', True, zip_name)
 zip_name = 'TonexOneController_V' + version + '_Lilygo_TDisplay_S3'
 build_distribution('template_cust_partition', 'build_lgtdisps3', True, zip_name)
 
-# Build Waveshare 3.5B with Amp skins
-zip_name = 'TonexOneController_V' + version + '_Waveshare_3_5B_Display_Amp_Skins'
-build_distribution('template_cust_partition', 'build_ws35b_as', True, zip_name)
+# Build Waveshare 3.5B
+zip_name = 'TonexOneController_V' + version + '_Waveshare_3_5B'
+build_distribution('template_cust_partition', 'build_ws35b', True, zip_name)
 
-# Build Waveshare 3.5B with Pedal skins
-zip_name = 'TonexOneController_V' + version + '_Waveshare_3_5B_Display_Pedal_Skins'
-build_distribution('template_cust_partition', 'build_ws35b_ps', True, zip_name)
-
-# Build JC3248W with Amp skins
-zip_name = 'TonexOneController_V' + version + '_JC3248W_Display_Amp_Skins'
-build_distribution('template_cust_partition', 'build_jc3248w_as', True, zip_name)
-
-# Build JC3248W with Pedal skins
-zip_name = 'TonexOneController_V' + version + '_JC3248W_Display_Pedal_Skins'
-build_distribution('template_cust_partition', 'build_jc3248w_ps', True, zip_name)
+# Build JC3248W
+zip_name = 'TonexOneController_V' + version + '_JC3248W'
+build_distribution('template_cust_partition', 'build_jc3248w', True, zip_name)
 
 # Build Waveshare 1.9
 zip_name = 'TonexOneController_V' + version + '_Waveshare_1_9'
@@ -150,8 +138,8 @@ build_distribution('template_cust_partition', 'build_pirate169', True, zip_name)
 zip_name = 'TonexOneController_V' + version + '_PirateMidi_PolarPlus'
 build_distribution('template_cust_partition', 'build_pirate169land', True, zip_name)
 
-# Build Pirate Midi Polar Max (4.3B) amp skins
-zip_name = 'TonexOneController_V' + version + '_PirateMidi_PolarMax_Amp_Skins'
-build_distribution('template_cust_partition', 'build_pirate43B_as', True, zip_name)
+# Build Pirate Midi Polar Max (4.3B)
+zip_name = 'TonexOneController_V' + version + '_PirateMidi_PolarMax'
+build_distribution('template_cust_partition', 'build_pirate43B', True, zip_name)
 
 print('All done')
