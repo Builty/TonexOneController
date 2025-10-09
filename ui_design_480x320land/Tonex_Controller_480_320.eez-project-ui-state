@@ -201,8 +201,7 @@
                   },
                   "icon": "svg:page"
                 }
-              ],
-              "active": true
+              ]
             },
             {
               "type": "row",
@@ -222,7 +221,8 @@
                       "enableClose": false,
                       "icon": "svg:properties"
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
@@ -970,12 +970,14 @@
     "[Tonex_Controller_480_320.eez-project]:/userPages/0[flow-state]": {
       "selection": {
         "0": {
-          "2": {
+          "2": {},
+          "3": {
             "$selected": true
           },
           "4": {},
           "9": {},
-          "10": {}
+          "10": {},
+          "11": {}
         }
       },
       "transform": {
@@ -996,12 +998,11 @@
       "selection": {
         "0": {
           "0": {
-            "4": {
+            "0": {},
+            "7": {
               "$selected": true
-            },
-            "7": {}
-          },
-          "2": {}
+            }
+          }
         }
       },
       "transform": {

@@ -1007,7 +1007,7 @@
                       "groupIndex": 0,
                       "text": "Preset Name",
                       "textType": "literal",
-                      "longMode": "WRAP",
+                      "longMode": "DOT",
                       "recolor": false
                     }
                   ],

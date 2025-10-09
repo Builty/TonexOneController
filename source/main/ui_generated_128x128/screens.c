@@ -242,6 +242,7 @@ void create_screen_screen1() {
                             objects.ui_preset_heading_label2 = obj;
                             lv_obj_set_pos(obj, 1, 1);
                             lv_obj_set_size(obj, 117, 69);
+                            lv_label_set_long_mode(obj, LV_LABEL_LONG_DOT);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                             lv_obj_set_style_text_font(obj, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
