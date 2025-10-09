@@ -163,8 +163,7 @@
                       "enableClose": false,
                       "icon": "svg:hierarchy"
                     }
-                  ],
-                  "active": true
+                  ]
                 },
                 {
                   "type": "tabset",
@@ -202,7 +201,8 @@
                   },
                   "icon": "svg:page"
                 }
-              ]
+              ],
+              "active": true
             },
             {
               "type": "row",
@@ -970,10 +970,12 @@
     "[Tonex_Controller_480_320.eez-project]:/userPages/0[flow-state]": {
       "selection": {
         "0": {
-          "4": {},
-          "9": {
+          "2": {
             "$selected": true
-          }
+          },
+          "4": {},
+          "9": {},
+          "10": {}
         }
       },
       "transform": {
@@ -994,9 +996,10 @@
       "selection": {
         "0": {
           "0": {
-            "7": {
+            "4": {
               "$selected": true
-            }
+            },
+            "7": {}
           },
           "2": {}
         }
@@ -1027,10 +1030,11 @@
   "showComponentDescriptions": true,
   "logsPanelFilter": "all",
   "selectedStylePropertyName": "",
-  "lvglPart": "SELECTED",
-  "lvglState": "CHECKED",
+  "lvglPart": "MAIN",
+  "lvglState": "DEFAULT",
   "lvglExpandedPropertiesGroup": [
-    "TEXT"
+    "TEXT",
+    "POSITION AND SIZE"
   ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,

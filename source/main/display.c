@@ -656,7 +656,10 @@ void action_save_skin_edit(lv_event_t * e)
     lv_obj_clear_flag(objects.ui_bank_value_label, LV_OBJ_FLAG_HIDDEN);
     lv_obj_clear_flag(objects.ui_bpm_title_label, LV_OBJ_FLAG_HIDDEN);
     lv_obj_clear_flag(objects.ui_bpm_value_label, LV_OBJ_FLAG_HIDDEN);
+
+#if (CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR)
     lv_obj_clear_flag(objects.ui_bpm_indicator, LV_OBJ_FLAG_HIDDEN);
+#endif    
 }
 
 /****************************************************************************
