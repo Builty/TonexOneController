@@ -11,8 +11,8 @@
       "extensions": [],
       "imports": [],
       "flowSupport": false,
-      "displayWidth": 320,
-      "displayHeight": 170,
+      "displayWidth": 128,
+      "displayHeight": 128,
       "displayBorderRadius": 0,
       "darkTheme": true,
       "colorFormat": "BGR",
@@ -92,7 +92,7 @@
           "template": "#if defined(EEZ_FOR_LVGL)\n#include <eez/core/vars.h>\n#endif\n\n#include \"ui.h\"\n#include \"screens.h\"\n#include \"images.h\"\n#include \"actions.h\"\n#include \"vars.h\"\n\n//${eez-studio GUI_ASSETS_DEF}\n\n//${eez-studio LVGL_NATIVE_VARS_TABLE_DEF}\n\n//${eez-studio LVGL_ACTIONS_ARRAY_DEF}\n\n#if defined(EEZ_FOR_LVGL)\n\nvoid ui_init() {\n    eez_flow_init(assets, sizeof(assets), (lv_obj_t **)&objects, sizeof(objects), images, sizeof(images), actions);\n}\n\nvoid ui_tick() {\n    eez_flow_tick();\n    tick_screen(g_currentScreen);\n}\n\n#else\n\n#include <string.h>\n\nstatic int16_t currentScreen = -1;\n\nstatic lv_obj_t *getLvglObjectFromIndex(int32_t index) {\n    if (index == -1) {\n        return 0;\n    }\n    return ((lv_obj_t **)&objects)[index];\n}\n\nvoid loadScreen(enum ScreensEnum screenId) {\n    currentScreen = screenId - 1;\n    lv_obj_t *screen = getLvglObjectFromIndex(currentScreen);\n    lv_scr_load_anim(screen, LV_SCR_LOAD_ANIM_FADE_IN, 200, 0, false);\n}\n\nvoid ui_init() {\n    create_screens();\n//${eez-studio LVGL_LOAD_FIRST_SCREEN}\n}\n\nvoid ui_tick() {\n    tick_screen(currentScreen);\n}\n\n#endif\n"
         }
       ],
-      "destinationFolder": "..\\source\\main\\ui_generated_320x170land",
+      "destinationFolder": "..\\source\\main\\ui_generated_128x128",
       "separateFolderForImagesAndFonts": false,
       "imageExportMode": "source",
       "fontExportMode": "source",
@@ -152,8 +152,8 @@
               "type": "LVGLContainerWidget",
               "left": 0,
               "top": 0,
-              "width": 320,
-              "height": 170,
+              "width": 128,
+              "height": 128,
               "customInputs": [],
               "customOutputs": [],
               "style": {
@@ -183,8 +183,8 @@
                   "type": "LVGLPanelWidget",
                   "left": 0,
                   "top": 0,
-                  "width": 320,
-                  "height": 30,
+                  "width": 128,
+                  "height": 22,
                   "customInputs": [],
                   "customOutputs": [],
                   "style": {
@@ -204,8 +204,8 @@
                     {
                       "objID": "5c09f798-f801-45f5-cc5a-f24d5c0399d6",
                       "type": "LVGLImageWidget",
-                      "left": 248,
-                      "top": -21,
+                      "left": 65,
+                      "top": -25,
                       "width": 69,
                       "height": 46,
                       "customInputs": [],
@@ -244,15 +244,15 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 180,
+                      "zoom": 120,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     },
                     {
                       "objID": "2033f55b-dd94-4ae9-8403-46bbf3d5f46c",
                       "type": "LVGLImageWidget",
-                      "left": 183,
-                      "top": -21,
+                      "left": 32,
+                      "top": -25,
                       "width": 52,
                       "height": 46,
                       "customInputs": [],
@@ -290,15 +290,15 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 160,
+                      "zoom": 120,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     },
                     {
                       "objID": "9366fa7e-f062-410e-9ca6-c96b75d2e595",
                       "type": "LVGLImageWidget",
-                      "left": 228,
-                      "top": -21,
+                      "left": 64,
+                      "top": -25,
                       "width": 26,
                       "height": 46,
                       "customInputs": [],
@@ -336,15 +336,15 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 192,
+                      "zoom": 120,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     },
                     {
                       "objID": "31b55091-7bb9-4e42-fb34-f4c1c67ad70d",
                       "type": "LVGLImageWidget",
-                      "left": -30,
-                      "top": -22,
+                      "left": -50,
+                      "top": -25,
                       "width": 132,
                       "height": 46,
                       "customInputs": [],
@@ -382,15 +382,15 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 170,
+                      "zoom": 110,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     },
                     {
                       "objID": "3330c110-9659-4ca5-b11a-47b67473744f",
                       "type": "LVGLImageWidget",
-                      "left": 183,
-                      "top": -21,
+                      "left": 32,
+                      "top": -25,
                       "width": 52,
                       "height": 46,
                       "customInputs": [],
@@ -430,15 +430,15 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 192,
+                      "zoom": 120,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     },
                     {
                       "objID": "9fd826fe-c690-416b-be55-75d76786a05c",
                       "type": "LVGLImageWidget",
-                      "left": 228,
-                      "top": -21,
+                      "left": 64,
+                      "top": -25,
                       "width": 26,
                       "height": 46,
                       "customInputs": [],
@@ -478,15 +478,15 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 192,
+                      "zoom": 120,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     },
                     {
                       "objID": "d0d818da-037c-4a36-bed4-dfbe053713f4",
                       "type": "LVGLImageWidget",
-                      "left": 248,
-                      "top": -21,
+                      "left": 65,
+                      "top": -26,
                       "width": 69,
                       "height": 46,
                       "customInputs": [],
@@ -526,7 +526,7 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 192,
+                      "zoom": 120,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     }
@@ -560,10 +560,10 @@
                 {
                   "objID": "fea65cbd-527a-43ac-c732-8171ae0c59b0",
                   "type": "LVGLLabelWidget",
-                  "left": 0,
-                  "top": 30,
-                  "width": 28,
-                  "height": 28,
+                  "left": 1,
+                  "top": 22,
+                  "width": 16,
+                  "height": 16,
                   "customInputs": [],
                   "customOutputs": [],
                   "style": {
@@ -595,10 +595,10 @@
                     "definition": {
                       "MAIN": {
                         "DEFAULT": {
-                          "text_font": "MONTSERRAT_20",
+                          "text_font": "MONTSERRAT_12",
                           "text_align": "CENTER",
                           "bg_color": "#1F1F1F",
-                          "radius": 8,
+                          "radius": 3,
                           "border_color": "#563F2A",
                           "border_width": 2
                         }
@@ -615,10 +615,10 @@
                 {
                   "objID": "67a3b305-7598-4830-9dc4-d7eed58ba415",
                   "type": "LVGLLabelWidget",
-                  "left": 30,
-                  "top": 30,
-                  "width": 28,
-                  "height": 28,
+                  "left": 1,
+                  "top": 41,
+                  "width": 16,
+                  "height": 16,
                   "customInputs": [],
                   "customOutputs": [],
                   "style": {
@@ -650,10 +650,10 @@
                     "definition": {
                       "MAIN": {
                         "DEFAULT": {
-                          "text_font": "MONTSERRAT_20",
+                          "text_font": "MONTSERRAT_12",
                           "text_align": "CENTER",
                           "bg_color": "#1F1F1F",
-                          "radius": 8,
+                          "radius": 3,
                           "border_color": "#563F2A",
                           "border_width": 2
                         }
@@ -670,10 +670,10 @@
                 {
                   "objID": "a42ed22e-23ea-4fc0-d9d4-43bac66256d7",
                   "type": "LVGLLabelWidget",
-                  "left": 0,
-                  "top": 60,
-                  "width": 28,
-                  "height": 28,
+                  "left": 19,
+                  "top": 22,
+                  "width": 16,
+                  "height": 16,
                   "customInputs": [],
                   "customOutputs": [],
                   "style": {
@@ -705,10 +705,10 @@
                     "definition": {
                       "MAIN": {
                         "DEFAULT": {
-                          "text_font": "MONTSERRAT_20",
+                          "text_font": "MONTSERRAT_12",
                           "text_align": "CENTER",
                           "bg_color": "#1F1F1F",
-                          "radius": 8,
+                          "radius": 3,
                           "border_color": "#563F2A",
                           "border_width": 2
                         }
@@ -725,10 +725,10 @@
                 {
                   "objID": "7343e522-cdc8-4a86-c09c-b02731290190",
                   "type": "LVGLLabelWidget",
-                  "left": 30,
-                  "top": 60,
-                  "width": 28,
-                  "height": 28,
+                  "left": 19,
+                  "top": 41,
+                  "width": 16,
+                  "height": 16,
                   "customInputs": [],
                   "customOutputs": [],
                   "style": {
@@ -760,10 +760,10 @@
                     "definition": {
                       "MAIN": {
                         "DEFAULT": {
-                          "text_font": "MONTSERRAT_20",
+                          "text_font": "MONTSERRAT_12",
                           "text_align": "CENTER",
                           "bg_color": "#1F1F1F",
-                          "radius": 8,
+                          "radius": 3,
                           "border_color": "#563F2A",
                           "border_width": 2
                         }
@@ -780,10 +780,10 @@
                 {
                   "objID": "a2705887-519a-4024-f6a7-ae08bffa3cbc",
                   "type": "LVGLLabelWidget",
-                  "left": 105,
-                  "top": 35,
-                  "width": 110,
-                  "height": 50,
+                  "left": 48,
+                  "top": 26,
+                  "width": 36,
+                  "height": 24,
                   "customInputs": [],
                   "customOutputs": [],
                   "style": {
@@ -820,7 +820,7 @@
                         },
                         "DEFAULT": {
                           "text_color": "D1A60C",
-                          "text_font": "MONTSERRAT_48",
+                          "text_font": "MONTSERRAT_24",
                           "text_align": "CENTER"
                         }
                       }
@@ -836,10 +836,10 @@
                 {
                   "objID": "f9439ee6-3b06-43f7-e274-830ccf1ad034",
                   "type": "LVGLLabelWidget",
-                  "left": 261,
-                  "top": 33,
-                  "width": 53,
-                  "height": 22,
+                  "left": 90,
+                  "top": 23,
+                  "width": 38,
+                  "height": 11,
                   "customInputs": [],
                   "customOutputs": [],
                   "style": {
@@ -871,7 +871,7 @@
                     "definition": {
                       "MAIN": {
                         "DEFAULT": {
-                          "text_font": "MONTSERRAT_20",
+                          "text_font": "MONTSERRAT_10",
                           "text_align": "CENTER"
                         }
                       }
@@ -887,10 +887,10 @@
                 {
                   "objID": "6d3b345d-c9c9-408d-b5e0-16124a5f01ad",
                   "type": "LVGLLabelWidget",
-                  "left": 261,
-                  "top": 55,
-                  "width": 53,
-                  "height": 33,
+                  "left": 90,
+                  "top": 36,
+                  "width": 38,
+                  "height": 18,
                   "customInputs": [],
                   "customOutputs": [],
                   "style": {
@@ -922,7 +922,7 @@
                     "definition": {
                       "MAIN": {
                         "DEFAULT": {
-                          "text_font": "MONTSERRAT_30",
+                          "text_font": "MONTSERRAT_16",
                           "text_color": "#FFFFFF",
                           "text_align": "CENTER"
                         }
@@ -939,10 +939,10 @@
                 {
                   "objID": "68b1d01a-bb24-47f4-c728-d88e45ffee9e",
                   "type": "LVGLContainerWidget",
-                  "left": 2,
-                  "top": 90,
-                  "width": 316,
-                  "height": 78,
+                  "left": 1,
+                  "top": 58,
+                  "width": 128,
+                  "height": 70,
                   "customInputs": [],
                   "customOutputs": [],
                   "style": {
@@ -964,8 +964,8 @@
                       "type": "LVGLLabelWidget",
                       "left": 1,
                       "top": 1,
-                      "width": 306,
-                      "height": 66,
+                      "width": 117,
+                      "height": 69,
                       "customInputs": [],
                       "customOutputs": [],
                       "style": {
@@ -997,7 +997,7 @@
                         "definition": {
                           "MAIN": {
                             "DEFAULT": {
-                              "text_font": "MONTSERRAT_30",
+                              "text_font": "MONTSERRAT_20",
                               "text_align": "CENTER"
                             }
                           }
@@ -1084,8 +1084,8 @@
       "name": "Screen1",
       "left": 0,
       "top": 0,
-      "width": 320,
-      "height": 170,
+      "width": 128,
+      "height": 128,
       "createAtStart": true,
       "deleteOnScreenUnload": false
     }

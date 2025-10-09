@@ -303,10 +303,34 @@ void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+void __attribute__((unused)) action_gesture(lv_event_t * e)
+{
+    lv_dir_t dir = lv_indev_get_gesture_dir(lv_indev_get_act());
+
+    // called from LVGL 
+    if (dir == LV_DIR_LEFT)
+    {
+        ESP_LOGI(TAG, "UI Previous Swipe");      
+        control_request_preset_down();      
+    }
+    else if (dir == LV_DIR_RIGHT)
+    {
+        ESP_LOGI(TAG, "UI Next Swipe");    
+        control_request_preset_up();      
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void action_previous_clicked(lv_event_t * e)
 {
     // called from LVGL 
-    ESP_LOGI(TAG, "UI Previous Click/Swipe");      
+    ESP_LOGI(TAG, "UI Previous Click");      
 
     control_request_preset_down();      
 }
@@ -321,7 +345,7 @@ void action_previous_clicked(lv_event_t * e)
 void action_next_clicked(lv_event_t * e)
 {
     // called from LVGL 
-    ESP_LOGI(TAG, "UI Next Click/Swipe");    
+    ESP_LOGI(TAG, "UI Next Click");    
 
     control_request_preset_up();        
 }
@@ -329,13 +353,18 @@ void action_next_clicked(lv_event_t * e)
 #else   //CONFIG_TONEX_CONTROLLER_HAS_TOUCH
 
 // Dummy functions so that 1.69 and 1.69 Touch can share the same UI project
-void action_previous_clicked(lv_event_t * e)
+void __attribute__((unused)) action_previous_clicked(lv_event_t * e)
 {
 }
 
-void action_next_clicked(lv_event_t * e)
+void __attribute__((unused)) action_next_clicked(lv_event_t * e)
 {
 }
+
+void __attribute__((unused)) action_gesture(lv_event_t * e)
+{
+}
+
 #endif  //CONFIG_TONEX_CONTROLLER_HAS_TOUCH
 
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
@@ -1747,7 +1776,7 @@ void updateIconOrder()
 static uint8_t update_ui_element(tUIUpdate* update)
 {
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
-    char value_string[20];
+    __attribute__((unused)) char value_string[20];
     lv_obj_t* element_1 = NULL;
 
     switch (update->ElementID)
@@ -3315,18 +3344,18 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             char buf[128];
                             sprintf(buf, "%d", (int)round(param_entry->Value));
-                            lv_label_set_text(ui_BPM, buf);  
+                            lv_label_set_text(objects.ui_bpm, buf);  
                         } break;
 
                         case TONEX_PARAM_COMP_ENABLE:
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_set_style_border_color(ui_CStatus, lv_color_hex(0xDDDD00), LV_PART_MAIN | LV_STATE_DEFAULT);
+                                lv_obj_set_style_border_color(objects.ui_cstatus, lv_color_hex(0xDDDD00), LV_PART_MAIN | LV_STATE_DEFAULT);
                             }
                             else
                             {
-                                lv_obj_set_style_border_color(ui_CStatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
+                                lv_obj_set_style_border_color(objects.ui_cstatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
                             }
                         } break;
 
@@ -3334,11 +3363,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_set_style_border_color(ui_MStatus, lv_color_hex(0xEEAA00), LV_PART_MAIN | LV_STATE_DEFAULT);
+                                lv_obj_set_style_border_color(objects.ui_mstatus, lv_color_hex(0xEEAA00), LV_PART_MAIN | LV_STATE_DEFAULT);
                             }
                             else
                             {
-                                lv_obj_set_style_border_color(ui_MStatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
+                                lv_obj_set_style_border_color(objects.ui_mstatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
                             }
                         } break;
 
@@ -3346,11 +3375,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_set_style_border_color(ui_DStatus, lv_color_hex(0x00CC00), LV_PART_MAIN | LV_STATE_DEFAULT);
+                                lv_obj_set_style_border_color(objects.ui_dstatus, lv_color_hex(0x00CC00), LV_PART_MAIN | LV_STATE_DEFAULT);
                             }
                             else
                             {
-                                lv_obj_set_style_border_color(ui_DStatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
+                                lv_obj_set_style_border_color(objects.ui_dstatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
                             }
                         } break;
 
@@ -3358,11 +3387,11 @@ static uint8_t update_ui_element(tUIUpdate* update)
                         {
                             if (param_entry->Value)
                             {
-                                lv_obj_set_style_border_color(ui_RStatus, lv_color_hex(0x33FFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+                                lv_obj_set_style_border_color(objects.ui_rstatus, lv_color_hex(0x33FFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
                             }
                             else
                             {
-                                lv_obj_set_style_border_color(ui_RStatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
+                                lv_obj_set_style_border_color(objects.ui_rstatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
                             }
                         } break;
 

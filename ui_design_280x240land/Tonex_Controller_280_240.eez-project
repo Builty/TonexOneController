@@ -11,8 +11,8 @@
       "extensions": [],
       "imports": [],
       "flowSupport": false,
-      "displayWidth": 320,
-      "displayHeight": 170,
+      "displayWidth": 240,
+      "displayHeight": 280,
       "displayBorderRadius": 0,
       "darkTheme": true,
       "colorFormat": "BGR",
@@ -92,7 +92,7 @@
           "template": "#if defined(EEZ_FOR_LVGL)\n#include <eez/core/vars.h>\n#endif\n\n#include \"ui.h\"\n#include \"screens.h\"\n#include \"images.h\"\n#include \"actions.h\"\n#include \"vars.h\"\n\n//${eez-studio GUI_ASSETS_DEF}\n\n//${eez-studio LVGL_NATIVE_VARS_TABLE_DEF}\n\n//${eez-studio LVGL_ACTIONS_ARRAY_DEF}\n\n#if defined(EEZ_FOR_LVGL)\n\nvoid ui_init() {\n    eez_flow_init(assets, sizeof(assets), (lv_obj_t **)&objects, sizeof(objects), images, sizeof(images), actions);\n}\n\nvoid ui_tick() {\n    eez_flow_tick();\n    tick_screen(g_currentScreen);\n}\n\n#else\n\n#include <string.h>\n\nstatic int16_t currentScreen = -1;\n\nstatic lv_obj_t *getLvglObjectFromIndex(int32_t index) {\n    if (index == -1) {\n        return 0;\n    }\n    return ((lv_obj_t **)&objects)[index];\n}\n\nvoid loadScreen(enum ScreensEnum screenId) {\n    currentScreen = screenId - 1;\n    lv_obj_t *screen = getLvglObjectFromIndex(currentScreen);\n    lv_scr_load_anim(screen, LV_SCR_LOAD_ANIM_FADE_IN, 200, 0, false);\n}\n\nvoid ui_init() {\n    create_screens();\n//${eez-studio LVGL_LOAD_FIRST_SCREEN}\n}\n\nvoid ui_tick() {\n    tick_screen(currentScreen);\n}\n\n#endif\n"
         }
       ],
-      "destinationFolder": "..\\source\\main\\ui_generated_320x170land",
+      "destinationFolder": "..\\source\\main\\ui_generated_280x240land",
       "separateFolderForImagesAndFonts": false,
       "imageExportMode": "source",
       "fontExportMode": "source",
@@ -152,8 +152,8 @@
               "type": "LVGLContainerWidget",
               "left": 0,
               "top": 0,
-              "width": 320,
-              "height": 170,
+              "width": 240,
+              "height": 280,
               "customInputs": [],
               "customOutputs": [],
               "style": {
@@ -181,10 +181,10 @@
                 {
                   "objID": "e2b8c10e-f095-44ea-802b-1ad28de7652e",
                   "type": "LVGLPanelWidget",
-                  "left": 0,
-                  "top": 0,
-                  "width": 320,
-                  "height": 30,
+                  "left": -99,
+                  "top": 135,
+                  "width": 280,
+                  "height": 48,
                   "customInputs": [],
                   "customOutputs": [],
                   "style": {
@@ -204,8 +204,8 @@
                     {
                       "objID": "5c09f798-f801-45f5-cc5a-f24d5c0399d6",
                       "type": "LVGLImageWidget",
-                      "left": 248,
-                      "top": -21,
+                      "left": 199,
+                      "top": -13,
                       "width": 69,
                       "height": 46,
                       "customInputs": [],
@@ -244,15 +244,15 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 180,
+                      "zoom": 220,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     },
                     {
                       "objID": "2033f55b-dd94-4ae9-8403-46bbf3d5f46c",
                       "type": "LVGLImageWidget",
-                      "left": 183,
-                      "top": -21,
+                      "left": 121,
+                      "top": -11,
                       "width": 52,
                       "height": 46,
                       "customInputs": [],
@@ -290,15 +290,15 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 160,
+                      "zoom": 220,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     },
                     {
                       "objID": "9366fa7e-f062-410e-9ca6-c96b75d2e595",
                       "type": "LVGLImageWidget",
-                      "left": 228,
-                      "top": -21,
+                      "left": 175,
+                      "top": -13,
                       "width": 26,
                       "height": 46,
                       "customInputs": [],
@@ -336,15 +336,15 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 192,
+                      "zoom": 220,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     },
                     {
                       "objID": "31b55091-7bb9-4e42-fb34-f4c1c67ad70d",
                       "type": "LVGLImageWidget",
-                      "left": -30,
-                      "top": -22,
+                      "left": -23,
+                      "top": -11,
                       "width": 132,
                       "height": 46,
                       "customInputs": [],
@@ -382,15 +382,15 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 170,
+                      "zoom": 200,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     },
                     {
                       "objID": "3330c110-9659-4ca5-b11a-47b67473744f",
                       "type": "LVGLImageWidget",
-                      "left": 183,
-                      "top": -21,
+                      "left": 121,
+                      "top": -11,
                       "width": 52,
                       "height": 46,
                       "customInputs": [],
@@ -430,15 +430,15 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 192,
+                      "zoom": 220,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     },
                     {
                       "objID": "9fd826fe-c690-416b-be55-75d76786a05c",
                       "type": "LVGLImageWidget",
-                      "left": 228,
-                      "top": -21,
+                      "left": 175,
+                      "top": -13,
                       "width": 26,
                       "height": 46,
                       "customInputs": [],
@@ -478,15 +478,15 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 192,
+                      "zoom": 220,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     },
                     {
                       "objID": "d0d818da-037c-4a36-bed4-dfbe053713f4",
                       "type": "LVGLImageWidget",
-                      "left": 248,
-                      "top": -21,
+                      "left": 199,
+                      "top": -13,
                       "width": 69,
                       "height": 46,
                       "customInputs": [],
@@ -526,7 +526,7 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 192,
+                      "zoom": 220,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     }
@@ -549,7 +549,10 @@
                         "DEFAULT": {
                           "bg_color": "#2A2A2A",
                           "radius": 0,
-                          "border_width": 0
+                          "border_width": 0,
+                          "transform_angle": -900,
+                          "transform_pivot_y": 24,
+                          "transform_pivot_x": 120
                         }
                       }
                     }
@@ -560,8 +563,8 @@
                 {
                   "objID": "fea65cbd-527a-43ac-c732-8171ae0c59b0",
                   "type": "LVGLLabelWidget",
-                  "left": 0,
-                  "top": 30,
+                  "left": 46,
+                  "top": 246,
                   "width": 28,
                   "height": 28,
                   "customInputs": [],
@@ -600,7 +603,10 @@
                           "bg_color": "#1F1F1F",
                           "radius": 8,
                           "border_color": "#563F2A",
-                          "border_width": 2
+                          "border_width": 2,
+                          "transform_angle": -900,
+                          "transform_pivot_x": 14,
+                          "transform_pivot_y": 14
                         }
                       }
                     }
@@ -615,8 +621,8 @@
                 {
                   "objID": "67a3b305-7598-4830-9dc4-d7eed58ba415",
                   "type": "LVGLLabelWidget",
-                  "left": 30,
-                  "top": 30,
+                  "left": 78,
+                  "top": 246,
                   "width": 28,
                   "height": 28,
                   "customInputs": [],
@@ -655,7 +661,10 @@
                           "bg_color": "#1F1F1F",
                           "radius": 8,
                           "border_color": "#563F2A",
-                          "border_width": 2
+                          "border_width": 2,
+                          "transform_angle": -900,
+                          "transform_pivot_x": 14,
+                          "transform_pivot_y": 14
                         }
                       }
                     }
@@ -670,8 +679,8 @@
                 {
                   "objID": "a42ed22e-23ea-4fc0-d9d4-43bac66256d7",
                   "type": "LVGLLabelWidget",
-                  "left": 0,
-                  "top": 60,
+                  "left": 46,
+                  "top": 215,
                   "width": 28,
                   "height": 28,
                   "customInputs": [],
@@ -710,7 +719,10 @@
                           "bg_color": "#1F1F1F",
                           "radius": 8,
                           "border_color": "#563F2A",
-                          "border_width": 2
+                          "border_width": 2,
+                          "transform_angle": -900,
+                          "transform_pivot_x": 14,
+                          "transform_pivot_y": 14
                         }
                       }
                     }
@@ -725,8 +737,8 @@
                 {
                   "objID": "7343e522-cdc8-4a86-c09c-b02731290190",
                   "type": "LVGLLabelWidget",
-                  "left": 30,
-                  "top": 60,
+                  "left": 78,
+                  "top": 215,
                   "width": 28,
                   "height": 28,
                   "customInputs": [],
@@ -765,7 +777,10 @@
                           "bg_color": "#1F1F1F",
                           "radius": 8,
                           "border_color": "#563F2A",
-                          "border_width": 2
+                          "border_width": 2,
+                          "transform_angle": -900,
+                          "transform_pivot_x": 14,
+                          "transform_pivot_y": 14
                         }
                       }
                     }
@@ -780,10 +795,10 @@
                 {
                   "objID": "a2705887-519a-4024-f6a7-ae08bffa3cbc",
                   "type": "LVGLLabelWidget",
-                  "left": 105,
-                  "top": 35,
-                  "width": 110,
-                  "height": 50,
+                  "left": 22,
+                  "top": 101,
+                  "width": 101,
+                  "height": 76,
                   "customInputs": [],
                   "customOutputs": [],
                   "style": {
@@ -821,7 +836,10 @@
                         "DEFAULT": {
                           "text_color": "D1A60C",
                           "text_font": "MONTSERRAT_48",
-                          "text_align": "CENTER"
+                          "text_align": "CENTER",
+                          "transform_angle": -900,
+                          "transform_pivot_x": 50,
+                          "transform_pivot_y": 25
                         }
                       }
                     }
@@ -836,8 +854,8 @@
                 {
                   "objID": "f9439ee6-3b06-43f7-e274-830ccf1ad034",
                   "type": "LVGLLabelWidget",
-                  "left": 261,
-                  "top": 33,
+                  "left": 47,
+                  "top": 60,
                   "width": 53,
                   "height": 22,
                   "customInputs": [],
@@ -872,7 +890,8 @@
                       "MAIN": {
                         "DEFAULT": {
                           "text_font": "MONTSERRAT_20",
-                          "text_align": "CENTER"
+                          "text_align": "CENTER",
+                          "transform_angle": -900
                         }
                       }
                     }
@@ -887,8 +906,8 @@
                 {
                   "objID": "6d3b345d-c9c9-408d-b5e0-16124a5f01ad",
                   "type": "LVGLLabelWidget",
-                  "left": 261,
-                  "top": 55,
+                  "left": 74,
+                  "top": 60,
                   "width": 53,
                   "height": 33,
                   "customInputs": [],
@@ -924,7 +943,8 @@
                         "DEFAULT": {
                           "text_font": "MONTSERRAT_30",
                           "text_color": "#FFFFFF",
-                          "text_align": "CENTER"
+                          "text_align": "CENTER",
+                          "transform_angle": -900
                         }
                       }
                     }
@@ -939,10 +959,10 @@
                 {
                   "objID": "68b1d01a-bb24-47f4-c728-d88e45ffee9e",
                   "type": "LVGLContainerWidget",
-                  "left": 2,
+                  "left": 63,
                   "top": 90,
-                  "width": 316,
-                  "height": 78,
+                  "width": 270,
+                  "height": 130,
                   "customInputs": [],
                   "customOutputs": [],
                   "style": {
@@ -964,8 +984,8 @@
                       "type": "LVGLLabelWidget",
                       "left": 1,
                       "top": 1,
-                      "width": 306,
-                      "height": 66,
+                      "width": 245,
+                      "height": 110,
                       "customInputs": [],
                       "customOutputs": [],
                       "style": {
@@ -1031,7 +1051,10 @@
                           "bg_opa": 255,
                           "border_width": 3,
                           "border_color": "#563F2A",
-                          "radius": 10
+                          "radius": 10,
+                          "transform_angle": -900,
+                          "transform_pivot_x": 114,
+                          "transform_pivot_y": 70
                         }
                       }
                     }
@@ -1084,8 +1107,8 @@
       "name": "Screen1",
       "left": 0,
       "top": 0,
-      "width": 320,
-      "height": 170,
+      "width": 240,
+      "height": 280,
       "createAtStart": true,
       "deleteOnScreenUnload": false
     }
