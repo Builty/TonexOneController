@@ -86,7 +86,7 @@ def main():
     with open(output_bin, "wb") as out:
         # Write TOC
         for i in range(DEFAULT_MAX_FILES):
-            if i < max_files:
+            if i < len(toc):
                 offset, size = toc[i]
                                
                 # Pack entry: name (16s), offset (I), size (I)
