@@ -95,9 +95,9 @@ static lv_disp_draw_buf_t disp_buf; // contains internal graphic buffer(s) calle
 static lv_disp_drv_t* disp_drv;      // contains callback functions
 static esp_lcd_panel_io_handle_t lcd_io = NULL;
 static esp_lcd_panel_handle_t lcd_panel = NULL;
-static esp_lcd_touch_handle_t tp = NULL;
-static esp_lcd_panel_io_handle_t tp_io_handle = NULL;
-static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
+__attribute__((unused)) static esp_lcd_touch_handle_t tp = NULL;
+__attribute__((unused)) static esp_lcd_panel_io_handle_t tp_io_handle = NULL;
+__attribute__((unused)) static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
 
 /****************************************************************************
 * NAME:        
@@ -169,7 +169,7 @@ __attribute__((unused)) uint16_t platform_get_toast_padding(void)
 void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex, lv_disp_drv_t* pdisp_drv)
 {    
     __attribute__((unused)) esp_err_t ret = ESP_OK;
-    uint8_t touch_ok = 0;
+    __attribute__((unused)) uint8_t touch_ok = 0;
     gpio_config_t gpio_config_struct;
 
     ESP_LOGI(TAG, "Platform Init");

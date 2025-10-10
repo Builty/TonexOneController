@@ -173,6 +173,58 @@ static esp_err_t i2c_master_init(i2c_master_bus_handle_t *bus_handle, uint32_t p
 * NAME:        
 * DESCRIPTION: 
 * PARAMETERS:  
+* RETURN:      none
+* NOTES:       none
+****************************************************************************/
+static __attribute__((unused)) void list_files(const char *path) 
+{
+    DIR *dir = opendir(path);
+    if (dir == NULL) 
+    {
+        ESP_LOGE(TAG, "Failed to open directory: %s", path);
+        return;
+    }
+
+    struct dirent *entry;
+    ESP_LOGI(TAG, "Listing files in directory: %s", path);
+    
+    while ((entry = readdir(dir)) != NULL) 
+    {
+        // Skip "." and ".." entries
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) 
+        {
+            continue;
+        }
+        
+        char full_path[300];
+        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
+        
+        // Get file information
+        struct stat stat_buf;
+        if (stat(full_path, &stat_buf) == 0) 
+        {
+            if (S_ISDIR(stat_buf.st_mode)) 
+            {
+                ESP_LOGI(TAG, "[DIR]  %s", entry->d_name);
+            } 
+            else 
+            {
+                ESP_LOGI(TAG, "[FILE] %s (%ld bytes)", entry->d_name, stat_buf.st_size);
+            }
+        } 
+        else 
+        {
+            ESP_LOGE(TAG, "Failed to stat %s", entry->d_name);
+        }
+    }
+
+    closedir(dir);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
