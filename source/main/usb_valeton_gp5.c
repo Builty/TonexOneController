@@ -259,18 +259,17 @@ void usb_valeton_gp5_handle(class_driver_t* driver_obj)
                     {
                         if (message.Payload < MAX_PRESETS_VALETON_GP5)
                         {
-                            uint8_t midi_tx[5];
-                            midi_tx[0] = 0xB0;
-                            midi_tx[1] = 0x00;
-                            midi_tx[2] = message.Payload;   // preset index
-                            midi_tx[3] = 0xC0;
-                            midi_tx[4] = 0x00;
+                            uint8_t midi_tx[4];
 
-                            ESP_LOGI(TAG, "Set preset");
-
-                            //uint8_t midi_tx[] =  {0x04,  0xf0,0x06,0x0c,0x00,0x01,0x00,0x00,0x00,0x06,0x01,0x01,0x04,0x03,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xf7,   0x00, 0x00};
-
-                            midi_host_data_tx_blocking(midi_dev, (const uint8_t*)midi_tx, sizeof(midi_tx), 50);
+                            midi_tx[0] = 0x0B;
+                            midi_tx[1] = 0xB0;
+                            midi_tx[2] = 0x00;
+                            midi_tx[3] = message.Payload;   // preset index
+                            
+                            if (midi_host_data_tx_blocking(midi_dev, (const uint8_t*)midi_tx, sizeof(midi_tx), 50) == ESP_OK)
+                            {
+                                control_sync_preset_details(message.Payload, "Unknown");
+                            }
                         }
                     } break;
                     

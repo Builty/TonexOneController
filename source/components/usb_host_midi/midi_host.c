@@ -784,38 +784,8 @@ static void notif_xfer_cb(usb_transfer_t *transfer)
     ESP_LOGD(TAG, "notif xfer cb");
     midi_dev_t *midi_dev = (midi_dev_t *)transfer->context;
 
-    if (midi_is_transfer_completed(transfer)) {
-#if 0        
-        midi_notification_t *notif = (midi_notification_t *)transfer->data_buffer;
-        switch (notif->bNotificationCode) {
-        case USB_MIDI_NOTIF_NETWORK_CONNECTION: {
-            if (midi_dev->notif.cb) {
-                const midi_host_dev_event_data_t net_conn_event = {
-                    .type = MIDI_HOST_NETWORK_CONNECTION,
-                    .data.network_connected = (bool) notif->wValue
-                };
-                midi_dev->notif.cb(&net_conn_event, midi_dev->cb_arg);
-            }
-            break;
-        }
-        case USB_MIDI_NOTIF_SERIAL_STATE: {
-            midi_dev->serial_state.val = *((uint16_t *)notif->Data);
-            if (midi_dev->notif.cb) {
-                const midi_host_dev_event_data_t serial_state_event = {
-                    .type = MIDI_HOST_SERIAL_STATE,
-                    .data.serial_state = midi_dev->serial_state
-                };
-                midi_dev->notif.cb(&serial_state_event, midi_dev->cb_arg);
-            }
-            break;
-        }
-        case USB_MIDI_NOTIF_RESPONSE_AVAILABLE: // Encapsulated commands not implemented - fallthrough
-        default:
-            ESP_LOGW(TAG, "Unsupported notification type 0x%02X", notif->bNotificationCode);
-            ESP_LOG_BUFFER_HEX(TAG, transfer->data_buffer, transfer->actual_num_bytes);
-            break;
-        }
-#endif
+    if (midi_is_transfer_completed(transfer)) 
+    {
         // Start polling for new data again
         ESP_LOGD(TAG, "Submitting poll for INTR IN transfer");
         usb_host_transfer_submit(midi_dev->notif.xfer);
@@ -831,46 +801,50 @@ static void out_xfer_cb(usb_transfer_t *transfer)
 
 static void usb_event_cb(const usb_host_client_event_msg_t *event_msg, void *arg)
 {
-    switch (event_msg->event) {
-    case USB_HOST_CLIENT_EVENT_NEW_DEV:
-        // Guard p_midi_obj->new_dev_cb from concurrent access
-        ESP_LOGI(TAG, "New device connected");
-        MIDI_ENTER_CRITICAL();
-        midi_new_dev_callback_t _new_dev_cb = p_midi_obj->new_dev_cb;
-        MIDI_EXIT_CRITICAL();
+    switch (event_msg->event) 
+    {
+        case USB_HOST_CLIENT_EVENT_NEW_DEV:
+        {
+            // Guard p_midi_obj->new_dev_cb from concurrent access
+            ESP_LOGI(TAG, "New device connected");
+            MIDI_ENTER_CRITICAL();
+            midi_new_dev_callback_t _new_dev_cb = p_midi_obj->new_dev_cb;
+            MIDI_EXIT_CRITICAL();
 
-        if (_new_dev_cb) {
-            usb_device_handle_t new_dev;
-            if (usb_host_device_open(p_midi_obj->midi_client_hdl, event_msg->new_dev.address, &new_dev) != ESP_OK) {
-                break;
+            if (_new_dev_cb) {
+                usb_device_handle_t new_dev;
+                if (usb_host_device_open(p_midi_obj->midi_client_hdl, event_msg->new_dev.address, &new_dev) != ESP_OK) {
+                    break;
+                }
+                assert(new_dev);
+                _new_dev_cb(new_dev);
+                usb_host_device_close(p_midi_obj->midi_client_hdl, new_dev);
             }
-            assert(new_dev);
-            _new_dev_cb(new_dev);
-            usb_host_device_close(p_midi_obj->midi_client_hdl, new_dev);
-        }
+        } break;
 
-        break;
-    case USB_HOST_CLIENT_EVENT_DEV_GONE: {
-        ESP_LOGI(TAG, "Device suddenly disconnected");
-        // Find MIDI pseudo-devices associated with this USB device and close them
-        midi_dev_t *midi_dev;
-        midi_dev_t *tmidi_dev;
-        // We are using 'SAFE' version of 'SLIST_FOREACH' which enables user to close the disconnected device in the callback
-        SLIST_FOREACH_SAFE(midi_dev, &p_midi_obj->midi_devices_list, list_entry, tmidi_dev) {
-            if (midi_dev->dev_hdl == event_msg->dev_gone.dev_hdl && midi_dev->notif.cb) {
-                // The suddenly disconnected device was opened by this driver: inform user about this
-                const midi_host_dev_event_data_t disconn_event = {
-                    .type = MIDI_HOST_DEVICE_DISCONNECTED,
-                    .data.midi_hdl = (midi_dev_hdl_t) midi_dev,
-                };
-                midi_dev->notif.cb(&disconn_event, midi_dev->cb_arg);
+        case USB_HOST_CLIENT_EVENT_DEV_GONE: 
+        {
+            ESP_LOGI(TAG, "Device suddenly disconnected");
+            // Find MIDI pseudo-devices associated with this USB device and close them
+            midi_dev_t *midi_dev;
+            midi_dev_t *tmidi_dev;
+            // We are using 'SAFE' version of 'SLIST_FOREACH' which enables user to close the disconnected device in the callback
+            SLIST_FOREACH_SAFE(midi_dev, &p_midi_obj->midi_devices_list, list_entry, tmidi_dev) {
+                if (midi_dev->dev_hdl == event_msg->dev_gone.dev_hdl && midi_dev->notif.cb) {
+                    // The suddenly disconnected device was opened by this driver: inform user about this
+                    const midi_host_dev_event_data_t disconn_event = {
+                        .type = MIDI_HOST_DEVICE_DISCONNECTED,
+                        .data.midi_hdl = (midi_dev_hdl_t) midi_dev,
+                    };
+                    midi_dev->notif.cb(&disconn_event, midi_dev->cb_arg);
+                }
             }
-        }
-        break;
-    }
-    default:
-        assert(false);
-        break;
+        } break;
+
+        default:
+        {
+            assert(false);
+        } break;
     }
 }
 
@@ -885,7 +859,8 @@ esp_err_t midi_host_data_tx_blocking(midi_dev_hdl_t midi_hdl, const uint8_t *dat
 
     // Take OUT mutex and fill the OUT transfer
     BaseType_t taken = xSemaphoreTake(midi_dev->data.out_mux, pdMS_TO_TICKS(timeout_ms));
-    if (taken != pdTRUE) {
+    if (taken != pdTRUE) 
+    {
         return ESP_ERR_TIMEOUT;
     }
 
@@ -900,7 +875,8 @@ esp_err_t midi_host_data_tx_blocking(midi_dev_hdl_t midi_hdl, const uint8_t *dat
 
     // Wait for OUT transfer completion
     taken = xSemaphoreTake(transfer_finished_semaphore, pdMS_TO_TICKS(timeout_ms));
-    if (!taken) {
+    if (!taken) 
+    {
         midi_reset_transfer_endpoint(midi_dev->dev_hdl, midi_dev->data.out_xfer); // Resetting the endpoint will cause all in-progress transfers to complete
         ESP_LOGW(TAG, "TX transfer timeout");
         ret = ESP_ERR_TIMEOUT;
@@ -923,14 +899,5 @@ esp_err_t midi_host_midi_desc_get(midi_dev_hdl_t midi_hdl, const usb_standard_de
     esp_err_t ret = ESP_ERR_NOT_FOUND;
     *desc_out = NULL;
 
-#if 0    
-    for (int i = 0; i < midi_dev->midi_func_desc_cnt; i++) {
-        const midi_header_desc_t *_desc = (const midi_header_desc_t *)((*(midi_dev->midi_func_desc))[i]);
-
-        ret = ESP_OK;
-        *desc_out = (const usb_standard_desc_t *)_desc;
-        break;
-    }
-#endif        
     return ret;
 }

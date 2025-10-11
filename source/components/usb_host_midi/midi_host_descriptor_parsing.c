@@ -36,25 +36,6 @@ static bool midi_parse_is_midi_compliant(const usb_device_desc_t *device_desc, c
         }                
     }
 
-#if 0    
-    if (((device_desc->bDeviceClass == USB_CLASS_MISC) && (device_desc->bDeviceSubClass == USB_SUBCLASS_COMMON) && (device_desc->bDeviceProtocol == USB_DEVICE_PROTOCOL_IAD)) 
-       || ((device_desc->bDeviceClass == USB_CLASS_PER_INTERFACE) && (device_desc->bDeviceSubClass == USB_SUBCLASS_NULL) && (device_desc->bDeviceProtocol == USB_PROTOCOL_NULL))) 
-    {
-        const usb_standard_desc_t *this_desc = (const usb_standard_desc_t *)config_desc;
-    
-        while ((this_desc = usb_parse_next_descriptor_of_type(this_desc, config_desc->wTotalLength, USB_B_DESCRIPTOR_TYPE_INTERFACE_ASSOCIATION, &desc_offset))) 
-        {
-            const usb_iad_desc_t *iad_desc = (const usb_iad_desc_t *)this_desc;
-            if ((iad_desc->bFirstInterface == intf_idx) && (iad_desc->bInterfaceCount == 2) && (iad_desc->bFunctionClass == USB_CLASS_AUDIO)) 
-            {
-                // 2. This is a composite device, that uses Interface Association Descriptor
-                ESP_LOGI(TAG, "Found Midi interface %d", intf_idx);
-                return true;
-            }
-        };
-    }
-#endif        
-
     return false;
 }
 
