@@ -142,6 +142,7 @@ static uint8_t boot_init_needed = 0;
 static uint8_t boot_global_request = 0;
 static uint8_t boot_preset_request = 0;
 static volatile tInputBufferEntry* InputBuffers;
+static uint8_t* ProcessingBuffer;
 
 /*
 ** Static function prototypes
@@ -152,142 +153,186 @@ static volatile tInputBufferEntry* InputBuffers;
 * DESCRIPTION: 
 * PARAMETERS:  
 * RETURN:      
+* NOTES:  credit to https://rvalladares.com/ for this     
+*****************************************************************************/
+static uint8_t usb_valeton_gp5_crc8(const uint8_t* buffer, uint32_t len) 
+{
+    uint8_t crc = 0x00; 
+    uint8_t cur;
+    
+    for (uint32_t  i = 0; i < len; i++) 
+    {
+        cur = buffer[i] & 0xFF;
+        crc ^= cur;
+
+        for (uint32_t j = 0; j < 8; j++) 
+        {
+            if ((crc & 0x80) != 0) 
+            {
+                crc = ((crc << 1) ^ 0x07) & 0xFF;
+            } 
+            else 
+            {
+                crc = (crc << 1) & 0xFF;
+            }
+        }
+    }
+    
+    return crc & 0xFF; 
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
 * NOTES:       
 *****************************************************************************/
-static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint8_t len) 
+static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len) 
 {
-    uint8_t start_index = 0xFF;
-    uint8_t end_index = 0xFF;
-    uint8_t mess_buffer[68];
-    char preset_name[32];
-    uint8_t bytes_consumed;
-    unsigned char ascii_char;
+    uint32_t write_index = 0;
+    uint32_t read_index = 0;
+    uint32_t bytes_read = 0;
+    uint32_t bytes_processed = 0;
+    uint16_t crc;
+    uint16_t preset_index = 0;
+    uint16_t vendor_id;
+    uint32_t packet_length;
+    uint8_t string_index;
+    uint16_t ascii_char;
+    uint8_t* tmp_ptr = (uint8_t*)buffer;
+    char name_string[20] = {0};
 
-    // find the start marker
-    for (uint8_t loop = 0; loop < len; loop++)
+    // step 1: strip the SysEx markers from the data, to get the message bytes
+    while (bytes_read < len)
     {
-        if (buffer[loop] == 0xF0)
+        if (*tmp_ptr == 0x04)
         {
-            start_index = loop;
-            break;
-        }
-    }
+            // skip the 04
+            tmp_ptr++;
+            bytes_read++;
 
-    if (start_index == 0xFF)
-    {
-        ESP_LOGW(TAG, "Missing F0 start byte");
-        return 0;
-    }
-
-
-    // find the end marker
-    for (uint8_t loop = 0; loop < len; loop++)
-    {
-        if (buffer[loop] == 0xF7)
-        {
-            end_index = loop;
-            break;
-        }
-    }
-
-    if (end_index == 0xFF)
-    {
-        ESP_LOGW(TAG, "Missing F7 end byte");
-        return 0;
-    }
-
-    // debug
-    ESP_LOGI(TAG, "SysEx start:%d, end:%d", (int)start_index, (int)end_index);
-
-    bytes_consumed = end_index;
-
-    // example of preset data
-    // 04 f0 08 03   f0 is start of packet.
-    // 04 06 0a 00   04060a is constant. last byte is bank number 0 onwards
-    // 04 00 01 03   after 04, next byte is the preset number within the bank, 0 to 15
-    // 04 01 02 04 
-    // 04 00 00 00      
-    // 04 00 00 00  
-    // 04 00 00 00                                        | Skip the 04 at start
-    // 04 04 07 07  -> 4 bit nibbles 0407 = 0x47 = 'G'.  0702 = 0x72 = 'r'
-    // 04 02 06 05  -> more characters of name
-    // 04 06 01 07  -> more characters of name
-    // 04 04 05 00  -> more characters of name
-    // 04 06 05 06  -> more characters of name
-    // 04 04 06 01  -> more characters of name
-    // 04 06 0c 00  -> 6c = 0x6c = 'l'. 00 = null
-    // 04 00 00 00 
-    // 07 00 00 f7  -> f7 is end of packet
-
-    // build buffer with real data, removing the 04 markers etc    
-    uint8_t mess_buffer_index = 0;
-    uint8_t buffer_index = start_index;
-    
-    // skip start marker and the next 2 bytes after it
-    buffer_index += 3;
-
-    while (buffer_index < end_index)
-    {
-        // skip the 0x04 
-        buffer_index++;
-
-        // copy next 3 bytes
-        mess_buffer[mess_buffer_index++] = buffer[buffer_index++]; 
-        mess_buffer[mess_buffer_index++] = buffer[buffer_index++]; 
-        mess_buffer[mess_buffer_index++] = buffer[buffer_index++]; 
-    }
-
-    // debug
-    //ESP_LOGW(TAG, "Original");
-    //ESP_LOG_BUFFER_HEXDUMP(TAG, buffer, len, ESP_LOG_INFO);
-    //ESP_LOGW(TAG, "Modified");
-    //ESP_LOG_BUFFER_HEXDUMP(TAG, mess_buffer, mess_buffer_index, ESP_LOG_INFO);
-
-    // check what we got
-    if ((mess_buffer[0] == 0x06) && (mess_buffer[1] == 0x0A))
-    {
-        uint8_t byte_index = 2;
-        
-        // found preset details
-        uint8_t bank = mess_buffer[byte_index++];
-        uint8_t preset_in_bank = mess_buffer[byte_index++];
-        uint8_t preset_index = (bank * 16) + preset_in_bank;
-
-        // skip unknown data
-        byte_index += 12;
-
-        // skip non-ascii chars until we get to the start of the preset name
-        for (uint8_t skip = 0; skip < 12; skip++)
-        {
-            if ((mess_buffer[byte_index] < 32) || (mess_buffer[byte_index] > 125))
+            if (*tmp_ptr == 0xF0)
             {
-                byte_index++;
+                // skip the start marker
+                tmp_ptr++;
+                bytes_read++;
+
+                // next 2 bytes are Crc, skip
+                tmp_ptr += 2;
+                bytes_read += 2;
+
+                // next 6 bytes are 0x060a, 0x00, 0x00 and a pair of 0x04s, skip all
+                tmp_ptr += 6;
+                bytes_read += 6;
+
+                // next 2 bytes are 0x0103, skip also, and the 0x04
+                tmp_ptr += 3;
+                bytes_read += 3;
+
+                // next 3 bytes are part of payload, grab them
+                ProcessingBuffer[write_index++] = *tmp_ptr++;
+                ProcessingBuffer[write_index++] = *tmp_ptr++;
+                ProcessingBuffer[write_index++] = *tmp_ptr++;
+                bytes_read += 3;
+
+                // skip the next 0x04
+                tmp_ptr++;
+                bytes_read++;
+
+                // next 3 bytes are part of payload, grab them
+                ProcessingBuffer[write_index++] = *tmp_ptr++;
+                ProcessingBuffer[write_index++] = *tmp_ptr++;
+                ProcessingBuffer[write_index++] = *tmp_ptr++;
+                bytes_read += 3;
             }
             else
             {
+                // data, grab triplet
+                ProcessingBuffer[write_index++] = *tmp_ptr++;
+                ProcessingBuffer[write_index++] = *tmp_ptr++;
+                ProcessingBuffer[write_index++] = *tmp_ptr++;
+                bytes_read += 3;
+            }
+        }
+        else if (*tmp_ptr == 0x07)
+        {
+            // skip the 07
+            tmp_ptr++;
+            bytes_read++;
+
+            // found end marker, get payload bytes
+            ProcessingBuffer[write_index++] = *tmp_ptr++;
+            ProcessingBuffer[write_index++] = *tmp_ptr++;
+            bytes_read += 2;
+
+            if (*tmp_ptr == 0xF7)
+            {
+                // skip end marker
+                tmp_ptr++;
+                bytes_read++;
+            }
+            else
+            {
+                ESP_LOGE(TAG, "Processing error");
                 break;
             }
         }
-
-        //ESP_LOGI(TAG, "Found preset details: bank:%d offset:%d index:%d", (int)bank, (int)preset_in_bank, (int)preset_index);
-
-        // get preset name
-        memset((void*)preset_name, 0, sizeof(preset_name));
-        for (uint8_t char_index = 0; char_index < 12; char_index++)
-        {
-            // get 4 bit nibbles into byte e.g. 04 07 into 47
-            ascii_char = (mess_buffer[byte_index] << 4) | mess_buffer[byte_index + 1];
-            byte_index += 2;
-
-            ESP_LOGW(TAG, "%d", (int)ascii_char);
-
-            preset_name[char_index] = (char)ascii_char;
-        }
-
-        control_sync_preset_name(preset_index, preset_name);
     }
 
-    return bytes_consumed;
+    // debug
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, ProcessingBuffer, write_index, ESP_LOG_INFO);
+    //vTaskDelay(100);
+
+    // check the message type
+    read_index = 0;
+    uint16_t message_type = (ProcessingBuffer[read_index] << 8) | ProcessingBuffer[read_index + 1];
+    read_index += 2;
+
+    switch (message_type)
+    {
+        case 0x0102:
+        {
+            // preset data
+            // is this a length??
+            uint16_t unknown = (ProcessingBuffer[read_index] << 8) | ProcessingBuffer[read_index + 1];
+            read_index += 2;
+
+            ESP_LOGI(TAG, "Found Preset Data: %d", unknown);
+
+            for (uint32_t presets = 0; presets < MAX_PRESETS_VALETON_GP5; presets++)
+            {
+                // get the preset index
+                preset_index = (ProcessingBuffer[read_index] << 8) | ProcessingBuffer[read_index + 1];
+                read_index += 2;
+
+                // skip 6 bytes of zeros
+                read_index += 6;
+                string_index = 0;
+
+                // next is 32 bytes/16 characters of preset name, 2 bytes per char
+                for (uint32_t character = 0; character < 16; character++)
+                {
+                    // get 4 bit nibbles into byte e.g. 04 07 into 47
+                    ascii_char = (ProcessingBuffer[read_index] << 4) | ProcessingBuffer[read_index + 1];
+                    read_index += 2;
+
+                    name_string[string_index++] = (char)ascii_char;
+                }
+                            
+                // save it
+                control_sync_preset_name(preset_index, name_string);
+
+                // don't smash the control input queue too hard
+                vTaskDelay(10);
+            }
+        } break;
+
+        default:
+        {
+            ESP_LOGW(TAG, "Message Type: %d", (int)message_type);
+        } break;
+    };
 }
 
 /****************************************************************************
@@ -433,7 +478,7 @@ void usb_valeton_gp5_handle(class_driver_t* driver_obj)
                             
                             if (midi_host_data_tx_blocking(midi_dev, (const uint8_t*)midi_tx, sizeof(midi_tx), 50) == ESP_OK)
                             {
-                                control_sync_preset_details(message.Payload, "Unknown");
+                                
                             }
                         }
                     } break;
@@ -476,19 +521,7 @@ void usb_valeton_gp5_handle(class_driver_t* driver_obj)
             uint8_t* rx_entry_ptr = (uint8_t*)InputBuffers[loop].Data;
             uint16_t rx_entry_length = InputBuffers[loop].Length;
 
-            // process all messages received (may be multiple messages appended)
-            uint8_t messages_arrived = rx_entry_length / 64;
-
-            for (uint8_t loop = 0; loop < messages_arrived; loop++)
-            {    
-                usb_valeton_gp5_parse_sysex(rx_entry_ptr, 64);
-
-                // skip this message
-                rx_entry_ptr += 64;
-
-                // add some delay, so we don't overload the control input queue
-                vTaskDelay(pdMS_TO_TICKS(20));    //10)); 
-            }  
+            usb_valeton_gp5_parse_sysex(rx_entry_ptr, rx_entry_length);
 
             // set buffer as available       
             InputBuffers[loop].ReadyToRead = 0;
@@ -521,6 +554,13 @@ void usb_valeton_gp5_init(class_driver_t* driver_obj, QueueHandle_t comms_queue)
         return;
     }
 
+    ProcessingBuffer = heap_caps_malloc(VALETON_GP5_RX_TEMP_BUFFER_SIZE, MALLOC_CAP_SPIRAM);
+    if (ProcessingBuffer == NULL)
+    {
+        ESP_LOGE(TAG, "Failed to allocate ProcessingBuffer!");
+        return;
+    }
+
     // set all buffers as ready for writing
     for (uint8_t loop = 0; loop < MAX_INPUT_BUFFERS; loop++)
     {
@@ -546,53 +586,6 @@ void usb_valeton_gp5_init(class_driver_t* driver_obj, QueueHandle_t comms_queue)
 
     memset((void*)ValetonGP5Data, 0, sizeof(tValetonGP5Data));
     ValetonGP5Data->State = COMMS_STATE_IDLE;
-
-    // code from ESP support forums, work around start. Refer to https://www.esp32.com/viewtopic.php?t=30601
-    // Relates to this:
-    // 
-    // Endpoint Descriptor:
-    // ------------------------------
-    // 0x07	bLength
-    // 0x05	bDescriptorType
-    // 0x87	bEndpointAddress  (IN endpoint 7)
-    // 0x02	bmAttributes      (Transfer: Bulk / Synch: None / Usage: Data)
-    // 0x0040	wMaxPacketSize    (64 bytes)
-    // 0x00	bInterval         
-    // *** ERROR: Invalid wMaxPacketSize. Must be 512 bytes in high speed mode.
-
-    //Endpoint Descriptor:
-    //------------------------------
-    // 0x07	bLength
-    // 0x05	bDescriptorType
-    // 0x07	bEndpointAddress  (OUT endpoint 7)
-    // 0x02	bmAttributes      (Transfer: Bulk / Synch: None / Usage: Data)
-    // 0x0200	wMaxPacketSize    (512 bytes)   <= invalid for full speed mode we are using here
-    // 0x00	bInterval         
-    const usb_config_desc_t* config_desc;
-    ESP_ERROR_CHECK(usb_host_get_active_config_descriptor(driver_obj->dev_hdl, &config_desc));
-
-    // fix wMaxPacketSize
-    int off = 0;
-    uint16_t wTotalLength = config_desc->wTotalLength;
-    const usb_standard_desc_t *next_desc = (const usb_standard_desc_t *)config_desc;
-    if (next_desc)
-    {
-        do
-        {
-            if (next_desc->bDescriptorType == USB_B_DESCRIPTOR_TYPE_ENDPOINT)
-            {
-                usb_ep_desc_t *mod_desc = (usb_ep_desc_t *)next_desc;
-                if (mod_desc->wMaxPacketSize > 64)
-                {
-                    ESP_LOGW(TAG, "EP 0x%02X with wrong wMaxPacketSize %d - fixed to 64", mod_desc->bEndpointAddress, mod_desc->wMaxPacketSize);
-                    mod_desc->wMaxPacketSize = 64;
-                }
-            }
-
-            next_desc = usb_parse_next_descriptor(next_desc, wTotalLength, &off);
-        } while (next_desc != NULL);
-    }
-    // code from forums, work around end
 
     // install Midi host driver
     ESP_ERROR_CHECK(midi_host_install(NULL));
