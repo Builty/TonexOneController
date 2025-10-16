@@ -115,6 +115,7 @@ static const char *TAG = "app_Valeton_GP5";
 enum CommsState
 {
     COMMS_STATE_IDLE,
+    COMMS_STATE_SYNC,
     COMMS_STATE_READY
 };
 
@@ -147,6 +148,8 @@ static uint8_t* ProcessingBuffer;
 /*
 ** Static function prototypes
 */
+static void usb_valeton_gp5_request_preset_sync(void);
+static void usb_valeton_gp5_request_current_preset(void);
 
 /****************************************************************************
 * NAME:        
@@ -201,6 +204,8 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
     uint8_t string_index;
     uint16_t ascii_char;
     uint8_t* tmp_ptr = (uint8_t*)buffer;
+    uint16_t message_type = 0;
+    uint8_t found_message = 0;
     char name_string[20] = {0};
 
     // step 1: strip the SysEx markers from the data, to get the message bytes
@@ -208,6 +213,8 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
     {
         if (*tmp_ptr == 0x04)
         {
+            //ESP_LOGE(TAG, "Chunk start");
+
             // skip the 04
             tmp_ptr++;
             bytes_read++;
@@ -222,13 +229,32 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
                 tmp_ptr += 2;
                 bytes_read += 2;
 
-                // next 6 bytes are 0x060a, 0x00, 0x00 and a pair of 0x04s, skip all
-                tmp_ptr += 6;
-                bytes_read += 6;
+                // skip the 0x04
+                tmp_ptr++;
+                bytes_read++;
 
-                // next 2 bytes are 0x0103, skip also, and the 0x04
+                // next 3 bytes are unknown, skip all
                 tmp_ptr += 3;
                 bytes_read += 3;
+
+                // skip the 0x04 and next 00
+                tmp_ptr += 2;
+                bytes_read += 2;
+
+                // grab next 2 bytes (message type)
+                if (!found_message)
+                {
+                    message_type = (*tmp_ptr << 8) | *(tmp_ptr + 1);
+                    found_message = 1;
+                }
+                tmp_ptr += 2;
+                bytes_read += 2;
+
+                //ESP_LOGE(TAG, "Chunk type %X %X", (int)ProcessingBuffer[write_index - 2], (int)ProcessingBuffer[write_index - 1]);
+
+                // skip the 0x04
+                tmp_ptr++;
+                bytes_read++;
 
                 // next 3 bytes are part of payload, grab them
                 ProcessingBuffer[write_index++] = *tmp_ptr++;
@@ -254,9 +280,14 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
                 ProcessingBuffer[write_index++] = *tmp_ptr++;
                 bytes_read += 3;
             }
+
+            // debug
+            //ESP_LOG_BUFFER_HEXDUMP(TAG, ProcessingBuffer, write_index, ESP_LOG_INFO);
         }
         else if (*tmp_ptr == 0x07)
         {
+            //ESP_LOGE(TAG, "Chunk end");
+
             // skip the 07
             tmp_ptr++;
             bytes_read++;
@@ -278,6 +309,29 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
                 break;
             }
         }
+        else if (*tmp_ptr == 0x05)
+        {
+            // skip the 05
+            tmp_ptr++;
+            bytes_read++;
+
+            if (*tmp_ptr == 0xF7)
+            {
+                // skip end marker
+                tmp_ptr++;
+                bytes_read++;
+
+                // skip last 2 bytes
+                tmp_ptr += 2;
+                bytes_read +=2 ;
+            }
+            else
+            {
+                ESP_LOGE(TAG, "Processing error");
+                break;
+            }
+        }
+
     }
 
     // debug
@@ -286,46 +340,116 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
 
     // check the message type
     read_index = 0;
-    uint16_t message_type = (ProcessingBuffer[read_index] << 8) | ProcessingBuffer[read_index + 1];
-    read_index += 2;
-
+   
     switch (message_type)
     {
-        case 0x0102:
+        case 0x0103:
         {
             // preset data
-            // is this a length??
-            uint16_t unknown = (ProcessingBuffer[read_index] << 8) | ProcessingBuffer[read_index + 1];
+            // skip the 0102 marker that signifies GP5 -> Host
             read_index += 2;
 
-            ESP_LOGI(TAG, "Found Preset Data: %d", unknown);
+            uint16_t sub_type = (ProcessingBuffer[read_index] << 8) | ProcessingBuffer[read_index + 1];
+            read_index += 2;
 
-            for (uint32_t presets = 0; presets < MAX_PRESETS_VALETON_GP5; presets++)
+            ESP_LOGI(TAG, "Found Preset Data: %d", sub_type);
+
+            if (sub_type == 1024)
             {
-                // get the preset index
-                preset_index = (ProcessingBuffer[read_index] << 8) | ProcessingBuffer[read_index + 1];
-                read_index += 2;
-
-                // skip 6 bytes of zeros
-                read_index += 6;
-                string_index = 0;
-
-                // next is 32 bytes/16 characters of preset name, 2 bytes per char
-                for (uint32_t character = 0; character < 16; character++)
+                for (uint32_t presets = 0; presets < MAX_PRESETS_VALETON_GP5; presets++)
                 {
-                    // get 4 bit nibbles into byte e.g. 04 07 into 47
-                    ascii_char = (ProcessingBuffer[read_index] << 4) | ProcessingBuffer[read_index + 1];
+                    // get the preset index (2 nibbles)
+                    preset_index = (ProcessingBuffer[read_index] * 16) + ProcessingBuffer[read_index + 1];
                     read_index += 2;
 
-                    name_string[string_index++] = (char)ascii_char;
-                }
-                            
-                // save it
-                control_sync_preset_name(preset_index, name_string);
+                    // debug
+                    //ESP_LOGI(TAG, "Preset Index: %d %d", (int)ProcessingBuffer[read_index - 2], (int)ProcessingBuffer[read_index - 1]);
 
-                // don't smash the control input queue too hard
-                vTaskDelay(10);
+                    // debug
+                    //if (preset_index == 14)
+                    //{
+                    //    ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index - 16], 64, ESP_LOG_INFO);
+                    //}
+
+                    // skip 6 bytes of zeros
+                    read_index += 6;
+                    string_index = 0;
+
+                    // next is 32 bytes/16 characters of preset name, 2 bytes per char
+                    for (uint32_t character = 0; character < 16; character++)
+                    {
+                        // get 4 bit nibbles into byte e.g. 04 07 into 47
+                        ascii_char = (ProcessingBuffer[read_index] << 4) | ProcessingBuffer[read_index + 1];
+                        read_index += 2;
+
+                        name_string[string_index++] = (char)ascii_char;
+                    }
+                                
+                    // save it
+                    control_sync_preset_name(preset_index, name_string);
+
+                    // don't smash the control input queue too hard
+                    vTaskDelay(10);
+                }
+
+                control_set_sync_complete();
+
+                // request the preset details
+                usb_valeton_gp5_request_current_preset();
+
+                ValetonGP5Data->State = COMMS_STATE_READY;
             }
+            else if (sub_type == 1025) 
+            {
+                // current preset details
+                // skip the 0102 marker that signifies GP5 -> Host
+                read_index += 2;
+
+                ESP_LOGI(TAG, "Current Preset details");
+
+                // debug
+                ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
+            }
+            else
+            {
+                ESP_LOGI(TAG, "Unknown Preset details sub-type %X", sub_type);
+            }
+        } break;
+
+        case 0x0006:
+        {
+            // skip the 0102 marker that signifies GP5 -> Host
+            read_index += 2;
+
+            // debug
+            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
+        
+            ESP_LOGI(TAG, "Preset changed?");
+
+            // request the preset details
+            usb_valeton_gp5_request_current_preset();
+        } break;
+
+        case 0x0604:
+        {
+            // skip the 0102 marker that signifies GP5 -> Host
+            read_index += 2;
+
+            // debug
+            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
+        
+            ESP_LOGI(TAG, "Preset details?");
+        } break;
+
+        case 0x0002:
+        {
+            // skip the 0102 marker that signifies GP5 -> Host
+            read_index += 2;
+
+            // debug
+            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
+        
+            ESP_LOGI(TAG, "Preset request?");
         } break;
 
         default:
@@ -333,6 +457,8 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
             ESP_LOGW(TAG, "Message Type: %d", (int)message_type);
         } break;
     };
+
+    return 1;
 }
 
 /****************************************************************************
@@ -354,6 +480,109 @@ static void usb_valeton_gp5_request_preset_sync(void)
     {
         ESP_LOGE(TAG, "Failed to send preset sync request");
     }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void usb_valeton_gp5_request_current_preset(void)
+{
+    // BT log f0 00 09 00 01 00 00 00 02 01 02 04 01 f7
+    uint8_t midi_tx[] = {0x04, 0xf0, 0x00, 0x09, 
+                         0x04, 0x00, 0x01, 0x00, 
+                         0x04, 0x00, 0x00, 0x02, 
+                         0x04, 0x01, 0x02, 0x04, 
+                         0x06, 0x01, 0xf7, 0x00};
+
+    if (midi_host_data_tx_blocking(midi_dev, (const uint8_t*)midi_tx, sizeof(midi_tx), 50) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Failed to send usb_valeton_gp5_request_current_preset");
+    }
+    
+    // params??
+    // response BT:  f0 03 0d 00 05 00 00 06 04 01 02 04 01 0f 0f 00 00 01
+    //  00 00 00 00 01 00 00 00 04 00 00 00 01 00 00 00
+    //  00 00 00 00 02 00 00 00 04 00 00 00 0a 04 05 04
+    //  0d 05 01 00 00 00 00 01 00 00 00 00 01 01 00 00
+    //  04 00 00 00 0a 00 00 00 00 00 00 00 02 01 00 00
+    //  04 00 00 00 08 00 00 00 00 00 00 00 01 00 00 01
+    //  00 00 00 00 01 02 00 00 04 00 00 03 02 00 00 00
+    //  00 00 00 00 02 02 00 00 04 00 00 07 08 00 00 00
+    //  00 00 00 00 02 00 00 08 06 00 01 00 01 03 00 00
+    //  04 00 00 03 0f 00 01 00 00 00 00 00 02 03 00 00
+    //  0a 00 00 00 00 00 01 00 02 00 09 00 03 00 04 00
+    //  05 00 06 00 07 00 08 00 03 03 00 02 08 00 00 01
+    //  0b 00 00 00 00 00 00 00 01 00 00 00 00 00 00 f7
+
+    // f0 08 06 00 05 00 01 06 04 00 00 00 00 00 00 00 03 00
+    // 04 00 00 00 00 00 07 01 09 00 00 00 00 00 0a 03
+    // 06 00 00 00 00 00 01 00 00 00 00 00 00 00 04 00
+    // 00 00 00 00 00 00 0b 00 06 00 00 00 00 00 0c 00
+    // 00 00 00 00 00 00 0f 00 04 03 00 04 00 00 01 00
+    // 00 00 00 07 00 04 01 00 00 00 00 00 00 00 00 00
+    // 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+    // 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+    // 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+    // 00 00 00 0a 00 04 01 00 00 00 00 03 04 04 02 00
+    // 00 00 00 02 00 04 02 00 00 00 00 02 00 04 01 00
+    // 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+    //  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f7
+
+    // +more
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void usb_valeton_gp5_request_something_1(void)
+{
+    // BT log f0 00 07 00 01 00 00 00 02 01 02 04 03 f7
+    uint8_t midi_tx[] = {0x04, 0xf0, 0x00, 0x07, 
+                         0x04, 0x00, 0x01, 0x00, 
+                         0x04, 0x00, 0x00, 0x02, 
+                         0x04, 0x01, 0x02, 0x04, 
+                         0x06, 0x03, 0xf7, 0x00};
+
+    if (midi_host_data_tx_blocking(midi_dev, (const uint8_t*)midi_tx, sizeof(midi_tx), 50) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Failed to send usb_valeton_gp5_request_something_1");
+    }
+
+    // response BT:  f0 00 07 00 01 00 00 00 02 01 02 04 03 f7
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void usb_valeton_gp5_request_something_2(void)
+{
+    // BT log f0 03 05 00 01 00 00 00 04 01 02 04 03 00 01 00 00 f7
+
+    uint8_t midi_tx[] = {0x04, 0xf0, 0x03, 0x05, 
+                         0x04, 0x00, 0x01, 0x00, 
+                         0x04, 0x00, 0x00, 0x04, 
+                         0x04, 0x01, 0x02, 0x04, 
+                         0x04, 0x03, 0x00, 0x01, 
+                         0x06, 0x00, 0x00, 0xf7};
+
+    if (midi_host_data_tx_blocking(midi_dev, (const uint8_t*)midi_tx, sizeof(midi_tx), 50) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Failed to send usb_valeton_gp5_request_something_1");
+    }
+
+    // response BT: f0 00 09 00 01 00 00 00 02 01 02 04 01 f7
 }
 
 /****************************************************************************
@@ -421,7 +650,17 @@ void usb_valeton_gp5_handle(class_driver_t* driver_obj)
         {
             usb_valeton_gp5_request_preset_sync();
 
-            ValetonGP5Data->State = COMMS_STATE_READY;
+#if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
+            // show sync message
+            UI_SetPresetLabel(0, "Syncing....");
+#endif
+
+            ValetonGP5Data->State = COMMS_STATE_SYNC;
+        } break;
+
+        case COMMS_STATE_SYNC:
+        {
+            // waiting for Sync to complete
         } break;
 
         case COMMS_STATE_READY:
