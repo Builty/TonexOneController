@@ -1,6 +1,6 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[Tonex_Controller_800_480land.eez-project]:/userPages/0",
+    "selectedUserPageObject": "[Tonex_Controller_800_480land.eez-project]:/userPages/1",
     "subnavigationSelectedItems": {}
   },
   "layoutModel": {
@@ -69,6 +69,7 @@
           {
             "type": "border",
             "selected": 0,
+            "size": 131.5,
             "location": "bottom",
             "children": [
               {
@@ -120,7 +121,7 @@
                 {
                   "type": "tabset",
                   "id": "#4cbdbd43-810e-4900-a96f-b3fb3a62a03d",
-                  "weight": 1,
+                  "weight": 0.4858156028368794,
                   "enableClose": false,
                   "children": [
                     {
@@ -152,7 +153,7 @@
                 {
                   "type": "tabset",
                   "id": "#d922e14c-0593-4c57-97e1-f49c1fe89d64",
-                  "weight": 1,
+                  "weight": 2.017029290379453,
                   "enableClose": false,
                   "children": [
                     {
@@ -163,12 +164,13 @@
                       "enableClose": false,
                       "icon": "svg:hierarchy"
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
                   "id": "#415a55d9-46d2-462b-9c9b-aebfa5867181",
-                  "weight": 1,
+                  "weight": 0.4971551067836679,
                   "enableClose": false,
                   "children": [
                     {
@@ -193,10 +195,10 @@
                 {
                   "type": "tab",
                   "id": "#76314634-65e1-4225-b990-af9c26f38d4f",
-                  "name": "Screen1",
+                  "name": "Settings",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[Tonex_Controller_800_480land.eez-project]:/userPages/0",
+                    "objectPath": "[Tonex_Controller_800_480land.eez-project]:/userPages/1",
                     "permanent": false
                   },
                   "icon": "svg:page"
@@ -221,8 +223,7 @@
                       "enableClose": false,
                       "icon": "svg:properties"
                     }
-                  ],
-                  "active": true
+                  ]
                 },
                 {
                   "type": "tabset",
@@ -993,9 +994,10 @@
       "selection": {
         "0": {
           "0": {
-            "7": {
+            "1": {
               "$selected": true
-            }
+            },
+            "7": {}
           }
         }
       },
