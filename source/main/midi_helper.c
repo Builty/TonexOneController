@@ -1980,14 +1980,27 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num, uint8_t midi_v
 
         case 127:
         {
-            // Custom case: use CC to change params.
-            if (midi_value_1 >= (usb_get_max_presets_for_connected_modeller())) 
+            uint32_t new_preset;
+            uint32_t current_preset = control_get_current_preset_index();
+
+            if (current_preset == midi_value_1)
             {
-                ESP_LOGW(TAG, "Unsupported Midi CC 127 value %d", midi_value_1);
+                // select midi value 2
+                new_preset = midi_value_2;
+            }
+            else
+            {
+                // select midi value 1
+                new_preset = midi_value_1;
+            }
+
+            if (new_preset >= (usb_get_max_presets_for_connected_modeller())) 
+            {
+                ESP_LOGW(TAG, "Unsupported Midi CC 127 value %d", new_preset);
             } 
             else 
             {
-                control_request_preset_index(midi_value_1);
+                control_request_preset_index(new_preset);
             }
 
             // don't set any return param, as this one is already handled and its not a parameter
