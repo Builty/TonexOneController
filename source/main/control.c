@@ -344,8 +344,12 @@ static uint8_t process_control_command(tControlMessage* message)
         {
             ControlData.PresetIndex = message->Value;
 
-            memcpy((void*)ControlData.PresetNames[message->Value], (void*)message->Text, MAX_PRESET_NAME_LENGTH);
-            ControlData.PresetNames[message->Value][MAX_PRESET_NAME_LENGTH - 1] = 0;
+            if (strlen(message->Text) > 0)
+            {
+                // update name text
+                memcpy((void*)ControlData.PresetNames[message->Value], (void*)message->Text, MAX_PRESET_NAME_LENGTH);
+                ControlData.PresetNames[message->Value][MAX_PRESET_NAME_LENGTH - 1] = 0;
+            }
           
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
             // update UI
