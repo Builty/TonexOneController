@@ -1,6 +1,7 @@
 {
   "navigation": {
     "selectedUserPageObject": "[Tonex_Controller_800_480land.eez-project]:/userPages/0",
+    "selectedBitmapObject": "[Tonex_Controller_800_480land.eez-project]:/bitmaps/-1",
     "subnavigationSelectedItems": {}
   },
   "layoutModel": {
@@ -21,7 +22,8 @@
           },
           {
             "type": "border",
-            "size": 240,
+            "selected": 0,
+            "size": 71.5,
             "location": "right",
             "children": [
               {
@@ -152,7 +154,7 @@
                 {
                   "type": "tabset",
                   "id": "#d922e14c-0593-4c57-97e1-f49c1fe89d64",
-                  "weight": 1,
+                  "weight": 1.8803088803088803,
                   "enableClose": false,
                   "children": [
                     {
@@ -168,7 +170,7 @@
                 {
                   "type": "tabset",
                   "id": "#415a55d9-46d2-462b-9c9b-aebfa5867181",
-                  "weight": 1,
+                  "weight": 0.11969111969111969,
                   "enableClose": false,
                   "children": [
                     {
@@ -531,7 +533,8 @@
                       "component": "bitmaps",
                       "enableClose": false
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
@@ -970,15 +973,16 @@
     "[Tonex_Controller_800_480land.eez-project]:/userPages/0[flow-state]": {
       "selection": {
         "0": {
-          "3": {
+          "2": {},
+          "11": {
             "$selected": true
           }
         }
       },
       "transform": {
         "translate": {
-          "x": -400,
-          "y": -240
+          "x": -309.2033167495847,
+          "y": -289.6253892873299
         },
         "scale": 1
       },
@@ -1027,7 +1031,10 @@
   "selectedStylePropertyName": "",
   "lvglPart": "MAIN",
   "lvglState": "DEFAULT",
-  "lvglExpandedPropertiesGroup": [],
+  "lvglExpandedPropertiesGroup": [
+    "MISCELLANEOUS",
+    "BACKGROUND"
+  ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,
   "flowZoom": 1,
