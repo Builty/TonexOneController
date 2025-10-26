@@ -587,6 +587,18 @@ uint8_t usb_get_first_preset_index_for_connected_modeller(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+uint8_t usb_get_connected_modeller_type(void)
+{
+    return AmpModellerType;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void init_usb_comms(void)
 {
     // init USB

@@ -674,7 +674,7 @@ static esp_err_t usb_tonex_one_modify_global(uint16_t global_val, float value)
 *****************************************************************************/
 static TonexStatus usb_tonex_one_parse_state(uint8_t* unframed, uint16_t length, uint16_t index)
 {
-    tTonexParameter* param_ptr;
+    tModellerParameter* param_ptr;
 
     TonexData->Message.Header.type = TYPE_STATE_UPDATE;
 
@@ -766,7 +766,7 @@ static TonexStatus usb_tonex_one_parse_param_changed(uint8_t* unframed, uint16_t
     uint16_t param_index;
     float value;
     float scaled_value;
-    tTonexParameter* param_ptr = NULL;
+    tModellerParameter* param_ptr = NULL;
     uint8_t param_start_marker[] = { 0xB9, 0x04, 0x03 };
     
     // try to locate the start of the parameter index
@@ -892,7 +892,7 @@ static Slot usb_tonex_one_slot_for_saving_preset(void)
 static void usb_tonex_one_parse_preset_parameters(uint8_t* raw_data, uint16_t length)
 {
     uint8_t param_start_marker[] = {0xBA, 0x03, 0xBA, 0x6D}; 
-    tTonexParameter* param_ptr = NULL;
+    tModellerParameter* param_ptr = NULL;
 
     ESP_LOGI(TAG, "Parsing Preset parameters");
 

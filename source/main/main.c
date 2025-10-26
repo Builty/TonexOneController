@@ -67,6 +67,7 @@ limitations under the License.
 #include "wifi_config.h"
 #include "leds.h"
 #include "tonex_params.h"
+#include "valeton_params.h"
 #include "platform_common.h"
 
 #define I2C_MASTER_FREQ_HZ              400000      /*!< I2C master clock frequency */
@@ -261,6 +262,7 @@ void app_main(void)
     // init parameters
     ESP_LOGI(TAG, "Init Params");
     tonex_params_init();
+    valeton_params_init();
 
     // init control task
     ESP_LOGI(TAG, "Init Control");

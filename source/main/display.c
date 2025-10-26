@@ -449,7 +449,7 @@ void ui_show_settings_tab(lv_event_t * e)
 *****************************************************************************/
 void action_effect_icon_clicked(lv_event_t * e)
 {
-    tTonexParameter* param_ptr;
+    tModellerParameter* param_ptr;
     float value;
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t* event_object = lv_event_get_target(e);
@@ -1784,6 +1784,31 @@ static uint8_t update_ui_element(tUIUpdate* update)
         case UI_ELEMENT_USB_STATUS:
         {
             element_1 = objects.ui_usb_status_fail;
+
+            if (update->Value == 1)
+            {
+                // if enabled, adjust UI to suit modeller
+                switch (usb_get_connected_modeller_type())
+                {
+                    case AMP_MODELLER_TONEX_ONE:        // fallthrough
+                    case AMP_MODELLER_TONEX:            // fallthrough
+                    default:
+                    {
+                        lv_obj_clear_flag(objects.ui_bottom_panel_tonex, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_add_flag(objects.ui_bottom_panel_valeton, LV_OBJ_FLAG_HIDDEN);
+
+                        lv_label_set_text(objects.ui_project_heading_label, "Tonex Controller"); 
+                    } break;
+
+                    case AMP_MODELLER_VALETON_GP5:
+                    {
+                        lv_obj_add_flag(objects.ui_bottom_panel_tonex, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_clear_flag(objects.ui_bottom_panel_valeton, LV_OBJ_FLAG_HIDDEN);
+
+                        lv_label_set_text(objects.ui_project_heading_label, "Valeton Controller"); 
+                    } break;
+                }
+            }
         } break;
 
         case UI_ELEMENT_BT_STATUS:
@@ -1827,13 +1852,13 @@ static uint8_t update_ui_element(tUIUpdate* update)
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             ESP_LOGI(TAG, "Syncing params to UI");
 
-            tTonexParameter* param_ptr;
+            tModellerParameter* param_ptr;
 
             for (uint16_t param = 0; param < TONEX_GLOBAL_LAST; param++)
             {                     
                 if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
                 {
-                    tTonexParameter* param_entry = &param_ptr[param];
+                    tModellerParameter* param_entry = &param_ptr[param];
 
                     // debug
                     //ESP_LOGI(TAG, "Param %d: val: %02f, min: %02f, max: %02f", param, param_entry->Value, param_entry->Min, param_entry->Max);
@@ -3327,13 +3352,13 @@ static uint8_t update_ui_element(tUIUpdate* update)
     || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
             ESP_LOGI(TAG, "Syncing params to UI");
 
-            tTonexParameter* param_ptr;
+            tModellerParameter* param_ptr;
 
             for (uint16_t param = 0; param < TONEX_GLOBAL_LAST; param++)
             {                     
                 if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
                 {
-                    tTonexParameter* param_entry = &param_ptr[param];
+                    tModellerParameter* param_entry = &param_ptr[param];
 
                     // debug
                     //ESP_LOGI(TAG, "Param %d: val: %02f, min: %02f, max: %02f", param, param_entry->Value, param_entry->Min, param_entry->Max);

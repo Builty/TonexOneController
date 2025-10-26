@@ -613,7 +613,7 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
     uint8_t value;
     uint16_t param;
     float new_value;
-    tTonexParameter* param_ptr;
+    tModellerParameter* param_ptr;
 
     // handle state
     switch (handler->state)
@@ -642,7 +642,7 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
                                 if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
                                 {
                                     // is the parameter a boolean type?
-                                    if (param_ptr[param].Type == TONEX_PARAM_TYPE_SWITCH)
+                                    if (param_ptr[param].Type == MODELLER_PARAM_TYPE_SWITCH)
                                     {
                                         // toggle the current value
                                         if (param_ptr[param].Value == 0)
@@ -657,7 +657,7 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
                                         tonex_params_release_locked_access();
                                         usb_modify_parameter(param, new_value);
                                     }
-                                    else if (param_ptr[param].Type == TONEX_PARAM_TYPE_SELECT)
+                                    else if (param_ptr[param].Type == MODELLER_PARAM_TYPE_SELECT)
                                     {
                                         // save current value before we release the locked access
                                         // select params are really integers saved as floats
@@ -677,7 +677,7 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
 
                                         midi_helper_adjust_param_via_midi(fx_handler[loop].config.CC, new_value);     
                                     }
-                                    else if (param_ptr[param].Type == TONEX_PARAM_TYPE_RANGE)
+                                    else if (param_ptr[param].Type == MODELLER_PARAM_TYPE_RANGE)
                                     {
                                         // save current value before we release the locked access
                                         float current_param_value = param_ptr[param].Value;

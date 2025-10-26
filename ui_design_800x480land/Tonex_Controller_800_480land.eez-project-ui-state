@@ -1,7 +1,6 @@
 {
   "navigation": {
     "selectedUserPageObject": "[Tonex_Controller_800_480land.eez-project]:/userPages/0",
-    "selectedBitmapObject": "[Tonex_Controller_800_480land.eez-project]:/bitmaps/-1",
     "subnavigationSelectedItems": {}
   },
   "layoutModel": {
@@ -973,10 +972,13 @@
     "[Tonex_Controller_800_480land.eez-project]:/userPages/0[flow-state]": {
       "selection": {
         "0": {
+          "0": {
+            "1": {
+              "$selected": true
+            }
+          },
           "2": {},
-          "11": {
-            "$selected": true
-          }
+          "11": {}
         }
       },
       "transform": {

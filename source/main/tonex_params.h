@@ -23,24 +23,6 @@ limitations under the License.
 extern "C" {
 #endif
 
-#define MAX_PARAM_NAME          12
-
-typedef struct
-{
-    float Value;
-    float Min;
-    float Max;
-    char Name[MAX_PARAM_NAME];
-    uint8_t Type;
-} tTonexParameter;
-
-enum ParamTypes
-{
-    TONEX_PARAM_TYPE_SWITCH,        // on/off
-    TONEX_PARAM_TYPE_SELECT,        // 0,1,2,3 etc
-    TONEX_PARAM_TYPE_RANGE          // floating point range
-};
-
 enum TonexReverbModels
 {
     TONEX_REVERB_SPRING_1,
@@ -226,7 +208,7 @@ typedef struct
 } tTonexPresetColor;
 
 esp_err_t tonex_params_init(void);
-esp_err_t tonex_params_get_locked_access(tTonexParameter** param_ptr);
+esp_err_t tonex_params_get_locked_access(tModellerParameter** param_ptr);
 esp_err_t tonex_params_release_locked_access(void);
 esp_err_t tonex_params_get_min_max(uint16_t param_index, float* min, float* max);
 esp_err_t tonex_dump_parameters(void);

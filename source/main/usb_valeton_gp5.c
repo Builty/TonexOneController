@@ -32,7 +32,7 @@ limitations under the License.
 #include "display.h"
 #include "wifi_config.h"
 #include "usb_tonex_common.h"
-#include "tonex_params.h"
+#include "valeton_params.h"
 
 //***** Valeton GP5 device *****
 //-----------------------------
@@ -113,47 +113,6 @@ static const char *TAG = "app_Valeton_GP5";
 #define VALETON_GP5_TX_TEMP_BUFFER_SIZE             1024
 #define VALETON_GP5_USB_TX_BUFFER_SIZE              128
 
-// GP5 params, might move to dedicated file
-// Credit for this to Facebook user, name to be found
-// Pedal	    No_of_Params	Param_0	Param_1	Param_2	Param_3	Param_4	Param_5	Param_6
-// Green OD	    3	            Gain	Tone	VOL				
-// Yellow OD	2	            Gain	VOL					
-// Super OD	    3	            Gain	Tone	VOL				
-// SM Dist	    3	            Gain	Tone	VOL				
-// Plustortion	2	            Gain	VOL					
-// La Charger	3	            Gain	Tone	VOL				
-// Darktale	    3	            Gain	Filter	VOL				
-// Sora Fuzz	2	            Fuzz	VOL					
-// Red Haze	    2	            Fuzz	VOL					
-// Bass OD	    5	            Gain	Blend	Vol	    Bass	Treble		
-// Guitar EQ 1	6	            125Hz	400Hz	800Hz	1.6kHz	4kHz	VOL	
-// Guitar EQ 2	6	            100Hz	500Hz	1kHz	3kHz	6kHz	VOL	
-// Bass EQ 1	6	            33Hz	150Hz	600Hz	2kHz	8kHz	VOL	
-// Bass EQ 2	6	            50Hz	120Hz	400Hz	800Hz	4.5kHz	VOL	
-// Mess EQ	    5	            80Hz	240Hz	750Hz	2.2kHz	6.6kHz		
-// Gate	        1	            THRE						
-// COMP	        2	            Sustain	VOL					
-// COMP4	    4	            Sustain	Attack	VOL	    Clip			
-// Boost	    3	            Gain	+3dB	Bright				
-// Micro Boost	1	            Gain						
-// B-Boost	    4	            Gain	Vol	    Bass	Treble			
-// Toucher	    4	            Sense	Range	Q	    Mix			
-// Crier	    6	            Depth	Rate	VOL	    Low	Q	High	
-// OCTA	        3	            Low	    High	Dry				
-// Pitch	    5	            High	Low	Dry	H-VOL	L-VOL		
-// Detune	    3	            Detune	Wet	Dry				
-// A-Chorus	    3	            Depth	Rate	Tone				
-// B-Chorus	    3	            Depth	Rate	VOL				
-// Jet	        4	            Depth	Rate	P.Delay	F.Back			
-// N-Jet	    4	            Depth	Rate	P.Delay	F.Back			
-// O-Phase	    1	            Rate						
-// M-Vibe	    2	            Depth	Rate					
-// V-Roto	    2	            Depth	Rate					
-// Vibrato	    3	            Depth	Rate	VOL				
-// O-Trem	    2	            Depth	Rate					
-// Sine Trem	3	            Depth	Rate	VOL				
-// Bias Trem	4	            Depth	Rate	VOL	    Bias			
-
 enum CommsState
 {
     COMMS_STATE_IDLE,
@@ -194,6 +153,7 @@ static void usb_valeton_gp5_request_something_2(void);
 static void usb_valeton_gp5_get_preset(uint8_t index);
 static void usb_valeton_gp5_set_preset(uint8_t index);
 static void usb_valeton_gp5_request_preset_params(void);
+static void usb_valeton_gp5_set_effect_block_state(uint8_t block_index, uint8_t state);
 
 /****************************************************************************
 * NAME:        
@@ -419,23 +379,40 @@ static esp_err_t usb_valeton_gp5_send_sysex(const uint8_t* buffer, uint8_t len, 
 * NOTES:       
 *****************************************************************************/
 // Decode percentage parameters (delay_mix, delay_feedback, reverb_mix, reverb_decay)
-float usb_valeton_gp5_decode_percentage(uint8_t byte30, uint8_t byte31, uint8_t byte33) {
+float usb_valeton_gp5_decode_percentage(uint8_t byte30, uint8_t byte31, uint8_t byte33) 
+{
     float value;
-    if (byte33 == 0x00) { // 0–7% range
+
+    if (byte33 == 0x00) 
+    { 
+        // 0–7% range
         value = (byte30 * 2.0f) + (byte31 / 8.0f);
-    } else if (byte33 == 0x01) { // 8–31% range
+    } 
+    else if (byte33 == 0x01) 
+    { 
+        // 8–31% range
         value = 8.0f + (byte30 * 2.0f) + (byte31 / 8.0f);
-    } else if (byte33 == 0x02) { // 32–100% range
+    } 
+    else if (byte33 == 0x02) 
+    { 
+        // 32–100% range
         value = 32.0f + (byte30 * 4.0f) + (byte31 / 4.0f);
-    } else if (byte33 == 0x03) { // Extended range (e.g., delay_time 128–255ms)
+    } 
+    else if (byte33 == 0x03) 
+    { 
+        // Extended range (e.g., delay_time 128–255ms)
         value = 128.0f + (byte30 * 4.0f) + (byte31 / 4.0f);
-    } else {
+    } 
+    else 
+    {
         return -1.0f;
     }
+    
     // Apply +2% offset for 32–100% range to match device display
-    if (byte33 == 0x02) {
-        value += 2.0f;
-    }
+    //if (byte33 == 0x02) 
+    //{
+    //    value += 2.0f;
+    //}
     return value;
 }
 
@@ -447,14 +424,24 @@ float usb_valeton_gp5_decode_percentage(uint8_t byte30, uint8_t byte31, uint8_t 
 * NOTES:       
 *****************************************************************************/
 // Decode delay_time (ms)
-float usb_valeton_gp5_decode_time(uint8_t byte30, uint8_t byte31, uint8_t byte33) {
-    if (byte33 == 0x01) { // 20–31ms range
+float usb_valeton_gp5_decode_time(uint8_t byte30, uint8_t byte31, uint8_t byte33) 
+{
+    if (byte33 == 0x01) 
+    { 
+        // 20–31ms range
         return 20.0f + (byte30 * 2.0f) + (byte31 / 8.0f);
-    } else if (byte33 == 0x02) { // 32–127ms range
+    } 
+    else if (byte33 == 0x02) 
+    { 
+        // 32–127ms range
         return 32.0f + (byte30 * 4.0f) + (byte31 / 4.0f);
-    } else if (byte33 == 0x03) { // 128–255ms range
+    } 
+    else if (byte33 == 0x03) 
+    { 
+        // 128–255ms range
         return 128.0f + (byte30 * 4.0f) + (byte31 / 4.0f);
     }
+    
     return -1.0f;
 }
 
@@ -465,47 +452,25 @@ float usb_valeton_gp5_decode_time(uint8_t byte30, uint8_t byte31, uint8_t byte33
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-// Decode reverb_type or reverb_ok
-const char *usb_valeton_gp5_decode_type_or_onoff(uint8_t byte24, uint8_t byte32) {
-    if (byte32 == 0x0c) { // reverb_type
-        switch (byte24) {
-            case 0x0b: return "Air";
-            case 0x00: return "Room";
-            case 0x01: return "Hall";
-            case 0x02: return "Church";
-            case 0x0f: return "Plate";
-            case 0x04: return "Spring";
-            case 0x06: return "N-Star";
-            case 0x07: return "Deepsea";
-            case 0x05: return "Sweet Space";
-            default: return "Unknown";
-        }
-    } else if (byte32 == 0x0b) { // reverb_ok
-        switch (byte24) {
-            case 0x01: return "On";
-            case 0x00: return "Off";
-            default: return "Unknown";
-        }
-    }
-    return "Unknown";
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
 // Decode EQ Level (-50 to 50)
-float usb_valeton_gp5_decode_level(uint8_t byte30, uint8_t byte31, uint8_t byte32, uint8_t byte33) {
-    if (byte32 == 0x0c && byte33 == 0x02) { // Negative range (-50 to -1)
+float usb_valeton_gp5_decode_level(uint8_t byte30, uint8_t byte31, uint8_t byte32, uint8_t byte33) 
+{
+    if (byte32 == 0x0c && byte33 == 0x02) 
+    { 
+        // Negative range (-50 to -1)
         return -50.0f + (byte30 * 2.0f) + (byte31 / 8.0f);
-    } else if (byte32 == 0x04 && byte33 == 0x00) { // Positive range (0 to 50)
+    } 
+    else if (byte32 == 0x04 && byte33 == 0x00) 
+    { 
+        // Positive range (0 to 50)
         return (byte30 * 2.0f) + (byte31 / 8.0f);
-    } else if (byte32 == 0x04 && byte33 == 0x01) { // 8–31 range, possibly mislabeled as Level
+    } 
+    else if (byte32 == 0x04 && byte33 == 0x01) 
+    { 
+        // 8–31 range, possibly mislabeled as Level
         return 8.0f + (byte30 * 2.0f) + (byte31 / 8.0f);
     }
+    
     return -51.0f; // Invalid
 }
 
@@ -1083,8 +1048,11 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
             // skip the 0x0F 0x0F bytes
             read_index += 2;
 
+#if 0            
+            // following is incorrect
+            
             // suspected 16 byte chunks per parameter. 99 x 16 byte chunks are found. 99 is number of presets, maybe this is not params?
-#define MESSAGE_LENGTH 34 
+            #define MESSAGE_LENGTH 34 
 
             for (size_t i = read_index; i <= write_index - read_index - MESSAGE_LENGTH; i += MESSAGE_LENGTH) 
             {
@@ -1150,7 +1118,7 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
                     }
                 }
             }
-    
+#endif    
 
 
 
@@ -1241,6 +1209,42 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
             // example response
             //                                      f0 07
             //  0d 00 01 00 00 00 03 01 02 04 05 00 00 f7
+        } break;
+
+        case 0x47:
+        {
+            // effect selection confirmation.
+            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
+
+            ESP_LOGI(TAG, "Got 0x47");
+
+            // example response
+            //  f0 0c 05 00 01 00 00 00 0e 01 01 04 07 00 01 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f7
+        } break;
+
+        case 0x48:
+        {
+            // parameter change confirmation
+            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
+
+            ESP_LOGI(TAG, "Got 0x48");
+
+            // example response
+            // f0 0c 0e 00 01 00 00 00 0e 01 01 04 08 00 01 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00 00 00 00 02 00 04 02 f7
+        } break;
+
+        case 0x49:
+        {
+            // effect block state
+            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
+            uint8_t effect_block = (ProcessingBuffer[read_index] << 4) | ProcessingBuffer[read_index + 1];
+            read_index += 2;
+
+            // skip to status byte
+            read_index += 7;
+            uint8_t state = ProcessingBuffer[read_index];
+
+            ESP_LOGI(TAG, "Got effect block state %d %d", effect_block, state);         
         } break;
 
         case 0x50:
@@ -1449,6 +1453,83 @@ static void usb_valeton_gp5_set_preset(uint8_t index)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+static void usb_valeton_gp5_set_effect_block_state(uint8_t block_index, uint8_t state)
+{
+    uint8_t midi_tx[] = {0x04, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+    // set the block index
+    midi_tx[2] = block_index >> 4;
+    midi_tx[3] = block_index & 0x0F;
+
+    // set state
+    midi_tx[11] = state;
+
+    ESP_LOGI(TAG, "Set Effect Block state %d %d", block_index, state);
+
+    usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void usb_valeton_gp5_set_effect_block_model(uint8_t block_index, uint8_t model)
+{
+    uint8_t midi_tx[] = {0x04, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+    // set the block index
+    midi_tx[2] = block_index >> 4;
+    midi_tx[3] = block_index & 0x0F;
+
+    // set model index
+    midi_tx[10] = model >> 4;
+    midi_tx[11] = model & 0x0F;
+
+    ESP_LOGI(TAG, "Set Effect Block model %d %d", block_index, model);
+
+    usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void usb_valeton_gp5_set_effect_block_model_parameter(uint8_t block_index, uint8_t parameter_index, float value)
+{
+    uint8_t midi_tx[] = {0x04, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+    // set the block index
+    midi_tx[2] = block_index >> 4;
+    midi_tx[3] = block_index & 0x0F;
+
+    // set parameter index
+    midi_tx[10] = parameter_index >> 4;
+    midi_tx[11] = parameter_index & 0x0F;
+
+    // set parameter value
+    //todo
+    //midi_tx[xx] = 
+    //midi_tx[xx] = 
+
+    ESP_LOGI(TAG, "Set Effect Block model parameter %d %d %3.2f", block_index, parameter_index, value);
+
+    usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 static bool usb_valeton_gp5_handle_rx(const uint8_t* data, size_t data_len, void* arg)
 {
     // debug
@@ -1577,10 +1658,11 @@ void usb_valeton_gp5_handle(class_driver_t* driver_obj)
                     
                     case USB_COMMAND_MODIFY_PARAMETER:
                     {
-                        if (message.Payload < TONEX_PARAM_LAST)
+                        if (message.Payload < VALETON_PARAM_LAST)
                         {
+                            // modify param
                         }
-                        else if (message.Payload < TONEX_GLOBAL_LAST)
+                        else if (message.Payload < VALETON_GLOBAL_LAST)
                         {
                             // modify the global
                         }
