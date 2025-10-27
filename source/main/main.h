@@ -23,7 +23,7 @@ limitations under the License.
 extern "C" {
 #endif
 
-#define APP_VERSION		"2.0.1.2"
+#define APP_VERSION		"2.0.2.2"
 
 #define I2C_MASTER_NUM_1                0          
 #define I2C_MASTER_NUM_2                1          

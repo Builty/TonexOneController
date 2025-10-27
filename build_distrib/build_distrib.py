@@ -9,7 +9,7 @@ from zipfile import ZipFile
 dirname = Path.cwd()
 
 # set version
-version = '2.0.0.2'
+version = '2.0.2.2'
 
 def delete_files_in_folder(directory):
     for filename in os.listdir(directory):
@@ -22,7 +22,7 @@ def delete_files_in_folder(directory):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
         
-def build_distribution(template, target_folder, include_ota, out_filename):     
+def build_distribution(template, target_folder, include_ota, out_filename, skins_path=None):     
     print('BuildDistrib working in folder: ', target_folder)
 
     # copy default flash updater
@@ -31,7 +31,9 @@ def build_distribution(template, target_folder, include_ota, out_filename):
     
     print('Delete files in ' + dest)
     delete_files_in_folder(dest)
-           
+    
+    os.mkdir(os.path.join(dest, 'bin'))
+    
     # copy new files
     print('copy template files from ' + template)
     #copy_tree(src, dest)
@@ -66,6 +68,13 @@ def build_distribution(template, target_folder, include_ota, out_filename):
     print('copying: ' + src + ' to ' + dest)
     shutil.copy(src, dest)
 
+    if skins_path is not None:
+        # copy skins bin
+        print('copy skins bin...')
+        src = os.path.join(dirname, '..', 'source', 'skin_images', skins_path, 'skins.bin')
+        dest = os.path.join(dirname, 'temp', 'bin')
+        print('copying: ' + src + ' to ' + dest)
+        shutil.copy(src, dest)
 
     # create zip file
     print('zip files...')
@@ -90,13 +99,9 @@ build_distribution('template_cust_partition', 'build_ws169t', True, zip_name)
 zip_name = 'TonexController_V' + version + '_Waveshare_1_69_Touch_land'
 build_distribution('template_cust_partition', 'build_ws169tland', True, zip_name)
 
-# Build Waveshare 4.3B with Amp skins
-zip_name = 'TonexController_V' + version + '_Waveshare_4_3B_Display_Amp_Skins'
-build_distribution('template_cust_partition', 'build_ws43b_as', True, zip_name)
-
-# Build Waveshare 4.3B with Pedal skins
-zip_name = 'TonexController_V' + version + '_Waveshare_4_3B_Display_Pedal_Skins'
-build_distribution('template_cust_partition', 'build_ws43b_ps', True, zip_name)
+# Build Waveshare 4.3B
+zip_name = 'TonexController_V' + version + '_Waveshare_4_3B'
+build_distribution('template_cust_partition_16MB', 'build_ws43b', True, zip_name, '16bit')
 
 # Build Waveshare Zero
 zip_name = 'TonexController_V' + version + '_Waveshare_Zero'
@@ -118,21 +123,13 @@ build_distribution('template_cust_partition', 'build_m5atoms3r', True, zip_name)
 zip_name = 'TonexController_V' + version + '_Lilygo_TDisplay_S3'
 build_distribution('template_cust_partition', 'build_lgtdisps3', True, zip_name)
 
-# Build Waveshare 3.5B with Amp skins
-zip_name = 'TonexController_V' + version + '_Waveshare_3_5B_Display_Amp_Skins'
-build_distribution('template_cust_partition', 'build_ws35b_as', True, zip_name)
+# Build Waveshare 3.5B
+zip_name = 'TonexController_V' + version + '_Waveshare_3_5B'
+build_distribution('template_cust_partition_16MB', 'build_ws35b', True, zip_name, '16bitswapped')
 
-# Build Waveshare 3.5B with Pedal skins
-zip_name = 'TonexController_V' + version + '_Waveshare_3_5B_Display_Pedal_Skins'
-build_distribution('template_cust_partition', 'build_ws35b_ps', True, zip_name)
-
-# Build JC3248W with Amp skins
-zip_name = 'TonexController_V' + version + '_JC3248W_Display_Amp_Skins'
-build_distribution('template_cust_partition', 'build_jc3248w_as', True, zip_name)
-
-# Build JC3248W with Pedal skins
-zip_name = 'TonexController_V' + version + '_JC3248W_Display_Pedal_Skins'
-build_distribution('template_cust_partition', 'build_jc3248w_ps', True, zip_name)
+# Build JC3248W
+zip_name = 'TonexController_V' + version + '_JC3248W'
+build_distribution('template_cust_partition_16MB', 'build_jc3248w', True, zip_name, '16bitswapped')
 
 # Build Waveshare 1.9
 zip_name = 'TonexController_V' + version + '_Waveshare_1_9'
@@ -150,8 +147,8 @@ build_distribution('template_cust_partition', 'build_pirate169', True, zip_name)
 zip_name = 'TonexController_V' + version + '_PirateMidi_PolarPlus'
 build_distribution('template_cust_partition', 'build_pirate169land', True, zip_name)
 
-# Build Pirate Midi Polar Max (4.3B) amp skins
-zip_name = 'TonexController_V' + version + '_PirateMidi_PolarMax_Amp_Skins'
-build_distribution('template_cust_partition', 'build_pirate43B_as', True, zip_name)
+# Build Pirate Midi Polar Max (4.3B)
+zip_name = 'TonexController_V' + version + '_PirateMidi_PolarMax'
+build_distribution('template_cust_partition_16MB', 'build_pirate43B', True, zip_name, '16bit')
 
 print('All done')
