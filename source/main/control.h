@@ -22,7 +22,6 @@ void control_load_config(void);
 
 enum Skins
 {
-#if CONFIG_TONEX_CONTROLLER_SKINS_AMP    
     // Amps
     AMP_SKIN_JCM,
     AMP_SKIN_SILVERFACE,
@@ -52,9 +51,7 @@ enum Skins
     AMP_SKIN_DIEZEL,
     AMP_SKIN_WHITEMODERN,
     AMP_SKIN_WOODAMP,
-#endif
 
-#if CONFIG_TONEX_CONTROLLER_SKINS_PEDAL
     // Pedals
     PEDAL_SKIN_BIGMUFF,
     PEDAL_SKIN_BOSSBLACK,
@@ -78,7 +75,6 @@ enum Skins
     PEDAL_SKIN_MXRSINGLEWHITE,
     PEDAL_SKIN_MXRSINGLEYELLOW,
     PEDAL_SKIN_RATYELLOW,
-#endif 
 
     SKIN_MAX        // must be last
 };

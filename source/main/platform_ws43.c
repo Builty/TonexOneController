@@ -78,7 +78,7 @@ limitations under the License.
 static const char *TAG = "platform_ws43";
 
 // LCD panel config
-#define DISPLAY_LCD_PIXEL_CLOCK_HZ     (18 * 1000 * 1000)
+#define DISPLAY_LCD_PIXEL_CLOCK_HZ     (13 * 1000 * 1000)
 #define DISPLAY_LCD_BK_LIGHT_ON_LEVEL  1
 #define DISPLAY_LCD_BK_LIGHT_OFF_LEVEL !DISPLAY_LCD_BK_LIGHT_ON_LEVEL
 
@@ -196,14 +196,14 @@ __attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max
 {
     if (max_entries <= 8)
     {
-        dest[0] = -275;
-        dest[1] = -205;
-        dest[2] = -135;
-        dest[3] = -65;
-        dest[4] = 0;
-        dest[5] = 65;
-        dest[6] = 135;
-        dest[7] = 205;
+        dest[0] = 89;
+        dest[1] = 156;
+        dest[2] = 223;
+        dest[3] = 291;
+        dest[4] = 356;
+        dest[5] = 416;
+        dest[6] = 479;
+        dest[7] = 549;
     }
 }
 
@@ -309,7 +309,15 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         },
         .flags.fb_in_psram = true, // allocate frame buffer in PSRAM
     };
+      
+    // hack here: if the panel is created normally, it results in massive jitter.
+    // allocating some PSRAM here before calling the esp_lcd_new_rgb_panel() function
+    // somehow fixes it, and simulates the way that older versions of the project
+    // did it (a lot of PSRAM was allocated for skin images.)
+    // If anybody figures out the root cause here I'd love to hear it.
+    void* psram_workaround_ptr = heap_caps_malloc(50000, MALLOC_CAP_SPIRAM);
     ESP_ERROR_CHECK(esp_lcd_new_rgb_panel(&panel_config, &panel_handle));
+    free(psram_workaround_ptr);   
 
     ESP_LOGI(TAG, "Register event callbacks");
     esp_lcd_rgb_panel_event_callbacks_t cbs = {

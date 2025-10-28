@@ -38,17 +38,6 @@ menu "Tonex Controller Configuration"
             bool "Waveshare 1.9 Touch"
             
     endchoice
-
-    choice TONEX_CONTROLLER_SKINS
-        prompt "Tonex Controller Skins included (applies to Display Type only)"
-        default TONEX_CONTROLLER_SKINS_AMP
-    
-        config TONEX_CONTROLLER_SKINS_AMP
-            bool "Amp Skins"
-
-        config TONEX_CONTROLLER_SKINS_PEDAL
-            bool "Pedal Skins"
-    endchoice    
     
     config TONEX_CONTROLLER_HAS_DISPLAY
        bool "LCD display is used"
