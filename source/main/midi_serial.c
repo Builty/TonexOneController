@@ -93,9 +93,15 @@ static void midi_serial_task(void *arg)
         .source_clk = UART_SCLK_DEFAULT,
     };
     
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B    
+    // 4.3B log UART shared with RS485 port, needs to be disabled
+    esp_log_level_set("*", ESP_LOG_NONE);
+#endif    
+
     int intr_alloc_flags = 0;
     ESP_ERROR_CHECK(uart_driver_install(UART_PORT_NUM, MIDI_SERIAL_BUFFER_SIZE * 2, 0, 0, NULL, intr_alloc_flags));
     ESP_ERROR_CHECK(uart_param_config(UART_PORT_NUM, &uart_config));
+
     ESP_ERROR_CHECK(uart_set_pin(UART_PORT_NUM, UART_TX_PIN, UART_RX_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
 
     // enable pullup on RX line, to help if pin is floating and Midi serial is enabled
