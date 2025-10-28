@@ -1,6 +1,6 @@
 #include "images.h"
 
-const ext_img_desc_t images[93] = {
+const ext_img_desc_t images[113] = {
     { "arrow_left", &img_arrow_left },
     { "arrow_right", &img_arrow_right },
     { "bt_conn", &img_bt_conn },
@@ -94,4 +94,24 @@ const ext_img_desc_t images[93] = {
     { "usb_ok", &img_usb_ok },
     { "wifi_conn", &img_wifi_conn },
     { "wifi_disconn", &img_wifi_disconn },
+    { "amp_off", &img_amp_off },
+    { "amp_on", &img_amp_on },
+    { "cab_off", &img_cab_off },
+    { "cab_on", &img_cab_on },
+    { "dly_off", &img_dly_off },
+    { "dly_on", &img_dly_on },
+    { "dst_off", &img_dst_off },
+    { "dst_on", &img_dst_on },
+    { "eq_off", &img_eq_off },
+    { "eq_on", &img_eq_on },
+    { "mod_off", &img_mod_off },
+    { "mod_on", &img_mod_on },
+    { "nr_off", &img_nr_off },
+    { "nr_on", &img_nr_on },
+    { "pre_off", &img_pre_off },
+    { "pre_on", &img_pre_on },
+    { "rvb_off", &img_rvb_off },
+    { "rvb_on", &img_rvb_on },
+    { "tc_off", &img_tc_off },
+    { "tc_on", &img_tc_on },
 };

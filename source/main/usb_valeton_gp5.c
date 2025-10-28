@@ -474,6 +474,12 @@ float usb_valeton_gp5_decode_level(uint8_t byte30, uint8_t byte31, uint8_t byte3
     return -51.0f; // Invalid
 }
 
+
+// The values are IEEE-754 (32 bits, little endian), I was having the same problem at first. 
+// But when I find the float numbers of some sliders I realized. The bytes for 50 are not 04 08 04 02(48 42) 
+// You have to add the 4 values before too so the final bytes would be 00 00 00 00 04 08 04 02. (00 00 48 42) 
+// And that is a very easy function to calculate.
+
 /****************************************************************************
 * NAME:        
 * DESCRIPTION: 
@@ -1119,8 +1125,6 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
                 }
             }
 #endif    
-
-
 
             // example response
             // I (9019) app_Valeton_GP5: 0x3c3d4730   0f 0f 00 00 01 00 00 00  00 01 00 00 00 04 00 00  |................|

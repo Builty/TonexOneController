@@ -71,6 +71,16 @@ if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35B OR CONFIG_TONEX_CONTR
                            "ui_generated_480x320land/ui_image_effect_icon_eq.c"                           
                            "ui_generated_480x320land/ui_image_arrow_left.c" "ui_generated_480x320land/ui_image_arrow_right.c" "ui_generated_480x320land/ui_image_tick.c"
                            "ui_generated_480x320land/ui_image_bt_conn.c" "ui_generated_480x320land/ui_image_bt_disconn.c"
+                           "ui_generated_480x320land/ui_image_eq_off.c" "ui_generated_480x320land/ui_image_eq_on.c"
+                           "ui_generated_480x320land/ui_image_mod_off.c" "ui_generated_480x320land/ui_image_mod_on.c"
+                           "ui_generated_480x320land/ui_image_pre_off.c" "ui_generated_480x320land/ui_image_pre_on.c"
+                           "ui_generated_480x320land/ui_image_nr_off.c" "ui_generated_480x320land/ui_image_nr_on.c"
+                           "ui_generated_480x320land/ui_image_rvb_off.c" "ui_generated_480x320land/ui_image_rvb_on.c"
+                           "ui_generated_480x320land/ui_image_tc_off.c" "ui_generated_480x320land/ui_image_tc_on.c"
+                           "ui_generated_480x320land/ui_image_amp_off.c" "ui_generated_480x320land/ui_image_amp_on.c"
+                           "ui_generated_480x320land/ui_image_dly_off.c" "ui_generated_480x320land/ui_image_dly_on.c"
+                           "ui_generated_480x320land/ui_image_dst_off.c" "ui_generated_480x320land/ui_image_dst_on.c"
+                           "ui_generated_480x320land/ui_image_cab_off.c" "ui_generated_480x320land/ui_image_cab_on.c"
                            "ui_generated_480x320land/ui_image_skin_jcm.c")
 endif()
 

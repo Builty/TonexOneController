@@ -100,6 +100,26 @@ extern const lv_img_dsc_t img_usb_fail;
 extern const lv_img_dsc_t img_usb_ok;
 extern const lv_img_dsc_t img_wifi_conn;
 extern const lv_img_dsc_t img_wifi_disconn;
+extern const lv_img_dsc_t img_amp_off;
+extern const lv_img_dsc_t img_amp_on;
+extern const lv_img_dsc_t img_cab_off;
+extern const lv_img_dsc_t img_cab_on;
+extern const lv_img_dsc_t img_dly_off;
+extern const lv_img_dsc_t img_dly_on;
+extern const lv_img_dsc_t img_dst_off;
+extern const lv_img_dsc_t img_dst_on;
+extern const lv_img_dsc_t img_eq_off;
+extern const lv_img_dsc_t img_eq_on;
+extern const lv_img_dsc_t img_mod_off;
+extern const lv_img_dsc_t img_mod_on;
+extern const lv_img_dsc_t img_nr_off;
+extern const lv_img_dsc_t img_nr_on;
+extern const lv_img_dsc_t img_pre_off;
+extern const lv_img_dsc_t img_pre_on;
+extern const lv_img_dsc_t img_rvb_off;
+extern const lv_img_dsc_t img_rvb_on;
+extern const lv_img_dsc_t img_tc_off;
+extern const lv_img_dsc_t img_tc_on;
 
 #ifndef EXT_IMG_DESC_T
 #define EXT_IMG_DESC_T
@@ -109,7 +129,7 @@ typedef struct _ext_img_desc_t {
 } ext_img_desc_t;
 #endif
 
-extern const ext_img_desc_t images[93];
+extern const ext_img_desc_t images[113];
 
 
 #ifdef __cplusplus

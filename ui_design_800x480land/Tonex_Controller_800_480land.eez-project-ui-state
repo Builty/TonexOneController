@@ -1,6 +1,7 @@
 {
   "navigation": {
     "selectedUserPageObject": "[Tonex_Controller_800_480land.eez-project]:/userPages/0",
+    "selectedActionObject": "[Tonex_Controller_800_480land.eez-project]:/actions/12",
     "subnavigationSelectedItems": {}
   },
   "layoutModel": {
@@ -164,7 +165,8 @@
                       "enableClose": false,
                       "icon": "svg:hierarchy"
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
@@ -222,8 +224,7 @@
                       "enableClose": false,
                       "icon": "svg:properties"
                     }
-                  ],
-                  "active": true
+                  ]
                 },
                 {
                   "type": "tabset",
@@ -973,12 +974,13 @@
       "selection": {
         "0": {
           "0": {
-            "1": {
-              "$selected": true
+            "2": {},
+            "11": {
+              "5": {
+                "$selected": true
+              }
             }
-          },
-          "2": {},
-          "11": {}
+          }
         }
       },
       "transform": {

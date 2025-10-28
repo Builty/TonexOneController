@@ -10,6 +10,7 @@ extern "C" {
 typedef struct _objects_t {
     lv_obj_t *screen1;
     lv_obj_t *settings;
+    lv_obj_t *ui_touch_gesture_container;
     lv_obj_t *ui_top_panel;
     lv_obj_t *ui_usb_status_fail;
     lv_obj_t *ui_project_heading_label;

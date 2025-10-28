@@ -194,35 +194,44 @@ __attribute__((unused)) void platform_adjust_display_flush_area(lv_area_t *area)
 *****************************************************************************/
 __attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max_entries)
 {
-    // Tonex
-    if (max_entries <= 8)
+    switch (usb_get_connected_modeller_type())
     {
-        dest[0] = -4;
-        dest[1] = 85;
-        dest[2] = 170;
-        dest[3] = 255;
-        dest[4] = 340;
-        dest[5] = 425;
-        dest[6] = 505;
-        dest[7] = 590;
-    }
+        case AMP_MODELLER_TONEX_ONE:    // fallthrough
+        case AMP_MODELLER_TONEX:        // fallthrough    
+        default:
+        {
+            // Tonex
+            if (max_entries <= 8)
+            {
+                dest[0] = -4;
+                dest[1] = 85;
+                dest[2] = 170;
+                dest[3] = 255;
+                dest[4] = 340;
+                dest[5] = 425;
+                dest[6] = 505;
+                dest[7] = 590;
+            }
+        } break;
 
-#if 0    
-    // Valeton
-    if (max_entries <= 10)
-    {
-        dest[0] = -15;
-        dest[1] = 55;
-        dest[2] = 125;
-        dest[3] = 195;
-        dest[4] = 265;
-        dest[5] = 335;
-        dest[6] = 405;
-        dest[7] = 475;
-        dest[8] = 545;
-        dest[9] = 615;
+        case AMP_MODELLER_VALETON_GP5:
+        {
+            // Valeton
+            if (max_entries <= 10)
+            {
+                dest[0] = -15;
+                dest[1] = 55;
+                dest[2] = 125;
+                dest[3] = 195;
+                dest[4] = 265;
+                dest[5] = 335;
+                dest[6] = 405;
+                dest[7] = 475;
+                dest[8] = 545;
+                dest[9] = 615;
+            }
+        } break;
     }
-#endif
 }
 
 /****************************************************************************

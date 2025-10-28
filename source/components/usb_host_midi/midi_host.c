@@ -895,7 +895,7 @@ unblock:
 esp_err_t midi_host_midi_desc_get(midi_dev_hdl_t midi_hdl, const usb_standard_desc_t **desc_out)
 {
     MIDI_CHECK(midi_hdl, ESP_ERR_INVALID_ARG);
-    midi_dev_t *midi_dev = (midi_dev_t *)midi_hdl;
+    midi_dev_t* __attribute__((unused)) midi_dev = (midi_dev_t *)midi_hdl;
     esp_err_t ret = ESP_ERR_NOT_FOUND;
     *desc_out = NULL;
 
