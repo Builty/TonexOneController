@@ -307,6 +307,9 @@ void __attribute__((unused)) action_gesture(lv_event_t * e)
 {
     lv_dir_t dir = lv_indev_get_gesture_dir(lv_indev_get_act());
 
+    // let platform adjust it
+    dir = platform_adjust_gesture(dir);
+
     // called from LVGL 
     if (dir == LV_DIR_LEFT)
     {
@@ -1785,6 +1788,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
         {
             element_1 = objects.ui_usb_status_fail;
 
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI            
             if (update->Value == 1)
             {
                 // if enabled, adjust UI to suit modeller
@@ -1809,6 +1813,7 @@ static uint8_t update_ui_element(tUIUpdate* update)
                     } break;
                 }
             }
+#endif            
         } break;
 
         case UI_ELEMENT_BT_STATUS:

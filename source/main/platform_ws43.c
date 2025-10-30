@@ -265,6 +265,19 @@ __attribute__((unused)) uint16_t platform_get_toast_padding(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+__attribute__((unused)) lv_dir_t platform_adjust_gesture(lv_dir_t gesture)
+{
+    // nothing special needed
+    return gesture;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex, lv_disp_drv_t* pdisp_drv)
 {    
     __attribute__((unused)) esp_err_t ret = ESP_OK;

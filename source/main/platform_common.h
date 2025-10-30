@@ -23,3 +23,4 @@ void platform_adjust_display_flush_area(lv_area_t *area);
 void platform_get_icon_coords(int16_t* dest, uint8_t max_entries);
 const lv_font_t* platform_get_toast_font(void);
 uint16_t platform_get_toast_padding(void);
+lv_dir_t platform_adjust_gesture(lv_dir_t gesture);

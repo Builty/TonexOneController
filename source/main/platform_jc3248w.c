@@ -272,6 +272,19 @@ __attribute__((unused)) uint16_t platform_get_toast_padding(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+__attribute__((unused)) lv_dir_t platform_adjust_gesture(lv_dir_t gesture)
+{
+    // nothing special needed
+    return gesture;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 static bool lvgl_port_flush_ready_callback(esp_lcd_panel_io_handle_t panel_io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx)
 {
     BaseType_t taskAwake = pdFALSE;
