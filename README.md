@@ -142,6 +142,12 @@ For more information about the firmware development and customisation, refer to 
 - https://github.com/vit3k/tonex_controller for great work on reverse engineering the Tonex One USB protocol
 
 ## Firmware Release Notes <a name="release_notes"></a>
+V2.0.1.2
+- Minor bug fix release. No features
+- Fixed issues with wired Midi on Waveshare 4.3B
+- Fixed issue with Internal/External footwitch FX config, where the "Set Preset" option didn't toggle between the two selected presets. Only preset 1 was set active.
+
+
 V2.0.0.2
 - Caution: due to structural changes, amp/pedal skins and user preset text is not maintained and will need to be entered again. And if rolling back to an older version, all config will be lost
 - Upgraded to ESP-IDF 5.5.1 

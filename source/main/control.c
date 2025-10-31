@@ -1217,6 +1217,18 @@ void control_trigger_tap_tempo(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+uint32_t control_get_current_preset_index(void)
+{
+    return ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder[ControlData.PresetIndex];
+}  
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void control_set_config_item_int(uint32_t item, uint32_t status)
 {
     tControlMessage message;

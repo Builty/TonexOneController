@@ -118,4 +118,5 @@ This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a 
 | Global Tuning Reference | 119 | 0-127 |
 | Load Preset to Slot A | 120 | 0-19 |
 | Load Preset to Slot B | 121 | 0-19 |
+| Global Volume | 122 | 0-127 |
 | Select Preset | 127 | 0-19 |
