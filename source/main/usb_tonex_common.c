@@ -303,7 +303,7 @@ uint16_t tonex_common_locate_message_end(uint8_t* data, uint16_t length)
 *****************************************************************************/
 esp_err_t tonex_common_modify_parameter(uint16_t index, float value)
 {
-    tTonexParameter* param_ptr = NULL;
+    tModellerParameter* param_ptr = NULL;
     esp_err_t res = ESP_FAIL;
      
     if (index >= TONEX_PARAM_LAST)

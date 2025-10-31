@@ -292,7 +292,7 @@ static esp_err_t build_send_ws_response_packet(httpd_req_t *req, char* payload)
 static void wifi_build_params_json(void)
 {
     char str_val[64];
-    tTonexParameter* param_ptr;
+    tModellerParameter* param_ptr;
 
     // init generation of json response
     json_gen_str_start(&pWebConfig->jstr, pWebConfig->TempBuffer, MAX_TEMP_BUFFER, NULL, NULL);

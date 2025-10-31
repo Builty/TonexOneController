@@ -621,7 +621,7 @@ static TonexStatus usb_tonex_parse_param_changed(uint8_t* unframed, uint16_t len
     TonexData->Message.Header.type = TYPE_PARAM_CHANGED;
 
     uint8_t param_start_marker[] = {0xB9, 0x04, 0x02, 0x00}; 
-    tTonexParameter* param_ptr = NULL;
+    tModellerParameter* param_ptr = NULL;
 
     // try to locate the start of the parameter block 
     uint8_t* temp_ptr = memmem((void*)unframed, length, (void*)param_start_marker, sizeof(param_start_marker));
@@ -673,7 +673,7 @@ static TonexStatus usb_tonex_parse_param_changed(uint8_t* unframed, uint16_t len
 static void usb_tonex_parse_preset_parameters(uint8_t* raw_data, uint16_t length)
 {
     uint8_t param_start_marker[] = {0xBA, 0x03, 0xBA, 0x6D}; 
-    tTonexParameter* param_ptr = NULL;
+    tModellerParameter* param_ptr = NULL;
 
     ESP_LOGI(TAG, "Parsing Preset parameters");
 
@@ -732,7 +732,7 @@ static void usb_tonex_parse_preset_parameters(uint8_t* raw_data, uint16_t length
 static TonexStatus usb_tonex_parse_global_config(uint8_t* unframed, uint16_t length, uint16_t index)
 {
     uint8_t config_start_marker[] = {0xB9, 0x02, 0xba, 0x16}; 
-    tTonexParameter* param_ptr = NULL;
+    tModellerParameter* param_ptr = NULL;
     float temp_val = 0;
     
     TonexData->Message.Header.type = TYPE_GLOBAL_CONFIG;

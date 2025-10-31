@@ -21,6 +21,7 @@
           },
           {
             "type": "border",
+            "selected": 2,
             "size": 240,
             "location": "right",
             "children": [
@@ -201,7 +202,8 @@
                   },
                   "icon": "svg:page"
                 }
-              ]
+              ],
+              "active": true
             },
             {
               "type": "row",
@@ -221,8 +223,7 @@
                       "enableClose": false,
                       "icon": "svg:properties"
                     }
-                  ],
-                  "active": true
+                  ]
                 },
                 {
                   "type": "tabset",
@@ -531,7 +532,8 @@
                       "component": "bitmaps",
                       "enableClose": false
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
@@ -970,20 +972,22 @@
     "[Tonex_Controller_480_320.eez-project]:/userPages/0[flow-state]": {
       "selection": {
         "0": {
-          "2": {},
-          "3": {
-            "$selected": true
-          },
-          "4": {},
-          "9": {},
-          "10": {},
-          "11": {}
+          "0": {
+            "1": {},
+            "7": {},
+            "8": {},
+            "9": {},
+            "10": {},
+            "13": {
+              "$selected": true
+            }
+          }
         }
       },
       "transform": {
         "translate": {
-          "x": -464.4660714285723,
-          "y": -349.9061507936503
+          "x": -494.8024350649359,
+          "y": -373.6126443001434
         },
         "scale": 2
       },
@@ -998,8 +1002,7 @@
       "selection": {
         "0": {
           "0": {
-            "0": {},
-            "7": {
+            "0": {
               "$selected": true
             }
           }

@@ -93,7 +93,7 @@ static float midi_helper_boolean_midi_to_float(uint8_t midi_value)
 *****************************************************************************/
 static uint8_t midi_helper_boolean_midi_toggle(uint16_t param, uint8_t midi_value, float* value)
 {
-    tTonexParameter* param_ptr;
+    tModellerParameter* param_ptr;
 
     if (midi_value == MIDI_BOOL_TOGGLE)
     {
@@ -133,7 +133,7 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
 {
     uint16_t param;
     float value;
-    tTonexParameter* param_ptr;
+    tModellerParameter* param_ptr;
 
     // Midi mapping done to match the big Tonex pedal
     switch (change_num)
@@ -1305,7 +1305,7 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
 uint16_t midi_helper_get_param_for_change_num(uint8_t change_num, uint8_t midi_value_1, uint8_t midi_value_2)
 {
     uint16_t param = TONEX_UNKNOWN;
-    tTonexParameter* param_ptr;
+    tModellerParameter* param_ptr;
 
     // Midi mapping done to match the big Tonex pedal
     switch (change_num)

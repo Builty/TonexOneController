@@ -248,16 +248,43 @@ __attribute__((unused)) void platform_adjust_display_flush_area(lv_area_t *area)
 *****************************************************************************/
 __attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max_entries)
 {
-    if (max_entries <= 8)
+    switch (usb_get_connected_modeller_type())
     {
-        dest[0] = -168;
-        dest[1] = -126;
-        dest[2] = -84;
-        dest[3] = -42;
-        dest[4] = 0;
-        dest[5] = 42;
-        dest[6] = 84;
-        dest[7] = 126;
+        case AMP_MODELLER_TONEX_ONE:    // fallthrough
+        case AMP_MODELLER_TONEX:        // fallthrough    
+        default:
+        {
+            // Tonex
+            if (max_entries <= 8)
+            {
+                dest[0] = -12;
+                dest[1] = 44;
+                dest[2] = 96;
+                dest[3] = 148;
+                dest[4] = 200;
+                dest[5] = 252;
+                dest[6] = 304;
+                dest[7] = 356;
+            }
+        } break;
+
+        case AMP_MODELLER_VALETON_GP5:
+        {
+            // Valeton
+            if (max_entries <= 10)
+            {
+                dest[0] = -19;
+                dest[1] = 24;
+                dest[2] = 67;
+                dest[3] = 110;
+                dest[4] = 153;
+                dest[5] = 196;
+                dest[6] = 239;
+                dest[7] = 282;
+                dest[8] = 325;
+                dest[9] = 368;
+            }
+        } break;
     }
 }
 
@@ -283,6 +310,19 @@ __attribute__((unused)) const lv_font_t* platform_get_toast_font(void)
 __attribute__((unused)) uint16_t platform_get_toast_padding(void)
 {
     return 25;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+__attribute__((unused)) lv_dir_t platform_adjust_gesture(lv_dir_t gesture)
+{
+    // nothing special needed
+    return gesture;
 }
 
 /****************************************************************************

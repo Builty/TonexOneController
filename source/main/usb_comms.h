@@ -27,12 +27,17 @@ extern "C" {
 #define TONEX_ONE_PRODUCT_ID            0x00D1
 #define TONEX_PRODUCT_ID                0x0068
 
+#define VALETON_USB_VENDOR              0x84EF
+#define VALETON_GP5_PRODUCT_ID          0x0184
+
+
 // Amp Modeller types
 enum AmpModellers
 {
     AMP_MODELLER_NONE,
     AMP_MODELLER_TONEX_ONE,
     AMP_MODELLER_TONEX,     // full size pedal with 3 footswitches
+    AMP_MODELLER_VALETON_GP5
 };
 
 enum USB_Commands
@@ -67,6 +72,7 @@ void usb_load_preset_to_slot_a(uint32_t preset);
 void usb_load_preset_to_slot_b(uint32_t preset);
 uint8_t usb_get_max_presets_for_connected_modeller(void);
 uint8_t usb_get_first_preset_index_for_connected_modeller(void);
+uint8_t usb_get_connected_modeller_type(void);
 
 #ifdef __cplusplus
 } /*extern "C"*/

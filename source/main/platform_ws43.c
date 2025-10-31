@@ -194,16 +194,43 @@ __attribute__((unused)) void platform_adjust_display_flush_area(lv_area_t *area)
 *****************************************************************************/
 __attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max_entries)
 {
-    if (max_entries <= 8)
+    switch (usb_get_connected_modeller_type())
     {
-        dest[0] = 89;
-        dest[1] = 156;
-        dest[2] = 223;
-        dest[3] = 291;
-        dest[4] = 356;
-        dest[5] = 416;
-        dest[6] = 479;
-        dest[7] = 549;
+        case AMP_MODELLER_TONEX_ONE:    // fallthrough
+        case AMP_MODELLER_TONEX:        // fallthrough    
+        default:
+        {
+            // Tonex
+            if (max_entries <= 8)
+            {
+                dest[0] = -4;
+                dest[1] = 85;
+                dest[2] = 170;
+                dest[3] = 255;
+                dest[4] = 340;
+                dest[5] = 425;
+                dest[6] = 505;
+                dest[7] = 590;
+            }
+        } break;
+
+        case AMP_MODELLER_VALETON_GP5:
+        {
+            // Valeton
+            if (max_entries <= 10)
+            {
+                dest[0] = -15;
+                dest[1] = 55;
+                dest[2] = 125;
+                dest[3] = 195;
+                dest[4] = 265;
+                dest[5] = 335;
+                dest[6] = 405;
+                dest[7] = 475;
+                dest[8] = 545;
+                dest[9] = 615;
+            }
+        } break;
     }
 }
 
@@ -229,6 +256,19 @@ __attribute__((unused)) const lv_font_t* platform_get_toast_font(void)
 __attribute__((unused)) uint16_t platform_get_toast_padding(void)
 {
     return 30;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+__attribute__((unused)) lv_dir_t platform_adjust_gesture(lv_dir_t gesture)
+{
+    // nothing special needed
+    return gesture;
 }
 
 /****************************************************************************
@@ -315,7 +355,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     // somehow fixes it, and simulates the way that older versions of the project
     // did it (a lot of PSRAM was allocated for skin images.)
     // If anybody figures out the root cause here I'd love to hear it.
-    void* psram_workaround_ptr = heap_caps_malloc(50000, MALLOC_CAP_SPIRAM);
+    void* psram_workaround_ptr = heap_caps_malloc(75000, MALLOC_CAP_SPIRAM);
     ESP_ERROR_CHECK(esp_lcd_new_rgb_panel(&panel_config, &panel_handle));
     free(psram_workaround_ptr);   
 

@@ -245,6 +245,24 @@ enum IOExpanderPins
     IO_EXPANDER_PIN_16
 };
 
+enum ParamTypes
+{
+    MODELLER_PARAM_TYPE_SWITCH,        // on/off
+    MODELLER_PARAM_TYPE_SELECT,        // 0,1,2,3 etc
+    MODELLER_PARAM_TYPE_RANGE          // floating point range
+};
+
+#define MAX_PARAM_NAME          12
+
+typedef struct
+{
+    float Value;
+    float Min;
+    float Max;
+    char Name[MAX_PARAM_NAME];
+    uint8_t Type;
+} tModellerParameter;
+
 typedef struct __attribute__ ((packed)) 
 {
     uint8_t Switch;
