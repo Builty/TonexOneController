@@ -27,13 +27,14 @@ Note: the controller code relies on the Tonex One pedal being set to Stomp mode.
 - Connect the USB-C port on the Waveshare board to the ToneX One USB-C port
 - Optional: connect dual footswitches to the isolated inputs on the Waveshare board. GND to ground. DI0 for footswitch 1. DI1 for footwitch 2. Exact wiring depends on the footswitch but is usually a 6.5mm stereo jack
 - Connect 9V DC 1 amp (minimum) power supply to the terminals on the Waveshare board. The terminals are screw terminals, so most likely a DC jack to wires will be needed.
-- Note: some users have had issues due to the quality of the power supply. If it is insufficient current, or electrically noisy, it may cause the board to crash/reset/flicker. A good quality power supply is recommended
+- __Note__: some users have had issues due to the quality of the power supply. If it is insufficient current, or electrically noisy, it may cause the board to crash/reset/flicker. A good quality power supply is recommended
+- __Note__: it is __highly recommended__ to link all of the ground terminals together. Some users have experienced crashing/instability without this, particularly if also using footswitches and Midi
 - Switch on the power supply
 - The Waveshare board USB port will power the Tonex One
 - Optional: for the Bluetooth Client version of code, switch on a M-Vave Chocolate Midi pedal (https://www.cuvave.com/productinfo/724103.html). After a few seconds it should connect and the Bluetooth icon should change from gray to blue
 - Optional: for the Bluetooth Server version of code, the controller will be available as a peripheral for you to connect to via a Bluetooth Midi device. The Bluetooth icon should change from gray to blue when connected.
 
-![wiring_waveshare_display](https://github.com/user-attachments/assets/f5edb5a8-f0d5-4b56-b29a-38f75dfab98c)
+<img width="1286" height="1002" alt="wiring_waveshare_display" src="https://github.com/user-attachments/assets/c76b11d2-f04e-4d1c-826f-8ab575e4f50e" />
 <br><br>
 
 <br><br>
