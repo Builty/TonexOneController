@@ -261,6 +261,9 @@ typedef struct
     float Max;
     char Name[MAX_PARAM_NAME];
     uint8_t Type;
+    uint8_t Data1;  // usage depends on connected modeller
+    uint8_t Data2;  // usage depends on connected modeller
+    uint8_t Data3;  // usage depends on connected modeller
 } tModellerParameter;
 
 typedef struct __attribute__ ((packed)) 

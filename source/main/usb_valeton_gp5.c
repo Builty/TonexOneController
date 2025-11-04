@@ -149,11 +149,11 @@ static uint8_t* TransmitBuffer;
 */
 static void usb_valeton_gp5_request_preset_sync(void);
 static void usb_valeton_gp5_request_current_preset(void);
-static void usb_valeton_gp5_request_something_2(void);
 static void usb_valeton_gp5_get_preset(uint8_t index);
 static void usb_valeton_gp5_set_preset(uint8_t index);
 static void usb_valeton_gp5_request_preset_params(void);
 static void usb_valeton_gp5_set_effect_block_state(uint8_t block_index, uint8_t state);
+static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint32_t len) ;
 
 /****************************************************************************
 * NAME:        
@@ -253,8 +253,8 @@ static esp_err_t usb_valeton_gp5_send_sysex(const uint8_t* buffer, uint8_t len, 
     memset((void*)TransmitBuffer, 0, VALETON_GP5_TX_TEMP_BUFFER_SIZE);
 
     // debug
-    ESP_LOGI(TAG, "usb_valeton_gp5_send_sysex input:");
-    ESP_LOG_BUFFER_HEXDUMP(TAG, buffer, len, ESP_LOG_INFO);
+    //ESP_LOGI(TAG, "usb_valeton_gp5_send_sysex input:");
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, buffer, len, ESP_LOG_INFO);
 
     // set start marker
     TransmitBuffer[write_index++] = 0xF0;
@@ -268,9 +268,10 @@ static esp_err_t usb_valeton_gp5_send_sysex(const uint8_t* buffer, uint8_t len, 
     TransmitBuffer[write_index++] = 0x00;
     TransmitBuffer[write_index++] = 0x00;
 
-    // length bytes. Value sent as e.g. 0x14 as 01 04
-    TransmitBuffer[write_index++] = len >> 4;
-    TransmitBuffer[write_index++] = len & 0x0F;
+    // length bytes. Value sent as e.g. 0x14 as 01 04. Sent as number of byte pairs hence divide by 2
+    // +2 here for the 0102/0101 bytes that come next
+    TransmitBuffer[write_index++] = ((len + 2) / 2) >> 4;
+    TransmitBuffer[write_index++] = ((len + 2) / 2) & 0x0F;
 
     // 0101 for messages sent to GP5, 0102 for receive??
     // or could be 0101 for requests, and 0102 for commands?
@@ -358,8 +359,8 @@ static esp_err_t usb_valeton_gp5_send_sysex(const uint8_t* buffer, uint8_t len, 
     }
 
     // debug
-    ESP_LOGI(TAG, "usb_valeton_gp5_send_sysex usb tx:");
-    ESP_LOG_BUFFER_HEXDUMP(TAG, usb_transfer, write_index, ESP_LOG_INFO);
+    //ESP_LOGI(TAG, "usb_valeton_gp5_send_sysex usb tx:");
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, usb_transfer, write_index, ESP_LOG_INFO);
 
     // send packet
     if (midi_host_data_tx_blocking(midi_dev, (const uint8_t*)usb_transfer, write_index, 50) != ESP_OK)
@@ -378,128 +379,18 @@ static esp_err_t usb_valeton_gp5_send_sysex(const uint8_t* buffer, uint8_t len, 
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-// Decode percentage parameters (delay_mix, delay_feedback, reverb_mix, reverb_decay)
-float usb_valeton_gp5_decode_percentage(uint8_t byte30, uint8_t byte31, uint8_t byte33) 
-{
-    float value;
-
-    if (byte33 == 0x00) 
-    { 
-        // 0–7% range
-        value = (byte30 * 2.0f) + (byte31 / 8.0f);
-    } 
-    else if (byte33 == 0x01) 
-    { 
-        // 8–31% range
-        value = 8.0f + (byte30 * 2.0f) + (byte31 / 8.0f);
-    } 
-    else if (byte33 == 0x02) 
-    { 
-        // 32–100% range
-        value = 32.0f + (byte30 * 4.0f) + (byte31 / 4.0f);
-    } 
-    else if (byte33 == 0x03) 
-    { 
-        // Extended range (e.g., delay_time 128–255ms)
-        value = 128.0f + (byte30 * 4.0f) + (byte31 / 4.0f);
-    } 
-    else 
-    {
-        return -1.0f;
-    }
-    
-    // Apply +2% offset for 32–100% range to match device display
-    //if (byte33 == 0x02) 
-    //{
-    //    value += 2.0f;
-    //}
-    return value;
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-// Decode delay_time (ms)
-float usb_valeton_gp5_decode_time(uint8_t byte30, uint8_t byte31, uint8_t byte33) 
-{
-    if (byte33 == 0x01) 
-    { 
-        // 20–31ms range
-        return 20.0f + (byte30 * 2.0f) + (byte31 / 8.0f);
-    } 
-    else if (byte33 == 0x02) 
-    { 
-        // 32–127ms range
-        return 32.0f + (byte30 * 4.0f) + (byte31 / 4.0f);
-    } 
-    else if (byte33 == 0x03) 
-    { 
-        // 128–255ms range
-        return 128.0f + (byte30 * 4.0f) + (byte31 / 4.0f);
-    }
-    
-    return -1.0f;
-}
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-// Decode EQ Level (-50 to 50)
-float usb_valeton_gp5_decode_level(uint8_t byte30, uint8_t byte31, uint8_t byte32, uint8_t byte33) 
-{
-    if (byte32 == 0x0c && byte33 == 0x02) 
-    { 
-        // Negative range (-50 to -1)
-        return -50.0f + (byte30 * 2.0f) + (byte31 / 8.0f);
-    } 
-    else if (byte32 == 0x04 && byte33 == 0x00) 
-    { 
-        // Positive range (0 to 50)
-        return (byte30 * 2.0f) + (byte31 / 8.0f);
-    } 
-    else if (byte32 == 0x04 && byte33 == 0x01) 
-    { 
-        // 8–31 range, possibly mislabeled as Level
-        return 8.0f + (byte30 * 2.0f) + (byte31 / 8.0f);
-    }
-    
-    return -51.0f; // Invalid
-}
-
-
-// The values are IEEE-754 (32 bits, little endian), I was having the same problem at first. 
-// But when I find the float numbers of some sliders I realized. The bytes for 50 are not 04 08 04 02(48 42) 
-// You have to add the 4 values before too so the final bytes would be 00 00 00 00 04 08 04 02. (00 00 48 42) 
-// And that is a very easy function to calculate.
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
 static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len) 
 {
     uint32_t write_index = 0;
-    uint32_t read_index = 0;
     uint32_t bytes_read = 0;
-    uint16_t preset_index = 0;
-    uint8_t string_index;
-    uint16_t ascii_char;
-    uint16_t function;
+    uint16_t rx_length;
     uint8_t* tmp_ptr = (uint8_t*)buffer;
-    uint16_t rx_length = 0;
-    uint8_t found_message = 0;
-    char name_string[20] = {0};
+    uint16_t chunk_count = 0;
+    uint16_t this_chunk = 0;
+    uint8_t found_chunks = 0;
+
+    // debug
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, buffer, len, ESP_LOG_INFO);
 
     // step 1: strip the SysEx markers from the data, to get the message bytes
     while (bytes_read < len)
@@ -526,20 +417,33 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
                 tmp_ptr++;
                 bytes_read++;
 
-                // next 3 bytes are Vendor ID, skip all
-                tmp_ptr += 3;
-                bytes_read += 3;
-
-                // skip the 0x04 and last Vendor ID byte
+                // next 2 bytes are total chunks in this message
+                chunk_count = (*tmp_ptr << 4) | *(tmp_ptr + 1);
                 tmp_ptr += 2;
                 bytes_read += 2;
 
+                // next byte is first byte of current chunk index
+                this_chunk = (*tmp_ptr << 4);
+                tmp_ptr++;
+                bytes_read++;
+
+                // skip the 0x04 
+                tmp_ptr++;
+                bytes_read++;
+
+                // get last chunk byte
+                this_chunk |= *tmp_ptr; 
+                tmp_ptr++;
+                bytes_read++;
+
+                found_chunks = 1;
+
+                // debug
+                //ESP_LOGI(TAG, "Total chunks: %d. This chunk: %d", (int)chunk_count, (int)this_chunk);
+
                 // grab next 2 bytes (length)
-                if (!found_message)
-                {
-                    rx_length = (*tmp_ptr << 8) | *(tmp_ptr + 1);
-                    found_message = 1;
-                }
+                // length is number of byte pairs/nibbles (half of byte length) to the next 0xF7
+                rx_length = (*tmp_ptr << 4) | *(tmp_ptr + 1);
                 tmp_ptr += 2;
                 bytes_read += 2;
 
@@ -645,13 +549,47 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
                 ESP_LOGE(TAG, "Processing error 07");
                 break;
             }
+        } 
+
+        if (found_chunks)
+        {
+            // see if we have all the chunks. +1 here as the total eg 10 is chunks 0 to 9
+            if ((this_chunk + 1) == chunk_count)
+            {
+                // process this messsage
+                usb_valeton_gp5_process_single_sysex(ProcessingBuffer, write_index);
+
+                // reset vars for possible next chunk
+                write_index = 0;
+                found_chunks = 0;
+                this_chunk = 0;
+                chunk_count = 0;
+            }
         }
-       
     }
 
+    return 1;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint32_t len) 
+{
+    uint32_t read_index = 0;
+    uint16_t preset_index = 0;
+    uint8_t string_index;
+    uint16_t ascii_char;
+    uint16_t function;
+    char name_string[20] = {0};
+
+    ESP_LOGI(TAG, "usb_valeton_gp5_process_single_sysex len: %d", (int)len);
     // debug
-    //ESP_LOG_BUFFER_HEXDUMP(TAG, ProcessingBuffer, write_index, ESP_LOG_INFO);
-    //vTaskDelay(100);
+    ESP_LOG_BUFFER_HEXDUMP(TAG, buffer, len, ESP_LOG_INFO);
 
     // check the message type
     read_index = 0;
@@ -660,16 +598,19 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
     read_index += 2;
 
     // next 2 bytes are function code
-    function = (ProcessingBuffer[read_index] << 4) | ProcessingBuffer[read_index + 1];
+    function = (buffer[read_index] << 4) | buffer[read_index + 1];
     read_index += 2;
 
     switch (function)
     {
         case 0x08:
         {
+#if 0            
+            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], write_index - read_index, ESP_LOG_INFO);
+
             // single preset name/index. Don't need as already done full sync
             // get the preset index
-            preset_index = (ProcessingBuffer[read_index] * 16) + ProcessingBuffer[read_index + 1];
+            preset_index = (buffer[read_index] * 16) + buffer[read_index + 1];
             read_index += 2;
 
             // skip 6 bytes of zeros
@@ -680,19 +621,20 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
             for (uint32_t character = 0; character < 16; character++)
             {
                 // get 4 bit nibbles into byte e.g. 04 07 into 47
-                ascii_char = (ProcessingBuffer[read_index] << 4) | ProcessingBuffer[read_index + 1];
+                ascii_char = (buffer[read_index] << 4) | buffer[read_index + 1];
                 read_index += 2;
 
                 name_string[string_index++] = (char)ascii_char;
             }
+#endif
 
-            ESP_LOGI(TAG, "Got single Preset details");
+            ESP_LOGI(TAG, "Got 0x08");
         } break;
 
         case 0x10:
         {
             // unknown
-            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
+            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
 
             ESP_LOGI(TAG, "Got unknown 0x10");
 
@@ -721,7 +663,7 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
         case 0x20:
         {
             // unknown, possibly parameters
-            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
+            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
 
             ESP_LOGI(TAG, "Got unknown 0x20");
 
@@ -785,7 +727,7 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
         case 0x24:
         {
             // unknown, some sort of user slots?
-            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
+            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
 
             ESP_LOGI(TAG, "Got unknown 0x24");
 
@@ -1008,11 +950,11 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
             for (uint32_t presets = 0; presets < MAX_PRESETS_VALETON_GP5; presets++)
             {
                 // get the preset index
-                preset_index = (ProcessingBuffer[read_index] * 16) + ProcessingBuffer[read_index + 1];
+                preset_index = (buffer[read_index] * 16) + buffer[read_index + 1];
                 read_index += 2;
 
                 // debug
-                //ESP_LOGI(TAG, "Preset Index: %d %d", (int)ProcessingBuffer[read_index - 2], (int)ProcessingBuffer[read_index - 1]);
+                //ESP_LOGI(TAG, "Preset Index: %d %d", (int)buffer[read_index - 2], (int)buffer[read_index - 1]);
 
                 // skip 6 bytes of zeros
                 read_index += 6;
@@ -1022,7 +964,7 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
                 for (uint32_t character = 0; character < 16; character++)
                 {
                     // get 4 bit nibbles into byte e.g. 04 07 into 47
-                    ascii_char = (ProcessingBuffer[read_index] << 4) | ProcessingBuffer[read_index + 1];
+                    ascii_char = (buffer[read_index] << 4) | buffer[read_index + 1];
                     read_index += 2;
 
                     name_string[string_index++] = (char)ascii_char;
@@ -1049,7 +991,7 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
             ESP_LOGI(TAG, "Current Preset params?");
 
             // debug
-            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
+            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
 
             // skip the 0x0F 0x0F bytes
             read_index += 2;
@@ -1060,15 +1002,15 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
             // suspected 16 byte chunks per parameter. 99 x 16 byte chunks are found. 99 is number of presets, maybe this is not params?
             #define MESSAGE_LENGTH 34 
 
-            for (size_t i = read_index; i <= write_index - read_index - MESSAGE_LENGTH; i += MESSAGE_LENGTH) 
+            for (size_t i = read_index; i <= len - read_index - MESSAGE_LENGTH; i += MESSAGE_LENGTH) 
             {
-                uint8_t byte12 = ProcessingBuffer[i + 12]; // Effect block
-                uint8_t byte23 = ProcessingBuffer[i + 23]; // Parameter index or type indicator
-                uint8_t byte24 = ProcessingBuffer[i + 24]; // For reverb_type/reverb_ok
-                uint8_t byte30 = ProcessingBuffer[i + 30]; // Coarse value
-                uint8_t byte31 = ProcessingBuffer[i + 31]; // Fine value
-                uint8_t byte32 = ProcessingBuffer[i + 32]; // Parameter type/range
-                uint8_t byte33 = ProcessingBuffer[i + 33]; // Range indicator
+                uint8_t byte12 = buffer[i + 12]; // Effect block
+                uint8_t byte23 = buffer[i + 23]; // Parameter index or type indicator
+                uint8_t byte24 = buffer[i + 24]; // For reverb_type/reverb_ok
+                uint8_t byte30 = buffer[i + 30]; // Coarse value
+                uint8_t byte31 = buffer[i + 31]; // Fine value
+                uint8_t byte32 = buffer[i + 32]; // Parameter type/range
+                uint8_t byte33 = buffer[i + 33]; // Range indicator
 
                 //if (byte12 == 0x04) 
                 { 
@@ -1191,8 +1133,8 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
         case 0x43:
         {
             // current preset index
-            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
-            uint8_t current_preset = (ProcessingBuffer[read_index] << 4) | ProcessingBuffer[read_index + 1];
+            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
+            uint8_t current_preset = (buffer[read_index] << 4) | buffer[read_index + 1];
 
             ESP_LOGI(TAG, "Got current preset index: %d", current_preset);
 
@@ -1206,7 +1148,7 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
         case 0x45:
         {
             // unknown. Seems to be some kind of confirmation response or short data
-            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
+            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
 
             ESP_LOGI(TAG, "Got unknown 0x45");
 
@@ -1218,7 +1160,7 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
         case 0x47:
         {
             // effect selection confirmation.
-            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
+            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
 
             ESP_LOGI(TAG, "Got 0x47");
 
@@ -1229,9 +1171,55 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
         case 0x48:
         {
             // parameter change confirmation
-            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
+            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
 
-            ESP_LOGI(TAG, "Got 0x48");
+            uint8_t effect_block = (buffer[read_index] << 4) | buffer[read_index + 1];
+            read_index += 8;
+
+            uint8_t param_index = (buffer[read_index] << 4) | buffer[read_index + 1];
+            read_index += 6;
+
+            uint8_t value[4];
+            value[0] =  (buffer[read_index] << 4) | buffer[read_index + 1];   
+            read_index += 2;
+
+            value[1] =  (buffer[read_index] << 4) | buffer[read_index + 1];   
+            read_index += 2;
+
+            value[2] =  (buffer[read_index] << 4) | buffer[read_index + 1];   
+            read_index += 2;
+
+            value[3] =  (buffer[read_index] << 4) | buffer[read_index + 1];   
+            read_index += 2;
+
+            float value_f;
+            memcpy((void*)&value_f, (void*)value, sizeof(value_f));
+            ESP_LOGI(TAG, "Got 0x48 param changed. Block:%d. Param Index:%d. Value:%f", (int)effect_block, (int)param_index, value_f);
+
+            // locate the parameter and update local copy
+            tModellerParameter* param_ptr = NULL;
+            uint8_t block;
+            uint8_t pedal;
+            uint8_t param;
+
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
+            {
+                for (uint32_t param_index = 0; param_index < VALETON_PARAM_LAST; param_index++)
+                {
+                    block = param_ptr[param_index].Data1;
+                    pedal = param_ptr[param_index].Data2;
+                    param = param_ptr[param_index].Data3;
+
+                    if ((effect_block == block) && (param_index == param))
+                    {
+                        // found it, update local copy
+                        param_ptr[param_index].Value = value_f;
+                        break;
+                    }
+                }
+
+                valeton_params_release_locked_access();
+            }
 
             // example response
             // f0 0c 0e 00 01 00 00 00 0e 01 01 04 08 00 01 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00 00 00 00 02 00 04 02 f7
@@ -1240,13 +1228,13 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
         case 0x49:
         {
             // effect block state
-            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
-            uint8_t effect_block = (ProcessingBuffer[read_index] << 4) | ProcessingBuffer[read_index + 1];
+            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
+            uint8_t effect_block = (buffer[read_index] << 4) | buffer[read_index + 1];
             read_index += 2;
 
             // skip to status byte
             read_index += 7;
-            uint8_t state = ProcessingBuffer[read_index];
+            uint8_t state = buffer[read_index];
 
             ESP_LOGI(TAG, "Got effect block state %d %d", effect_block, state);         
         } break;
@@ -1254,7 +1242,7 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
         case 0x50:
         {
             // unknown
-            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&ProcessingBuffer[read_index], write_index - read_index, ESP_LOG_INFO);
+            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
 
             ESP_LOGI(TAG, "Got unknown 0x50");
 
@@ -1273,7 +1261,7 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
         default:
         {
             ESP_LOGI(TAG, "Unknown function type %X", function);
-            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)ProcessingBuffer, 16, ESP_LOG_WARN);
+            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)buffer, 16, ESP_LOG_WARN);
         } break;
     }
 
@@ -1335,7 +1323,7 @@ static void usb_valeton_gp5_request_preset_params(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void usb_valeton_gp5_request_unknown(void)
+static void __attribute__((unused)) usb_valeton_gp5_request_unknown(void)
 {
     uint8_t midi_tx[] = {0x01, 0x00};
 
@@ -1351,7 +1339,7 @@ static void usb_valeton_gp5_request_unknown(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void usb_valeton_gp5_request_unknown_2(void)
+static void __attribute__((unused)) usb_valeton_gp5_request_unknown_2(void)
 {
     uint8_t midi_tx[] = {0x05, 0x00};
 
@@ -1367,7 +1355,7 @@ static void usb_valeton_gp5_request_unknown_2(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void usb_valeton_gp5_request_unknown_3(void)
+static void __attribute__((unused)) usb_valeton_gp5_request_unknown_3(void)
 {
     uint8_t midi_tx[] = {0x04, 0x05};
 
@@ -1383,7 +1371,7 @@ static void usb_valeton_gp5_request_unknown_3(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void usb_valeton_gp5_request_unknown_4(void)
+static void __attribute__((unused)) usb_valeton_gp5_request_unknown_4(void)
 {
     uint8_t midi_tx[] = {0x02, 0x00};
 
@@ -1399,7 +1387,7 @@ static void usb_valeton_gp5_request_unknown_4(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void usb_valeton_gp5_request_unknown_5(void)
+static void __attribute__((unused)) usb_valeton_gp5_request_unknown_5(void)
 {
     uint8_t midi_tx[] = {0x02, 0x04};
 
@@ -1415,7 +1403,7 @@ static void usb_valeton_gp5_request_unknown_5(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void usb_valeton_gp5_get_preset(uint8_t index)
+static void __attribute__((unused)) usb_valeton_gp5_get_preset(uint8_t index)
 {
     uint8_t midi_tx[] = {0x04, 0x03, 0x00, 0x00, 0x00, 0x00};
 
@@ -1459,7 +1447,7 @@ static void usb_valeton_gp5_set_preset(uint8_t index)
 *****************************************************************************/
 static void usb_valeton_gp5_set_effect_block_state(uint8_t block_index, uint8_t state)
 {
-    uint8_t midi_tx[] = {0x04, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    uint8_t midi_tx[] = {0x04, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
     // set the block index
     midi_tx[2] = block_index >> 4;
@@ -1517,10 +1505,17 @@ static void usb_valeton_gp5_set_effect_block_model_parameter(uint8_t block_index
     midi_tx[10] = parameter_index >> 4;
     midi_tx[11] = parameter_index & 0x0F;
 
-    // set parameter value
-    //todo
-    //midi_tx[xx] = 
-    //midi_tx[xx] = 
+    // set parameter value, big endian IEEE float value in nibbles
+    uint8_t float_bytes[4];
+    memcpy((void*)float_bytes, (void*)&value, sizeof(value));
+
+    // break into 4 bit nibbles.
+    uint8_t index = 18;
+    for (uint8_t loop = 0; loop < 4; loop++)
+    {
+        midi_tx[index++] = float_bytes[loop] >> 4;
+        midi_tx[index++] = float_bytes[loop] & 0x0F;
+    }
 
     ESP_LOGI(TAG, "Set Effect Block model parameter %d %d %3.2f", block_index, parameter_index, value);
 
@@ -1570,6 +1565,80 @@ static bool usb_valeton_gp5_handle_rx(const uint8_t* data, size_t data_len, void
 
     ESP_LOGE(TAG, "usb_valeton_gp5_handle_rx no available buffers!");
     return false;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static esp_err_t usb_valeton_gp5_send_single_parameter(uint16_t index, float value)
+{
+    esp_err_t res = ESP_FAIL;
+    tModellerParameter* param_ptr = NULL;
+
+    if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
+    {
+        uint8_t block = param_ptr[index].Data1;
+        uint8_t pedal = param_ptr[index].Data2;
+        uint8_t param = param_ptr[index].Data3;
+
+        valeton_params_release_locked_access();
+
+        if (pedal == VALETON_BLOCK_SELECTION)
+        {
+            // pedal selection within block
+            usb_valeton_gp5_set_effect_block_model(block, (uint8_t)value);
+        }
+        else if (pedal == VALETON_BLOCK_ENABLE)
+        {
+            // block enable
+            usb_valeton_gp5_set_effect_block_state(block, (uint8_t)value);
+        }
+        else
+        {
+            // regular param, send it
+            usb_valeton_gp5_set_effect_block_model_parameter(block, param, value);
+        }
+
+        res = ESP_OK;
+    }
+
+    return res;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+esp_err_t usb_valeton_gp5_modify_parameter(uint16_t index, float value)
+{
+    tModellerParameter* param_ptr = NULL;
+    esp_err_t res = ESP_FAIL;
+     
+    if (index >= VALETON_PARAM_LAST)
+    {
+        ESP_LOGE(TAG, "usb_valeton_gp5_modify_parameter invalid index %d", (int)index);   
+        return ESP_FAIL;
+    }
+        
+    if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
+    {
+        ESP_LOGI(TAG, "usb_valeton_gp5_modify_parameter index: %d name: %s value: %02f", (int)index, param_ptr[index].Name, value);  
+
+        // update the local copy
+        memcpy((void*)&param_ptr[index].Value, (void*)&value, sizeof(float));
+
+        valeton_params_release_locked_access();
+        res = ESP_OK;
+    }
+
+    return res;
 }
 
 /****************************************************************************
@@ -1665,10 +1734,15 @@ void usb_valeton_gp5_handle(class_driver_t* driver_obj)
                         if (message.Payload < VALETON_PARAM_LAST)
                         {
                             // modify param
+                            usb_valeton_gp5_modify_parameter(message.Payload, message.PayloadFloat);
+
+                            // send it
+                            usb_valeton_gp5_send_single_parameter(message.Payload, message.PayloadFloat);
                         }
                         else if (message.Payload < VALETON_GLOBAL_LAST)
                         {
                             // modify the global
+                            //todo
                         }
                         else
                         {

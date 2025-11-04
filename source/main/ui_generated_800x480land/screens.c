@@ -444,7 +444,7 @@ void create_screen_screen1() {
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_pre_off);
                             lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
-                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_PRESSED, (void *)0);
+                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                         }
                         {
@@ -455,7 +455,7 @@ void create_screen_screen1() {
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_amp_off);
                             lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
-                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_PRESSED, (void *)0);
+                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                         }
                         {
@@ -466,7 +466,7 @@ void create_screen_screen1() {
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_nr_off);
                             lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
-                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_PRESSED, (void *)0);
+                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                         }
                         {
@@ -477,7 +477,7 @@ void create_screen_screen1() {
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_rvb_off);
                             lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
-                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_PRESSED, (void *)0);
+                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                         }
                         {
@@ -488,7 +488,7 @@ void create_screen_screen1() {
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_cab_off);
                             lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
-                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_PRESSED, (void *)0);
+                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                         }
                         {
@@ -499,7 +499,7 @@ void create_screen_screen1() {
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_tc_off);
                             lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_PRESSING, (void *)0);
-                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_PRESSED, (void *)0);
+                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                         }
                         {
@@ -510,7 +510,7 @@ void create_screen_screen1() {
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_eq_off);
                             lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
-                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_PRESSED, (void *)0);
+                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                         }
                         {
@@ -521,7 +521,7 @@ void create_screen_screen1() {
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_mod_off);
                             lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
-                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_PRESSED, (void *)0);
+                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                         }
                         {
@@ -532,7 +532,7 @@ void create_screen_screen1() {
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_dly_off);
                             lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
-                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_PRESSED, (void *)0);
+                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                         }
                         {
@@ -543,7 +543,7 @@ void create_screen_screen1() {
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_dst_off);
                             lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
-                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_PRESSED, (void *)0);
+                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                         }
                         {
