@@ -1006,7 +1006,7 @@ void updateIconOrder(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static uint8_t update_ui_element(tUIUpdate* update)
+static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
 {
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
     __attribute__((unused)) char value_string[20];
@@ -1420,6 +1420,7 @@ static void __attribute__((unused)) ui_show_toast(char* contents)
     ESP_LOGI(TAG, "Message box created");
 }
 
+#if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY        
 /****************************************************************************
 * NAME:        
 * DESCRIPTION: 
@@ -1470,6 +1471,7 @@ void display_task(void *arg)
         vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
+#endif //CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
 
 /****************************************************************************
 * NAME:        
