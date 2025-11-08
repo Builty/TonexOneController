@@ -133,6 +133,13 @@ typedef struct
     uint8_t ReadyToWrite : 1;
 } tInputBufferEntry;
 
+typedef struct __attribute__ ((packed))  
+{
+    uint16_t param_id;
+    int16_t  value_raw;
+    uint32_t reserved;
+} ParamEntry_t;
+
 /*
 ** Static vars
 */
@@ -243,7 +250,8 @@ static esp_err_t usb_valeton_gp5_send_sysex(const uint8_t* buffer, uint8_t len, 
     // packet structure - max 64 bytes to suit USB transfer size
     // 0xF0 start marker
     // CRC (2 bytes)
-    // Vendor ID 00 01 00 00
+    // Total chunks e.g. 00 01 
+    // Chunk index e.g. 00 00
     // Data size (2 byte)
     // 0101 for messages to GP5, 0102 for received? or could be commands and requests?
     // Payload
@@ -262,9 +270,11 @@ static esp_err_t usb_valeton_gp5_send_sysex(const uint8_t* buffer, uint8_t len, 
     // next 2 bytes are Crc, skip for now
     write_index += 2;
 
-    // next 4 bytes are vendor ID??
+    // Total chunks
     TransmitBuffer[write_index++] = 0x00;
     TransmitBuffer[write_index++] = 0x01;
+
+    // Chunk index
     TransmitBuffer[write_index++] = 0x00;
     TransmitBuffer[write_index++] = 0x00;
 
@@ -589,7 +599,7 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
 
     ESP_LOGI(TAG, "usb_valeton_gp5_process_single_sysex len: %d", (int)len);
     // debug
-    ESP_LOG_BUFFER_HEXDUMP(TAG, buffer, len, ESP_LOG_INFO);
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, buffer, len, ESP_LOG_INFO);
 
     // check the message type
     read_index = 0;
@@ -605,30 +615,8 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
     {
         case 0x08:
         {
-#if 0            
-            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], write_index - read_index, ESP_LOG_INFO);
-
-            // single preset name/index. Don't need as already done full sync
-            // get the preset index
-            preset_index = (buffer[read_index] * 16) + buffer[read_index + 1];
-            read_index += 2;
-
-            // skip 6 bytes of zeros
-            read_index += 6;
-            string_index = 0;
-
-            // next is 32 bytes/16 characters of preset name, 2 bytes per char
-            for (uint32_t character = 0; character < 16; character++)
-            {
-                // get 4 bit nibbles into byte e.g. 04 07 into 47
-                ascii_char = (buffer[read_index] << 4) | buffer[read_index + 1];
-                read_index += 2;
-
-                name_string[string_index++] = (char)ascii_char;
-            }
-#endif
-
-            ESP_LOGI(TAG, "Got 0x08");
+            // this seems to be a confirmation message on param change
+            ESP_LOGI(TAG, "Got 0x08");            
         } break;
 
         case 0x10:
@@ -987,147 +975,96 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
         
         case 0x41: 
         {
-            // current preset parameters?
-            ESP_LOGI(TAG, "Current Preset params?");
+            // current preset parameters
+            ESP_LOGI(TAG, "Current Preset params");
 
             // debug
             //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
+            uint8_t temp_buf[4];
+            uint32_t param_index = 0;
+            float temp_val;
+            tModellerParameter* param_ptr;
 
-            // skip the 0x0F 0x0F bytes
-            read_index += 2;
+            // bytes 140,141,142,143 has effect block states
+            uint8_t effect_states_1 = (buffer[140] << 4) | (buffer[141] & 0x0F);  
+            uint8_t effect_states_2 = (buffer[142] << 4) | (buffer[143] & 0x0F);  
+            //ESP_LOGI(TAG, "Effect states: %d %d", (int)effect_states_1, (int)effect_states_2);
 
-#if 0            
-            // following is incorrect
-            
-            // suspected 16 byte chunks per parameter. 99 x 16 byte chunks are found. 99 is number of presets, maybe this is not params?
-            #define MESSAGE_LENGTH 34 
-
-            for (size_t i = read_index; i <= len - read_index - MESSAGE_LENGTH; i += MESSAGE_LENGTH) 
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
             {
-                uint8_t byte12 = buffer[i + 12]; // Effect block
-                uint8_t byte23 = buffer[i + 23]; // Parameter index or type indicator
-                uint8_t byte24 = buffer[i + 24]; // For reverb_type/reverb_ok
-                uint8_t byte30 = buffer[i + 30]; // Coarse value
-                uint8_t byte31 = buffer[i + 31]; // Fine value
-                uint8_t byte32 = buffer[i + 32]; // Parameter type/range
-                uint8_t byte33 = buffer[i + 33]; // Range indicator
-
-                //if (byte12 == 0x04) 
-                { 
-                    // Check for valid message pattern
-                    if (byte23 == 0x00 && (byte32 == 0x00 || byte32 == 0x04)) 
-                    { 
-                        // delay_mix, delay_feedback, reverb_mix, reverb_decay
-                        float value = usb_valeton_gp5_decode_percentage(byte30, byte31, byte33);
-                        if (value >= 0.0f) 
-                        {
-                            ESP_LOGI(TAG, "Percentage Parameter (Mix/Feedback/Decay) at index %zu: %.2f%%", i, value);
-                        } 
-                        else 
-                        {
-                            ESP_LOGI(TAG, "Invalid Percentage Parameter at index %zu: %02x %02x %02x %02x", i, byte30, byte31, byte32, byte33);
-                        }
-                    } 
-                    else if (byte23 == 0x01 && byte32 == 0x00) 
-                    { 
-                        // delay_time
-                        float value = usb_valeton_gp5_decode_time(byte30, byte31, byte33);
-                        if (value >= 0.0f) 
-                        {
-                            ESP_LOGI(TAG, "Delay Time at index %zu: %.0fms", i, value);
-                        } 
-                        else 
-                        {
-                            ESP_LOGI(TAG,  "Invalid Delay Time at index %zu: %02x %02x %02x %02x", i, byte30, byte31, byte32, byte33);
-                        }
-                    } 
-                    else if (byte23 == 0x01 && (byte32 == 0x0c || byte32 == 0x0b)) 
-                    { 
-                        // reverb_type, reverb_ok
-                        const char *value = usb_valeton_gp5_decode_type_or_onoff(byte24, byte32);
-                        ESP_LOGI(TAG, "Reverb Type/OnOff at index %zu: %s", i, value);
-                    } 
-                    else if (byte23 == 0x02 && (byte32 == 0x04 || byte32 == 0x0c || byte32 == 0x04)) 
-                    { 
-                        // EQ Level
-                        float value = usb_valeton_gp5_decode_level(byte30, byte31, byte32, byte33);
-                        if (value >= -50.0f && value <= 50.0f) 
-                        {
-                            ESP_LOGI(TAG, "EQ Level at index %zu: %.2f", i, value);
-                        } 
-                        else 
-                        {
-                            ESP_LOGI(TAG, "Invalid EQ Level at index %zu: %02x %02x %02x %02x", i, byte30, byte31, byte32, byte33);
-                        }
-                    } 
-                    else 
-                    {
-                        ESP_LOGI(TAG, "Unknown Parameter at index %zu: byte12=%02x, byte23=%02x, value=%02x %02x %02x %02x", i, byte12, byte23, byte30, byte31, byte32, byte33);
-                    }
-                }
+                // set effect block states
+                param_ptr[VALETON_PARAM_NR_ENABLE].Value = (float)((effect_states_1 & 1) != 0);
+                param_ptr[VALETON_PARAM_PRE_ENABLE].Value = (float)((effect_states_1 & 2) != 0);
+                param_ptr[VALETON_PARAM_DIST_ENABLE].Value = (float)((effect_states_1 & 4) != 0);
+                param_ptr[VALETON_PARAM_AMP_ENABLE].Value = (float)((effect_states_1 & 8) != 0);
+                param_ptr[VALETON_PARAM_CAB_ENABLE].Value = (float)((effect_states_1 & 16) != 0);
+                param_ptr[VALETON_PARAM_EQ_ENABLE].Value = (float)((effect_states_1 & 32) != 0);
+                param_ptr[VALETON_PARAM_MOD_ENABLE].Value = (float)((effect_states_1 & 64) != 0);
+                param_ptr[VALETON_PARAM_DLY_ENABLE].Value = (float)((effect_states_1 & 128) != 0);
+                param_ptr[VALETON_PARAM_RVB_ENABLE].Value = (float)((effect_states_2 & 1) != 0);
+                param_ptr[VALETON_PARAM_NS_ENABLE].Value = (float)((effect_states_2 & 2) != 0);
+                
+                valeton_params_release_locked_access();
             }
-#endif    
 
-            // example response
-            // I (9019) app_Valeton_GP5: 0x3c3d4730   0f 0f 00 00 01 00 00 00  00 01 00 00 00 04 00 00  |................|
-            // I (9026) app_Valeton_GP5: 0x3c3d4740   00 01 00 00 00 00 00 00  00 02 00 00 00 04 00 00  |................|
-            // I (9035) app_Valeton_GP5: 0x3c3d4750   00 0a 04 05 04 0d 05 01  00 00 00 00 01 00 00 00  |................|
-            // I (9045) app_Valeton_GP5: 0x3c3d4760   00 01 01 00 00 04 00 00  00 0a 00 00 00 00 00 00  |................|
-            // I (9054) app_Valeton_GP5: 0x3c3d4770   00 02 01 00 00 04 00 00  00 08 00 00 00 00 00 00  |................|
-            // I (9064) app_Valeton_GP5: 0x3c3d4780   00 01 00 00 01 00 00 00  00 01 02 00 00 04 00 00  |................|
-            // I (9073) app_Valeton_GP5: 0x3c3d4790   03 02 00 00 00 00 00 00  00 02 02 00 00 04 00 00  |................|
-            // I (9083) app_Valeton_GP5: 0x3c3d47a0   07 08 00 00 00 00 00 00  00 02 00 00 08 06 00 01  |................|
-            // I (9092) app_Valeton_GP5: 0x3c3d47b0   00 01 03 00 00 04 00 00  01 0d 00 01 00 00 00 00  |................|
-            // I (9102) app_Valeton_GP5: 0x3c3d47c0   00 02 03 00 00 0a 00 00  00 00 00 01 00 02 00 09  |................|
-            // I (9111) app_Valeton_GP5: 0x3c3d47d0   00 03 00 04 00 05 00 06  00 07 00 08 00 03 03 00  |................|
-            // I (9121) app_Valeton_GP5: 0x3c3d47e0   02 08 00 00 01 0b 00 00  00 00 00 00 02 01 00 00  |................|
-            // I (9130) app_Valeton_GP5: 0x3c3d47f0   00 00 00 01 00 00 00 00  00 00 00 03 02 07 00 00  |................|
-            // I (9139) app_Valeton_GP5: 0x3c3d4800   00 00 00 07 00 08 00 00  00 00 00 0a 03 05 00 00  |................|
-            // I (9149) app_Valeton_GP5: 0x3c3d4810   00 00 00 01 01 09 00 00  00 00 00 04 00 00 00 00  |................|
-            // I (9158) app_Valeton_GP5: 0x3c3d4820   00 00 00 0b 00 04 00 00  00 00 00 0c 00 00 00 00  |................|
-            // I (9168) app_Valeton_GP5: 0x3c3d4830   00 00 00 0f 00 04 03 00  04 00 00 01 00 00 00 00  |................|
-            // I (9177) app_Valeton_GP5: 0x3c3d4840   0d 00 04 01 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9187) app_Valeton_GP5: 0x3c3d4850   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9196) app_Valeton_GP5: 0x3c3d4860   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9206) app_Valeton_GP5: 0x3c3d4870   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9215) app_Valeton_GP5: 0x3c3d4880   0a 00 04 01 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9225) app_Valeton_GP5: 0x3c3d4890   07 00 04 02 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9234) app_Valeton_GP5: 0x3c3d48a0   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9244) app_Valeton_GP5: 0x3c3d48b0   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9253) app_Valeton_GP5: 0x3c3d48c0   0a 00 04 01 00 00 00 00  0a 00 04 02 00 00 00 00  |................|
-            // I (9263) app_Valeton_GP5: 0x3c3d48d0   05 0c 04 02 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9272) app_Valeton_GP5: 0x3c3d48e0   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9281) app_Valeton_GP5: 0x3c3d48f0   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9291) app_Valeton_GP5: 0x3c3d4900   0a 00 04 01 00 00 00 00  02 00 04 01 00 00 00 00  |................|
-            // I (9300) app_Valeton_GP5: 0x3c3d4910   04 08 04 02 00 00 00 00  02 00 04 02 00 00 00 00  |................|
-            // I (9310) app_Valeton_GP5: 0x3c3d4920   0b 04 04 02 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9319) app_Valeton_GP5: 0x3c3d4930   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9329) app_Valeton_GP5: 0x3c3d4940   04 08 04 02 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9338) app_Valeton_GP5: 0x3c3d4950   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9348) app_Valeton_GP5: 0x3c3d4960   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9357) app_Valeton_GP5: 0x3c3d4970   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9367) app_Valeton_GP5: 0x3c3d4980   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9376) app_Valeton_GP5: 0x3c3d4990   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9385) app_Valeton_GP5: 0x3c3d49a0   00 00 00 00 00 00 00 00  04 08 04 02 00 00 00 00  |................|
-            // I (9395) app_Valeton_GP5: 0x3c3d49b0   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9405) app_Valeton_GP5: 0x3c3d49c0   00 00 03 0f 00 00 00 00  00 00 03 0f 00 00 00 00  |................|
-            // I (9414) app_Valeton_GP5: 0x3c3d49d0   04 08 04 02 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9423) app_Valeton_GP5: 0x3c3d49e0   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9433) app_Valeton_GP5: 0x3c3d49f0   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9442) app_Valeton_GP5: 0x3c3d4a00   0a 00 04 01 00 00 00 00  0f 0a 04 03 00 00 00 00  |................|
-            // I (9452) app_Valeton_GP5: 0x3c3d4a10   0f 00 04 01 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9461) app_Valeton_GP5: 0x3c3d4a20   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9471) app_Valeton_GP5: 0x3c3d4a30   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9480) app_Valeton_GP5: 0x3c3d4a40   00 0c 04 02 00 00 00 00  0b 08 04 01 00 00 00 00  |................|
-            // I (9490) app_Valeton_GP5: 0x3c3d4a50   04 08 04 02 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9499) app_Valeton_GP5: 0x3c3d4a60   04 08 04 02 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9508) app_Valeton_GP5: 0x3c3d4a70   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9518) app_Valeton_GP5: 0x3c3d4a80   04 08 04 02 00 00 00 00  04 08 04 02 00 00 00 00  |................|
-            // I (9527) app_Valeton_GP5: 0x3c3d4a90   04 08 04 02 00 00 00 00  04 08 04 02 00 00 00 00  |................|
-            // I (9537) app_Valeton_GP5: 0x3c3d4aa0   04 08 04 02 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-            // I (9546) app_Valeton_GP5: 0x3c3d4ab0   00 00 00 00 00 00 00 00  00 00 00 00 00 03 00 00  |................|
-            // I (9556) app_Valeton_GP5: 0x3c3d4ac0   00 08 00 00 00 04 00 00  00 00 00 00 00 07 00 00  |................|
-            // I (9565) app_Valeton_GP5: 0x3c3d4ad0   00 00 00 00                                       |....|
+
+            // get effect block settings
+            //todo VALETON_PARAM_PRE_TYPE
+
+            // first 332 bytes of data unknown. From there, back to back 32 bit big-endian floats
+            read_index += 268;  //324;  //332;
+            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], 8, ESP_LOG_INFO);
+
+            // params following match the order defined in Valeton params from VALETON_PARAM_NR_PARAM_0 down
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
+            {
+                while (read_index < len)
+                {
+                    // join 8 nibbles to form a 4 byte value
+                    for (uint8_t loop = 0; loop < 4; loop++)
+                    {
+                        temp_buf[loop] = buffer[read_index++] << 4;
+                        temp_buf[loop] |= buffer[read_index++] & 0x0F;
+                    }
+
+                    // get value as 32 bit big-endian float
+                    memcpy((void*)&temp_val, (void*)temp_buf, sizeof(float));
+
+                    if ((VALETON_PARAM_NR_PARAM_0 + param_index) < VALETON_PARAM_LAST)
+                    {
+                        // update local copy                
+                        param_ptr[VALETON_PARAM_NR_PARAM_0 + param_index].Value = temp_val;
+                    }
+                    else
+                    {
+                        // maybe these are globals?
+                        ESP_LOGW(TAG, "Invalid Param count %d %f!", (int)(VALETON_PARAM_NR_PARAM_0 + param_index), temp_val);  
+                    }
+                    
+                    //ESP_LOGI(TAG, "Param val %d: %3.2f", (int)param_index, temp_val);
+                    param_index++;
+                }
+
+                valeton_params_release_locked_access();
+            }
+            else
+            {
+                ESP_LOGW(TAG, "Param mutex failed!");  
+            }
+
+            // if we have messages waiting in the queue, it will trigger another
+            // change that will overwrite this one. Skip the UI refresh to save time
+            if (uxQueueMessagesWaiting(input_queue) == 0)
+            {
+                // signal to refresh param UI
+                UI_RefreshParameterValues();
+
+                // update web UI
+                wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+            }
+
+            // debug
+            valeton_dump_parameters();
         } break;
 
         case 0x43:
@@ -1426,6 +1363,9 @@ static void __attribute__((unused)) usb_valeton_gp5_get_preset(uint8_t index)
 static void usb_valeton_gp5_set_preset(uint8_t index)
 {
     ESP_LOGI(TAG, "Set preset %d", index);
+
+    // other way                              preset  
+    // f0 06 0e 00 01 00 00 00 06 01 01 04 03 05 0d 00 00 00 00 00 00 f7
 
     // send control change
     uint8_t midi_tx[4];

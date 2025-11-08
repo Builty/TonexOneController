@@ -101,7 +101,10 @@ void valeton_show_settings_tab(lv_event_t * e)
     else if (target == objects.ui_icon_val_rvb)
     {
     }
-    else if ((target == objects.ui_icon_val_amp) || (target == objects.ui_icon_val_cab))
+    else if (target == objects.ui_icon_val_amp) 
+    {
+    }
+    else if (target == objects.ui_icon_val_cab)
     {
     }
     else if (target == objects.ui_icon_val_tc)
@@ -146,132 +149,185 @@ void valeton_action_effect_icon_clicked(lv_event_t * e)
         {
             ESP_LOGI(TAG, "UI Toggle Pre");
 
-            valeton_params_get_locked_access(&param_ptr);
-            if (param_ptr[VALETON_PARAM_PRE_ENABLE].Value == 0.0f)
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
             {
-                value = 1.0f;
-            }
-            else
-            {
-                value = 0.0f;
-            }
-            valeton_params_release_locked_access();
+                if (param_ptr[VALETON_PARAM_PRE_ENABLE].Value == 0.0f)
+                {
+                    value = 1.0f;
+                }
+                else
+                {
+                    value = 0.0f;
+                }
+                valeton_params_release_locked_access();
 
-            usb_modify_parameter(VALETON_PARAM_PRE_ENABLE, value);   
+                usb_modify_parameter(VALETON_PARAM_PRE_ENABLE, value);   
+            }
         }
         else if (event_object == objects.ui_icon_val_nr)
         {
             ESP_LOGI(TAG, "UI Toggle NR");
         
-            valeton_params_get_locked_access(&param_ptr);
-            if (param_ptr[VALETON_PARAM_NR_ENABLE].Value == 0.0f)
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
             {
-                value = 1.0f;
-            }
-            else
-            {
-                value = 0.0f;
-            }
-            valeton_params_release_locked_access();
+                if (param_ptr[VALETON_PARAM_NR_ENABLE].Value == 0.0f)
+                {
+                    value = 1.0f;
+                }
+                else
+                {
+                    value = 0.0f;
+                }
+                valeton_params_release_locked_access();
 
-            usb_modify_parameter(VALETON_PARAM_NR_ENABLE, value);   
+                usb_modify_parameter(VALETON_PARAM_NR_ENABLE, value);   
+            }
         }
         else if (event_object == objects.ui_icon_val_rvb)
         {
             ESP_LOGI(TAG, "UI Toggle RVB");
             
-            valeton_params_get_locked_access(&param_ptr);
-            if (param_ptr[VALETON_PARAM_RVB_ENABLE].Value == 0.0f)
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
             {
-                value = 1.0f;
-            }
-            else
-            {
-                value = 0.0f;
-            }
-            valeton_params_release_locked_access();
+                if (param_ptr[VALETON_PARAM_RVB_ENABLE].Value == 0.0f)
+                {
+                    value = 1.0f;
+                }
+                else
+                {
+                    value = 0.0f;
+                }
+                valeton_params_release_locked_access();
 
-            usb_modify_parameter(VALETON_PARAM_RVB_ENABLE, value);  
+                usb_modify_parameter(VALETON_PARAM_RVB_ENABLE, value);  
+            }
         } 
         else if (event_object == objects.ui_icon_val_eq)
         {
             ESP_LOGI(TAG, "UI Toggle EQ");
             
-            valeton_params_get_locked_access(&param_ptr);
-            if (param_ptr[VALETON_PARAM_EQ_ENABLE].Value == 0.0f)
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
             {
-                value = 1.0f;
-            }
-            else
-            {
-                value = 0.0f;
-            }
-            valeton_params_release_locked_access();
+                if (param_ptr[VALETON_PARAM_EQ_ENABLE].Value == 0.0f)
+                {
+                    value = 1.0f;
+                }
+                else
+                {
+                    value = 0.0f;
+                }
+                valeton_params_release_locked_access();
 
-            usb_modify_parameter(VALETON_PARAM_EQ_ENABLE, value);  
+                usb_modify_parameter(VALETON_PARAM_EQ_ENABLE, value);  
+            }
         }
         else if (event_object == objects.ui_icon_val_mod)
         {
             ESP_LOGI(TAG, "UI Toggle Mod");
             
-            valeton_params_get_locked_access(&param_ptr);
-            if (param_ptr[VALETON_PARAM_MOD_ENABLE].Value == 0.0f)
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
             {
-                value = 1.0f;
-            }
-            else
-            {
-                value = 0.0f;
-            }
-            valeton_params_release_locked_access();
+                if (param_ptr[VALETON_PARAM_MOD_ENABLE].Value == 0.0f)
+                {
+                    value = 1.0f;
+                }
+                else
+                {
+                    value = 0.0f;
+                }
+                valeton_params_release_locked_access();
 
-            usb_modify_parameter(VALETON_PARAM_MOD_ENABLE, value); 
+                usb_modify_parameter(VALETON_PARAM_MOD_ENABLE, value); 
+            }
         }
         else if (event_object == objects.ui_icon_val_dly)
         {
             ESP_LOGI(TAG, "UI Toggle Dly");
             
-            valeton_params_get_locked_access(&param_ptr);
-            if (param_ptr[VALETON_PARAM_DLY_ENABLE].Value == 0.0f)
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
             {
-                value = 1.0f;
-            }
-            else
-            {
-                value = 0.0f;
-            }
-            valeton_params_release_locked_access();
+                if (param_ptr[VALETON_PARAM_DLY_ENABLE].Value == 0.0f)
+                {
+                    value = 1.0f;
+                }
+                else
+                {
+                    value = 0.0f;
+                }
+                valeton_params_release_locked_access();
 
-            usb_modify_parameter(VALETON_PARAM_DLY_ENABLE, value); 
+                usb_modify_parameter(VALETON_PARAM_DLY_ENABLE, value); 
+            }
         }
         else if (event_object == objects.ui_icon_val_dst)
         {
             ESP_LOGI(TAG, "UI Toggle Dst");
             
-            valeton_params_get_locked_access(&param_ptr);
-            if (param_ptr[VALETON_PARAM_DIST_ENABLE].Value == 0.0f)
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
             {
-                value = 1.0f;
-            }
-            else
-            {
-                value = 0.0f;
-            }
-            valeton_params_release_locked_access();
+                if (param_ptr[VALETON_PARAM_DIST_ENABLE].Value == 0.0f)
+                {
+                    value = 1.0f;
+                }
+                else
+                {
+                    value = 0.0f;
+                }
+                valeton_params_release_locked_access();
 
-            usb_modify_parameter(VALETON_PARAM_DIST_ENABLE, value);   
+                usb_modify_parameter(VALETON_PARAM_DIST_ENABLE, value);   
+            }
         }
         else if (event_object == objects.ui_icon_val_amp)
         {   
-            //todo
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
+            {
+                if (param_ptr[VALETON_PARAM_AMP_ENABLE].Value == 0.0f)
+                {
+                    value = 1.0f;
+                }
+                else
+                {
+                    value = 0.0f;
+                }
+                valeton_params_release_locked_access();
+
+                usb_modify_parameter(VALETON_PARAM_AMP_ENABLE, value);   
+            }
         } 
         else if (event_object == objects.ui_icon_val_cab)
         {   
-            //todo
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
+            {
+                if (param_ptr[VALETON_PARAM_CAB_ENABLE].Value == 0.0f)
+                {
+                    value = 1.0f;
+                }
+                else
+                {
+                    value = 0.0f;
+                }
+                valeton_params_release_locked_access();
+
+                usb_modify_parameter(VALETON_PARAM_CAB_ENABLE, value);   
+            }
         } 
         else if (event_object == objects.ui_icon_val_tc)
         {   
-            //todo
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
+            {
+                if (param_ptr[VALETON_PARAM_NS_ENABLE].Value == 0.0f)
+                {
+                    value = 1.0f;
+                }
+                else
+                {
+                    value = 0.0f;
+                }
+                valeton_params_release_locked_access();
+
+                usb_modify_parameter(VALETON_PARAM_NS_ENABLE, value);   
+            }
         } 
         else
         {
@@ -344,8 +400,195 @@ uint8_t valeton_update_ui_parameters(void)
             // debug
             //ESP_LOGI(TAG, "Param %d: val: %02f, min: %02f, max: %02f", param, param_entry->Value, param_entry->Min, param_entry->Max);
             
-            //todo
-             
+            switch (param)
+            {
+                case VALETON_PARAM_NR_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_img_set_src(objects.ui_icon_val_nr, (lv_obj_t*)&img_nr_on);
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_val_nr, (lv_obj_t*)&img_nr_off);
+                    }
+                } break;
+
+                //VALETON_PARAM_NR_PARAM_0
+
+                case VALETON_PARAM_PRE_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_img_set_src(objects.ui_icon_val_pre, (lv_obj_t*)&img_pre_on);
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_val_pre, (lv_obj_t*)&img_pre_off);
+                    }
+                } break;
+
+                //VALETON_PARAM_PRE_TYPE, 
+                // VALETON_PARAM_PRE_PARAM_0,    
+                // VALETON_PARAM_PRE_PARAM_1,    
+                // VALETON_PARAM_PRE_PARAM_2,    
+                // VALETON_PARAM_PRE_PARAM_3,    
+                // VALETON_PARAM_PRE_PARAM_4,    
+                // VALETON_PARAM_PRE_PARAM_5,    
+                
+                case VALETON_PARAM_DIST_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_img_set_src(objects.ui_icon_val_dst, (lv_obj_t*)&img_dst_on);
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_val_dst, (lv_obj_t*)&img_dst_off);
+                    }
+                } break;
+                
+                //VALETON_PARAM_DIST_TYPE,    
+                // VALETON_PARAM_DIST_PARAM_0,
+                // VALETON_PARAM_DIST_PARAM_1,
+                // VALETON_PARAM_DIST_PARAM_2,
+                // VALETON_PARAM_DIST_PARAM_3,
+                // VALETON_PARAM_DIST_PARAM_4,
+
+                case VALETON_PARAM_AMP_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_img_set_src(objects.ui_icon_val_amp, (lv_obj_t*)&img_amp_on);
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_val_amp, (lv_obj_t*)&img_amp_off);
+                    }
+                } break;
+
+                //VALETON_PARAM_AMP_TYPE,
+                // VALETON_PARAM_AMP_PARAM_0,
+                // VALETON_PARAM_AMP_PARAM_1,
+                // VALETON_PARAM_AMP_PARAM_2,
+                // VALETON_PARAM_AMP_PARAM_3,
+                // VALETON_PARAM_AMP_PARAM_4,
+                // VALETON_PARAM_AMP_PARAM_5,
+                // VALETON_PARAM_AMP_PARAM_6,
+
+                case VALETON_PARAM_CAB_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_img_set_src(objects.ui_icon_val_cab, (lv_obj_t*)&img_cab_on);
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_val_cab, (lv_obj_t*)&img_cab_off);
+                    }
+                } break;
+
+                //VALETON_PARAM_CAB_TYPE,
+                //VALETON_PARAM_CAB_PARAM_0,
+
+                case VALETON_PARAM_EQ_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_img_set_src(objects.ui_icon_val_eq, (lv_obj_t*)&img_eq_on);
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_val_eq, (lv_obj_t*)&img_eq_off);
+                    }
+                } break;
+
+                // VALETON_PARAM_EQ_TYPE
+                // VALETON_PARAM_EQ_PARAM_0,
+                // VALETON_PARAM_EQ_PARAM_1,
+                // VALETON_PARAM_EQ_PARAM_2,
+                // VALETON_PARAM_EQ_PARAM_3,
+                // VALETON_PARAM_EQ_PARAM_4,
+                // VALETON_PARAM_EQ_PARAM_5,
+
+                case VALETON_PARAM_MOD_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_img_set_src(objects.ui_icon_val_mod, (lv_obj_t*)&img_mod_on);
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_val_mod, (lv_obj_t*)&img_mod_off);
+                    }
+                } break;
+
+                // VALETON_PARAM_MOD_TYPE,
+                // VALETON_PARAM_MOD_PARAM_0,
+                // VALETON_PARAM_MOD_PARAM_1,
+                // VALETON_PARAM_MOD_PARAM_2,
+                // VALETON_PARAM_MOD_PARAM_3,
+
+                case VALETON_PARAM_DLY_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_img_set_src(objects.ui_icon_val_dly, (lv_obj_t*)&img_dly_on);
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_val_dly, (lv_obj_t*)&img_dly_off);
+                    }
+                } break;
+
+                // VALETON_PARAM_DLY_TYPE,
+                // VALETON_PARAM_DLY_PARAM_0,
+                // VALETON_PARAM_DLY_PARAM_1,
+                // VALETON_PARAM_DLY_PARAM_2,
+                // VALETON_PARAM_DLY_PARAM_3,
+                // VALETON_PARAM_DLY_PARAM_4,
+                // VALETON_PARAM_DLY_PARAM_5,
+                // VALETON_PARAM_DLY_PARAM_6,
+
+                case VALETON_PARAM_RVB_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_img_set_src(objects.ui_icon_val_rvb, (lv_obj_t*)&img_rvb_on);
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_val_rvb, (lv_obj_t*)&img_rvb_off);
+                    }
+                } break;
+
+                // VALETON_PARAM_RVB_TYPE,
+                // VALETON_PARAM_RVB_PARAM_0,
+                // VALETON_PARAM_RVB_PARAM_1,
+                // VALETON_PARAM_RVB_PARAM_2,
+                // VALETON_PARAM_RVB_PARAM_3,
+                // VALETON_PARAM_RVB_PARAM_4,
+
+                case VALETON_PARAM_NS_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_img_set_src(objects.ui_icon_val_tc, (lv_obj_t*)&img_tc_on);
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_val_tc, (lv_obj_t*)&img_tc_off);
+                    }
+                } break;
+
+                //VALETON_PARAM_NS_TYPE,
+                // VALETON_PARAM_NS_PARAM_0,
+                // VALETON_PARAM_NS_PARAM_1,
+                // VALETON_PARAM_NS_PARAM_2,
+                // VALETON_PARAM_NS_PARAM_3,
+                // VALETON_PARAM_NS_PARAM_4,
+            }
+
             valeton_params_release_locked_access();
         }               
     }

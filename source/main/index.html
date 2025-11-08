@@ -819,6 +819,10 @@
         // Init web socket when the page loads
         window.addEventListener('load', onload);
 
+        const THROTTLE_DELAY = 200; // ms between WebSocket sends
+        let lastSendTime = 0;
+        let throttleTimeout = null;
+
         // waveform display
         let canvas = null; 
         let ctx = null;
@@ -848,7 +852,7 @@
    			inputs = document.getElementsByTagName('input');
 			for (i = 0; i < inputs.length; i++) {
 				if (inputs[i].type == "range" && inputs[i].oninput == null) {
-					inputs[i].oninput = function(e){showValue(e.target);};
+					inputs[i].oninput = function(e){showValue(e.target, true);};
 				}
             }
 
@@ -1219,7 +1223,7 @@
             paramrange.min = min;
             paramrange.max = max;
             paramrange.value = value;            
-			showValue(paramrange);
+			showValue(paramrange, false);
         }
 
         function configureParamSwitch(objname, value) {
@@ -2541,14 +2545,18 @@
                 param_value = parseFloat(e.target.value);
             }
 
-            if (SocketConnected === 1) {                
-                sendWS({"CMD": "SETPARAM", 
-                        "INDEX": parseInt(param_index),
-                        "VALUE": param_value});                        
+            // range changes sent already in other function
+            if (e.target.type !== 'range') {
+                if (SocketConnected === 1) {                
+                    sendWS({"CMD": "SETPARAM", 
+                            "INDEX": parseInt(param_index),
+                            "VALUE": param_value});                        
+                }
             }
         }
         
-        function showValue(e) {
+        function showValue(e, send_value) {
+            var param_index = e.getAttribute("data-indexnumber");
             const label = document.querySelector(`label[for="${e.id}"]`);
             if (!label) {
                 console.error(`Label for input ${e.id} not found`);
@@ -2560,6 +2568,32 @@
             const unit = label.getAttribute("unit");
             if (unit) {
                 label.innerText += unit;
+            }
+
+            if (send_value) {
+                // check for web socket send, with rate limit
+                const now = Date.now();
+                if (now - lastSendTime >= THROTTLE_DELAY) {
+                    if (SocketConnected === 1) {                
+                        sendWS({"CMD": "SETPARAM", 
+                            "INDEX": parseInt(param_index),
+                            "VALUE": parseFloat(e.value)});                        
+                    }
+                    lastSendTime = now;
+                } else {
+                    // If within delay, queue the next send
+                    clearTimeout(throttleTimeout);
+                    
+                    throttleTimeout = setTimeout(() => {
+                        if (SocketConnected === 1) {                
+                            sendWS({"CMD": "SETPARAM", 
+                            "INDEX": parseInt(param_index),
+                            "VALUE": parseFloat(e.value)});                        
+                        }
+
+                        lastSendTime = Date.now();
+                    }, THROTTLE_DELAY - (now - lastSendTime));
+                }
             }
 
             // Handle label click
@@ -2656,7 +2690,7 @@
             let bpm = globalTapTempo.tap(input);
             if (bpm > 0) {
                 setParamValue("gb_bpm", bpm);
-                showValue(input);
+                showValue(input, false);
 
                 var event = new Event('change');
                 input.dispatchEvent(event);

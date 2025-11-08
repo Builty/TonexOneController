@@ -1433,7 +1433,7 @@ void display_task(void *arg)
     tUIUpdate ui_update;
 
     ESP_LOGI(TAG, "Display task start");
-
+ 
     while (1) 
     {
         // Lock the mutex due to the LVGL APIs are not thread-safe

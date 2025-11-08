@@ -1,6 +1,6 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[Tonex_Controller_800_480land.eez-project]:/userPages/1",
+    "selectedUserPageObject": "[Tonex_Controller_800_480land.eez-project]:/userPages/0",
     "subnavigationSelectedItems": {}
   },
   "layoutModel": {
@@ -196,10 +196,10 @@
                 {
                   "type": "tab",
                   "id": "#76314634-65e1-4225-b990-af9c26f38d4f",
-                  "name": "Settings",
+                  "name": "Screen1",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[Tonex_Controller_800_480land.eez-project]:/userPages/1",
+                    "objectPath": "[Tonex_Controller_800_480land.eez-project]:/userPages/0",
                     "permanent": false
                   },
                   "icon": "svg:page"
@@ -977,7 +977,8 @@
             "2": {},
             "10": {
               "$selected": true
-            }
+            },
+            "11": {}
           }
         }
       },
@@ -999,10 +1000,7 @@
       "selection": {
         "0": {
           "0": {
-            "1": {
-              "$selected": true
-            },
-            "7": {}
+            "$selected": true
           }
         }
       },
