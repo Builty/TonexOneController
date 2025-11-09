@@ -135,10 +135,9 @@ typedef struct
 
 typedef struct __attribute__ ((packed))  
 {
-    uint16_t param_id;
-    int16_t  value_raw;
-    uint32_t reserved;
-} ParamEntry_t;
+    uint8_t effect_index;
+    uint32_t byte_sequence;
+} EffectMapEntry_t;
 
 /*
 ** Static vars
@@ -150,6 +149,248 @@ static QueueHandle_t input_queue;
 static volatile tInputBufferEntry* InputBuffers;
 static uint8_t* ProcessingBuffer;
 static uint8_t* TransmitBuffer;
+
+static const EffectMapEntry_t effect_map_nr[] = {
+                                            {VALETON_EFFECT_NR_GATE, 0x1B000000},
+                                          };
+
+static const EffectMapEntry_t effect_map_pre[] = {
+                                            {VALETON_EFFECT_PRE_COMP, 0x00000000},
+                                            {VALETON_EFFECT_PRE_COMP4, 0x01000000},
+                                            {VALETON_EFFECT_PRE_BOOST, 0x1A000000},
+                                            {VALETON_EFFECT_PRE_MICRO_BOOST, 0x14000000},
+                                            {VALETON_EFFECT_PRE_B_BOOST, 0x0B000000},
+                                            {VALETON_EFFECT_PRE_TOUCHER, 0x0F000001},
+                                            {VALETON_EFFECT_PRE_CRIER, 0x15000001},
+                                            {VALETON_EFFECT_PRE_OCTA, 0x21000001},
+                                            {VALETON_EFFECT_PRE_PITCH, 0x23000001},
+                                            {VALETON_EFFECT_PRE_DETUNE, 0x29000001},
+                                            { 0xFF, 0xFFFFFFFF}, // end of table
+                                          };
+
+static const EffectMapEntry_t effect_map_dst[] = {
+                                            { VALETON_EFFECT_DIST_GREEN_OD, 0x00000003},
+                                            { VALETON_EFFECT_DIST_YELLOW_OD, 0x02000003},
+                                            { VALETON_EFFECT_DIST_SUPER_OD, 0x06000003},
+                                            { VALETON_EFFECT_DIST_SM_DIST, 0x2A000003},
+                                            { VALETON_EFFECT_DIST_PLUSTORTION, 0x29000003},
+                                            { VALETON_EFFECT_DIST_LA_CHARGER, 0x2B000003},
+                                            { VALETON_EFFECT_DIST_DARKTALE, 0x22000003},
+                                            { VALETON_EFFECT_DIST_SORA_FUZZ, 0x24000003},
+                                            { VALETON_EFFECT_DIST_RED_HAZE, 0x40000003},
+                                            { VALETON_EFFECT_DIST_BASS_OD, 0x41000003},  //todo
+                                            { 0xFF, 0xFFFFFFFF}, // end of table
+                                          };
+
+                                          
+static const EffectMapEntry_t effect_map_amp[] = {
+                                            { VALETON_EFFECT_AMP_TWEEDY, 0x01000007},
+                                            { VALETON_EFFECT_AMP_BELLMAN_59N, 0x03000007},
+                                            { VALETON_EFFECT_AMP_DARK_TWIN, 0x04000007},
+                                            { VALETON_EFFECT_AMP_FOXY_30N, 0x11000007},
+                                            { VALETON_EFFECT_AMP_J_120_CL, 0x14000007},
+                                            { VALETON_EFFECT_AMP_MATCH_CL, 0x15000007},
+                                            { VALETON_EFFECT_AMP_L_STAR_CL, 0x19000007},
+                                            { VALETON_EFFECT_AMP_UK_45, 0x2A000007},
+                                            { VALETON_EFFECT_AMP_UK_50JP, 0x2F000007},
+                                            { VALETON_EFFECT_AMP_UK_800, 0x35000007},
+                                            { VALETON_EFFECT_AMP_BELLMAN_59B, 0x24000007},
+                                            { VALETON_EFFECT_AMP_FOXY_30TB, 0x27000007},
+                                            { VALETON_EFFECT_AMP_SUPDUAL_OD, 0x28000007},
+                                            { VALETON_EFFECT_AMP_SOLO100_OD, 0x47000007},
+                                            { VALETON_EFFECT_AMP_Z38_OD, 0x49000007},
+                                            { VALETON_EFFECT_AMP_BAD_KT_OD, 0x4B000007},
+                                            { VALETON_EFFECT_AMP_JUICEW_R100, 0x53000007},
+                                            { VALETON_EFFECT_AMP_DIZZ_VH, 0x65000007},
+                                            { VALETON_EFFECT_AMP_DIZZ_VH_PLUS, 0x6A000007},
+                                            { VALETON_EFFECT_AMP_EAGLE_120, 0x5F000007},
+                                            { VALETON_EFFECT_AMP_EV_51, 0x65000007},
+                                            { VALETON_EFFECT_AMP_SOLO100_LD, 0x6A000007},
+                                            { VALETON_EFFECT_AMP_MESS_DUALV, 0x5F000007},
+                                            { VALETON_EFFECT_AMP_MESS_DUALM, 0x5A000007},
+                                            { VALETON_EFFECT_AMP_POWER_LD, 0x59000007},
+                                            { VALETON_EFFECT_AMP_FLAGMAN_PLUS, 0x68000007},
+                                            { VALETON_EFFECT_AMP_BOG_REDV, 0x69000007},
+                                            { VALETON_EFFECT_AMP_CLASSIC_BASS, 0x63000007},
+                                            { VALETON_EFFECT_AMP_FOXY_BASS, 0x5D000007},
+                                            { VALETON_EFFECT_AMP_MESS_BASS, 0x6D000007},
+                                            { VALETON_EFFECT_AMP_AC_PRE1, 0x73000008},
+                                            { VALETON_EFFECT_AMP_AC_PRE2, 0x75000008},
+                                            { 0xFF, 0xFFFFFFFF}, // end of table
+                                          };
+
+static const EffectMapEntry_t effect_map_cab[] = {
+                                            { VALETON_EFFECT_CAB_TWD_CP, 0x0100000A},
+                                            { VALETON_EFFECT_CAB_DARK_VIT, 0x0400000A},
+                                            { VALETON_EFFECT_CAB_FOXY_1X12, 0x0800000A},
+                                            { VALETON_EFFECT_CAB_L_STAR_1X12, 0x0900000A},
+                                            { VALETON_EFFECT_CAB_DARK_CS_2X12, 0x1B00000A},
+                                            { VALETON_EFFECT_CAB_DARK_TWIN_2X12, 0x1200000A},
+                                            { VALETON_EFFECT_CAB_SUP_STAR_2X12, 0x1900000A},
+                                            { VALETON_EFFECT_CAB_J_120_2X12, 0x1100000A},
+                                            { VALETON_EFFECT_CAB_FOXY_2X12, 0x0F00000A},
+                                            { VALETON_EFFECT_CAB_UK_GRN_2X12, 0x1300000A},
+                                            { VALETON_EFFECT_CAB_UK_GRN_4X12, 0x2200000A},
+                                            { VALETON_EFFECT_CAB_BOG_4X12, 0x2500000A},
+                                            { VALETON_EFFECT_CAB_DIZZ_4X12, 0x2E00000A},
+                                            { VALETON_EFFECT_CAB_EV_4X12, 0x2000000A},
+                                            { VALETON_EFFECT_CAB_SOLO_4X12, 0x2800000A},
+                                            { VALETON_EFFECT_CAB_MESS_4X12, 0x2400000A},
+                                            { VALETON_EFFECT_CAB_EAGLE_4X12, 0x2600000A},
+                                            { VALETON_EFFECT_CAB_JUICE_4X12, 0x2900000A},
+                                            { VALETON_EFFECT_CAB_BELLMAN_2X12, 0x1600000A},
+                                            { VALETON_EFFECT_CAB_AMPG_4X10, 0x3800000A},
+                                            { 0xFF, 0xFFFFFFFF}, // end of table
+                                          };
+
+static const EffectMapEntry_t effect_map_eq[] = {
+                                            { VALETON_EFFECT_EQ_GUITAR_EQ1, 0x35000001},
+                                            { VALETON_EFFECT_EQ_GUITAR_EQ2, 0x36000001},
+                                            { VALETON_EFFECT_EQ_BASS_EQ1, 0x39000001},
+                                            { VALETON_EFFECT_EQ_BASS_EQ2, 0x3A000001},
+                                            { VALETON_EFFECT_EQ_MESS_EQ, 0x3C000001},
+                                            { 0xFF, 0xFFFFFFFF}, // end of table
+                                          };
+
+static const EffectMapEntry_t effect_map_mod[] = {
+                                            { VALETON_EFFECT_MOD_A_CHORUS, 0x00000004},
+                                            { VALETON_EFFECT_MOD_B_CHORUS, 0x08000004},
+                                            { VALETON_EFFECT_MOD_JET, 0x11000004},
+                                            { VALETON_EFFECT_MOD_N_JET, 0x13000004},
+                                            { VALETON_EFFECT_MOD_O_PHASE, 0x19000004},
+                                            { VALETON_EFFECT_MOD_M_VIBE, 0x1F000004},
+                                            { VALETON_EFFECT_MOD_V_ROTO, 0x15000004},
+                                            { VALETON_EFFECT_MOD_VIBRATO, 0x17000004},
+                                            { VALETON_EFFECT_MOD_O_TREM, 0x21000004},
+                                            { VALETON_EFFECT_MOD_SINE_TREM, 0x26000004},
+                                            { VALETON_EFFECT_MOD_BIAS_TREM, 0x28000004},
+                                            { 0xFF, 0xFFFFFFFF}, // end of table
+                                          };
+
+static const EffectMapEntry_t effect_map_dly[] = {
+                                            { VALETON_EFFECT_DLY_PURE, 0x0000000B},
+                                            { VALETON_EFFECT_DLY_ANALOG, 0x0100000B},
+                                            { VALETON_EFFECT_DLY_SLAPBACK, 0x0500000B},
+                                            { VALETON_EFFECT_DLY_SWEET_ECHO, 0x0D00000B},
+                                            { VALETON_EFFECT_DLY_TAPE, 0x0200000B},
+                                            { VALETON_EFFECT_DLY_TUBE, 0x0B00000B},
+                                            { VALETON_EFFECT_DLY_REV_ECHO, 0x1300000B},
+                                            { VALETON_EFFECT_DLY_RING_ECHO, 0x0900000B},
+                                            { VALETON_EFFECT_DLY_SWEEP_ECHO, 0x0600000B},
+                                            { VALETON_EFFECT_DLY_PING_PONG, 0x0400000B},
+                                            { 0xFF, 0xFFFFFFFF}, // end of table
+                                          };
+
+static const EffectMapEntry_t effect_map_rvb[] = {
+                                            { VALETON_EFFECT_RVB_AIR, 0x0B00000C},
+                                            { VALETON_EFFECT_RVB_ROOM, 0x0000000C},
+                                            { VALETON_EFFECT_RVB_HALL, 0x0100000C},
+                                            { VALETON_EFFECT_RVB_CHURCH, 0x0200000C},
+                                            { VALETON_EFFECT_RVB_PLATE_L, 0x1000000C},
+                                            { VALETON_EFFECT_RVB_PLATE, 0x0F00000C},
+                                            { VALETON_EFFECT_RVB_SPRING, 0x0400000C},
+                                            { VALETON_EFFECT_RVB_N_STAR, 0x0600000C},
+                                            { VALETON_EFFECT_RVB_DEEPSEA, 0x0700000C},
+                                            { VALETON_EFFECT_RVB_SWEET_SPACE, 0x1500000C},
+                                            { 0xFF, 0xFFFFFFFF}, // end of table
+                                          };
+
+static const EffectMapEntry_t effect_map_ns[] = {
+                                            { 0, 0x0000000F},
+                                            { 1, 0x0100000F},
+                                            { 2, 0x0200000F},
+                                            { 3, 0x0300000F},
+                                            { 4, 0x0400000F},
+                                            { 5, 0x0500000F},
+                                            { 6, 0x0600000F},
+                                            { 7, 0x0700000F},
+                                            { 8, 0x0800000F},
+                                            { 9, 0x0900000F},
+                                            { 10, 0x0A00000F},
+                                            { 11, 0x0B00000F},
+                                            { 12, 0x0C00000F},
+                                            { 13, 0x0D00000F},
+                                            { 14, 0x0E00000F},
+                                            { 15, 0x0F00000F},
+                                            { 16, 0x1000000F},
+                                            { 17, 0x1100000F},
+                                            { 18, 0x1200000F},
+                                            { 19, 0x1300000F},
+                                            { 20, 0x1400000F},
+                                            { 21, 0x1500000F},
+                                            { 22, 0x1600000F},
+                                            { 23, 0x1700000F},
+                                            { 24, 0x1800000F},
+                                            { 25, 0x1900000F},
+                                            { 26, 0x1A00000F},
+                                            { 27, 0x1B00000F},
+                                            { 28, 0x1C00000F},
+                                            { 29, 0x1D00000F},
+                                            { 30, 0x1E00000F},
+                                            { 31, 0x1F00000F},
+                                            { 32, 0x2000000F},
+                                            { 33, 0x2100000F},
+                                            { 34, 0x2200000F},
+                                            { 35, 0x2300000F},
+                                            { 36, 0x2400000F},
+                                            { 37, 0x2500000F},
+                                            { 38, 0x2600000F},
+                                            { 39, 0x2700000F},
+                                            { 40, 0x2800000F},
+                                            { 41, 0x2900000F},
+                                            { 42, 0x2A00000F},
+                                            { 43, 0x2B00000F},
+                                            { 44, 0x2C00000F},
+                                            { 45, 0x2D00000F},
+                                            { 46, 0x2E00000F},
+                                            { 47, 0x2F00000F},
+                                            { 48, 0x3000000F},
+                                            { 49, 0x3100000F},
+                                            { 50, 0x3200000F},
+                                            { 51, 0x3300000F},
+                                            { 52, 0x3400000F},
+                                            { 53, 0x3500000F},
+                                            { 54, 0x3600000F},
+                                            { 55, 0x3700000F},
+                                            { 56, 0x3800000F},
+                                            { 57, 0x3900000F},
+                                            { 58, 0x3A00000F},
+                                            { 59, 0x3B00000F},
+                                            { 60, 0x3C00000F},
+                                            { 61, 0x3D00000F},
+                                            { 62, 0x3E00000F},
+                                            { 63, 0x3F00000F},
+                                            { 64, 0x4000000F},
+                                            { 65, 0x4100000F},
+                                            { 66, 0x4200000F},
+                                            { 67, 0x4300000F},
+                                            { 68, 0x4400000F},
+                                            { 69, 0x4500000F},
+                                            { 70, 0x4600000F},
+                                            { 71, 0x4700000F},
+                                            { 72, 0x4800000F},
+                                            { 73, 0x4900000F},
+                                            { 74, 0x4A00000F},
+                                            { 75, 0x4B00000F},
+                                            { 76, 0x4C00000F},
+                                            { 77, 0x4D00000F},
+                                            { 78, 0x4E00000F},
+                                            { 79, 0x4F00000F},
+                                            { 0xFF, 0xFFFFFFFF}, // end of table
+                                          };
+
+static const EffectMapEntry_t* effect_maps[] = {
+                                                effect_map_nr,
+                                                effect_map_pre,
+                                                effect_map_dst,
+                                                effect_map_amp,
+                                                effect_map_cab,
+                                                effect_map_eq,
+                                                effect_map_mod,
+                                                effect_map_dly,
+                                                effect_map_rvb,
+                                                effect_map_ns
+                                            };
 
 /*
 ** Static function prototypes
@@ -588,6 +829,42 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+static uint8_t usb_valeton_gp5_get_effect_block_index(uint32_t in, uint8_t block)
+{
+    if (block < VALETON_EFFECT_BLOCK_LAST)
+    {
+        const EffectMapEntry_t* map = effect_maps[block];
+
+        //ESP_LOGI(TAG, "Effect map:%d %X ", (int)map->effect_index, (int)map->byte_sequence);
+
+        // search for the in marker
+        while (map->effect_index != 0xFF)
+        {
+            // debug
+            //ESP_LOGI(TAG, "Effect map %X ", (int)map->byte_sequence);
+
+            if (map->byte_sequence == in)
+            {
+                // found match
+                return map->effect_index;
+            }
+
+            map++;
+        }
+    }
+
+    // unknown
+    ESP_LOGW(TAG, "Effect map in %X not found", (int)in);
+    return 0;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint32_t len) 
 {
     uint32_t read_index = 0;
@@ -984,11 +1261,17 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
             uint32_t param_index = 0;
             float temp_val;
             tModellerParameter* param_ptr;
+            uint8_t effect_states_1;
+            uint8_t effect_states_2;
+            uint8_t loop;
 
-            // bytes 140,141,142,143 has effect block states
-            uint8_t effect_states_1 = (buffer[140] << 4) | (buffer[141] & 0x0F);  
-            uint8_t effect_states_2 = (buffer[142] << 4) | (buffer[143] & 0x0F);  
-            //ESP_LOGI(TAG, "Effect states: %d %d", (int)effect_states_1, (int)effect_states_2);
+            // skip to effect block bit flags
+            read_index += 136;
+
+            effect_states_1 = (buffer[read_index] << 4) | (buffer[read_index + 1] & 0x0F);  
+            read_index += 2;
+            effect_states_2 = (buffer[read_index] << 4) | (buffer[read_index + 1] & 0x0F);  
+            read_index += 2;
 
             if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
             {
@@ -1007,13 +1290,41 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
                 valeton_params_release_locked_access();
             }
 
+            // skip to effect block models
+            read_index += 40;
+            
+            // debug
+            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], 80, ESP_LOG_INFO);
 
-            // get effect block settings
-            //todo VALETON_PARAM_PRE_TYPE
+            // first 6 bytes are the value, then shift it right by 4 bits
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
+            {
+                for (loop = VALETON_EFFECT_BLOCK_NR; loop < VALETON_EFFECT_BLOCK_NS; loop++)
+                {
+                    // get 4 byte effect code from 8 nibbles
+                    uint32_t effect_code = (((buffer[read_index] << 4) | (buffer[read_index + 1] & 0x0F)) << 24);
+                    effect_code |= (((buffer[read_index + 2] << 4) | (buffer[read_index + 3] & 0x0F)) << 16);
+                    effect_code |= (((buffer[read_index + 4] << 4) | (buffer[read_index + 5] & 0x0F)) << 8);
+                    effect_code |= (((buffer[read_index + 6] << 4) | (buffer[read_index + 7] & 0x0F)));
+                      
+                    //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], 8, ESP_LOG_INFO);
+                    //ESP_LOGI(TAG, "Effect code %X for effect %d", (int)effect_code, (int)loop);
 
-            // first 332 bytes of data unknown. From there, back to back 32 bit big-endian floats
-            read_index += 268;  //324;  //332;
-            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], 8, ESP_LOG_INFO);
+                    param_ptr[VALETON_PARAM_NR_TYPE + loop].Value = (float)usb_valeton_gp5_get_effect_block_index(effect_code, loop);
+                    read_index += 8;
+                } 
+
+                valeton_params_release_locked_access();
+            }
+
+            // debug
+            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index - 49], 128, ESP_LOG_INFO);
+
+            // skip to start of params, back to back 32 bit big-endian floats
+            read_index += 16; 
+            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], 64, ESP_LOG_INFO);
+
+            ESP_LOGI(TAG, "Param values read_index: %d", (int)read_index);
 
             // params following match the order defined in Valeton params from VALETON_PARAM_NR_PARAM_0 down
             if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
@@ -1021,7 +1332,7 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
                 while (read_index < len)
                 {
                     // join 8 nibbles to form a 4 byte value
-                    for (uint8_t loop = 0; loop < 4; loop++)
+                    for (loop = 0; loop < 4; loop++)
                     {
                         temp_buf[loop] = buffer[read_index++] << 4;
                         temp_buf[loop] |= buffer[read_index++] & 0x0F;
@@ -1037,7 +1348,6 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
                     }
                     else
                     {
-                        // maybe these are globals?
                         ESP_LOGW(TAG, "Invalid Param count %d %f!", (int)(VALETON_PARAM_NR_PARAM_0 + param_index), temp_val);  
                     }
                     

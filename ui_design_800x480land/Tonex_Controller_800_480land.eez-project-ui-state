@@ -165,8 +165,7 @@
                       "enableClose": false,
                       "icon": "svg:hierarchy"
                     }
-                  ],
-                  "active": true
+                  ]
                 },
                 {
                   "type": "tabset",
@@ -189,7 +188,7 @@
             {
               "type": "tabset",
               "id": "EDITORS",
-              "weight": 65,
+              "weight": 63.29315960912052,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
@@ -204,12 +203,13 @@
                   },
                   "icon": "svg:page"
                 }
-              ]
+              ],
+              "active": true
             },
             {
               "type": "row",
               "id": "#55e73ab0-fa96-4ca0-8eb9-9c3aaf1fe427",
-              "weight": 20,
+              "weight": 21.706840390879478,
               "children": [
                 {
                   "type": "tabset",
@@ -974,11 +974,7 @@
       "selection": {
         "0": {
           "0": {
-            "2": {},
-            "10": {
-              "$selected": true
-            },
-            "11": {}
+            "$selected": true
           }
         }
       },
@@ -1017,6 +1013,30 @@
         "secondToPx": 200,
         "scrollLeft": 0
       }
+    },
+    "[Tonex_Controller_800_480land.eez-project]:/userPages/2[flow-state]": {
+      "selection": {
+        "0": {
+          "0": {
+            "1": {
+              "$selected": true
+            }
+          }
+        }
+      },
+      "transform": {
+        "translate": {
+          "x": -400,
+          "y": -240
+        },
+        "scale": 1
+      },
+      "timeline": {
+        "isEditorActive": false,
+        "position": 0,
+        "secondToPx": 200,
+        "scrollLeft": 0
+      }
     }
   },
   "activeOutputSection": 0,
@@ -1025,16 +1045,17 @@
   "searchMatchWholeWord": false,
   "replaceEnabled": false,
   "replaceText": "",
+  "pageRuntimeFrontFace": true,
   "breakpoints": {},
   "watchExpressions": [],
   "showComponentDescriptions": true,
   "logsPanelFilter": "all",
   "selectedStylePropertyName": "",
-  "lvglPart": "MAIN",
-  "lvglState": "DEFAULT",
+  "lvglPart": "ITEMS",
+  "lvglState": "CHECKED",
   "lvglExpandedPropertiesGroup": [
-    "MISCELLANEOUS",
-    "BACKGROUND"
+    "TEXT",
+    "BORDER"
   ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,

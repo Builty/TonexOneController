@@ -93,34 +93,43 @@ void valeton_show_settings_tab(lv_event_t * e)
 
     if (target == objects.ui_icon_val_pre)
     {
-        //todo
+        lv_tabview_set_act(objects.ui_val_settings_tab_view, CONFIG_TAB_VAL_PRE, LV_ANIM_OFF);
     }
     else if (target == objects.ui_icon_val_nr)
     {
+        lv_tabview_set_act(objects.ui_val_settings_tab_view, CONFIG_TAB_VAL_NR, LV_ANIM_OFF);
     }
     else if (target == objects.ui_icon_val_rvb)
     {
+        lv_tabview_set_act(objects.ui_val_settings_tab_view, CONFIG_TAB_VAL_RVB, LV_ANIM_OFF);
     }
     else if (target == objects.ui_icon_val_amp) 
     {
+        lv_tabview_set_act(objects.ui_val_settings_tab_view, CONFIG_TAB_VAL_AMP, LV_ANIM_OFF);
     }
     else if (target == objects.ui_icon_val_cab)
     {
+        lv_tabview_set_act(objects.ui_val_settings_tab_view, CONFIG_TAB_VAL_CAB, LV_ANIM_OFF);
     }
     else if (target == objects.ui_icon_val_tc)
     {
+        lv_tabview_set_act(objects.ui_val_settings_tab_view, CONFIG_TAB_VAL_NR, LV_ANIM_OFF);
     }
     else if (target == objects.ui_icon_val_eq)
     {
+        lv_tabview_set_act(objects.ui_val_settings_tab_view, CONFIG_TAB_VAL_EQ, LV_ANIM_OFF);
     }
     else if (target == objects.ui_icon_val_mod)
     {
+        lv_tabview_set_act(objects.ui_val_settings_tab_view, CONFIG_TAB_VAL_MOD, LV_ANIM_OFF);
     }
     else if (target == objects.ui_icon_val_dly)
     {
+        lv_tabview_set_act(objects.ui_val_settings_tab_view, CONFIG_TAB_VAL_DLY, LV_ANIM_OFF);
     }
     else if (target == objects.ui_icon_val_dst)
     {
+        lv_tabview_set_act(objects.ui_val_settings_tab_view, CONFIG_TAB_VAL_DST, LV_ANIM_OFF);
     }
 #endif //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI          
 }

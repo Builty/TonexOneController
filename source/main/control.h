@@ -191,7 +191,7 @@ enum WiFiTxPower
     WIFI_TX_POWER_100
 };
 
-enum ConfigTabs43B
+enum ConfigTabs43BTonex
 {
     CONFIG_TAB_GATE,
     CONFIG_TAB_COMPRESSOR,
@@ -201,6 +201,21 @@ enum ConfigTabs43B
     CONFIG_TAB_DELAY,
     CONFIG_TAB_REVERB,
     CONFIG_TAB_GLOBAL,
+};
+
+enum ConfigTabs43BValeton
+{
+    CONFIG_TAB_VAL_NR,
+    CONFIG_TAB_VAL_PRE,
+    CONFIG_TAB_VAL_DST,
+    CONFIG_TAB_VAL_AMP,
+    CONFIG_TAB_VAL_CAB,
+    CONFIG_TAB_VAL_EQ,
+    CONFIG_TAB_VAL_MOD,
+    CONFIG_TAB_VAL_DLY,
+    CONFIG_TAB_VAL_RVB,
+    CONFIG_TAB_VAL_NS,
+    CONFIG_TAB_VAL_GLOBAL,
 };
 
 enum FootswitchLayouts

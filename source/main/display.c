@@ -492,7 +492,20 @@ void action_close_settings_page(lv_event_t * e)
 *****************************************************************************/
 void action_show_settings_page(lv_event_t * e)
 {
-    lv_scr_load_anim(objects.settings, LV_SCR_LOAD_ANIM_FADE_IN, 0, 0, false);
+    switch (usb_get_connected_modeller_type())
+    {
+        case AMP_MODELLER_TONEX_ONE:        // fallthrough
+        case AMP_MODELLER_TONEX:            // fallthrough
+        default:
+        {
+            lv_scr_load_anim(objects.settings, LV_SCR_LOAD_ANIM_FADE_IN, 0, 0, false);
+        } break;
+
+        case AMP_MODELLER_VALETON_GP5:
+        {
+            lv_scr_load_anim(objects.val_settings, LV_SCR_LOAD_ANIM_FADE_IN, 0, 0, false);
+        } break;
+    }    
 }
 
 /****************************************************************************
