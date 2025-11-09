@@ -200,7 +200,7 @@ static const EffectMapEntry_t effect_map_amp[] = {
                                             { VALETON_EFFECT_AMP_SOLO100_OD, 0x47000007},
                                             { VALETON_EFFECT_AMP_Z38_OD, 0x49000007},
                                             { VALETON_EFFECT_AMP_BAD_KT_OD, 0x4B000007},
-                                            { VALETON_EFFECT_AMP_JUICEW_R100, 0x53000007},
+                                            { VALETON_EFFECT_AMP_JUICE_R100, 0x53000007},
                                             { VALETON_EFFECT_AMP_DIZZ_VH, 0x65000007},
                                             { VALETON_EFFECT_AMP_DIZZ_VH_PLUS, 0x6A000007},
                                             { VALETON_EFFECT_AMP_EAGLE_120, 0x5F000007},

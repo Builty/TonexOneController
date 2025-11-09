@@ -883,54 +883,154 @@ uint8_t valeton_update_ui_parameters(void)
 
                     switch ((int)param_entry->Value)
                     {
-                        case  VALETON_EFFECT_DIST_GREEN_OD:
-                        {
-
-                        } break;
-
-                        case VALETON_EFFECT_DIST_YELLOW_OD:
-                        {
-
-                        } break;
-
-                        case VALETON_EFFECT_DIST_SUPER_OD:
-                        {
-
-                        } break;
-
-                        case VALETON_EFFECT_DIST_SM_DIST:
-                        {
-
-                        } break;
-
-                        case VALETON_EFFECT_DIST_PLUSTORTION:
-                        {
-
-                        } break;
-
+                        case VALETON_EFFECT_DIST_GREEN_OD:      // fallthrough
+                        case VALETON_EFFECT_DIST_SUPER_OD:      // fallthrough
+                        case VALETON_EFFECT_DIST_SM_DIST:       // fallthrough
                         case VALETON_EFFECT_DIST_LA_CHARGER:
                         {
+                            lv_obj_clear_flag(objects.ui_val_dst_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_dst_param0_label, "Gain");
+                            lv_slider_set_range(objects.ui_val_dst_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_dst_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_dst_param1_label, "Tone");
+                            lv_slider_set_range(objects.ui_val_dst_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_dst_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_dst_param2_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_dst_param2_slider, 0, 100);
 
+                            lv_obj_add_flag(objects.ui_val_dst_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param3_value, LV_OBJ_FLAG_HIDDEN);
+
+                            lv_obj_add_flag(objects.ui_val_dst_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param4_value, LV_OBJ_FLAG_HIDDEN);  
                         } break;
 
+                        case VALETON_EFFECT_DIST_YELLOW_OD:     // fallthrough
+                        case VALETON_EFFECT_DIST_PLUSTORTION:
+                        {
+                            lv_obj_clear_flag(objects.ui_val_dst_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_dst_param0_label, "Gain");
+                            lv_slider_set_range(objects.ui_val_dst_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_dst_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_dst_param1_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_dst_param1_slider, 0, 100);
+ 
+                            lv_obj_add_flag(objects.ui_val_dst_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param2_value, LV_OBJ_FLAG_HIDDEN);
+
+                            lv_obj_add_flag(objects.ui_val_dst_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param3_value, LV_OBJ_FLAG_HIDDEN);
+
+                            lv_obj_add_flag(objects.ui_val_dst_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param4_value, LV_OBJ_FLAG_HIDDEN);  
+                        } break;
+                   
                         case VALETON_EFFECT_DIST_DARKTALE:
                         {
+                            lv_obj_clear_flag(objects.ui_val_dst_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_dst_param0_label, "Gain");
+                            lv_slider_set_range(objects.ui_val_dst_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_dst_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_dst_param1_label, "Filter");
+                            lv_slider_set_range(objects.ui_val_dst_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_dst_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_dst_param2_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_dst_param2_slider, 0, 100);
 
+                            lv_obj_add_flag(objects.ui_val_dst_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param3_value, LV_OBJ_FLAG_HIDDEN);
+
+                            lv_obj_add_flag(objects.ui_val_dst_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param4_value, LV_OBJ_FLAG_HIDDEN);  
                         } break;
                         
-                        case VALETON_EFFECT_DIST_SORA_FUZZ:
-                        {
-
-                        } break;
-
+                        case VALETON_EFFECT_DIST_SORA_FUZZ:     // fallthrough
                         case VALETON_EFFECT_DIST_RED_HAZE:
                         {
+                            lv_obj_clear_flag(objects.ui_val_dst_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_dst_param0_label, "Fuzz");
+                            lv_slider_set_range(objects.ui_val_dst_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_dst_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_dst_param1_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_dst_param1_slider, 0, 100);
+ 
+                            lv_obj_add_flag(objects.ui_val_dst_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param2_value, LV_OBJ_FLAG_HIDDEN);
 
+                            lv_obj_add_flag(objects.ui_val_dst_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param3_value, LV_OBJ_FLAG_HIDDEN);
+
+                            lv_obj_add_flag(objects.ui_val_dst_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_dst_param4_value, LV_OBJ_FLAG_HIDDEN);  
                         } break;
 
                         case VALETON_EFFECT_DIST_BASS_OD:
                         {
+                            lv_obj_clear_flag(objects.ui_val_dst_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_dst_param0_label, "Gain");
+                            lv_slider_set_range(objects.ui_val_dst_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_dst_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_dst_param1_label, "Blend");
+                            lv_slider_set_range(objects.ui_val_dst_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_dst_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_dst_param2_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_dst_param2_slider, 0, 100);
 
+                            lv_obj_clear_flag(objects.ui_val_dst_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param3_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_dst_param3_label, "Bass");
+                            lv_slider_set_range(objects.ui_val_dst_param3_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_dst_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_dst_param4_value, LV_OBJ_FLAG_HIDDEN);  
+                            lv_label_set_text(objects.ui_val_dst_param4_label, "Treble");
+                            lv_slider_set_range(objects.ui_val_dst_param4_slider, 0, 100);
                         } break;
                     }
                 } break;
@@ -999,40 +1099,490 @@ uint8_t valeton_update_ui_parameters(void)
                     {
                         case VALETON_EFFECT_AMP_TWEEDY:
                         {
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param0_label, "Gain");
+                            lv_slider_set_range(objects.ui_val_amp_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param1_label, "Tone");
+                            lv_slider_set_range(objects.ui_val_amp_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param2_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_amp_param2_slider, 0, 100);
+
+                            lv_obj_add_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
+
+                            lv_obj_add_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
+                        } break;
+
+                        case VALETON_EFFECT_AMP_BELLMAN_59N:    // fallthrough
+                        case VALETON_EFFECT_AMP_MATCH_CL:       // fallthrough
+                        case VALETON_EFFECT_AMP_L_STAR_CL:      // fallthrough
+                        case VALETON_EFFECT_AMP_UK_45:          // fallthough
+                        case VALETON_EFFECT_AMP_UK_800:         // fallthrough
+                        case VALETON_EFFECT_AMP_BELLMAN_59B:    // fallthough
+                        case VALETON_EFFECT_AMP_SOLO100_OD:     // fallthrough
+                        case VALETON_EFFECT_AMP_BAD_KT_OD:      // fallthough
+                        case VALETON_EFFECT_AMP_DIZZ_VH:        // fallthrough
+                        case VALETON_EFFECT_AMP_DIZZ_VH_PLUS:   // fallthrough
+                        case VALETON_EFFECT_AMP_EAGLE_120:      // fallthrough
+                        case VALETON_EFFECT_AMP_SOLO100_LD:     // fallthrough
+                        case VALETON_EFFECT_AMP_MESS_DUALV:     // fallthrough
+                        case VALETON_EFFECT_AMP_MESS_DUALM:     // fallthrough
+                        case VALETON_EFFECT_AMP_POWER_LD:       // fallthrough
+                        case VALETON_EFFECT_AMP_FLAGMAN_PLUS:   // fallthrough
+                        case VALETON_EFFECT_AMP_BOG_REDV:
+                        {
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param0_label, "Gain");
+                            lv_slider_set_range(objects.ui_val_amp_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param1_label, "Presence");
+                            lv_slider_set_range(objects.ui_val_amp_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param2_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_amp_param2_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param3_label, "Bass");
+                            lv_slider_set_range(objects.ui_val_amp_param3_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
+                            lv_label_set_text(objects.ui_val_amp_param4_label, "Middle");
+                            lv_slider_set_range(objects.ui_val_amp_param4_slider, 0, 100);
+
+                            // todo Treble 
+                        } break;
+
+                        case VALETON_EFFECT_AMP_DARK_TWIN:
+                        case VALETON_EFFECT_AMP_JUICE_R100:
+                        {
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param0_label, "Gain");
+                            lv_slider_set_range(objects.ui_val_amp_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param1_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_amp_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param2_label, "Bass");
+                            lv_slider_set_range(objects.ui_val_amp_param2_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param3_label, "Middle");
+                            lv_slider_set_range(objects.ui_val_amp_param3_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
+                            lv_label_set_text(objects.ui_val_amp_param4_label, "Treble");
+                            lv_slider_set_range(objects.ui_val_amp_param4_slider, 0, 100);
+
+                            //todo bright switch
+                        } break;
+
+                        case VALETON_EFFECT_AMP_FOXY_30N:
+                        {
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param0_label, "Gain");
+                            lv_slider_set_range(objects.ui_val_amp_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param1_label, "Tone Cut");
+                            lv_slider_set_range(objects.ui_val_amp_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param2_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_amp_param2_slider, 0, 100);
+
+                            lv_obj_add_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
+
+                            lv_obj_add_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
+
+                            //todo tone cut switch
+                        } break;
+
+                        case VALETON_EFFECT_AMP_J_120_CL:
+                        {
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param0_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_amp_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param1_label, "Bass");
+                            lv_slider_set_range(objects.ui_val_amp_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param2_label, "Middle");
+                            lv_slider_set_range(objects.ui_val_amp_param2_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param3_label, "Treble");
+                            lv_slider_set_range(objects.ui_val_amp_param3_slider, 0, 100);
+
+                            lv_obj_add_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
+
+                            //todo bright switch
+                        } break;
+
+                        case VALETON_EFFECT_AMP_UK_50JP:
+                        {
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param0_label, "Gain 1");
+                            lv_slider_set_range(objects.ui_val_amp_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param1_label, "Presence");
+                            lv_slider_set_range(objects.ui_val_amp_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param2_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_amp_param2_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param3_label, "Bass");
+                            lv_slider_set_range(objects.ui_val_amp_param3_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
+                            lv_label_set_text(objects.ui_val_amp_param4_label, "Middle");
+                            lv_slider_set_range(objects.ui_val_amp_param4_slider, 0, 100);
+
+                            //todo: treble, gain 2
+                        } break;
+
+                        case VALETON_EFFECT_AMP_FOXY_30TB:
+                        {
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param0_label, "Gain");
+                            lv_slider_set_range(objects.ui_val_amp_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param1_label, "Tone Cut");
+                            lv_slider_set_range(objects.ui_val_amp_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param2_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_amp_param2_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param3_label, "Bass");
+                            lv_slider_set_range(objects.ui_val_amp_param3_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
+                            lv_label_set_text(objects.ui_val_amp_param4_label, "Treble");
+                            lv_slider_set_range(objects.ui_val_amp_param4_slider, 0, 100);
+
+                            //todo: add character switch
+                        } break;
+
+                        case VALETON_EFFECT_AMP_SUPDUAL_OD:
+                        {
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param0_label, "Gain 1");
+                            lv_slider_set_range(objects.ui_val_amp_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param1_label, "Tone 1");
+                            lv_slider_set_range(objects.ui_val_amp_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param2_label, "Gain 2");
+                            lv_slider_set_range(objects.ui_val_amp_param2_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param3_label, "Tone 2");
+                            lv_slider_set_range(objects.ui_val_amp_param3_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
+                            lv_label_set_text(objects.ui_val_amp_param4_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_amp_param4_slider, 0, 100);
+                        } break;
+                        
+                        case VALETON_EFFECT_AMP_Z38_OD:
+                        {
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param0_label, "Gain");
+                            lv_slider_set_range(objects.ui_val_amp_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param1_label, "Tone Cut");
+                            lv_slider_set_range(objects.ui_val_amp_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param2_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_amp_param2_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param3_label, "Bass");
+                            lv_slider_set_range(objects.ui_val_amp_param3_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
+                            lv_label_set_text(objects.ui_val_amp_param4_label, "Middle");
+                            lv_slider_set_range(objects.ui_val_amp_param4_slider, 0, 100);
+
+                            //todo: treble
+                        } break;
+
+                        case VALETON_EFFECT_AMP_EV_51:
+                        {
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param0_label, "Gain");
+                            lv_slider_set_range(objects.ui_val_amp_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param1_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_amp_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param2_label, "Bass");
+                            lv_slider_set_range(objects.ui_val_amp_param2_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param3_label, "Mid");
+                            lv_slider_set_range(objects.ui_val_amp_param3_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
+                            lv_label_set_text(objects.ui_val_amp_param4_label, "Treble");
+                            lv_slider_set_range(objects.ui_val_amp_param4_slider, 0, 100);
+
+                            // todo presence
+                        } break;
+
+                        case VALETON_EFFECT_AMP_CLASSIC_BASS:
+                        {
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param0_label, "Gain");
+                            lv_slider_set_range(objects.ui_val_amp_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param1_label, "Bass");
+                            lv_slider_set_range(objects.ui_val_amp_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param2_label, "Middle");
+                            lv_slider_set_range(objects.ui_val_amp_param2_slider, 0, 100);
+
+                            //todo: middle freq
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param3_label, "Treble");
+                            lv_slider_set_range(objects.ui_val_amp_param3_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
+                            lv_label_set_text(objects.ui_val_amp_param4_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_amp_param4_slider, 0, 100);
+                        } break;
+                        
+                        case VALETON_EFFECT_AMP_FOXY_BASS:
+                        {
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param0_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_amp_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param1_label, "Bass");
+                            lv_slider_set_range(objects.ui_val_amp_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param2_label, "Treble");
+                            lv_slider_set_range(objects.ui_val_amp_param2_slider, 0, 100);
+
+                            lv_obj_add_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
+
+                            lv_obj_add_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_add_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
 
                         } break;
 
-                        // VALETON_EFFECT_AMP_BELLMAN_59N,
-                        // VALETON_EFFECT_AMP_DARK_TWIN,
-                        // VALETON_EFFECT_AMP_FOXY_30N,
-                        // VALETON_EFFECT_AMP_J_120_CL,
-                        // VALETON_EFFECT_AMP_MATCH_CL,
-                        // VALETON_EFFECT_AMP_L_STAR_CL,
-                        // VALETON_EFFECT_AMP_UK_45,
-                        // VALETON_EFFECT_AMP_UK_50JP,
-                        // VALETON_EFFECT_AMP_UK_800,
-                        // VALETON_EFFECT_AMP_BELLMAN_59B,
-                        // VALETON_EFFECT_AMP_FOXY_30TB,
-                        // VALETON_EFFECT_AMP_SUPDUAL_OD,
-                        // VALETON_EFFECT_AMP_SOLO100_OD,
-                        // VALETON_EFFECT_AMP_Z38_OD,
-                        // VALETON_EFFECT_AMP_BAD_KT_OD,
-                        // VALETON_EFFECT_AMP_JUICEW_R100,
-                        // VALETON_EFFECT_AMP_DIZZ_VH,
-                        // VALETON_EFFECT_AMP_DIZZ_VH_PLUS,
-                        // VALETON_EFFECT_AMP_EAGLE_120,
-                        // VALETON_EFFECT_AMP_EV_51,
-                        // VALETON_EFFECT_AMP_SOLO100_LD,
-                        // VALETON_EFFECT_AMP_MESS_DUALV,
-                        // VALETON_EFFECT_AMP_MESS_DUALM,
-                        // VALETON_EFFECT_AMP_POWER_LD,
-                        // VALETON_EFFECT_AMP_FLAGMAN_PLUS,
-                        // VALETON_EFFECT_AMP_BOG_REDV,
-                        // VALETON_EFFECT_AMP_CLASSIC_BASS,
-                        // VALETON_EFFECT_AMP_FOXY_BASS,
-                        // VALETON_EFFECT_AMP_MESS_BASS,
-                        // VALETON_EFFECT_AMP_AC_PRE1,
-                        // VALETON_EFFECT_AMP_AC_PRE2
+                        case VALETON_EFFECT_AMP_MESS_BASS:
+                        {
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param0_label, "Gain");
+                            lv_slider_set_range(objects.ui_val_amp_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param1_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_amp_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param2_label, "Bass");
+                            lv_slider_set_range(objects.ui_val_amp_param2_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param3_label, "Mid");
+                            lv_slider_set_range(objects.ui_val_amp_param3_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
+                            lv_label_set_text(objects.ui_val_amp_param4_label, "Treble");
+                            lv_slider_set_range(objects.ui_val_amp_param4_slider, 0, 100);
+                        } break;
+
+                        case VALETON_EFFECT_AMP_AC_PRE1:    // fallthrough
+                        case VALETON_EFFECT_AMP_AC_PRE2:
+                        {
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param0_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param0_label, "Volume");
+                            lv_slider_set_range(objects.ui_val_amp_param0_slider, 0, 100);
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param1_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param1_label, "Tone");
+                            lv_slider_set_range(objects.ui_val_amp_param1_slider, 0, 100);
+ 
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param2_label, "Balance");
+                            lv_slider_set_range(objects.ui_val_amp_param2_slider, 0, 100);
+
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
+                            lv_label_set_text(objects.ui_val_amp_param3_label, "EQ Freq");
+                            lv_slider_set_range(objects.ui_val_amp_param3_slider, 0, 100);
+
+                            // todo: EQ Q
+                            
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                            lv_obj_clear_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
+                            lv_label_set_text(objects.ui_val_amp_param4_label, "EQ Gain");
+                            lv_slider_set_range(objects.ui_val_amp_param4_slider, 0, 100);
+                        } break;
                     }
                 } break;
 
@@ -1096,33 +1646,28 @@ uint8_t valeton_update_ui_parameters(void)
                 {
                     lv_dropdown_set_selected(objects.ui_val_cab_model_dropdown, (int)param_entry->Value);
 
-                    switch ((int)param_entry->Value)
-                    {
-                        case VALETON_EFFECT_CAB_TWD_CP:
-                        {
+                    // all cabs have volume only
+                    lv_obj_clear_flag(objects.ui_val_cab_param0_label, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_val_cab_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_val_cab_param0_value, LV_OBJ_FLAG_HIDDEN);
+                    lv_label_set_text(objects.ui_val_cab_param0_label, "Volume");
+                    lv_slider_set_range(objects.ui_val_cab_param0_slider, 0, 100);
+                    
+                    lv_obj_add_flag(objects.ui_val_cab_param1_label, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_add_flag(objects.ui_val_cab_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_add_flag(objects.ui_val_cab_param1_value, LV_OBJ_FLAG_HIDDEN);
 
-                        } break;
+                    lv_obj_add_flag(objects.ui_val_cab_param2_label, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_add_flag(objects.ui_val_cab_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_add_flag(objects.ui_val_cab_param2_value, LV_OBJ_FLAG_HIDDEN);
 
-                        // VALETON_EFFECT_CAB_DARK_VIT,
-                        // VALETON_EFFECT_CAB_FOXY_1X12,
-                        // VALETON_EFFECT_CAB_L_STAR_1X12,
-                        // VALETON_EFFECT_CAB_DARK_CS_2X12,
-                        // VALETON_EFFECT_CAB_DARK_TWIN_2X12,
-                        // VALETON_EFFECT_CAB_SUP_STAR_2X12,
-                        // VALETON_EFFECT_CAB_J_120_2X12,
-                        // VALETON_EFFECT_CAB_FOXY_2X12,
-                        // VALETON_EFFECT_CAB_UK_GRN_2X12,
-                        // VALETON_EFFECT_CAB_UK_GRN_4X12,
-                        // VALETON_EFFECT_CAB_BOG_4X12,
-                        // VALETON_EFFECT_CAB_DIZZ_4X12,
-                        // VALETON_EFFECT_CAB_EV_4X12,
-                        // VALETON_EFFECT_CAB_SOLO_4X12,
-                        // VALETON_EFFECT_CAB_MESS_4X12,
-                        // VALETON_EFFECT_CAB_EAGLE_4X12,
-                        // VALETON_EFFECT_CAB_JUICE_4X12,
-                        // VALETON_EFFECT_CAB_BELLMAN_2X12,
-                        // VALETON_EFFECT_CAB_AMPG_4X10
-                    }
+                    lv_obj_add_flag(objects.ui_val_cab_param3_label, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_add_flag(objects.ui_val_cab_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_add_flag(objects.ui_val_cab_param3_value, LV_OBJ_FLAG_HIDDEN);
+                    
+                    lv_obj_add_flag(objects.ui_val_cab_param4_label, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_add_flag(objects.ui_val_cab_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_add_flag(objects.ui_val_cab_param4_value, LV_OBJ_FLAG_HIDDEN);  
                 } break;
 
                 case VALETON_PARAM_CAB_PARAM_0:
