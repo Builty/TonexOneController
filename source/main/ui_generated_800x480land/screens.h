@@ -260,7 +260,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_val_dst_param1_slider;
     lv_obj_t *ui_val_dst_param1_value;
     lv_obj_t *ui_val_dst_param2_label;
-    lv_obj_t *ui_val_dste_param2_slider;
+    lv_obj_t *ui_val_dst_param2_slider;
     lv_obj_t *ui_val_dst_param2_value;
     lv_obj_t *ui_val_dst_param3_label;
     lv_obj_t *ui_val_dst_param3_slider;

@@ -3065,7 +3065,7 @@ void create_screen_val_settings() {
                             objects.ui_val_dst_model_dropdown = obj;
                             lv_obj_set_pos(obj, 482, 8);
                             lv_obj_set_size(obj, 280, LV_SIZE_CONTENT);
-                            lv_dropdown_set_options(obj, "Comp\nComp4\nBoost\nMicro Boost\nB-Boost\nToucher\nCrier\nOcta\nPitch\nDetune");
+                            lv_dropdown_set_options(obj, "Green OD\nYellow OD\nSuper OD\nSM Dist\nPlustortion\nLa Charger\nDarktale\nSora Fuzz\nRed Haze\nBass OD");
                             lv_dropdown_set_selected(obj, 0);
                             lv_obj_add_event_cb(obj, action_parameter_changed, LV_EVENT_VALUE_CHANGED, (void *)0);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(0xff1f1f1f), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3172,9 +3172,9 @@ void create_screen_val_settings() {
                             lv_label_set_text(obj, "Param2");
                         }
                         {
-                            // ui_ValDsteParam2Slider
+                            // ui_ValDstParam2Slider
                             lv_obj_t *obj = lv_slider_create(parent_obj);
-                            objects.ui_val_dste_param2_slider = obj;
+                            objects.ui_val_dst_param2_slider = obj;
                             lv_obj_set_pos(obj, 168, 21);
                             lv_obj_set_size(obj, 511, 20);
                             lv_slider_set_range(obj, -100, -20);
