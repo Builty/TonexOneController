@@ -367,8 +367,298 @@ void valeton_action_parameter_changed(lv_event_t * e)
 
     ESP_LOGI(TAG, "Valeton Parameter changed");
 
-    //todo 
-
+    // Block Switches
+    if (obj == objects.ui_val_nr_block_switch)
+    {
+        usb_modify_parameter(VALETON_PARAM_NR_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
+    } 
+    else if (obj == objects.ui_val_pre_block_switch)
+    {
+        usb_modify_parameter(VALETON_PARAM_PRE_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
+    } 
+    else if (obj == objects.ui_val_dst_block_switch)
+    {
+        usb_modify_parameter(VALETON_PARAM_DIST_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
+    } 
+    else if (obj == objects.ui_val_amp_block_switch)
+    {
+        usb_modify_parameter(VALETON_PARAM_AMP_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
+    } 
+    else if (obj == objects.ui_val_cab_block_switch)
+    {
+        usb_modify_parameter(VALETON_PARAM_CAB_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
+    } 
+    else if (obj == objects.ui_val_eq_block_switch)
+    {
+        usb_modify_parameter(VALETON_PARAM_EQ_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
+    } 
+    else if (obj == objects.ui_val_mod_block_switch)
+    {
+        usb_modify_parameter(VALETON_PARAM_MOD_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
+    } 
+    else if (obj == objects.ui_val_dly_block_switch)
+    {
+        usb_modify_parameter(VALETON_PARAM_DLY_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
+    } 
+    else if (obj == objects.ui_val_rvb_block_switch)
+    {
+        usb_modify_parameter(VALETON_PARAM_RVB_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
+    } 
+    else if (obj == objects.ui_val_ns_block_switch)
+    {
+        usb_modify_parameter(VALETON_PARAM_NS_ENABLE, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
+    } 
+    // Models
+    else if (obj == objects.ui_val_nr_model_dropdown)
+    {
+        usb_modify_parameter(VALETON_PARAM_NR_TYPE, lv_dropdown_get_selected(obj));
+    }
+    else if (obj == objects.ui_val_pre_model_dropdown)
+    {
+        usb_modify_parameter(VALETON_PARAM_PRE_TYPE, lv_dropdown_get_selected(obj));
+    }
+    else if (obj == objects.ui_val_dst_model_dropdown)
+    {
+        usb_modify_parameter(VALETON_PARAM_DIST_TYPE, lv_dropdown_get_selected(obj));
+    }
+    else if (obj == objects.ui_val_amp_model_dropdown)
+    {
+        usb_modify_parameter(VALETON_PARAM_AMP_TYPE, lv_dropdown_get_selected(obj));
+    }
+    else if (obj == objects.ui_val_cab_model_dropdown)
+    {
+        usb_modify_parameter(VALETON_PARAM_CAB_TYPE, lv_dropdown_get_selected(obj));
+    }
+    else if (obj == objects.ui_val_eq_model_dropdown)
+    {
+        usb_modify_parameter(VALETON_PARAM_EQ_TYPE, lv_dropdown_get_selected(obj));
+    }
+    else if (obj == objects.ui_val_mod_model_dropdown)
+    {
+        usb_modify_parameter(VALETON_PARAM_MOD_TYPE, lv_dropdown_get_selected(obj));
+    }
+    else if (obj == objects.ui_val_dly_model_dropdown)
+    {
+        usb_modify_parameter(VALETON_PARAM_DLY_TYPE, lv_dropdown_get_selected(obj));
+    }
+    else if (obj == objects.ui_val_rvb_model_dropdown)
+    {
+        usb_modify_parameter(VALETON_PARAM_RVB_TYPE, lv_dropdown_get_selected(obj));
+    }
+    else if (obj == objects.ui_val_ns_model_dropdown)
+    {
+        usb_modify_parameter(VALETON_PARAM_NS_TYPE, lv_dropdown_get_selected(obj));
+    }
+    // NR params
+    else if (obj == objects.ui_val_nr_param0_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_NR_PARAM_0, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_nr_param1_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_NR_PARAM_1, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_nr_param2_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_NR_PARAM_2, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_nr_param3_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_NR_PARAM_3, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_nr_param4_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_NR_PARAM_4, ((float)lv_slider_get_value(obj)));
+    }
+    // Pre block
+    else if (obj == objects.ui_val_pre_param0_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_PRE_PARAM_0, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_pre_param1_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_PRE_PARAM_1, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_pre_param2_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_PRE_PARAM_2, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_pre_param3_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_PRE_PARAM_3, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_pre_param4_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_PRE_PARAM_4, ((float)lv_slider_get_value(obj)));
+    }
+    // Dst block
+    else if (obj == objects.ui_val_dst_param0_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_DIST_PARAM_0, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_dst_param1_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_DIST_PARAM_1, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_dst_param2_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_DIST_PARAM_2, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_dst_param3_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_DIST_PARAM_3, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_dst_param4_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_DIST_PARAM_4, ((float)lv_slider_get_value(obj)));
+    }
+    // Amp block
+    else if (obj == objects.ui_val_amp_param0_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_AMP_PARAM_0, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_amp_param1_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_AMP_PARAM_1, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_amp_param2_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_AMP_PARAM_2, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_amp_param3_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_AMP_PARAM_3, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_amp_param4_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_AMP_PARAM_4, ((float)lv_slider_get_value(obj)));
+    }
+    // Cab block
+    else if (obj == objects.ui_val_cab_param0_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_CAB_PARAM_0, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_cab_param1_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_CAB_PARAM_1, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_cab_param2_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_CAB_PARAM_2, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_cab_param3_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_CAB_PARAM_3, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_cab_param4_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_CAB_PARAM_4, ((float)lv_slider_get_value(obj)));
+    }
+    // EQ block
+    else if (obj == objects.ui_val_eq_param0_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_EQ_PARAM_0, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_eq_param1_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_EQ_PARAM_1, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_eq_param2_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_EQ_PARAM_2, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_eq_param3_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_EQ_PARAM_3, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_eq_param4_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_EQ_PARAM_4, ((float)lv_slider_get_value(obj)));
+    }
+    // Mod block
+    else if (obj == objects.ui_val_mod_param0_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_MOD_PARAM_0, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_mod_param1_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_MOD_PARAM_1, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_mod_param2_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_MOD_PARAM_2, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_mod_param3_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_MOD_PARAM_3, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_mod_param4_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_MOD_PARAM_4, ((float)lv_slider_get_value(obj)));
+    }
+    // Dly block
+    else if (obj == objects.ui_val_dly_param0_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_DLY_PARAM_0, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_dly_param1_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_DLY_PARAM_1, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_dly_param2_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_DLY_PARAM_2, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_dly_param3_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_DLY_PARAM_3, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_dly_param4_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_DLY_PARAM_4, ((float)lv_slider_get_value(obj)));
+    }
+    // Rvb block
+    else if (obj == objects.ui_val_rvb_param0_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_RVB_PARAM_0, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_rvb_param1_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_RVB_PARAM_1, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_rvb_param2_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_RVB_PARAM_2, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_rvb_param3_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_RVB_PARAM_3, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_rvb_param4_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_RVB_PARAM_4, ((float)lv_slider_get_value(obj)));
+    }
+    // NS block
+    else if (obj == objects.ui_val_ns_param0_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_NS_PARAM_0, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_ns_param1_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_NS_PARAM_1, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_ns_param2_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_NS_PARAM_2, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_ns_param3_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_NS_PARAM_3, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_ns_param4_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_NS_PARAM_4, ((float)lv_slider_get_value(obj)));
+    }
 #endif // CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI          
 }
 
@@ -2666,35 +2956,35 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_dropdown_set_selected(objects.ui_val_ns_model_dropdown, (int)param_entry->Value);
 
                     // all models have same params
-                    lv_obj_clear_flag(objects.ui_val_rvb_param0_label, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(objects.ui_val_rvb_param0_slider, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(objects.ui_val_rvb_param0_value, LV_OBJ_FLAG_HIDDEN);
-                    lv_label_set_text(objects.ui_val_rvb_param0_label, "Gain");
-                    lv_slider_set_range(objects.ui_val_rvb_param0_slider, 0, 100);
+                    lv_obj_clear_flag(objects.ui_val_ns_param0_label, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_val_ns_param0_slider, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_val_ns_param0_value, LV_OBJ_FLAG_HIDDEN);
+                    lv_label_set_text(objects.ui_val_ns_param0_label, "Gain");
+                    lv_slider_set_range(objects.ui_val_ns_param0_slider, 0, 100);
                     
-                    lv_obj_clear_flag(objects.ui_val_rvb_param1_label, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(objects.ui_val_rvb_param1_slider, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(objects.ui_val_rvb_param1_value, LV_OBJ_FLAG_HIDDEN);
-                    lv_label_set_text(objects.ui_val_rvb_param1_label, "Volume");
-                    lv_slider_set_range(objects.ui_val_rvb_param1_slider, 0, 100);
+                    lv_obj_clear_flag(objects.ui_val_ns_param1_label, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_val_ns_param1_slider, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_val_ns_param1_value, LV_OBJ_FLAG_HIDDEN);
+                    lv_label_set_text(objects.ui_val_ns_param1_label, "Volume");
+                    lv_slider_set_range(objects.ui_val_ns_param1_slider, 0, 100);
 
-                    lv_obj_clear_flag(objects.ui_val_rvb_param2_label, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(objects.ui_val_rvb_param2_slider, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(objects.ui_val_rvb_param2_value, LV_OBJ_FLAG_HIDDEN);
-                    lv_label_set_text(objects.ui_val_rvb_param2_label, "Bass");
-                    lv_slider_set_range(objects.ui_val_rvb_param2_slider, 0, 100);
+                    lv_obj_clear_flag(objects.ui_val_ns_param2_label, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_val_ns_param2_slider, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_val_ns_param2_value, LV_OBJ_FLAG_HIDDEN);
+                    lv_label_set_text(objects.ui_val_ns_param2_label, "Bass");
+                    lv_slider_set_range(objects.ui_val_ns_param2_slider, 0, 100);
 
-                    lv_obj_clear_flag(objects.ui_val_rvb_param3_label, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(objects.ui_val_rvb_param3_slider, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(objects.ui_val_rvb_param3_value, LV_OBJ_FLAG_HIDDEN);
-                    lv_label_set_text(objects.ui_val_rvb_param3_label, "Middle");
-                    lv_slider_set_range(objects.ui_val_rvb_param3_slider, 0, 100);
+                    lv_obj_clear_flag(objects.ui_val_ns_param3_label, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_val_ns_param3_slider, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_val_ns_param3_value, LV_OBJ_FLAG_HIDDEN);
+                    lv_label_set_text(objects.ui_val_ns_param3_label, "Middle");
+                    lv_slider_set_range(objects.ui_val_ns_param3_slider, 0, 100);
 
-                    lv_obj_clear_flag(objects.ui_val_rvb_param4_label, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(objects.ui_val_rvb_param4_slider, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(objects.ui_val_rvb_param4_value, LV_OBJ_FLAG_HIDDEN);      
-                    lv_label_set_text(objects.ui_val_rvb_param4_label, "Treble");
-                    lv_slider_set_range(objects.ui_val_rvb_param4_slider, 0, 100);
+                    lv_obj_clear_flag(objects.ui_val_ns_param4_label, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_val_ns_param4_slider, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_val_ns_param4_value, LV_OBJ_FLAG_HIDDEN);      
+                    lv_label_set_text(objects.ui_val_ns_param4_label, "Treble");
+                    lv_slider_set_range(objects.ui_val_ns_param4_slider, 0, 100);
                 } break;
 
                 case VALETON_PARAM_NS_PARAM_0:

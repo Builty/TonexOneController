@@ -174,11 +174,11 @@ static const EffectMapEntry_t effect_map_dst[] = {
                                             { VALETON_EFFECT_DIST_SUPER_OD, 0x06000003},
                                             { VALETON_EFFECT_DIST_SM_DIST, 0x2A000003},
                                             { VALETON_EFFECT_DIST_PLUSTORTION, 0x29000003},
-                                            { VALETON_EFFECT_DIST_LA_CHARGER, 0x2B000003},
-                                            { VALETON_EFFECT_DIST_DARKTALE, 0x22000003},
-                                            { VALETON_EFFECT_DIST_SORA_FUZZ, 0x24000003},
-                                            { VALETON_EFFECT_DIST_RED_HAZE, 0x40000003},
-                                            { VALETON_EFFECT_DIST_BASS_OD, 0x41000003},  //todo
+                                            { VALETON_EFFECT_DIST_LA_CHARGER, 0x30000003},
+                                            { VALETON_EFFECT_DIST_DARKTALE, 0x2B000003},
+                                            { VALETON_EFFECT_DIST_SORA_FUZZ, 0x22000003},
+                                            { VALETON_EFFECT_DIST_RED_HAZE, 0x24000003},
+                                            { VALETON_EFFECT_DIST_BASS_OD, 0x40000003}, 
                                             { 0xFF, 0xFFFFFFFF}, // end of table
                                           };
 
@@ -282,15 +282,15 @@ static const EffectMapEntry_t effect_map_dly[] = {
                                           };
 
 static const EffectMapEntry_t effect_map_rvb[] = {
-                                            { VALETON_EFFECT_RVB_AIR, 0x0B00000C},
-                                            { VALETON_EFFECT_RVB_ROOM, 0x000000C},
-                                            { VALETON_EFFECT_RVB_HALL, 0x0100000C},
-                                            { VALETON_EFFECT_RVB_CHURCH, 0x0200000C},
+                                            { VALETON_EFFECT_RVB_AIR, 0xB00000C},
+                                            { VALETON_EFFECT_RVB_ROOM, 0x00000C},
+                                            { VALETON_EFFECT_RVB_HALL, 0x100000C},
+                                            { VALETON_EFFECT_RVB_CHURCH, 0x200000C},
                                             { VALETON_EFFECT_RVB_PLATE_L, 0x1000000C},
                                             { VALETON_EFFECT_RVB_PLATE, 0x0F00000C},
-                                            { VALETON_EFFECT_RVB_SPRING, 0x0400000C},
-                                            { VALETON_EFFECT_RVB_N_STAR, 0x0600000C},
-                                            { VALETON_EFFECT_RVB_DEEPSEA, 0x0700000C},
+                                            { VALETON_EFFECT_RVB_SPRING, 0x400000C},
+                                            { VALETON_EFFECT_RVB_N_STAR, 0x600000C},
+                                            { VALETON_EFFECT_RVB_DEEPSEA, 0x700000C},
                                             { VALETON_EFFECT_RVB_SWEET_SPACE, 0x1500000C},
                                             { 0xFF, 0xFFFFFFFF}, // end of table
                                           };
@@ -927,10 +927,10 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
 
         case 0x20:
         {
-            // unknown, possibly parameters
+            // IRs
             ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
 
-            ESP_LOGI(TAG, "Got unknown 0x20");
+            ESP_LOGI(TAG, "Got IRs");
 
             // contains the text "User" numerous times
 
@@ -991,12 +991,10 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
 
         case 0x24:
         {
-            // unknown, some sort of user slots?
+            // NAM models/Snaptones
             ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
 
-            ESP_LOGI(TAG, "Got unknown 0x24");
-
-            // contains text "OCD", "Reverb", "Sweet Drive", "Empty" etc
+            ESP_LOGI(TAG, "Got Snaptones");
 
             // example response
             // 0000                                             f0 0d
@@ -1296,7 +1294,6 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
             // debug
             //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], 80, ESP_LOG_INFO);
 
-            // first 6 bytes are the value, then shift it right by 4 bits
             if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
             {
                 for (loop = VALETON_EFFECT_BLOCK_NR; loop < VALETON_EFFECT_BLOCK_NS; loop++)
@@ -1308,23 +1305,21 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
                     effect_code |= (((buffer[read_index + 6] << 4) | (buffer[read_index + 7] & 0x0F)));
                       
                     //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], 8, ESP_LOG_INFO);
-                    //ESP_LOGI(TAG, "Effect code %X for effect %d", (int)effect_code, (int)loop);
-
+                    
                     param_ptr[VALETON_PARAM_NR_TYPE + loop].Value = (float)usb_valeton_gp5_get_effect_block_index(effect_code, loop);
                     read_index += 8;
+
+                    //ESP_LOGI(TAG, "Effect code %X for effect %d, model:%d", (int)effect_code, (int)loop, (int)param_ptr[VALETON_PARAM_NR_TYPE + loop].Value);
                 } 
 
                 valeton_params_release_locked_access();
             }
 
-            // debug
-            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index - 49], 128, ESP_LOG_INFO);
-
             // skip to start of params, back to back 32 bit big-endian floats
             read_index += 16; 
+            
             //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], 64, ESP_LOG_INFO);
-
-            ESP_LOGI(TAG, "Param values read_index: %d", (int)read_index);
+            //ESP_LOGI(TAG, "Param values read_index: %d", (int)read_index);
 
             // params following match the order defined in Valeton params from VALETON_PARAM_NR_PARAM_0 down
             if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
@@ -1374,7 +1369,7 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
             }
 
             // debug
-            valeton_dump_parameters();
+            //valeton_dump_parameters();
         } break;
 
         case 0x43:
@@ -1618,11 +1613,11 @@ static void __attribute__((unused)) usb_valeton_gp5_request_unknown_3(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void __attribute__((unused)) usb_valeton_gp5_request_unknown_4(void)
+static void __attribute__((unused)) usb_valeton_gp5_request_ir(void)
 {
     uint8_t midi_tx[] = {0x02, 0x00};
 
-    ESP_LOGI(TAG, "Request unknown_4");
+    ESP_LOGI(TAG, "Request IR");
 
     usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x02);
 }
@@ -1634,11 +1629,11 @@ static void __attribute__((unused)) usb_valeton_gp5_request_unknown_4(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void __attribute__((unused)) usb_valeton_gp5_request_unknown_5(void)
+static void __attribute__((unused)) usb_valeton_gp5_request_nams(void)
 {
     uint8_t midi_tx[] = {0x02, 0x04};
 
-    ESP_LOGI(TAG, "Request unknown_5");
+    ESP_LOGI(TAG, "Request NAMs");
 
     usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x02);
 }
@@ -1674,18 +1669,13 @@ static void usb_valeton_gp5_set_preset(uint8_t index)
 {
     ESP_LOGI(TAG, "Set preset %d", index);
 
-    // other way                              preset  
-    // f0 06 0e 00 01 00 00 00 06 01 01 04 03 05 0d 00 00 00 00 00 00 f7
+    uint8_t midi_tx[] = {0x04, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-    // send control change
-    uint8_t midi_tx[4];
+    // set the preset index
+    midi_tx[2] = index >> 4;
+    midi_tx[3] = index & 0x0F;
 
-    midi_tx[0] = 0x0B;
-    midi_tx[1] = 0xB0;
-    midi_tx[2] = 0x00;
-    midi_tx[3] = index;
-
-    midi_host_data_tx_blocking(midi_dev, (const uint8_t*)midi_tx, sizeof(midi_tx), 50);
+    usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
 }
 
 /****************************************************************************
@@ -1708,6 +1698,9 @@ static void usb_valeton_gp5_set_effect_block_state(uint8_t block_index, uint8_t 
 
     ESP_LOGI(TAG, "Set Effect Block state %d %d", block_index, state);
 
+    // debug
+    ESP_LOG_BUFFER_HEXDUMP(TAG, midi_tx, sizeof(midi_tx), ESP_LOG_INFO);
+
     usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
 }
 
@@ -1720,19 +1713,63 @@ static void usb_valeton_gp5_set_effect_block_state(uint8_t block_index, uint8_t 
 *****************************************************************************/
 static void usb_valeton_gp5_set_effect_block_model(uint8_t block_index, uint8_t model)
 {
-    uint8_t midi_tx[] = {0x04, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    //                               | block  |                                      | block  |                                      |          effect code                       |
+    uint8_t midi_tx[] = {0x04, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    uint32_t effect_code = 0;
 
-    // set the block index
+    // set the block index (twice)
     midi_tx[2] = block_index >> 4;
     midi_tx[3] = block_index & 0x0F;
 
-    // set model index
-    midi_tx[10] = model >> 4;
-    midi_tx[11] = model & 0x0F;
+    midi_tx[10] = block_index >> 4;
+    midi_tx[11] = block_index & 0x0F;
 
-    ESP_LOGI(TAG, "Set Effect Block model %d %d", block_index, model);
+    if (block_index < VALETON_EFFECT_BLOCK_LAST)
+    {
+        const EffectMapEntry_t* map = effect_maps[block_index];
 
-    usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
+        // search for the matching effect code for the model
+        while (map->effect_index != 0xFF)
+        {
+            // debug
+            //ESP_LOGI(TAG, "Effect map %X ", (int)map->byte_sequence);
+
+            if (map->effect_index == model)
+            {
+                // found match
+                effect_code = map->byte_sequence;
+                break;
+            }
+
+            map++;
+        }
+    }
+
+    if (effect_code != 0)
+    {
+        ESP_LOGI(TAG, "Set Effect Block model %d %d %X", (int)block_index, (int)model, (int)effect_code);
+
+        // set the effect code
+        uint8_t* ptr = (uint8_t*)&effect_code;
+        // 18 to 25
+        midi_tx[18] = ptr[3] >> 4;
+        midi_tx[19] = ptr[3] & 0x0F;
+        midi_tx[20] = ptr[2] >> 4;
+        midi_tx[11] = ptr[2] & 0x0F;
+        midi_tx[22] = ptr[1] >> 4;
+        midi_tx[23] = ptr[1] & 0x0F;
+        midi_tx[24] = ptr[0] >> 4;
+        midi_tx[25] = ptr[0] & 0x0F;
+
+        // debug
+        ESP_LOG_BUFFER_HEXDUMP(TAG, midi_tx, sizeof(midi_tx), ESP_LOG_INFO);
+
+        usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Set Effect Block model code not found for %d %d", block_index, model);
+    }
 }
 
 /****************************************************************************
@@ -1851,6 +1888,19 @@ static esp_err_t usb_valeton_gp5_send_single_parameter(uint16_t index, float val
         {
             // regular param, send it
             usb_valeton_gp5_set_effect_block_model_parameter(block, param, value);
+        }
+
+        // if we have messages waiting in the queue, it will trigger another
+        // change that will overwrite this one. Skip the UI refresh to save time
+        if (uxQueueMessagesWaiting(input_queue) == 0)
+        {
+            usb_valeton_gp5_request_preset_params();
+
+            // signal to refresh param UI
+            //UI_RefreshParameterValues();
+
+            // update web UI
+            //wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
         }
 
         res = ESP_OK;
