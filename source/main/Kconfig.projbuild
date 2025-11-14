@@ -36,6 +36,12 @@ menu "Tonex Controller Configuration"
         
         config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
             bool "Waveshare 1.9 Touch"
+
+        config TONEX_CONTROLLER_HARDWARE_PLATFORM_PIRATE_MIDI_POLAR_PRO
+            bool "Pirate Midi Polar Pro 1.69"
+
+        config TONEX_CONTROLLER_HARDWARE_PLATFORM_PIRATE_MIDI_POLAR_MAX_V2
+            bool "Pirate Midi Polar Max V2 3.5 touch"
             
     endchoice
     

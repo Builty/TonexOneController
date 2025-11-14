@@ -149,6 +149,7 @@ static QueueHandle_t input_queue;
 static volatile tInputBufferEntry* InputBuffers;
 static uint8_t* ProcessingBuffer;
 static uint8_t* TransmitBuffer;
+static uint8_t snaptone_sync_done = 0;
 
 static const EffectMapEntry_t effect_map_nr[] = {
                                             {VALETON_EFFECT_NR_GATE, 0x1B000000},
@@ -402,6 +403,8 @@ static void usb_valeton_gp5_set_preset(uint8_t index);
 static void usb_valeton_gp5_request_preset_params(void);
 static void usb_valeton_gp5_set_effect_block_state(uint8_t block_index, uint8_t state);
 static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint32_t len) ;
+static void usb_valeton_gp5_request_ir(void);
+static void usb_valeton_gp5_request_nams(void);
 
 /****************************************************************************
 * NAME:        
@@ -928,7 +931,7 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
         case 0x20:
         {
             // IRs
-            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
+            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
 
             ESP_LOGI(TAG, "Got IRs");
 
@@ -992,9 +995,12 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
         case 0x24:
         {
             // NAM models/Snaptones
-            ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
+            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
 
             ESP_LOGI(TAG, "Got Snaptones");
+
+            // request ITs
+            usb_valeton_gp5_request_ir();
 
             // example response
             // 0000                                             f0 0d
@@ -1369,7 +1375,14 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
             }
 
             // debug
-            //valeton_dump_parameters();
+            //valeton_dump_parameters();    
+            
+            if (!snaptone_sync_done)
+            {
+                // request snaptones once only
+                usb_valeton_gp5_request_nams();
+                snaptone_sync_done = 1;
+            }
         } break;
 
         case 0x43:

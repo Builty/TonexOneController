@@ -274,46 +274,6 @@ void create_screen_screen1() {
                     }
                 }
                 {
-                    // ui_LeftArrow
-                    lv_obj_t *obj = lv_img_create(parent_obj);
-                    objects.ui_left_arrow = obj;
-                    lv_obj_set_pos(obj, 88, 165);
-                    lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-                    lv_img_set_src(obj, &img_arrow_left);
-                    lv_obj_add_event_cb(obj, action_amp_skin_previous, LV_EVENT_PRESSED, (void *)0);
-                    lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN|LV_OBJ_FLAG_CLICKABLE);
-                }
-                {
-                    // ui_RightArrow
-                    lv_obj_t *obj = lv_img_create(parent_obj);
-                    objects.ui_right_arrow = obj;
-                    lv_obj_set_pos(obj, 640, 165);
-                    lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-                    lv_img_set_src(obj, &img_arrow_right);
-                    lv_obj_add_event_cb(obj, action_amp_skin_next, LV_EVENT_PRESSED, (void *)0);
-                    lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN|LV_OBJ_FLAG_CLICKABLE);
-                }
-                {
-                    // ui_EntryKeyboard
-                    lv_obj_t *obj = lv_keyboard_create(parent_obj);
-                    objects.ui_entry_keyboard = obj;
-                    lv_obj_set_pos(obj, 0, 3);
-                    lv_obj_set_size(obj, 800, 275);
-                    lv_obj_add_event_cb(obj, action_keyboard_ok, LV_EVENT_READY, (void *)0);
-                    lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_set_style_align(obj, LV_ALIGN_DEFAULT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                }
-                {
-                    // ui_OKTick
-                    lv_obj_t *obj = lv_img_create(parent_obj);
-                    objects.ui_ok_tick = obj;
-                    lv_obj_set_pos(obj, 343, 405);
-                    lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-                    lv_img_set_src(obj, &img_tick);
-                    lv_obj_add_event_cb(obj, action_save_skin_edit, LV_EVENT_PRESSED, (void *)0);
-                    lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN|LV_OBJ_FLAG_CLICKABLE);
-                }
-                {
                     // ui_BottomPanelTonex
                     lv_obj_t *obj = lv_obj_create(parent_obj);
                     objects.ui_bottom_panel_tonex = obj;
@@ -557,6 +517,46 @@ void create_screen_screen1() {
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                         }
                     }
+                }
+                {
+                    // ui_LeftArrow
+                    lv_obj_t *obj = lv_img_create(parent_obj);
+                    objects.ui_left_arrow = obj;
+                    lv_obj_set_pos(obj, 88, 165);
+                    lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                    lv_img_set_src(obj, &img_arrow_left);
+                    lv_obj_add_event_cb(obj, action_amp_skin_previous, LV_EVENT_PRESSED, (void *)0);
+                    lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN|LV_OBJ_FLAG_CLICKABLE);
+                }
+                {
+                    // ui_RightArrow
+                    lv_obj_t *obj = lv_img_create(parent_obj);
+                    objects.ui_right_arrow = obj;
+                    lv_obj_set_pos(obj, 640, 165);
+                    lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                    lv_img_set_src(obj, &img_arrow_right);
+                    lv_obj_add_event_cb(obj, action_amp_skin_next, LV_EVENT_PRESSED, (void *)0);
+                    lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN|LV_OBJ_FLAG_CLICKABLE);
+                }
+                {
+                    // ui_EntryKeyboard
+                    lv_obj_t *obj = lv_keyboard_create(parent_obj);
+                    objects.ui_entry_keyboard = obj;
+                    lv_obj_set_pos(obj, 0, 3);
+                    lv_obj_set_size(obj, 800, 275);
+                    lv_obj_add_event_cb(obj, action_keyboard_ok, LV_EVENT_READY, (void *)0);
+                    lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_set_style_align(obj, LV_ALIGN_DEFAULT, LV_PART_MAIN | LV_STATE_DEFAULT);
+                }
+                {
+                    // ui_OKTick
+                    lv_obj_t *obj = lv_img_create(parent_obj);
+                    objects.ui_ok_tick = obj;
+                    lv_obj_set_pos(obj, 343, 405);
+                    lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                    lv_img_set_src(obj, &img_tick);
+                    lv_obj_add_event_cb(obj, action_save_skin_edit, LV_EVENT_PRESSED, (void *)0);
+                    lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN|LV_OBJ_FLAG_CLICKABLE);
                 }
             }
         }

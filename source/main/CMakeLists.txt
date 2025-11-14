@@ -1,5 +1,5 @@
 
-idf_component_register(SRCS "valeton_params.c" "midi_control.c" "control.c" "footswitches.c" "CH422G.c" "display.c" "main.c" "tonex_params.c" "SX1509.c" "display_tonex.c" "display_valeton.c"
+idf_component_register(SRCS "platform_pirate_pro_169.c" "platform_pirate_max35.c" "valeton_params.c" "midi_control.c" "control.c" "footswitches.c" "CH422G.c" "display.c" "main.c" "tonex_params.c" "SX1509.c" "display_tonex.c" "display_valeton.c"
                             "usb_comms.c" "usb_tonex_one.c" "usb_tonex_common.c" "usb_tonex.c" "usb_valeton_gp5.c" "CH422G.c" "midi_serial.c" "wifi_config.c" "leds.c" "midi_helper.c" "LP5562.c"
                             "platform_devkitc.c" "platform_lgtdisps3.c" "platform_m5atoms3r.c" "platform_ws19t.c" "platform_ws43.c" "platform_wszero.c" "platform_ws169.c" 
                             "platform_ws35b.c" "platform_jc3248w.c"
@@ -45,7 +45,7 @@ if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B OR CONFIG_TONEX_CONTR
                            "ui_generated_800x480land/ui_image_skin_jcm.c")
 endif()
 
-if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35B OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC3248W535)
+if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35B OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC3248W535 OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_PIRATE_MIDI_POLAR_MAX_V2)
     target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated_480x320land")
 
     target_sources(${COMPONENT_LIB} PRIVATE "ui_generated_480x320land/ui.c" "ui_generated_480x320land/styles.c"
@@ -84,7 +84,7 @@ if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35B OR CONFIG_TONEX_CONTR
                            "ui_generated_480x320land/ui_image_skin_jcm.c")
 endif()
 
-if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH)
+if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_PIRATE_MIDI_POLAR_PRO)
    if(CONFIG_TONEX_CONTROLLER_WAVESHARE_169_LANDSCAPE)
       target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated_280x240land")
 

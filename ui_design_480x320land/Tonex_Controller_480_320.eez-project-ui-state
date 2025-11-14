@@ -1,6 +1,6 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[Tonex_Controller_480_320.eez-project]:/userPages/0",
+    "selectedUserPageObject": "[Tonex_Controller_480_320.eez-project]:/userPages/2",
     "subnavigationSelectedItems": {}
   },
   "layoutModel": {
@@ -194,15 +194,16 @@
                 {
                   "type": "tab",
                   "id": "#dee75bb2-f325-4341-bdaa-55bf02902407",
-                  "name": "Screen1",
+                  "name": "ValSettings",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[Tonex_Controller_480_320.eez-project]:/userPages/0",
+                    "objectPath": "[Tonex_Controller_480_320.eez-project]:/userPages/2",
                     "permanent": false
                   },
                   "icon": "svg:page"
                 }
-              ]
+              ],
+              "active": true
             },
             {
               "type": "row",
@@ -222,8 +223,7 @@
                       "enableClose": false,
                       "icon": "svg:properties"
                     }
-                  ],
-                  "active": true
+                  ]
                 },
                 {
                   "type": "tabset",
@@ -976,14 +976,11 @@
             "1": {},
             "7": {},
             "8": {},
-            "9": {},
-            "10": {},
-            "13": {},
-            "14": {
-              "9": {
-                "$selected": true
-              }
-            }
+            "10": {
+              "$selected": true
+            },
+            "11": {},
+            "12": {}
           }
         }
       },
@@ -992,7 +989,7 @@
           "x": -494.8024350649359,
           "y": -373.6126443001434
         },
-        "scale": 2
+        "scale": 1.75
       },
       "timeline": {
         "isEditorActive": false,
@@ -1005,9 +1002,10 @@
       "selection": {
         "0": {
           "0": {
-            "0": {
-              "$selected": true
-            }
+            "0": {}
+          },
+          "1": {
+            "$selected": true
           }
         }
       },
@@ -1016,7 +1014,32 @@
           "x": -463.8108225108226,
           "y": -332.91341991342006
         },
-        "scale": 2
+        "scale": 1.25
+      },
+      "timeline": {
+        "isEditorActive": false,
+        "position": 0,
+        "secondToPx": 200,
+        "scrollLeft": 0
+      }
+    },
+    "[Tonex_Controller_480_320.eez-project]:/userPages/2[flow-state]": {
+      "selection": {
+        "0": {
+          "0": {
+            "0": {
+              "$selected": true
+            }
+          },
+          "1": {}
+        }
+      },
+      "transform": {
+        "translate": {
+          "x": -172.75081168831161,
+          "y": -191.27056277056272
+        },
+        "scale": 1.25
       },
       "timeline": {
         "isEditorActive": false,
@@ -1045,6 +1068,6 @@
   ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,
-  "flowZoom": 2,
+  "flowZoom": 1.25,
   "implementationLanguage": "C"
 }

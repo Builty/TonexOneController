@@ -32,10 +32,6 @@ typedef struct _objects_t {
     lv_obj_t *ui_bpm_title_label;
     lv_obj_t *ui_bpm_value_label;
     lv_obj_t *ui_bpm_indicator;
-    lv_obj_t *ui_left_arrow;
-    lv_obj_t *ui_right_arrow;
-    lv_obj_t *ui_entry_keyboard;
-    lv_obj_t *ui_ok_tick;
     lv_obj_t *ui_bottom_panel_tonex;
     lv_obj_t *ui_settings_image;
     lv_obj_t *ui_icon_reverb;
@@ -58,6 +54,10 @@ typedef struct _objects_t {
     lv_obj_t *ui_icon_val_dly;
     lv_obj_t *ui_icon_val_dst;
     lv_obj_t *ui_val_settings;
+    lv_obj_t *ui_left_arrow;
+    lv_obj_t *ui_right_arrow;
+    lv_obj_t *ui_entry_keyboard;
+    lv_obj_t *ui_ok_tick;
     lv_obj_t *ui_settings_tab_view;
     lv_obj_t *obj0;
     lv_obj_t *ui_gate_tab;
