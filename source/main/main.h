@@ -522,8 +522,8 @@ extern SemaphoreHandle_t I2CMutex_2;
 
 #elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_PIRATE_MIDI_POLAR_PRO
     // I2C bus 1
-    #define I2C_MASTER_1_SCL_IO  GPIO_NUM_10       
-    #define I2C_MASTER_1_SDA_IO  GPIO_NUM_11       
+    #define I2C_MASTER_1_SCL_IO  GPIO_NUM_12    // not actually used       
+    #define I2C_MASTER_1_SDA_IO  GPIO_NUM_13    // not actually used           
 
     #define EXTERNAL_IO_EXPANDER_BUS       I2C_MASTER_NUM_1
     #define EXTERNAL_IO_EXPANDER_MUTEX     I2CMutex_1 
@@ -543,7 +543,11 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define UART_TX_PIN         GPIO_NUM_17 
 
     // leds
-    #define LED_OUTPUT_GPIO_NUM          -1
+    #define LED_OUTPUT_GPIO_NUM          GPIO_NUM_1
+
+    // charger
+    #define LBO_STATUS            GPIO_NUM_10
+    #define CHARGE_STATUS         GPIO_NUM_11
 
     // LCD pins
     #define POLAR_PRO_240_280_LCD_GPIO_SCLK           (GPIO_NUM_6)
@@ -555,8 +559,8 @@ extern SemaphoreHandle_t I2CMutex_2;
 
 #elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_PIRATE_MIDI_POLAR_MAX_V2
     // I2C bus 1
-    #define I2C_MASTER_1_SCL_IO  GPIO_NUM_7       
-    #define I2C_MASTER_1_SDA_IO  GPIO_NUM_8       
+    #define I2C_MASTER_1_SCL_IO  GPIO_NUM_41
+    #define I2C_MASTER_1_SDA_IO  GPIO_NUM_40
 
     // I2C bus 2
     #define I2C_MASTER_2_SCL_IO  -1
@@ -565,27 +569,25 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define EXTERNAL_IO_EXPANDER_BUS       I2C_MASTER_NUM_1
     #define EXTERNAL_IO_EXPANDER_MUTEX     I2CMutex_1 
 
-    #define FOOTSWITCH_1		GPIO_NUM_38
-    #define FOOTSWITCH_2		GPIO_NUM_39
-    #define FOOTSWITCH_3		GPIO_NUM_40
-    #define FOOTSWITCH_4		GPIO_NUM_41
+    #define FOOTSWITCH_1		GPIO_NUM_2
+    #define FOOTSWITCH_2		GPIO_NUM_4
+    #define FOOTSWITCH_3		GPIO_NUM_5
+    #define FOOTSWITCH_4		GPIO_NUM_6
 
     // Midi: 
-    #define UART_RX_PIN         GPIO_NUM_17
-    #define UART_TX_PIN         GPIO_NUM_18 
+    #define UART_RX_PIN         GPIO_NUM_10
+    #define UART_TX_PIN         GPIO_NUM_9 
 
     // leds
-    #define LED_OUTPUT_GPIO_NUM          -1
+    #define LED_OUTPUT_GPIO_NUM          GPIO_NUM_1
 
     // LCD pins
-    #define POLAR_MAX_35_LCD_GPIO_SCLK           GPIO_NUM_5
-    #define POLAR_MAX_35_LCD_GPIO_QSPI_0         GPIO_NUM_1
-    #define POLAR_MAX_35_LCD_GPIO_QSPI_1         GPIO_NUM_2
-    #define POLAR_MAX_35_LCD_GPIO_QSPI_2         GPIO_NUM_3
-    #define POLAR_MAX_35_LCD_GPIO_QSPI_3         GPIO_NUM_4
-    #define POLAR_MAX_35_LCD_GPIO_RST            GPIO_NUM_NC
-    #define POLAR_MAX_35_LCD_GPIO_CS             GPIO_NUM_12
-    #define POLAR_MAX_35_LCD_GPIO_BL             GPIO_NUM_6
+    #define POLAR_MAX_35_LCD_GPIO_SCLK           GPIO_NUM_47
+    #define POLAR_MAX_35_LCD_GPIO_MOSI           GPIO_NUM_21
+    #define POLAR_MAX_35_LCD_GPIO_DC             GPIO_NUM_14
+    #define POLAR_MAX_35_LCD_GPIO_RST            GPIO_NUM_13
+    #define POLAR_MAX_35_LCD_GPIO_CS             GPIO_NUM_48
+    #define POLAR_MAX_35_LCD_GPIO_BL             GPIO_NUM_39
 
     // backlight
     #define POLAR_MAX_35_LCD_BL_LEDC_TIMER              LEDC_TIMER_1
@@ -594,6 +596,9 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define POLAR_MAX_35_LCD_BL_LEDC_DUTY_RES           LEDC_TIMER_10_BIT // Set duty resolution to 13 bits
     #define POLAR_MAX_35_LCD_BL_LEDC_DUTY               (1024)                // Set duty to 50%. (2 ** 13) * 50% = 4096
     #define POLAR_MAX_35_LCD_BL_LEDC_FREQUENCY          (10000)          // Frequency in Hertz. Set frequency at 5 kHz
+
+    // Touch
+    #define TOUCH_INT                            GPIO_NUM_42
 
 #else
     #error "Unknown hardware platform!"

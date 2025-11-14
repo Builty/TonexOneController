@@ -199,6 +199,11 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 
     ESP_LOGI(TAG, "Platform Init");
 
+    // todo
+    // LED_OUTPUT_GPIO_NUM  
+    // LBO_STATUS     
+    // CHARGE_STATUS
+
     disp_drv = pdisp_drv;
 
     // LCD backlight

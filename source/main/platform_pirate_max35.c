@@ -75,8 +75,7 @@ limitations under the License.
 #include "tonex_params.h"
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_PIRATE_MIDI_POLAR_MAX_V2
-
-// LCD: ST7796, touch: FT6336
+// LCD: ST7796, touch: GT911
 
 static const char *TAG = "platform_piratemax35";
 
@@ -230,16 +229,20 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     __attribute__((unused)) esp_err_t ret = ESP_OK;
     uint8_t touch_ok = 0;
     I2CMutexHandle = I2CMutex;
+    gpio_config_t gpio_config_struct;
     disp_drv = pdisp_drv;
 
     ESP_LOGI(TAG, "Platform Init");
+
+    //todo
+    // LED_OUTPUT_GPIO_NUM
 
     /* LCD initialization */
     ESP_LOGD(TAG, "Initialize SPI bus");
     const spi_bus_config_t buscfg = {
         .sclk_io_num = POLAR_MAX_35_LCD_GPIO_SCLK,
         .mosi_io_num = POLAR_MAX_35_LCD_GPIO_MOSI,
-        .miso_io_num = POLAR_MAX_35_LCD_GPIO_MISO,
+        .miso_io_num = GPIO_NUM_NC,
         .quadwp_io_num = GPIO_NUM_NC,
         .quadhd_io_num = GPIO_NUM_NC,
         // note here: this value needs to be: POLAR_MAX_35_LCD_H_RES * POLAR_MAX_35_LCD_DRAW_BUFF_HEIGHT * sizeof(uint16_t)
@@ -356,56 +359,83 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     ledc_set_duty(POLAR_MAX_35_LCD_BL_LEDC_MODE, POLAR_MAX_35_LCD_BL_LEDC_CHANNEL, duty);
     ledc_update_duty(POLAR_MAX_35_LCD_BL_LEDC_MODE, POLAR_MAX_35_LCD_BL_LEDC_CHANNEL);
 
-    // init touch screen    
-    const esp_lcd_panel_io_i2c_config_t tp_io_config = {
-        .dev_addr = ESP_LCD_TOUCH_IO_I2C_FT6336_ADDRESS,
-        .control_phase_bytes = 1,
-        .dc_bit_offset = 0,
-        .lcd_cmd_bits = 8,
-        .flags.disable_control_phase = 1,
-        .scl_speed_hz = 400 * 1000
-    };
+    esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_GT911_CONFIG();
+    tp_io_config.scl_speed_hz = 400000;
     
-    const esp_lcd_touch_config_t tp_cfg = {
-        .x_max = POLAR_MAX_35_LCD_H_RES,
-        .y_max = POLAR_MAX_35_LCD_V_RES,
-        .rst_gpio_num = GPIO_NUM_NC,
-        .int_gpio_num = GPIO_NUM_NC,
-        .interrupt_callback = touch_data_ready,
-        .flags = {
-            .swap_xy = 1,
-            .mirror_x = 0,
-            .mirror_y = 1,
-        },
-    };
+    // set Int pin to output temporarily
+    gpio_config_struct.pin_bit_mask = (uint64_t)1 << TOUCH_INT;
+    gpio_config_struct.mode = GPIO_MODE_OUTPUT;
+    gpio_config_struct.pull_up_en = GPIO_PULLUP_DISABLE;
+    gpio_config_struct.pull_down_en = GPIO_PULLDOWN_DISABLE;
+    gpio_config_struct.intr_type = GPIO_INTR_DISABLE;
+    gpio_config(&gpio_config_struct);
+
+    // set Int to low/output
+    gpio_set_level(TOUCH_INT, 0);
+    esp_rom_delay_us(100 * 1000);
+
+    // set interrupt to tristate
+    gpio_config_struct.mode = GPIO_MODE_INPUT;
+    gpio_config_struct.pull_down_en = GPIO_PULLDOWN_ENABLE;
+    gpio_config(&gpio_config_struct);
 
     // Touch IO handle
     if (esp_lcd_new_panel_io_i2c(bus_handle, &tp_io_config, &tp_io_handle) != ESP_OK)
     {
-        ESP_LOGE(TAG, "Touch IO handle failed!");
+        ESP_LOGE(TAG, "Touch reset 3 failed!");
     }
     
+    esp_lcd_touch_config_t tp_cfg = {
+            .x_max = POLAR_MAX_35_LCD_V_RES,
+            .y_max = POLAR_MAX_35_LCD_H_RES,
+            .rst_gpio_num = -1,
+            .int_gpio_num = -1,
+            .flags = {
+                .swap_xy = 0,
+                .mirror_x = 0,
+                .mirror_y = 0,
+            },
+        };
+    
     // Initialize touch
-    ESP_LOGI(TAG, "Initialize touch controller FT6336");
+    ESP_LOGI(TAG, "Initialize touch controller GT911");
 
-    if (xSemaphoreTake(I2CMutex, (TickType_t)10000) == pdTRUE)
+    // try a few times
+    for (int loop = 0; loop < 5; loop++)
     {
-        ret = esp_lcd_touch_new_i2c_ft6336(tp_io_handle, &tp_cfg, &tp);
-        xSemaphoreGive(I2CMutex);
-    }
-    else
-    {
-        ESP_LOGE(TAG, "Initialize touch mutex timeout");
-    }
+        ret = ESP_FAIL;
+
+        if (xSemaphoreTake(I2CMutexHandle, (TickType_t)10000) == pdTRUE)
+        {
+            ret = (esp_lcd_touch_new_i2c_gt911(tp_io_handle, &tp_cfg, &tp));
+
+            xSemaphoreGive(I2CMutexHandle);
+        }
+        else
+        {
+            ESP_LOGE(TAG, "Initialize touch loop mutex timeout");
+        }
         
-    if (ret == ESP_OK)
-    {
-        ESP_LOGI(TAG, "Touch controller init OK");
-        touch_ok = 1;
+        if (ret == ESP_OK)
+        {
+            ESP_LOGI(TAG, "Touch controller init OK");
+            touch_ok = 1;
+            break;
+        }
+        else
+        {
+            ESP_LOGI(TAG, "Touch controller init retry %s", esp_err_to_name(ret));
+
+            // reset I2C bus
+            i2c_master_reset();
+        }
+           
+        vTaskDelay(pdMS_TO_TICKS(25));    
     }
-    else
+
+    if (ret != ESP_OK)
     {
-        ESP_LOGW(TAG, "Touch controller init failed %s", esp_err_to_name(ret));
+        ESP_LOGE(TAG, "Failed to init touch screen");
     }
 
     if (touch_ok)
@@ -419,14 +449,13 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         lv_indev_drv_register(&indev_drv);
     }     
     
-    //to do
-    //if (control_get_config_item_int(CONFIG_ITEM_SCREEN_ROTATION) == SCREEN_ROTATION_180)
-    //{
-    //    disp_drv->rotated = LV_DISP_ROT_180;
+    if (control_get_config_item_int(CONFIG_ITEM_SCREEN_ROTATION) == SCREEN_ROTATION_180)
+    {
+        disp_drv->rotated = LV_DISP_ROT_180;
 
         // can only do software rotation, with a drop in frame rate
-    //    disp_drv->sw_rotate = 1;
-    //}
+        disp_drv->sw_rotate = 1;
+    }
 }
 
 #endif //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_PIRATE_MIDI_POLAR_MAX_V2
