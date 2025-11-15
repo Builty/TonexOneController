@@ -167,13 +167,13 @@ static tModellerParameter ValetonParameters[VALETON_GLOBAL_LAST] =
 
     //************* Global params *****************
     {80,     40,                        240,                        "BPM",         MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},                 // VALETON_GLOBAL_BPM
-    {0,      -15,                       15,                         "TRIM",        MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},                // VALETON_GLOBAL_INPUT_TRIM
-    {0,      0,                         1,                          "CABSIM",      MODELLER_PARAM_TYPE_SWITCH, 0, 0, 0},              // VALETON_GLOBAL_CABSIM_BYPASS
-    {440,    415,                       465,                        "TUNEREF",     MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},              // VALETON_GLOBAL_TUNING_REFERENCE
-    {0,      0,                         1,                          "BYPASS",      MODELLER_PARAM_TYPE_SWITCH, 0, 0, 0},             // VALETON_GLOBAL_BYPASS
-    {0,     -40,                        3,                          "MVOL",        MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},                 // VALETON_GLOBAL_MASTER_VOLUME
+    {0,     -20,                        20,                         "TRIM",        MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},                 // VALETON_GLOBAL_INPUT_TRIM
+    {0,      0,                         1,                          "CABSIM",      MODELLER_PARAM_TYPE_SWITCH, 0, 0, 0},                // VALETON_GLOBAL_CABSIM_BYPASS
+    {0,     -20,                        20,                         "MVOL",        MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},                 // VALETON_GLOBAL_MASTER_VOLUME
+    {0,     -20,                        20,                         "RLEV",        MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},                 // VALETON_GLOBAL_RECORD_LEVEL
+    {0,     -20,                        20,                         "MONL",        MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},                 // VALETON_GLOBAL_MONITOR_LEVEL
+    {0,     -20,                        20,                         "BTLV",        MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},                 // VALETON_GLOBAL_BT_LEVEL
 };
-
 
 /****************************************************************************
 * NAME:        
