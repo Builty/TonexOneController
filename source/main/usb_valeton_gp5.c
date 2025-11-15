@@ -963,7 +963,15 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
             }
 
             // debug
-            valeton_dump_parameters();
+            //valeton_dump_parameters();
+            
+            // signal to refresh param UI
+            UI_RefreshParameterValues();
+
+            // update web UI
+            wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+
+            control_set_sync_complete();
 
             // request nams
             usb_valeton_gp5_request_nams();
@@ -1031,8 +1039,6 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
                 // don't smash the control input queue too hard
                 vTaskDelay(10);
             }
-
-            control_set_sync_complete();
 
             // request the preset
             usb_valeton_gp5_request_current_preset();
@@ -1148,18 +1154,7 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
             {
                 ESP_LOGW(TAG, "Param mutex failed!");  
             }
-
-            // if we have messages waiting in the queue, it will trigger another
-            // change that will overwrite this one. Skip the UI refresh to save time
-            if (uxQueueMessagesWaiting(input_queue) == 0)
-            {
-                // signal to refresh param UI
-                UI_RefreshParameterValues();
-
-                // update web UI
-                wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
-            }
-
+         
             // debug
             //valeton_dump_parameters();    
             
@@ -1168,6 +1163,19 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
                 // request globals once only
                 usb_valeton_gp5_request_globals();
                 boot_sync_done = 1;
+            }
+            else
+            {
+                // if we have messages waiting in the queue, it will trigger another
+                // change that will overwrite this one. Skip the UI refresh to save time
+                if (uxQueueMessagesWaiting(input_queue) == 0)
+                {
+                    // signal to refresh param UI
+                    UI_RefreshParameterValues();
+
+                    // update web UI
+                    wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+                }
             }
         } break;
 
@@ -1958,7 +1966,7 @@ void usb_valeton_gp5_init(class_driver_t* driver_obj, QueueHandle_t comms_queue)
     tonex_common_release_memory();
 
     // let the pedal boot up
-    vTaskDelay(pdMS_TO_TICKS(1000));
+    vTaskDelay(pdMS_TO_TICKS(200));
 
     // open it
     ESP_ERROR_CHECK(midi_host_open(VALETON_USB_VENDOR, VALETON_GP5_PRODUCT_ID, VALETON_GP5_MIDI_INTERFACE_INDEX, &dev_config, &midi_dev));

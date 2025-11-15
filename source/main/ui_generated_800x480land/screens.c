@@ -5132,7 +5132,7 @@ void create_screen_val_settings() {
                             objects.ui_val_glob_input_level_slider = obj;
                             lv_obj_set_pos(obj, 168, -92);
                             lv_obj_set_size(obj, 511, 20);
-                            lv_slider_set_range(obj, -100, -20);
+                            lv_slider_set_range(obj, -20, 20);
                             lv_slider_set_value(obj, -64, LV_ANIM_OFF);
                             lv_obj_add_event_cb(obj, action_parameter_changed, LV_EVENT_RELEASED, (void *)0);
                             lv_obj_set_style_align(obj, LV_ALIGN_LEFT_MID, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -5146,6 +5146,42 @@ void create_screen_val_settings() {
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.ui_val_glob_input_level_value = obj;
                             lv_obj_set_pos(obj, 703, -92);
+                            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                            lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+                            lv_obj_set_style_text_font(obj, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_align(obj, LV_ALIGN_LEFT_MID, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_label_set_text(obj, "0");
+                        }
+                        {
+                            // ui_ValGlobMasterVolLabel
+                            lv_obj_t *obj = lv_label_create(parent_obj);
+                            objects.ui_val_glob_master_vol_label = obj;
+                            lv_obj_set_pos(obj, 13, -36);
+                            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                            lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+                            lv_obj_set_style_text_font(obj, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_align(obj, LV_ALIGN_LEFT_MID, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_label_set_text(obj, "Master Vol");
+                        }
+                        {
+                            // ui_ValGlobMasterVolSlider
+                            lv_obj_t *obj = lv_slider_create(parent_obj);
+                            objects.ui_val_glob_master_vol_slider = obj;
+                            lv_obj_set_pos(obj, 168, -36);
+                            lv_obj_set_size(obj, 511, 20);
+                            lv_slider_set_value(obj, -64, LV_ANIM_OFF);
+                            lv_obj_add_event_cb(obj, action_parameter_changed, LV_EVENT_RELEASED, (void *)0);
+                            lv_obj_set_style_align(obj, LV_ALIGN_LEFT_MID, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_bg_color(obj, lv_color_hex(0xffaeb1b4), LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_bg_color(obj, lv_color_hex(0xffaeb1b4), LV_PART_MAIN | LV_STATE_SCROLLED);
+                            lv_obj_set_style_bg_color(obj, lv_color_hex(0xff3890d5), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+                            lv_obj_set_style_bg_color(obj, lv_color_hex(0xffffffff), LV_PART_KNOB | LV_STATE_DEFAULT);
+                        }
+                        {
+                            // ui_ValGlobMasterVolValue
+                            lv_obj_t *obj = lv_label_create(parent_obj);
+                            objects.ui_val_glob_master_vol_value = obj;
+                            lv_obj_set_pos(obj, 703, -36);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                             lv_obj_set_style_text_font(obj, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);

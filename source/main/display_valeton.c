@@ -659,6 +659,19 @@ void valeton_action_parameter_changed(lv_event_t * e)
     {
         usb_modify_parameter(VALETON_PARAM_NS_PARAM_4, ((float)lv_slider_get_value(obj)));
     }
+    // Globals
+    else if (obj == objects.ui_val_glob_no_cab_switch)
+    {
+        usb_modify_parameter(VALETON_GLOBAL_CABSIM_BYPASS, lv_obj_has_state(obj, LV_STATE_CHECKED) ? 1 : 0);
+    } 
+    else if (obj == objects.ui_val_glob_input_level_slider)
+    {
+        usb_modify_parameter(VALETON_GLOBAL_INPUT_TRIM, ((float)lv_slider_get_value(obj)));
+    }
+    else if (obj == objects.ui_val_glob_master_vol_slider)
+    {
+        usb_modify_parameter(VALETON_GLOBAL_MASTER_VOLUME, ((float)lv_slider_get_value(obj)));
+    }
 #endif // CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI          
 }
 
@@ -690,7 +703,7 @@ uint8_t valeton_update_ui_parameters(void)
 
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI      
     
-    for (uint16_t param = 0; param < VALETON_PARAM_LAST; param++)
+    for (uint16_t param = 0; param < VALETON_GLOBAL_LAST; param++)
     {                     
         if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
         {
@@ -3030,6 +3043,44 @@ uint8_t valeton_update_ui_parameters(void)
                 case VALETON_PARAM_NS_PARAM_10:
                 {
                     // not used
+                } break;
+
+                case VALETON_GLOBAL_BPM:
+                {
+                    //todo
+                } break;
+    
+                case VALETON_GLOBAL_INPUT_TRIM:
+                {
+                    lv_slider_set_value(objects.ui_val_glob_input_level_slider, round(param_entry->Value), LV_ANIM_OFF);
+                    sprintf(value_string, "%d", (int)round(param_entry->Value));
+                    lv_label_set_text(objects.ui_val_glob_input_level_value, value_string);
+                } break;
+
+                case VALETON_GLOBAL_CABSIM_BYPASS:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_obj_add_state(objects.ui_val_glob_no_cab_switch, LV_STATE_CHECKED);
+                    }
+                    else
+                    {
+                        lv_obj_clear_state(objects.ui_val_glob_no_cab_switch, LV_STATE_CHECKED);
+                    }                    
+                } break;
+
+                case VALETON_GLOBAL_MASTER_VOLUME:
+                {
+                    lv_slider_set_value(objects.ui_val_glob_master_vol_slider, round(param_entry->Value), LV_ANIM_OFF);
+                    sprintf(value_string, "%d", (int)round(param_entry->Value));
+                    lv_label_set_text(objects.ui_val_glob_master_vol_value, value_string);
+                } break;
+
+                case VALETON_GLOBAL_RECORD_LEVEL:   // fallthrough
+                case VALETON_GLOBAL_MONITOR_LEVEL:  // fallthrough
+                case VALETON_GLOBAL_BT_LEVEL:
+                {
+                    // not exposed to UI
                 } break;
             }
 

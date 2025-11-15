@@ -412,6 +412,9 @@ typedef struct _objects_t {
     lv_obj_t *ui_val_glob_input_level_label;
     lv_obj_t *ui_val_glob_input_level_slider;
     lv_obj_t *ui_val_glob_input_level_value;
+    lv_obj_t *ui_val_glob_master_vol_label;
+    lv_obj_t *ui_val_glob_master_vol_slider;
+    lv_obj_t *ui_val_glob_master_vol_value;
     lv_obj_t *ui_val_closeimage;
 } objects_t;
 

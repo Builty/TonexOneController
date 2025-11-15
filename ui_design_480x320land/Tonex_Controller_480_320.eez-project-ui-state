@@ -122,6 +122,7 @@
                   "type": "tabset",
                   "id": "#e9c1201a-3c4b-425c-bf27-cc604f16dbe9",
                   "weight": 0.557257000659591,
+                  "selected": 1,
                   "enableClose": false,
                   "children": [
                     {
@@ -202,8 +203,7 @@
                   },
                   "icon": "svg:page"
                 }
-              ],
-              "active": true
+              ]
             },
             {
               "type": "row",
@@ -223,7 +223,8 @@
                       "enableClose": false,
                       "icon": "svg:properties"
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
@@ -1027,8 +1028,11 @@
       "selection": {
         "0": {
           "0": {
-            "0": {
-              "$selected": true
+            "0": {},
+            "11": {
+              "6": {
+                "$selected": true
+              }
             }
           },
           "1": {}
