@@ -777,6 +777,7 @@ void valeton_update_icon_order(void)
 *****************************************************************************/
 uint8_t valeton_update_ui_parameters(void)
 {
+#if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY           
     tModellerParameter* param_ptr;
     __attribute__((unused)) char value_string[20];
 
@@ -3183,14 +3184,8 @@ uint8_t valeton_update_ui_parameters(void)
             valeton_params_release_locked_access();
         }               
     }
-#endif 
-
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 \
-    || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH \
-    || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R \
-    || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3 \
-    || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
-
+#else //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
+    // Small UI
     for (uint16_t param = 0; param < VALETON_PARAM_LAST; param++)
     {                     
         if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
@@ -3200,12 +3195,70 @@ uint8_t valeton_update_ui_parameters(void)
             // debug
             //ESP_LOGI(TAG, "Param %d: val: %02f, min: %02f, max: %02f", param, param_entry->Value, param_entry->Min, param_entry->Max);
 
-            //todo
+            switch (param)
+            {
+                case VALETON_GLOBAL_BPM:
+                {
+                    char buf[128];
+                    sprintf(buf, "%d", (int)round(param_entry->Value));
+                    lv_label_set_text(objects.ui_bpm, buf);  
+                } break;
+
+                case VALETON_PARAM_DIST_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_obj_set_style_border_color(objects.ui_cstatus, lv_color_hex(0xDDDD00), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    }
+                    else
+                    {
+                        lv_obj_set_style_border_color(objects.ui_cstatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    }
+                } break;
+
+                case VALETON_PARAM_MOD_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_obj_set_style_border_color(objects.ui_mstatus, lv_color_hex(0xEEAA00), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    }
+                    else
+                    {
+                        lv_obj_set_style_border_color(objects.ui_mstatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    }
+                } break;
+
+                case VALETON_PARAM_DLY_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_obj_set_style_border_color(objects.ui_dstatus, lv_color_hex(0x00CC00), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    }
+                    else
+                    {
+                        lv_obj_set_style_border_color(objects.ui_dstatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    }
+                } break;
+
+                case VALETON_PARAM_RVB_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_obj_set_style_border_color(objects.ui_rstatus, lv_color_hex(0x33FFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    }
+                    else
+                    {
+                        lv_obj_set_style_border_color(objects.ui_rstatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    }
+                } break;
+
+            }
 
             valeton_params_release_locked_access();
         }               
     }
-#endif
+#endif  //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
+#endif  //CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
 
     return 1;
 }

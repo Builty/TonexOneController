@@ -1031,7 +1031,6 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
         {
             element_1 = objects.ui_usb_status_fail;
 
-#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI            
             if (update->Value == 1)
             {
                 // if enabled, adjust UI to suit modeller
@@ -1041,22 +1040,32 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
                     case AMP_MODELLER_TONEX:            // fallthrough
                     default:
                     {
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI                                    
                         lv_obj_clear_flag(objects.ui_bottom_panel_tonex, LV_OBJ_FLAG_HIDDEN);
                         lv_obj_add_flag(objects.ui_bottom_panel_valeton, LV_OBJ_FLAG_HIDDEN);
 
                         lv_label_set_text(objects.ui_project_heading_label, "Tonex Controller"); 
+#else                    
+                        // set effect letter to "C" (Compressor)
+                        lv_label_set_text(objects.ui_cstatus, "C");
+#endif    
+
                     } break;
 
                     case AMP_MODELLER_VALETON_GP5:
                     {
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI                                                            
                         lv_obj_add_flag(objects.ui_bottom_panel_tonex, LV_OBJ_FLAG_HIDDEN);
                         lv_obj_clear_flag(objects.ui_bottom_panel_valeton, LV_OBJ_FLAG_HIDDEN);
 
                         lv_label_set_text(objects.ui_project_heading_label, "Valeton Controller"); 
+#else            
+                        // set effect letter to "T" (Distortion)
+                        lv_label_set_text(objects.ui_cstatus, "T");
+#endif    
                     } break;
                 }
             }
-#endif            
         } break;
 
         case UI_ELEMENT_BT_STATUS:
@@ -1114,7 +1123,9 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
                 } break;
             }
 
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI            
             updateIconOrder();
+#endif              
         } break;
 
         case UI_ELEMENT_TOAST:

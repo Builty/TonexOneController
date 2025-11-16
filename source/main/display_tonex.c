@@ -969,11 +969,11 @@ void tonex_update_icon_order(void)
 *****************************************************************************/
 uint8_t tonex_update_ui_parameters(void)
 {
+#if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
     tModellerParameter* param_ptr;
     __attribute__((unused)) char value_string[20];
 
-#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI      
-    
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI          
     for (uint16_t param = 0; param < TONEX_GLOBAL_LAST; param++)
     {                     
         if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
@@ -2457,13 +2457,7 @@ uint8_t tonex_update_ui_parameters(void)
             tonex_params_release_locked_access();
         }               
     }
-#endif 
-
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 \
-    || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH \
-    || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_M5ATOMS3R \
-    || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3 \
-    || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
+#else  //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI 
 
     for (uint16_t param = 0; param < TONEX_GLOBAL_LAST; param++)
     {                     
@@ -2536,7 +2530,8 @@ uint8_t tonex_update_ui_parameters(void)
             tonex_params_release_locked_access();
         }               
     }
-#endif
+#endif  //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
+#endif  //CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
 
     return 1;
 }

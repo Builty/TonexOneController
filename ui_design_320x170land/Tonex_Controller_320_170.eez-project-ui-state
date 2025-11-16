@@ -166,7 +166,8 @@
                       "enableClose": false,
                       "icon": "svg:hierarchy"
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
@@ -224,8 +225,7 @@
                       "enableClose": false,
                       "icon": "svg:properties"
                     }
-                  ],
-                  "active": true
+                  ]
                 },
                 {
                   "type": "tabset",
@@ -975,13 +975,13 @@
       "selection": {
         "0": {
           "0": {
-            "1": {},
+            "1": {
+              "$selected": true
+            },
             "5": {},
             "7": {},
             "8": {
-              "0": {
-                "$selected": true
-              }
+              "0": {}
             }
           }
         }
