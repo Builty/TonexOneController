@@ -1995,8 +1995,24 @@ void usb_valeton_gp5_handle(class_driver_t* driver_obj)
                         }
                         else if (message.Payload < VALETON_GLOBAL_LAST)
                         {
-                            // modify the global
-                            usb_valeton_gp5_set_global(message.Payload, message.PayloadFloat);
+                            if (message.Payload == VALETON_GLOBAL_BPM)
+                            {
+                                // BPM is a virtual parameter. Convert bpm to msec
+                                float delay_time = 60000.0f / message.PayloadFloat;
+                                if (delay_time > 1000.0f)
+                                {
+                                   delay_time= 1000.0f;
+                                }
+                                
+                                // adjust delay time
+                                usb_valeton_gp5_modify_parameter(VALETON_PARAM_DLY_PARAM_1, delay_time);
+                                usb_valeton_gp5_send_single_parameter(VALETON_PARAM_DLY_PARAM_1, delay_time);
+                            }
+                            else
+                            {
+                                // modify the global
+                                usb_valeton_gp5_set_global(message.Payload, message.PayloadFloat);
+                            }
                         }
                         else
                         {

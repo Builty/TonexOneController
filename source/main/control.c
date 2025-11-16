@@ -43,6 +43,7 @@ limitations under the License.
 #include "wifi_config.h"
 #include "task_priorities.h"
 #include "tonex_params.h"
+#include "valeton_params.h"
 
 #define CTRL_TASK_STACK_SIZE                (3 * 1024)
 
@@ -892,7 +893,20 @@ static uint8_t process_control_command(tControlMessage* message)
                 ESP_LOGI(TAG, "Tap Tempo BPM = %d", (int)bpm);
 
                 // update pedal
-                usb_modify_parameter(TONEX_GLOBAL_BPM, ControlData.TapTempo.BPM);
+                switch (usb_get_connected_modeller_type())
+                {
+                    case AMP_MODELLER_TONEX_ONE:        // fallthrough
+                    case AMP_MODELLER_TONEX:            // fallthrough
+                    default:
+                    {
+                        usb_modify_parameter(TONEX_GLOBAL_BPM, ControlData.TapTempo.BPM);
+                    } break;
+
+                    case AMP_MODELLER_VALETON_GP5:
+                    {
+                        usb_modify_parameter(VALETON_GLOBAL_BPM, ControlData.TapTempo.BPM);
+                    } break;
+                }
 
                 // save time for next trigger
                 ControlData.TapTempo.LastTime = current_time;
