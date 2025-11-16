@@ -995,7 +995,6 @@ uint8_t tonex_update_ui_parameters(void)
                     {
                         lv_obj_clear_state(objects.ui_noise_gate_post_switch, LV_STATE_CHECKED);
                     }
-                    tonex_update_icon_order();
                 } break;
 
                 case TONEX_PARAM_NOISE_GATE_ENABLE:
@@ -1052,7 +1051,6 @@ uint8_t tonex_update_ui_parameters(void)
                     {
                         lv_obj_clear_state(objects.ui_compressor_post_switch, LV_STATE_CHECKED);
                     }
-                    tonex_update_icon_order();
                 } break;
 
                 case TONEX_PARAM_COMP_ENABLE:
@@ -1109,7 +1107,6 @@ uint8_t tonex_update_ui_parameters(void)
                     {
                         lv_obj_clear_state(objects.ui_eq_post_switch, LV_STATE_CHECKED);
                     }
-                    tonex_update_icon_order();
                 } break;
 
                 case TONEX_PARAM_EQ_BASS:
@@ -1305,7 +1302,6 @@ uint8_t tonex_update_ui_parameters(void)
                     {
                         lv_obj_clear_state(objects.ui_reverb_post_switch, LV_STATE_CHECKED);
                     }
-                    tonex_update_icon_order();
                 } break;
 
                 case TONEX_PARAM_REVERB_ENABLE:
@@ -1683,7 +1679,6 @@ uint8_t tonex_update_ui_parameters(void)
                     {
                         lv_obj_clear_state(objects.ui_modulation_post_switch, LV_STATE_CHECKED);
                     }
-                    tonex_update_icon_order();
                 } break;
 
                 case TONEX_PARAM_MODULATION_ENABLE:
@@ -2185,7 +2180,6 @@ uint8_t tonex_update_ui_parameters(void)
                     {
                         lv_obj_clear_state(objects.ui_delay_post_switch, LV_STATE_CHECKED);
                     }
-                    tonex_update_icon_order();
                 } break;
 
                 case TONEX_PARAM_DELAY_ENABLE:

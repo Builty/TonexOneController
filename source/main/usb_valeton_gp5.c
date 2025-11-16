@@ -1095,9 +1095,32 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
                 
                 valeton_params_release_locked_access();
             }
+           
+            // skip to effect order. these are 2 byte values, with block index in order from slot 0 to 9
+            read_index += 12;
+
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
+            {
+                // set effect block order
+                param_ptr[VALETON_PARAM_EFFECT_SLOT_0].Value = (float)((buffer[read_index + 0] << 4) | (buffer[read_index + 1] & 0x0F));
+                param_ptr[VALETON_PARAM_EFFECT_SLOT_1].Value = (float)((buffer[read_index + 2] << 4) | (buffer[read_index + 3] & 0x0F));
+                param_ptr[VALETON_PARAM_EFFECT_SLOT_2].Value = (float)((buffer[read_index + 4] << 4) | (buffer[read_index + 5] & 0x0F));
+                param_ptr[VALETON_PARAM_EFFECT_SLOT_3].Value = (float)((buffer[read_index + 6] << 4) | (buffer[read_index + 7] & 0x0F));
+                param_ptr[VALETON_PARAM_EFFECT_SLOT_4].Value = (float)((buffer[read_index + 8] << 4) | (buffer[read_index + 9] & 0x0F));
+                param_ptr[VALETON_PARAM_EFFECT_SLOT_5].Value = (float)((buffer[read_index + 10] << 4) | (buffer[read_index + 11] & 0x0F));
+                param_ptr[VALETON_PARAM_EFFECT_SLOT_6].Value = (float)((buffer[read_index + 12] << 4) | (buffer[read_index + 13] & 0x0F));
+                param_ptr[VALETON_PARAM_EFFECT_SLOT_7].Value = (float)((buffer[read_index + 14] << 4) | (buffer[read_index + 15] & 0x0F));
+                param_ptr[VALETON_PARAM_EFFECT_SLOT_8].Value = (float)((buffer[read_index + 16] << 4) | (buffer[read_index + 17] & 0x0F));
+                param_ptr[VALETON_PARAM_EFFECT_SLOT_9].Value = (float)((buffer[read_index + 18] << 4) | (buffer[read_index + 19] & 0x0F));
+                
+                valeton_params_release_locked_access();
+            }
+
+            // debug
+            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], 32, ESP_LOG_INFO);
 
             // skip to effect block models
-            read_index += 40;
+            read_index += 28;
             
             // debug
             //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], 80, ESP_LOG_INFO);

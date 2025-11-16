@@ -47,6 +47,7 @@ static SemaphoreHandle_t ParamMutex;
 static tModellerParameter ValetonParameters[VALETON_GLOBAL_LAST] = 
 {
     //value, Min,                       Max,                        Name           Type                        Data1                    Data2                 Data 3
+    // Block Enables
     {0,      0,                         1,                          "NG EN",       MODELLER_PARAM_TYPE_SWITCH, VALETON_EFFECT_BLOCK_NR, VALETON_BLOCK_ENABLE,  0},           //VALETON_PARAM_NR_ENABLE   
     {0,      0,                         1,                          "PRE EN",      MODELLER_PARAM_TYPE_SWITCH, VALETON_EFFECT_BLOCK_PRE, VALETON_BLOCK_ENABLE,  0},           //VALETON_PARAM_PRE_ENABLE,
     {0,      0,                         1,                          "DST EN",      MODELLER_PARAM_TYPE_SWITCH, VALETON_EFFECT_BLOCK_DST, VALETON_BLOCK_ENABLE, 0},           //VALETON_PARAM_DIST_ENABLE,
@@ -58,6 +59,7 @@ static tModellerParameter ValetonParameters[VALETON_GLOBAL_LAST] =
     {0,      0,                         1,                          "RVB EN",      MODELLER_PARAM_TYPE_SWITCH, VALETON_EFFECT_BLOCK_RVB, VALETON_BLOCK_ENABLE, 0},            // VALETON_PARAM_RVB_ENABLE,
     {0,      0,                         1,                          "NS EN",       MODELLER_PARAM_TYPE_SWITCH, VALETON_EFFECT_BLOCK_NS, VALETON_BLOCK_ENABLE, 0},                   //VALETON_PARAM_NS_ENABLE
     
+    // effect block selections
     {0,      0,                         1,                          "NR TP",       MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_NR, VALETON_BLOCK_SELECTION, 0},           //VALETON_PARAM_NR_TYPE,    
     {0,      VALETON_EFFECT_PRE_COMP,   VALETON_EFFECT_PRE_DETUNE,  "PRE TP",      MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_PRE, VALETON_BLOCK_SELECTION, 0},           //VALETON_PARAM_PRE_TYPE,    
     {0,      VALETON_EFFECT_DIST_GREEN_OD,VALETON_EFFECT_DIST_BASS_OD,"DST TP",    MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_DST, VALETON_BLOCK_SELECTION, 0},           //VALETON_PARAM_DIST_TYPE 
@@ -68,9 +70,21 @@ static tModellerParameter ValetonParameters[VALETON_GLOBAL_LAST] =
     {0,      VALETON_EFFECT_DLY_PURE,   VALETON_EFFECT_DLY_PING_PONG,"DL TP",      MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_DLY, VALETON_BLOCK_SELECTION, 0},            //VALETON_PARAM_DLY_TYPE,
     {0,      VALETON_EFFECT_RVB_AIR,     VALETON_EFFECT_RVB_SWEET_SPACE, "RVB TP", MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_RVB, VALETON_BLOCK_SELECTION, 0},            //VALETON_PARAM_RVB_TYPE,
     {0,      0,                         1,                          "NS TP",       MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_NS, VALETON_BLOCK_SELECTION, 0},                //VALETON_PARAM_NS_TYPE
- 
-    {0,      0,                         100,                        "PVOL",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_PATCH_VOLUME
 
+    // general
+    {0,      0,                         100,                        "PVOL",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_PATCH_VOLUME
+    {0,      0,                         10,                         "ESL0",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_0
+    {0,      0,                         10,                         "ESL1",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_1
+    {0,      0,                         10,                         "ESL2",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_2
+    {0,      0,                         10,                         "ESL3",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_3
+    {0,      0,                         10,                         "ESL4",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_4
+    {0,      0,                         10,                         "ESL5",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_5
+    {0,      0,                         10,                         "ESL6",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_6
+    {0,      0,                         10,                         "ESL7",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_7
+    {0,      0,                         10,                         "ESL8",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_8
+    {0,      0,                         10,                         "ESL9",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_9
+
+    // effect params
     {0,      0,                         100,                        "NR 0",      MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NR, 0, 0},            //VALETON_PARAM_NR_PARAM_0
     {0,      0,                         100,                        "NR 1",      MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NR, 0, 1},            //VALETON_PARAM_NR_PARAM_1
     {0,      0,                         100,                        "NR 2",      MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NR, 0, 2},            //VALETON_PARAM_NR_PARAM_2

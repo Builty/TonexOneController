@@ -685,7 +685,86 @@ void valeton_action_parameter_changed(lv_event_t * e)
 void valeton_update_icon_order(void)
 {
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI          
-    //todo
+    tModellerParameter* param_ptr;
+    lv_obj_t* icons[VALETON_EFFECT_BLOCK_LAST];
+    uint8_t index = 0;
+    int16_t offsets[VALETON_EFFECT_BLOCK_LAST];
+
+    ESP_LOGI(TAG, "Update effect icon order");
+
+    if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
+    {
+        // build array with lvgl object in the current effect order
+        for (uint32_t loop = VALETON_PARAM_EFFECT_SLOT_0; loop <= VALETON_PARAM_EFFECT_SLOT_9; loop++)
+        {
+            switch ((int)param_ptr[loop].Value)
+            {
+                case VALETON_EFFECT_BLOCK_NR:
+                {
+                    icons[index] = objects.ui_icon_val_nr;
+                } break;
+
+                case VALETON_EFFECT_BLOCK_PRE:
+                {
+                    icons[index] = objects.ui_icon_val_pre;
+                } break;
+
+                case VALETON_EFFECT_BLOCK_DST:
+                {
+                    icons[index] = objects.ui_icon_val_dst;
+                } break;
+
+                case VALETON_EFFECT_BLOCK_AMP:
+                {
+                    icons[index] = objects.ui_icon_val_amp;
+                } break;
+
+                case VALETON_EFFECT_BLOCK_CAB:
+                {
+                    icons[index] = objects.ui_icon_val_cab;
+                } break;
+
+                case VALETON_EFFECT_BLOCK_EQ:
+                {
+                    icons[index] = objects.ui_icon_val_eq;
+                } break;
+
+                case VALETON_EFFECT_BLOCK_MOD:
+                {
+                    icons[index] = objects.ui_icon_val_mod;
+                } break;
+                
+                case VALETON_EFFECT_BLOCK_DLY:
+                {
+                    icons[index] = objects.ui_icon_val_dly;
+                } break;
+
+                case VALETON_EFFECT_BLOCK_RVB:
+                {
+                    icons[index] = objects.ui_icon_val_rvb;
+                } break;
+
+                case VALETON_EFFECT_BLOCK_NS:
+                {
+                    icons[index] = objects.ui_icon_val_tc;
+                } break;
+            }
+            
+            index++;
+        }
+
+        valeton_params_release_locked_access();
+        
+        platform_get_icon_coords(offsets, sizeof(offsets) / sizeof(int16_t));
+
+        // update X pos of each to set the correct order
+        for (uint8_t i = 0; i < VALETON_EFFECT_BLOCK_LAST; i++)
+        {
+            lv_obj_t* icon = icons[i];
+            int16_t offset = offsets[i];
+            lv_obj_set_x(icon, offset);
+        }
+    }
 #endif    
 }
 
@@ -3085,7 +3164,17 @@ uint8_t valeton_update_ui_parameters(void)
 
                 case VALETON_GLOBAL_RECORD_LEVEL:   // fallthrough
                 case VALETON_GLOBAL_MONITOR_LEVEL:  // fallthrough
-                case VALETON_GLOBAL_BT_LEVEL:
+                case VALETON_GLOBAL_BT_LEVEL:       // fallthrough
+                case VALETON_PARAM_EFFECT_SLOT_0:   // fallthrough
+                case VALETON_PARAM_EFFECT_SLOT_1:   // fallthrough
+                case VALETON_PARAM_EFFECT_SLOT_2:   // fallthrough
+                case VALETON_PARAM_EFFECT_SLOT_3:   // fallthrough
+                case VALETON_PARAM_EFFECT_SLOT_4:   // fallthrough
+                case VALETON_PARAM_EFFECT_SLOT_5:   // fallthrough
+                case VALETON_PARAM_EFFECT_SLOT_6:   // fallthrough
+                case VALETON_PARAM_EFFECT_SLOT_7:   // fallthrough
+                case VALETON_PARAM_EFFECT_SLOT_8:   // fallthrough
+                case VALETON_PARAM_EFFECT_SLOT_9:
                 {
                     // not exposed to UI
                 } break;

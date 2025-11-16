@@ -1113,6 +1113,8 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
                     valeton_update_ui_parameters();
                 } break;
             }
+
+            updateIconOrder();
         } break;
 
         case UI_ELEMENT_TOAST:
