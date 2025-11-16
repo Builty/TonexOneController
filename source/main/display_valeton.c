@@ -714,6 +714,13 @@ uint8_t valeton_update_ui_parameters(void)
             
             switch (param)
             {
+                case VALETON_PARAM_PATCH_VOLUME:
+                {
+                    lv_slider_set_value(objects.ui_val_patch_vol_slider, round(param_entry->Value), LV_ANIM_OFF);
+                    sprintf(value_string, "%d", (int)round(param_entry->Value));
+                    lv_label_set_text(objects.ui_val_patch_vol_value, value_string);
+                } break;
+
                 case VALETON_PARAM_NR_ENABLE:
                 {
                     if (param_entry->Value)

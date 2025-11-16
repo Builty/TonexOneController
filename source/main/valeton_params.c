@@ -69,6 +69,8 @@ static tModellerParameter ValetonParameters[VALETON_GLOBAL_LAST] =
     {0,      VALETON_EFFECT_RVB_AIR,     VALETON_EFFECT_RVB_SWEET_SPACE, "RVB TP", MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_RVB, VALETON_BLOCK_SELECTION, 0},            //VALETON_PARAM_RVB_TYPE,
     {0,      0,                         1,                          "NS TP",       MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_NS, VALETON_BLOCK_SELECTION, 0},                //VALETON_PARAM_NS_TYPE
  
+    {0,      0,                         100,                        "PVOL",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_PATCH_VOLUME
+
     {0,      0,                         100,                        "NR 0",      MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NR, 0, 0},            //VALETON_PARAM_NR_PARAM_0
     {0,      0,                         100,                        "NR 1",      MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NR, 0, 1},            //VALETON_PARAM_NR_PARAM_1
     {0,      0,                         100,                        "NR 2",      MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NR, 0, 2},            //VALETON_PARAM_NR_PARAM_2

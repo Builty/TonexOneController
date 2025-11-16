@@ -638,7 +638,7 @@ static uint8_t usb_valeton_gp5_parse_sysex(const uint8_t* buffer, uint32_t len)
 {
     uint32_t write_index = 0;
     uint32_t bytes_read = 0;
-    uint16_t rx_length;
+    uint16_t __attribute__((unused))  rx_length;
     uint8_t* tmp_ptr = (uint8_t*)buffer;
     uint16_t chunk_count = 0;
     uint16_t this_chunk = 0;
@@ -928,7 +928,7 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
             // debug
             //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
            
-            // skip to mast volume
+            // skip to master volume
             read_index += 40;
 
             if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
@@ -963,7 +963,7 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
             }
 
             // debug
-            //valeton_dump_parameters();
+            valeton_dump_parameters();
             
             // signal to refresh param UI
             UI_RefreshParameterValues();
@@ -1061,8 +1061,18 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
             uint8_t effect_states_2;
             uint8_t loop;
 
+            // skip to patch vol
+            read_index += 96; 
+
+            if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
+            {
+                // get patch volume
+                param_ptr[VALETON_PARAM_PATCH_VOLUME].Value = (float)usb_valeton_gp5_convert_hex_byte_pair_s16(buffer[read_index], buffer[read_index + 1]);
+                valeton_params_release_locked_access();
+            }
+            
             // skip to effect block bit flags
-            read_index += 136;
+            read_index += 40;
 
             effect_states_1 = (buffer[read_index] << 4) | (buffer[read_index + 1] & 0x0F);  
             read_index += 2;
@@ -1155,9 +1165,6 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
                 ESP_LOGW(TAG, "Param mutex failed!");  
             }
          
-            // debug
-            //valeton_dump_parameters();    
-            
             if (!boot_sync_done)
             {
                 // request globals once only
@@ -1248,7 +1255,7 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
             // locate the parameter and update local copy
             tModellerParameter* param_ptr = NULL;
             uint8_t block;
-            uint8_t pedal;
+            uint8_t __attribute__((unused)) pedal;
             uint8_t param;
 
             if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
@@ -1269,9 +1276,6 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
 
                 valeton_params_release_locked_access();
             }
-
-            // example response
-            // f0 0c 0e 00 01 00 00 00 0e 01 01 04 08 00 01 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00 00 00 00 02 00 04 02 f7
         } break;
 
         case 0x49:
@@ -1506,7 +1510,7 @@ static void usb_valeton_gp5_set_effect_block_state(uint8_t block_index, uint8_t 
     ESP_LOGI(TAG, "Set Effect Block state %d %d", block_index, state);
 
     // debug
-    ESP_LOG_BUFFER_HEXDUMP(TAG, midi_tx, sizeof(midi_tx), ESP_LOG_INFO);
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, midi_tx, sizeof(midi_tx), ESP_LOG_INFO);
 
     usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
 }
@@ -1569,7 +1573,7 @@ static void usb_valeton_gp5_set_effect_block_model(uint8_t block_index, uint8_t 
         midi_tx[25] = ptr[0] & 0x0F;
 
         // debug
-        ESP_LOG_BUFFER_HEXDUMP(TAG, midi_tx, sizeof(midi_tx), ESP_LOG_INFO);
+        //ESP_LOG_BUFFER_HEXDUMP(TAG, midi_tx, sizeof(midi_tx), ESP_LOG_INFO);
 
         usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
     }
@@ -1612,6 +1616,118 @@ static void usb_valeton_gp5_set_effect_block_model_parameter(uint8_t block_index
     }
 
     ESP_LOGI(TAG, "Set Effect Block model parameter %d %d %3.2f", block_index, parameter_index, value);
+
+    usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void usb_valeton_gp5_set_global(uint16_t param_index, float value)
+{
+    uint16_t temp_val;
+    uint8_t midi_tx[] = {0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+    switch (param_index)
+    {
+        case VALETON_GLOBAL_INPUT_TRIM:
+        {
+            midi_tx[3] = 1;
+            midi_tx[5] = 3;
+        } break;
+
+        case VALETON_GLOBAL_MASTER_VOLUME:
+        {
+            midi_tx[3] = 2;
+            midi_tx[5] = 2;
+        } break;
+
+        case VALETON_GLOBAL_CABSIM_BYPASS:
+        {
+            midi_tx[3] = 3;
+            midi_tx[5] = 3;
+        } break;
+
+        case VALETON_GLOBAL_RECORD_LEVEL:
+        {
+            midi_tx[3] = 1;
+            midi_tx[5] = 4;
+        } break;
+
+        case VALETON_GLOBAL_MONITOR_LEVEL:
+        {
+            midi_tx[3] = 2;
+            midi_tx[5] = 4;
+        } break;
+
+        case VALETON_GLOBAL_BT_LEVEL:
+        {
+            midi_tx[3] = 5;
+            midi_tx[5] = 4;
+        } break;
+
+        case VALETON_GLOBAL_BPM:            // fallthrough
+        default:
+        {
+            ESP_LOGW(TAG, "Invalid set global %d", param_index);
+            return;
+        } break;
+    }
+
+    // set the value
+    if (value < 0)
+    {
+        temp_val = (uint16_t)(0x100 + value);
+    }
+    else
+    {
+        temp_val = (uint16_t)value;
+    }
+
+    midi_tx[10] = temp_val >> 8;
+    midi_tx[11] = temp_val & 0xFF;
+
+    ESP_LOGI(TAG, "Set Global %d: %f", param_index, value);
+
+    // debug
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, midi_tx, sizeof(midi_tx), ESP_LOG_INFO);
+
+    usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void usb_valeton_gp5_set_patch_volume(float value)
+{
+    uint16_t temp_val;
+    uint8_t midi_tx[] = {0x04, 0x02, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+    // set the value
+    if (value < 0)
+    {
+        temp_val = (uint16_t)(0x100 + value);
+    }
+    else
+    {
+        temp_val = (uint16_t)value;
+    }
+
+    midi_tx[10] = temp_val >> 8;
+    midi_tx[11] = temp_val & 0xFF;
+
+    ESP_LOGI(TAG, "Set Patch volume %f", value);
+
+    // debug
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, midi_tx, sizeof(midi_tx), ESP_LOG_INFO);
 
     usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
 }
@@ -1840,16 +1956,24 @@ void usb_valeton_gp5_handle(class_driver_t* driver_obj)
                     {
                         if (message.Payload < VALETON_PARAM_LAST)
                         {
-                            // modify param
-                            usb_valeton_gp5_modify_parameter(message.Payload, message.PayloadFloat);
+                            if (message.Payload == VALETON_PARAM_PATCH_VOLUME)
+                            {
+                                // special case for patch vol
+                                usb_valeton_gp5_set_patch_volume(message.PayloadFloat);
+                            }
+                            else
+                            {
+                                // modify param
+                                usb_valeton_gp5_modify_parameter(message.Payload, message.PayloadFloat);
 
-                            // send it
-                            usb_valeton_gp5_send_single_parameter(message.Payload, message.PayloadFloat);
+                                // send it
+                                usb_valeton_gp5_send_single_parameter(message.Payload, message.PayloadFloat);
+                            }
                         }
                         else if (message.Payload < VALETON_GLOBAL_LAST)
                         {
                             // modify the global
-                            //todo
+                            usb_valeton_gp5_set_global(message.Payload, message.PayloadFloat);
                         }
                         else
                         {

@@ -213,6 +213,9 @@ enum ValetonParameters
     VALETON_PARAM_RVB_TYPE,    
     VALETON_PARAM_NS_TYPE,
 
+    // patch volume
+    VALETON_PARAM_PATCH_VOLUME,
+
     // params
     //**** NR **** 
     VALETON_PARAM_NR_PARAM_0,

@@ -5188,6 +5188,42 @@ void create_screen_val_settings() {
                             lv_obj_set_style_align(obj, LV_ALIGN_LEFT_MID, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_label_set_text(obj, "0");
                         }
+                        {
+                            // ui_ValPatchVolLabel
+                            lv_obj_t *obj = lv_label_create(parent_obj);
+                            objects.ui_val_patch_vol_label = obj;
+                            lv_obj_set_pos(obj, 13, 21);
+                            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                            lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+                            lv_obj_set_style_text_font(obj, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_align(obj, LV_ALIGN_LEFT_MID, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_label_set_text(obj, "Patch Vol");
+                        }
+                        {
+                            // ui_ValPatchVolSlider
+                            lv_obj_t *obj = lv_slider_create(parent_obj);
+                            objects.ui_val_patch_vol_slider = obj;
+                            lv_obj_set_pos(obj, 168, 22);
+                            lv_obj_set_size(obj, 511, 20);
+                            lv_slider_set_value(obj, -64, LV_ANIM_OFF);
+                            lv_obj_add_event_cb(obj, action_parameter_changed, LV_EVENT_RELEASED, (void *)0);
+                            lv_obj_set_style_align(obj, LV_ALIGN_LEFT_MID, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_bg_color(obj, lv_color_hex(0xffaeb1b4), LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_bg_color(obj, lv_color_hex(0xffaeb1b4), LV_PART_MAIN | LV_STATE_SCROLLED);
+                            lv_obj_set_style_bg_color(obj, lv_color_hex(0xff3890d5), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+                            lv_obj_set_style_bg_color(obj, lv_color_hex(0xffffffff), LV_PART_KNOB | LV_STATE_DEFAULT);
+                        }
+                        {
+                            // ui_ValPatchVolValue
+                            lv_obj_t *obj = lv_label_create(parent_obj);
+                            objects.ui_val_patch_vol_value = obj;
+                            lv_obj_set_pos(obj, 703, 21);
+                            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                            lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+                            lv_obj_set_style_text_font(obj, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_obj_set_style_align(obj, LV_ALIGN_LEFT_MID, LV_PART_MAIN | LV_STATE_DEFAULT);
+                            lv_label_set_text(obj, "0");
+                        }
                     }
                 }
             }
