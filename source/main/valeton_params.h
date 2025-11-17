@@ -356,6 +356,7 @@ esp_err_t valeton_params_release_locked_access(void);
 esp_err_t valeton_params_get_min_max(uint16_t param_index, float* min, float* max);
 esp_err_t valeton_dump_parameters(void);
 float valeton_params_clamp_value(uint16_t param_index, float value);
+void valeton_params_set_min_max(void);
 
 #ifdef __cplusplus
 } /*extern "C"*/

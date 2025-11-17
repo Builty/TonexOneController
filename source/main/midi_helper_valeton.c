@@ -1140,59 +1140,578 @@ esp_err_t midi_helper_valeton_adjust_param_via_midi(uint8_t change_num, uint8_t 
 *****************************************************************************/
 uint16_t midi_helper_valeton_get_param_for_change_num(uint8_t change_num, uint8_t midi_value_1, uint8_t midi_value_2)
 {
-    uint16_t param = 0; //TONEX_UNKNOWN;
+    uint16_t param = TONEX_UNKNOWN;
     tModellerParameter* param_ptr;
 
     switch (change_num)
     {
         case 0:
         {
-            //todo param = VALETON_PARAM_NR_ENABLE;
+            param = VALETON_PARAM_NR_ENABLE;  
         } break;
 
         case 1:
         {
-            //todo param = VALETON_PARAM_NR_ENABLE;
+            param = VALETON_PARAM_PRE_ENABLE;
         } break;
 
         case 2:
         {
+            param = VALETON_PARAM_DIST_ENABLE;
         } break;
 
+        case 3:
+        {
+            param = VALETON_PARAM_AMP_ENABLE;
+        } break;
+        
+        case 4:
+        {
+            param = VALETON_PARAM_CAB_ENABLE;
+        } break;
+        
+        case 5:
+        {
+            param = VALETON_PARAM_EQ_ENABLE;
+        } break;
+
+        case 6:
+        {
+            param = VALETON_PARAM_MOD_ENABLE;
+        } break;
+         
+        case 7:
+        {
+            param = VALETON_PARAM_DLY_ENABLE;
+        } break;
+
+        case 8:
+        {
+            param = VALETON_PARAM_RVB_ENABLE;
+        } break;
+         
+        case 9:
+        {
+            param = VALETON_PARAM_NS_ENABLE;
+        } break;
+    
+        case 10:
+        {
+            param = VALETON_PARAM_NR_TYPE;
+        } break;
+
+        case 11:
+        {
+            param = VALETON_PARAM_PRE_TYPE;
+        } break;
+
+        case 12:
+        {
+            param = VALETON_PARAM_DIST_TYPE;
+        } break;
+
+        case 13:
+        {
+            param = VALETON_PARAM_AMP_TYPE;
+        } break;
+
+        case 14:
+        {
+            param = VALETON_PARAM_CAB_TYPE;
+        } break;
+
+        case 15:
+        {
+            param = VALETON_PARAM_EQ_TYPE;
+        } break;
+
+        case 16:
+        {
+            param = VALETON_PARAM_MOD_TYPE;
+        } break;
+
+        case 17:
+        {
+            param = VALETON_PARAM_DLY_TYPE;
+        } break;
+
+        case 18:
+        {
+            param = VALETON_PARAM_RVB_TYPE;
+        } break;
+
+        case 19:
+        {
+            param = VALETON_PARAM_NS_TYPE;
+        } break;
+
+        case 20:
+        {
+            param = VALETON_PARAM_PATCH_VOLUME;
+        } break;
+
+        case 21:
+        {
+            param = VALETON_PARAM_NR_PARAM_0;
+        } break;
+
+        case 23:
+        {
+            param = VALETON_PARAM_NR_PARAM_1;
+        } break;
+
+        case 24:
+        {
+            param = VALETON_PARAM_NR_PARAM_2;
+        } break;
+
+        case 25:
+        {
+            param = VALETON_PARAM_NR_PARAM_3;
+        } break;
+
+        case 26:
+        {
+            param = VALETON_PARAM_NR_PARAM_4;
+        } break;
+
+        case 27:
+        {
+            param = VALETON_PARAM_NR_PARAM_5;
+        } break;
+
+        case 28:
+        {
+            param = VALETON_PARAM_NR_PARAM_6;
+        } break;
+
+        case 29:
+        {
+            param = VALETON_PARAM_NR_PARAM_7;
+        } break;
+
+        case 30:
+        {
+            param = VALETON_PARAM_PRE_PARAM_0;
+        } break;
+
+        case 31:
+        {
+            param = VALETON_PARAM_PRE_PARAM_1;
+        } break;
+
+        case 32:
+        {
+            param = VALETON_PARAM_PRE_PARAM_2;
+        } break;
+
+        case 33:
+        {
+            param = VALETON_PARAM_PRE_PARAM_3;
+        } break;
+
+        case 34:
+        {
+            param = VALETON_PARAM_PRE_PARAM_4;
+        } break;
+
+        case 35:
+        {
+            param = VALETON_PARAM_PRE_PARAM_5;
+        } break;
+
+        case 36:
+        {
+            param = VALETON_PARAM_PRE_PARAM_6;
+        } break;
+
+        case 37:
+        {
+            param = VALETON_PARAM_PRE_PARAM_7;
+        } break;
+
+        case 38:
+        {
+            param = VALETON_PARAM_DIST_PARAM_0;
+        } break;
+    
+        case 39:
+        {
+            param = VALETON_PARAM_DIST_PARAM_1;
+        } break;
+
+        case 40:
+        {
+            param = VALETON_PARAM_DIST_PARAM_2;
+        } break;
+
+        case 41:
+        {
+            param = VALETON_PARAM_DIST_PARAM_3;
+        } break;
+
+        case 42:
+        {
+            param = VALETON_PARAM_DIST_PARAM_4;
+        } break;
+
+        case 43:
+        {
+            param = VALETON_PARAM_DIST_PARAM_5;
+        } break;
+
+        case 44:
+        {
+            param = VALETON_PARAM_DIST_PARAM_6;
+        } break;
+
+        case 45:
+        {
+            param = VALETON_PARAM_DIST_PARAM_7;
+        } break;
+
+        case 46:
+        {
+            param = VALETON_PARAM_AMP_PARAM_0;
+        } break;
+
+        case 47:
+        {
+            param = VALETON_PARAM_AMP_PARAM_1;
+        } break;
+
+        case 48:
+        {
+            param = VALETON_PARAM_AMP_PARAM_2;
+        } break;
+
+        case 49:
+        {
+            param = VALETON_PARAM_AMP_PARAM_3;
+        } break;
+
+        case 50:
+        {
+            param = VALETON_PARAM_AMP_PARAM_4;
+        } break;
+
+        case 51:
+        {
+            param = VALETON_PARAM_AMP_PARAM_5;
+        } break;
+
+        case 52:
+        {
+            param = VALETON_PARAM_AMP_PARAM_6;
+        } break;
+
+        case 53:
+        {
+            param = VALETON_PARAM_AMP_PARAM_7;
+        } break;
+
+        case 54:
+        {
+            param = VALETON_PARAM_CAB_PARAM_0;
+        } break;
+
+        case 55:
+        {
+            param = VALETON_PARAM_CAB_PARAM_1;
+        } break;
+
+        case 56:
+        {
+            param = VALETON_PARAM_CAB_PARAM_2;
+        } break;
+
+        case 57:
+        {
+            param = VALETON_PARAM_CAB_PARAM_3;
+        } break;
+
+        case 58:
+        {
+            param = VALETON_PARAM_CAB_PARAM_4;
+        } break;
+
+        case 59:
+        {
+            param = VALETON_PARAM_CAB_PARAM_5;
+        } break;
+
+        case 60:
+        {
+            param = VALETON_PARAM_CAB_PARAM_6;
+        } break;
+
+        case 61:
+        {
+            param = VALETON_PARAM_CAB_PARAM_7;
+        } break;
+
+        case 62:
+        {
+            param = VALETON_PARAM_EQ_PARAM_0;
+        } break;
+
+        case 63:
+        {
+            param = VALETON_PARAM_EQ_PARAM_1;
+        } break;
+
+        case 64:
+        {
+            param = VALETON_PARAM_EQ_PARAM_2;
+        } break;
+
+        case 65:
+        {
+            param = VALETON_PARAM_EQ_PARAM_3;
+        } break;
+
+        case 66:
+        {
+            param = VALETON_PARAM_EQ_PARAM_4;
+        } break;
+
+        case 67:
+        {
+            param = VALETON_PARAM_EQ_PARAM_5;
+        } break;
+
+        case 68:
+        {
+            param = VALETON_PARAM_EQ_PARAM_6;
+        } break;
+
+        case 69:
+        {
+            param = VALETON_PARAM_EQ_PARAM_7;
+        } break;
+
+        case 70:
+        {
+            param = VALETON_PARAM_MOD_PARAM_0;
+        } break;
+
+        case 71:
+        {
+            param = VALETON_PARAM_MOD_PARAM_1;
+        } break;
+
+        case 72:
+        {
+            param = VALETON_PARAM_MOD_PARAM_2;
+        } break;
+
+        case 73:
+        {
+            param = VALETON_PARAM_MOD_PARAM_3;
+        } break;
+
+        case 74:
+        {
+            param = VALETON_PARAM_MOD_PARAM_4;
+        } break;
+
+        case 75:
+        {
+            param = VALETON_PARAM_MOD_PARAM_5;
+        } break;
+
+        case 76:
+        {
+            param = VALETON_PARAM_MOD_PARAM_6;
+        } break;
+
+        case 77:
+        {
+            param = VALETON_PARAM_MOD_PARAM_7;
+        } break;
+
+        case 78:
+        {
+            param = VALETON_PARAM_DLY_PARAM_0;
+        } break;
+   
+        case 79:
+        {
+            param = VALETON_PARAM_DLY_PARAM_1;
+        } break;
+
+        case 80:
+        {
+            param = VALETON_PARAM_DLY_PARAM_2;
+        } break;
+
+        case 81:
+        {
+            param = VALETON_PARAM_DLY_PARAM_3;
+        } break;
+
+        case 82:
+        {
+            param = VALETON_PARAM_DLY_PARAM_4;
+        } break;
+
+        case 83:
+        {
+            param = VALETON_PARAM_DLY_PARAM_5;
+        } break;
+
+        case 84:
+        {
+            param = VALETON_PARAM_DLY_PARAM_6;
+        } break;
+
+        case 85:
+        {
+            param = VALETON_PARAM_DLY_PARAM_7;
+        } break;
+
+        case 86:
+        {
+            param = VALETON_PARAM_RVB_PARAM_0;
+        } break;
+   
+        case 87:
+        {
+            param = VALETON_PARAM_RVB_PARAM_1;
+        } break;
+
+        case 88:
+        {
+            param = VALETON_PARAM_RVB_PARAM_2;
+        } break;
+
+        case 89:
+        {
+            param = VALETON_PARAM_RVB_PARAM_3;
+        } break;
+
+        case 90:
+        {
+            param = VALETON_PARAM_RVB_PARAM_4;
+        } break;
+
+        case 91:
+        {
+            param = VALETON_PARAM_RVB_PARAM_5;
+        } break;
+
+        case 92:
+        {
+            param = VALETON_PARAM_RVB_PARAM_6;
+        } break;
+
+        case 93:
+        {
+            param = VALETON_PARAM_RVB_PARAM_7;
+        } break;
+
+        case 94:
+        {
+            param = VALETON_PARAM_NS_PARAM_0;
+        } break;
+
+        case 95:
+        {
+            param = VALETON_PARAM_NS_PARAM_1;
+        } break;
+
+        case 96:
+        {
+            param = VALETON_PARAM_NS_PARAM_2;
+        } break;
+
+        case 97:
+        {
+            param = VALETON_PARAM_NS_PARAM_3;
+        } break;
+
+        case 98:
+        {
+            param = VALETON_PARAM_NS_PARAM_4;
+        } break;
+
+        case 99:
+        {
+            param = VALETON_PARAM_NS_PARAM_5;
+        } break;
+
+        case 100:
+        {
+            param = VALETON_PARAM_NS_PARAM_6;
+        } break;
+
+        case 101:
+        {
+            param = VALETON_PARAM_NS_PARAM_7;
+        } break;
+
+        // gap for expansion
 
         case 116: 
         {
+            // preset down
+            control_request_preset_down();
+
+            // don't set any return param, as this one is already handled and its not a parameter
+        } break;
+
+        case 117:
+        {
+            // preset up
+            control_request_preset_up();
+
+            // don't set any return param, as this one is already handled and its not a parameter
+        } break;
+
+        case 118: 
+        {
+            // bpm
+            param = VALETON_GLOBAL_BPM;            
+        } break;
+
+        case 119: 
+        {
+            // BPM
+            param = VALETON_GLOBAL_BPM;
+        } break;
+    
+        case 120: 
+        {
+            // input trim
             param = VALETON_GLOBAL_INPUT_TRIM;            
         } break;
 
-        case 117: 
+        case 121: 
         {
             param = VALETON_GLOBAL_CABSIM_BYPASS;
         } break;
-         
-        case 118:
-        {
-        } break;
- 
-        case 119:
-        {
-            
-        } break;
-
-        case 120:
-        {
-
-        } break;
-
-        case 121:
-        {
-
-        } break;
-
+        
         case 122:
         {            
             param = VALETON_GLOBAL_MASTER_VOLUME;
         } break;
+
+        case 123:
+        {            
+            param = VALETON_GLOBAL_RECORD_LEVEL;
+        } break;
+
+        case 124:
+        {            
+            param = VALETON_GLOBAL_MONITOR_LEVEL;
+        } break;
+
+        case 125:
+        {            
+            param = VALETON_GLOBAL_BT_LEVEL;
+        } break;
+
+        //126
 
         case 127:
         {

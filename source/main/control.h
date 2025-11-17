@@ -269,6 +269,9 @@ enum ParamTypes
 
 #define MAX_PARAM_NAME          12
 
+// special cases for handling effect switches that use Midi but don't change a parameter
+#define TONEX_UNKNOWN           0xFFFF
+
 typedef struct
 {
     float Value;

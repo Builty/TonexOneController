@@ -963,8 +963,11 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
             }
 
             // debug
-            valeton_dump_parameters();
+            //valeton_dump_parameters();
             
+            // set param ranges
+            valeton_params_set_min_max();
+
             // signal to refresh param UI
             UI_RefreshParameterValues();
 
@@ -1200,6 +1203,8 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
                 // change that will overwrite this one. Skip the UI refresh to save time
                 if (uxQueueMessagesWaiting(input_queue) == 0)
                 {
+                    valeton_params_set_min_max();
+
                     // signal to refresh param UI
                     UI_RefreshParameterValues();
 
@@ -1841,12 +1846,6 @@ static esp_err_t usb_valeton_gp5_send_single_parameter(uint16_t index, float val
         if (uxQueueMessagesWaiting(input_queue) == 0)
         {
             usb_valeton_gp5_request_preset_params();
-
-            // signal to refresh param UI
-            //UI_RefreshParameterValues();
-
-            // update web UI
-            //wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
         }
 
         res = ESP_OK;

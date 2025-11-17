@@ -197,9 +197,6 @@ enum TonexParameters
     TONEX_GLOBAL_LAST
 };
 
-// special cases for handling effect switches that use Midi but don't change a parameter
-#define TONEX_UNKNOWN           0xFFFF
-
 typedef struct
 {
     uint8_t red;
