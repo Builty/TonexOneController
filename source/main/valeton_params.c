@@ -321,6 +321,7 @@ void valeton_params_set_min_max(void)
         {
             case VALETON_EFFECT_NR_GATE:
             {
+                // threshold
                 param_ptr[VALETON_PARAM_NR_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_NR_PARAM_0].Max = 100;
             } break;
@@ -331,135 +332,176 @@ void valeton_params_set_min_max(void)
         {
             case VALETON_EFFECT_PRE_COMP:
             {
+                // sustain
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;
 
+                // volume
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 100;
             } break;
 
             case VALETON_EFFECT_PRE_COMP4:
             {
+                // sustain
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;
                 
+                // attack
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 100;
 
+                // vol
                 param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 100;
 
+                // clip
                 param_ptr[VALETON_PARAM_PRE_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_3].Max = 100;                
             } break;
 
             case VALETON_EFFECT_PRE_BOOST:
             {
+                // gain
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;
+
+                // +3db
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 1;
+
+                // bright
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 1;
             } break;
 
             case VALETON_EFFECT_PRE_MICRO_BOOST:
             {
+                // gain
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
-                param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;
-                
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;            
             } break;
 
             case VALETON_EFFECT_PRE_B_BOOST:
             {
+                // gain
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;
                 
+                // vol
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 100;
 
+                // bass
                 param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 100;
 
+                // treble
                 param_ptr[VALETON_PARAM_PRE_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_3].Max = 100;
-
             } break;
 
             case VALETON_EFFECT_PRE_TOUCHER:
             {
+                // sense
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;
                 
+                // range
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 100;
 
+                // Q
                 param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 100;
 
+                // mix
                 param_ptr[VALETON_PARAM_PRE_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_3].Max = 100;
 
+                // mode
+                param_ptr[VALETON_PARAM_PRE_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_4].Max = 1;
             } break;
 
             case VALETON_EFFECT_PRE_CRIER:
             {
+                // depth
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;
                 
+                // rate
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 10;
 
+                // vol
                 param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 100;
 
+                // low
                 param_ptr[VALETON_PARAM_PRE_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_3].Max = 100;
 
+                // Q
                 param_ptr[VALETON_PARAM_PRE_PARAM_4].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_4].Max = 100;
 
-                //todo one more slider
+                // High
+                param_ptr[VALETON_PARAM_PRE_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_5].Max = 100;
             } break;
 
             case VALETON_EFFECT_PRE_OCTA:
             {
+                // Low
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;
                 
+                // high
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 100;
 
+                // Dry
                 param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 100;
-
             } break;
 
             case VALETON_EFFECT_PRE_PITCH:
             {
+                // High
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 24;
 
+                // Low
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = -24;
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 0;
 
+                // Dry
                 param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 100;
 
+                // H-Vol
                 param_ptr[VALETON_PARAM_PRE_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_3].Max = 100;
 
+                // L-Vol
                 param_ptr[VALETON_PARAM_PRE_PARAM_4].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_4].Max = 100;
             } break;
 
             case VALETON_EFFECT_PRE_DETUNE:
             {
+                // Detune
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = -50;
                 param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 50;
                 
+                // Wet
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 100;
 
+                // Dry
                 param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 100;
-
             } break;
         } 
          
@@ -471,66 +513,77 @@ void valeton_params_set_min_max(void)
             case VALETON_EFFECT_DIST_SM_DIST:       // fallthrough
             case VALETON_EFFECT_DIST_LA_CHARGER:
             {
+                // Gain
                 param_ptr[VALETON_PARAM_DIST_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_DIST_PARAM_0].Max = 100;
                 
+                // Tone
                 param_ptr[VALETON_PARAM_DIST_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_DIST_PARAM_1].Max = 100;
 
+                // Vol
                 param_ptr[VALETON_PARAM_DIST_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_DIST_PARAM_2].Max = 100;
-
             } break;
 
             case VALETON_EFFECT_DIST_YELLOW_OD:     // fallthrough
             case VALETON_EFFECT_DIST_PLUSTORTION:
             {
+                // Gain
                 param_ptr[VALETON_PARAM_DIST_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_DIST_PARAM_0].Max = 100;
                 
+                // Vol
                 param_ptr[VALETON_PARAM_DIST_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_DIST_PARAM_1].Max = 100;
-
             } break;
         
             case VALETON_EFFECT_DIST_DARKTALE:
             {
+                // Gain
                 param_ptr[VALETON_PARAM_DIST_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_DIST_PARAM_0].Max = 100;
                 
+                // Filter
                 param_ptr[VALETON_PARAM_DIST_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_DIST_PARAM_1].Max = 100;
 
+                // Vol
                 param_ptr[VALETON_PARAM_DIST_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_DIST_PARAM_2].Max = 100;
-
             } break;
             
             case VALETON_EFFECT_DIST_SORA_FUZZ:     // fallthrough
             case VALETON_EFFECT_DIST_RED_HAZE:
             {
+                // Fuzz
                 param_ptr[VALETON_PARAM_DIST_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_DIST_PARAM_0].Max = 100;
                 
+                // Vol
                 param_ptr[VALETON_PARAM_DIST_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_DIST_PARAM_1].Max = 100;
-
             } break;
 
             case VALETON_EFFECT_DIST_BASS_OD:
             {
+                // Gain
                 param_ptr[VALETON_PARAM_DIST_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_DIST_PARAM_0].Max = 100;
                 
+                // Blend
                 param_ptr[VALETON_PARAM_DIST_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_DIST_PARAM_1].Max = 100;
 
+                // Vol
                 param_ptr[VALETON_PARAM_DIST_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_DIST_PARAM_2].Max = 100;
 
+                // Bass
                 param_ptr[VALETON_PARAM_DIST_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_DIST_PARAM_3].Max = 100;
 
+                // Treble
                 param_ptr[VALETON_PARAM_DIST_PARAM_4].Min = 0;
                 param_ptr[VALETON_PARAM_DIST_PARAM_4].Max = 100;
             } break;
@@ -541,12 +594,15 @@ void valeton_params_set_min_max(void)
         {
             case VALETON_EFFECT_AMP_TWEEDY:
             {
+                // Gain
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
 
+                // Tone
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
 
+                // Vol
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
             } break;
@@ -569,21 +625,27 @@ void valeton_params_set_min_max(void)
             case VALETON_EFFECT_AMP_FLAGMAN_PLUS:   // fallthrough
             case VALETON_EFFECT_AMP_BOG_REDV:
             {
+                // Gain
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
 
+                // Pres
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
 
+                // Vol
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
 
+                // Bass
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
 
+                // Middle
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
 
+                // Treble
                 param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 100;
             } break;
@@ -591,193 +653,269 @@ void valeton_params_set_min_max(void)
             case VALETON_EFFECT_AMP_DARK_TWIN:
             case VALETON_EFFECT_AMP_JUICE_R100:
             {
+                // Gain
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
 
+                // Vol
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
 
+                // Bass
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
 
+                // Middle
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
 
+                // Treble
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
 
+                // Bright
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 1;
             } break;
 
             case VALETON_EFFECT_AMP_FOXY_30N:
             {
+                // Gain
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
 
+                // Tone Cut
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
 
+                // Vol
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
 
+                // Bright
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 1;
             } break;
 
             case VALETON_EFFECT_AMP_J_120_CL:
             {
+                // Vol
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
 
+                // Bass
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
 
+                // Middle
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
 
+                // Treble
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
 
-                
+                // Bright
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 1;
             } break;
 
             case VALETON_EFFECT_AMP_UK_50JP:
             {
+                // Gain 1
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
 
+                // Pres
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
 
+                // Vol
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
 
+                // Bass
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
 
+                // Middle
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
 
+                // Treble
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 100;
+
+                // Gain 2
+                param_ptr[VALETON_PARAM_AMP_PARAM_6].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_6].Max = 100;
             } break;
 
             case VALETON_EFFECT_AMP_FOXY_30TB:
             {
+                // Gain
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
 
+                // Tone Cut
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
 
+                // Vol
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
 
+                // Bass
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
 
+                // Treble
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
 
+                // Character
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 1;
             } break;
 
             case VALETON_EFFECT_AMP_SUPDUAL_OD:
             {
+                // Gain 1
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
 
+                // Tone 1
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
 
+                // Gain 2
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
 
+                // Tone 2
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
 
+                // Vol
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
             } break;
             
             case VALETON_EFFECT_AMP_Z38_OD:
             {
+                // Gain
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
 
+                // Tone Cut
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
 
+                // Vol
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
 
+                // Bass
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
 
+                // Middle
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
 
+                // Treble
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 100;
             } break;
 
             case VALETON_EFFECT_AMP_EV_51:
             {
+                // Gain
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
 
+                // Vol
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
 
+                // Bass
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
 
+                // Middle
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
 
+                // Treble
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
 
+                // Pres
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 100;
             } break;
 
             case VALETON_EFFECT_AMP_CLASSIC_BASS:
             {
+                // Gain
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
 
+                // Bass
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
 
+                // Middle
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
 
+                // Mid freq
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
-                param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 4;
 
+                // Treble
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
+
+                // Vol
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 100;
             } break;
             
             case VALETON_EFFECT_AMP_FOXY_BASS:
             {
+                // Vol
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
 
+                // Bass
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
 
+                // Treble
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
-
-
             } break;
 
             case VALETON_EFFECT_AMP_MESS_BASS:
             {
+                // Gain
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
 
+                // Vol
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
 
+                // Bass
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
 
+                // Middle
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
 
+                // Treble
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
             } break;
@@ -785,44 +923,63 @@ void valeton_params_set_min_max(void)
             case VALETON_EFFECT_AMP_AC_PRE1:    // fallthrough
             case VALETON_EFFECT_AMP_AC_PRE2:
             {
+                // Vol
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
 
+                // Tone
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
 
+                // Balance
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
 
+                // EQ Freq
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
 
+                // EQ Q
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
                 param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
+
+                // EQ Gain
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 100;
             } break;
         }
                 
         // Cab
         // all cabs have volume only
+        // Vol
         param_ptr[VALETON_PARAM_CAB_PARAM_0].Min = 0;
         param_ptr[VALETON_PARAM_CAB_PARAM_0].Max = 100;
                     
         // EQ
         // all have same range
+        // band 1
         param_ptr[VALETON_PARAM_EQ_PARAM_0].Min = -50;
         param_ptr[VALETON_PARAM_EQ_PARAM_0].Max = 50;
 
+        // band 2
         param_ptr[VALETON_PARAM_EQ_PARAM_1].Min = -50;
         param_ptr[VALETON_PARAM_EQ_PARAM_1].Max = 50;
 
+        // band 3
         param_ptr[VALETON_PARAM_EQ_PARAM_2].Min = -50;
         param_ptr[VALETON_PARAM_EQ_PARAM_2].Max = 50;
 
+        // band 4
         param_ptr[VALETON_PARAM_EQ_PARAM_3].Min = -50;
         param_ptr[VALETON_PARAM_EQ_PARAM_3].Max = 50;
 
+        // band 5
         param_ptr[VALETON_PARAM_EQ_PARAM_4].Min = -50;
         param_ptr[VALETON_PARAM_EQ_PARAM_4].Max = 50;
+
+        // Vol
+        param_ptr[VALETON_PARAM_EQ_PARAM_5].Min = 0;
+        param_ptr[VALETON_PARAM_EQ_PARAM_5].Max = 100;
 
         // Mod
         switch ((int)param_ptr[VALETON_PARAM_MOD_TYPE].Value)
@@ -830,12 +987,15 @@ void valeton_params_set_min_max(void)
             case VALETON_EFFECT_MOD_A_CHORUS:   // fallthrough
             case VALETON_EFFECT_MOD_B_CHORUS:
             {
+                // Depth
                 param_ptr[VALETON_PARAM_MOD_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_0].Max = 100;
 
+                // Rate
                 param_ptr[VALETON_PARAM_MOD_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_1].Max = 10;
 
+                // Tone
                 param_ptr[VALETON_PARAM_MOD_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_2].Max = 100;
 
@@ -844,21 +1004,26 @@ void valeton_params_set_min_max(void)
             case VALETON_EFFECT_MOD_JET:       // Fallthrough
             case VALETON_EFFECT_MOD_N_JET:
             {
+                // Depth
                 param_ptr[VALETON_PARAM_MOD_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_0].Max = 100;
 
+                // Rate
                 param_ptr[VALETON_PARAM_MOD_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_1].Max = 10;
 
+                // P.Delay
                 param_ptr[VALETON_PARAM_MOD_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_2].Max = 100;
 
+                // F.Back
                 param_ptr[VALETON_PARAM_MOD_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_3].Max = 100;
             } break;
 
             case VALETON_EFFECT_MOD_O_PHASE:
             {
+                // Rate
                 param_ptr[VALETON_PARAM_MOD_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_0].Max = 10;
             } break;
@@ -867,9 +1032,11 @@ void valeton_params_set_min_max(void)
             case VALETON_EFFECT_MOD_V_ROTO:     // fallthrough
             case VALETON_EFFECT_MOD_O_TREM:
             {
+                // Depth
                 param_ptr[VALETON_PARAM_MOD_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_0].Max = 100;
 
+                // Rate
                 param_ptr[VALETON_PARAM_MOD_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_1].Max = 10;
 
@@ -878,27 +1045,34 @@ void valeton_params_set_min_max(void)
             case VALETON_EFFECT_MOD_VIBRATO:        // fallthrough
             case VALETON_EFFECT_MOD_SINE_TREM:
             {
+                // Depth
                 param_ptr[VALETON_PARAM_MOD_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_0].Max = 100;
 
+                // Rate
                 param_ptr[VALETON_PARAM_MOD_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_1].Max = 10;
 
+                // Vol
                 param_ptr[VALETON_PARAM_MOD_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_2].Max = 100;
             } break;
 
             case VALETON_EFFECT_MOD_BIAS_TREM:
             {
+                // Depth
                 param_ptr[VALETON_PARAM_MOD_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_0].Max = 100;
 
+                // Rate
                 param_ptr[VALETON_PARAM_MOD_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_1].Max = 10;
 
+                // Vol
                 param_ptr[VALETON_PARAM_MOD_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_2].Max = 100;
 
+                // Bias
                 param_ptr[VALETON_PARAM_MOD_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_MOD_PARAM_3].Max = 100;
             } break;
@@ -912,104 +1086,155 @@ void valeton_params_set_min_max(void)
             case VALETON_EFFECT_DLY_TAPE:       // fallthrough
             case VALETON_EFFECT_DLY_TUBE:
             {
+                // Mix
                 param_ptr[VALETON_PARAM_DLY_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_0].Max = 100;
 
+                // Time
                 param_ptr[VALETON_PARAM_DLY_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_1].Max = 1000;
 
+                // F.Back
                 param_ptr[VALETON_PARAM_DLY_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_2].Max = 100;
 
+                // Trail
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Max = 1;
             } break;
 
             case VALETON_EFFECT_DLY_ANALOG:    
             {
+                // Mix
                 param_ptr[VALETON_PARAM_DLY_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_0].Max = 100;
 
+                // Time
                 param_ptr[VALETON_PARAM_DLY_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_1].Max = 4000;
 
+                // Feedback
                 param_ptr[VALETON_PARAM_DLY_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_2].Max = 100;
 
+                // Trail
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Max = 1;
             } break;
 
             case VALETON_EFFECT_DLY_SLAPBACK:   
             {
+                // Mix
                 param_ptr[VALETON_PARAM_DLY_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_0].Max = 100;
 
+                // Time
                 param_ptr[VALETON_PARAM_DLY_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_1].Max = 300;
 
+                // F.Back
                 param_ptr[VALETON_PARAM_DLY_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_2].Max = 100;
 
+                // Trail
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Max = 1;
             } break;
 
             case VALETON_EFFECT_DLY_REV_ECHO:   
             {
+                // Mix
                 param_ptr[VALETON_PARAM_DLY_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_0].Max = 100;
 
+                // Time
                 param_ptr[VALETON_PARAM_DLY_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_1].Max = 780;
 
+                // F.Back
                 param_ptr[VALETON_PARAM_DLY_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_2].Max = 100;
 
+                // Trail
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Max = 1;
             } break;
 
             case VALETON_EFFECT_DLY_PING_PONG:
             {
+                // Mix
                 param_ptr[VALETON_PARAM_DLY_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_0].Max = 100;
 
+                // Time
                 param_ptr[VALETON_PARAM_DLY_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_1].Max = 500;
 
+                // F.Back
                 param_ptr[VALETON_PARAM_DLY_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_2].Max = 100;
 
+                // Trail
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Max = 1;
             } break;
 
             case VALETON_EFFECT_DLY_RING_ECHO:
             {
+                // Mix
                 param_ptr[VALETON_PARAM_DLY_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_0].Max = 100;
 
+                // Time
                 param_ptr[VALETON_PARAM_DLY_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_1].Max = 1000;
 
+                // F.Back
                 param_ptr[VALETON_PARAM_DLY_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_2].Max = 100;
 
+                // R-Mix
                 param_ptr[VALETON_PARAM_DLY_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_3].Max = 100;
 
+                // Freq
                 param_ptr[VALETON_PARAM_DLY_PARAM_4].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_4].Max = 100;
 
+                // Tone
+                param_ptr[VALETON_PARAM_DLY_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_5].Max = 100;
+
+                // Trail
+                param_ptr[VALETON_PARAM_DLY_PARAM_6].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_6].Max = 1;
             } break;
 
             case VALETON_EFFECT_DLY_SWEEP_ECHO:
             {
+                // Mix
                 param_ptr[VALETON_PARAM_DLY_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_0].Max = 100;
 
+                // Time
                 param_ptr[VALETON_PARAM_DLY_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_1].Max = 1000;
 
+                // F.Back
                 param_ptr[VALETON_PARAM_DLY_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_2].Max = 100;
 
+                // S-Depth
                 param_ptr[VALETON_PARAM_DLY_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_3].Max = 100;
 
+                // S-Rate
                 param_ptr[VALETON_PARAM_DLY_PARAM_4].Min = 0;
                 param_ptr[VALETON_PARAM_DLY_PARAM_4].Max = 100;
+
+                // Trail
+                param_ptr[VALETON_PARAM_DLY_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_5].Max = 1;
             } break;
         }
 
@@ -1019,15 +1244,21 @@ void valeton_params_set_min_max(void)
             case VALETON_EFFECT_RVB_AIR:       // fallthrough
             case VALETON_EFFECT_RVB_PLATE:
             {
+                // Mix
                 param_ptr[VALETON_PARAM_RVB_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_RVB_PARAM_0].Max = 100;
 
+                // Decay
                 param_ptr[VALETON_PARAM_RVB_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_RVB_PARAM_1].Max = 100;
 
+                // Damp
                 param_ptr[VALETON_PARAM_RVB_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_RVB_PARAM_2].Max = 100;
 
+                // Trail
+                param_ptr[VALETON_PARAM_RVB_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_3].Max = 1;
             } break;
 
             case VALETON_EFFECT_RVB_ROOM:       // fallthrough
@@ -1038,45 +1269,62 @@ void valeton_params_set_min_max(void)
             case VALETON_EFFECT_RVB_N_STAR:     // fallthrough
             case VALETON_EFFECT_RVB_DEEPSEA:
             {
+                // Mix
                 param_ptr[VALETON_PARAM_RVB_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_RVB_PARAM_0].Max = 100;
 
+                // Decay
                 param_ptr[VALETON_PARAM_RVB_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_RVB_PARAM_1].Max = 100;
 
+                // Trail
+                param_ptr[VALETON_PARAM_RVB_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_2].Max = 1;
             } break;
     
             case VALETON_EFFECT_RVB_SWEET_SPACE:
             {
+                // Mix
                 param_ptr[VALETON_PARAM_RVB_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_RVB_PARAM_0].Max = 100;
 
+                // Decay
                 param_ptr[VALETON_PARAM_RVB_PARAM_1].Min = 0;
                 param_ptr[VALETON_PARAM_RVB_PARAM_1].Max = 100;
 
+                // Damp
                 param_ptr[VALETON_PARAM_RVB_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_RVB_PARAM_2].Max = 100;
 
+                // Mod
                 param_ptr[VALETON_PARAM_RVB_PARAM_3].Min = 0;
                 param_ptr[VALETON_PARAM_RVB_PARAM_3].Max = 100;
 
+                // Trail
+                param_ptr[VALETON_PARAM_RVB_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_4].Max = 1;
             } break;
         }
 
         // NS
         // all models have same params
+        // Gain
         param_ptr[VALETON_PARAM_NS_PARAM_0].Min = 0;
         param_ptr[VALETON_PARAM_NS_PARAM_0].Max = 100;
 
+        // Vol
         param_ptr[VALETON_PARAM_NS_PARAM_1].Min = 0;
         param_ptr[VALETON_PARAM_NS_PARAM_1].Max = 100;
 
+        // Bass
         param_ptr[VALETON_PARAM_NS_PARAM_2].Min = 0;
         param_ptr[VALETON_PARAM_NS_PARAM_2].Max = 100;
 
+        // Mid
         param_ptr[VALETON_PARAM_NS_PARAM_3].Min = 0;
         param_ptr[VALETON_PARAM_NS_PARAM_3].Max = 100;
 
+        // Treble
         param_ptr[VALETON_PARAM_NS_PARAM_4].Min = 0;
         param_ptr[VALETON_PARAM_NS_PARAM_4].Max = 100;
 

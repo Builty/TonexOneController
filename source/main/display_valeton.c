@@ -955,12 +955,12 @@ uint8_t valeton_update_ui_parameters(void)
                             lv_obj_clear_flag(objects.ui_val_pre_param2_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param2_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param2_value, LV_OBJ_FLAG_HIDDEN);
-                            lv_label_set_text(objects.ui_val_pre_param1_label, "Volume");
+                            lv_label_set_text(objects.ui_val_pre_param2_label, "Volume");
 
                             lv_obj_clear_flag(objects.ui_val_pre_param3_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param3_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param3_value, LV_OBJ_FLAG_HIDDEN);
-                            lv_label_set_text(objects.ui_val_pre_param1_label, "Clip");
+                            lv_label_set_text(objects.ui_val_pre_param3_label, "Clip");
 
                             lv_obj_add_flag(objects.ui_val_pre_param4_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_add_flag(objects.ui_val_pre_param4_slider, LV_OBJ_FLAG_HIDDEN);
@@ -1032,12 +1032,12 @@ uint8_t valeton_update_ui_parameters(void)
                             lv_obj_clear_flag(objects.ui_val_pre_param2_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param2_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param2_value, LV_OBJ_FLAG_HIDDEN);
-                            lv_label_set_text(objects.ui_val_pre_param1_label, "Bass");
+                            lv_label_set_text(objects.ui_val_pre_param2_label, "Bass");
 
                             lv_obj_clear_flag(objects.ui_val_pre_param3_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param3_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param3_value, LV_OBJ_FLAG_HIDDEN);
-                            lv_label_set_text(objects.ui_val_pre_param1_label, "Treble");
+                            lv_label_set_text(objects.ui_val_pre_param3_label, "Treble");
 
                             lv_obj_add_flag(objects.ui_val_pre_param4_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_add_flag(objects.ui_val_pre_param4_slider, LV_OBJ_FLAG_HIDDEN);
@@ -1059,12 +1059,12 @@ uint8_t valeton_update_ui_parameters(void)
                             lv_obj_clear_flag(objects.ui_val_pre_param2_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param2_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param2_value, LV_OBJ_FLAG_HIDDEN);
-                            lv_label_set_text(objects.ui_val_pre_param1_label, "Q");
+                            lv_label_set_text(objects.ui_val_pre_param2_label, "Q");
 
                             lv_obj_clear_flag(objects.ui_val_pre_param3_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param3_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param3_value, LV_OBJ_FLAG_HIDDEN);
-                            lv_label_set_text(objects.ui_val_pre_param1_label, "Mix");
+                            lv_label_set_text(objects.ui_val_pre_param3_label, "Mix");
 
                             // todo switch here
 
@@ -1088,17 +1088,17 @@ uint8_t valeton_update_ui_parameters(void)
                             lv_obj_clear_flag(objects.ui_val_pre_param2_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param2_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param2_value, LV_OBJ_FLAG_HIDDEN);
-                            lv_label_set_text(objects.ui_val_pre_param1_label, "Volume");
+                            lv_label_set_text(objects.ui_val_pre_param2_label, "Volume");
 
                             lv_obj_clear_flag(objects.ui_val_pre_param3_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param3_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param3_value, LV_OBJ_FLAG_HIDDEN);
-                            lv_label_set_text(objects.ui_val_pre_param1_label, "Low");
+                            lv_label_set_text(objects.ui_val_pre_param3_label, "Low");
 
                             lv_obj_clear_flag(objects.ui_val_pre_param4_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param4_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_pre_param4_value, LV_OBJ_FLAG_HIDDEN);  
-                            lv_label_set_text(objects.ui_val_pre_param1_label, "Q");
+                            lv_label_set_text(objects.ui_val_pre_param4_label, "Q");
 
                             //todo one more slider
                         } break;
@@ -1573,6 +1573,8 @@ uint8_t valeton_update_ui_parameters(void)
                             lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
                             lv_label_set_text(objects.ui_val_amp_param2_label, "Volume");
+ 
+                            //todo bright switch
 
                             lv_obj_add_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_add_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
@@ -1581,8 +1583,6 @@ uint8_t valeton_update_ui_parameters(void)
                             lv_obj_add_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_add_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_add_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
-
-                            //todo tone cut switch
                         } break;
 
                         case VALETON_EFFECT_AMP_J_120_CL:
@@ -1607,11 +1607,11 @@ uint8_t valeton_update_ui_parameters(void)
                             lv_obj_clear_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
                             lv_label_set_text(objects.ui_val_amp_param3_label, "Treble");
 
+                            //todo bright switch
+
                             lv_obj_add_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_add_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
-                            lv_obj_add_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
-
-                            //todo bright switch
+                            lv_obj_add_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);                          
                         } break;
 
                         case VALETON_EFFECT_AMP_UK_50JP:
@@ -1778,18 +1778,18 @@ uint8_t valeton_update_ui_parameters(void)
                             lv_obj_clear_flag(objects.ui_val_amp_param2_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_amp_param2_value, LV_OBJ_FLAG_HIDDEN);
                             lv_label_set_text(objects.ui_val_amp_param2_label, "Middle");
-
-                            //todo: middle freq
                             
                             lv_obj_clear_flag(objects.ui_val_amp_param3_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_amp_param3_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
-                            lv_label_set_text(objects.ui_val_amp_param3_label, "Treble");
+                            lv_label_set_text(objects.ui_val_amp_param3_label, "Mid Freq");
 
                             lv_obj_clear_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
-                            lv_label_set_text(objects.ui_val_amp_param4_label, "Volume");
+                            lv_label_set_text(objects.ui_val_amp_param4_label, "Treble");
+
+                            //todo vol
                         } break;
                         
                         case VALETON_EFFECT_AMP_FOXY_BASS:
@@ -1870,12 +1870,12 @@ uint8_t valeton_update_ui_parameters(void)
                             lv_obj_clear_flag(objects.ui_val_amp_param3_value, LV_OBJ_FLAG_HIDDEN);
                             lv_label_set_text(objects.ui_val_amp_param3_label, "EQ Freq");
 
-                            // todo: EQ Q
-                            
                             lv_obj_clear_flag(objects.ui_val_amp_param4_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_amp_param4_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_amp_param4_value, LV_OBJ_FLAG_HIDDEN);  
-                            lv_label_set_text(objects.ui_val_amp_param4_label, "EQ Gain");
+                            lv_label_set_text(objects.ui_val_amp_param4_label, "EQ Q");
+
+                            //todo : EQ gain
                         } break;
                     }
                 } break;
@@ -2344,7 +2344,6 @@ uint8_t valeton_update_ui_parameters(void)
                             lv_obj_clear_flag(objects.ui_val_mod_param1_slider, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_clear_flag(objects.ui_val_mod_param1_value, LV_OBJ_FLAG_HIDDEN);
                             lv_label_set_text(objects.ui_val_mod_param1_label, "Rate");
-                            lv_slider_set_range(objects.ui_val_mod_param1_slider, 0, 10);
  
                             lv_obj_add_flag(objects.ui_val_mod_param2_label, LV_OBJ_FLAG_HIDDEN);
                             lv_obj_add_flag(objects.ui_val_mod_param2_slider, LV_OBJ_FLAG_HIDDEN);
