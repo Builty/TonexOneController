@@ -1438,7 +1438,15 @@ uint8_t valeton_update_ui_parameters(void)
                 {
                     if (param_entry->Value)
                     {
-                        lv_img_set_src(objects.ui_icon_val_amp, (lv_obj_t*)&img_amp_on);
+                        if (param_ptr[VALETON_PARAM_NS_ENABLE].Value != 0.0f)
+                        {
+                            // show disabled
+                            lv_img_set_src(objects.ui_icon_val_amp, (lv_obj_t*)&img_amp_disabled);
+                        }
+                        else
+                        {
+                            lv_img_set_src(objects.ui_icon_val_amp, (lv_obj_t*)&img_amp_on);
+                        }
                         lv_obj_add_state(objects.ui_val_amp_block_switch, LV_STATE_CHECKED);
                     }
                     else
@@ -1931,7 +1939,15 @@ uint8_t valeton_update_ui_parameters(void)
                 {
                     if (param_entry->Value)
                     {
-                        lv_img_set_src(objects.ui_icon_val_cab, (lv_obj_t*)&img_cab_on);
+                        if (param_ptr[VALETON_PARAM_NS_ENABLE].Value != 0.0f)
+                        {
+                            // show disabled
+                            lv_img_set_src(objects.ui_icon_val_cab, (lv_obj_t*)&img_cab_disabled);
+                        }
+                        else
+                        {
+                            lv_img_set_src(objects.ui_icon_val_cab, (lv_obj_t*)&img_cab_on);
+                        }
                         lv_obj_add_state(objects.ui_val_cab_block_switch, LV_STATE_CHECKED);
                     }
                     else
