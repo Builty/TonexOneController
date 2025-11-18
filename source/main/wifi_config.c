@@ -52,6 +52,7 @@ limitations under the License.
 #include "usb_comms.h"
 #include "usb_tonex_one.h"
 #include "display.h"
+//#include "embed_files.h"          // <-- generated header
 
 #define WIFI_CONFIG_TASK_STACK_SIZE   (3 * 1024)
 
@@ -79,13 +80,15 @@ static EventGroupHandle_t s_wifi_event_group;
 static QueueHandle_t wifi_input_queue;
 static uint8_t presetIndexes[MAX_SUPPORTED_PRESETS];
 
-static esp_err_t index_get_handler(httpd_req_t *req);
-static esp_err_t get_handler(httpd_req_t *req);
 static esp_err_t ws_handler(httpd_req_t *req);
+static esp_err_t embedded_files_handler(httpd_req_t *req);
 static void wifi_kill_all(void);
 static void wifi_build_params_json(void);
 static void wifi_build_config_json(void);
 static void wifi_build_preset_json(void);
+
+extern const uint8_t embedded_files_start[] asm("_binary_embedded_files_start");
+extern const uint8_t embedded_files_end[]   asm("_binary_embedded_files_end");
 
 enum WiFivents
 {
@@ -133,11 +136,11 @@ typedef struct
     char locater_packet[MAX_LOCATER_PACKET];
 } tLocaterData;
 
-static const httpd_uri_t index_get = 
+static const httpd_uri_t embedded_uri = 
 {
-	.uri	  = "/",
+	.uri	  = "/*",
 	.method   = HTTP_GET,
-	.handler  = index_get_handler,
+	.handler  = embedded_files_handler,
 	.user_ctx = NULL
 };
 
@@ -1273,15 +1276,12 @@ static esp_err_t ws_handler(httpd_req_t *req)
 * RETURN:      none
 * NOTES:       none
 ****************************************************************************/
-static esp_err_t __attribute__((unused)) get_handler(httpd_req_t *req)
+static esp_err_t send_embedded_png_file(httpd_req_t *req, const char* start, uint32_t length)
 {
-    ESP_LOGI(TAG, "get_handler\n");
+    httpd_resp_set_type(req, "image/png");
+    httpd_resp_set_hdr(req, "Cache-Control", "public, max-age=86400");
 
-    // Send a simple response
-    const char resp[] = "URI GET Response";
-
-    httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
-    return ESP_OK;
+    return httpd_resp_send(req, start, length);
 }
 
 /****************************************************************************
@@ -1291,10 +1291,328 @@ static esp_err_t __attribute__((unused)) get_handler(httpd_req_t *req)
 * RETURN:      none
 * NOTES:       none
 ****************************************************************************/
-static esp_err_t index_get_handler(httpd_req_t *req)
+static esp_err_t embedded_files_handler(httpd_req_t *req)
 {
-	httpd_resp_send(req, (const char*)index_html_start, index_html_end - index_html_start);
-	return ESP_OK;
+    // req->uri always contains the full requested path, e.g. "/img/amp_off.png"
+    const char *requested = req->uri;
+
+    // Remove leading '/' so we can compare with the embedded symbol names
+    if (requested[0] == '/')
+    {
+        requested++;
+    }
+
+    // check the file requested
+    if (strcmp(requested, "index.html") == 0 || strcmp(requested, "") == 0) 
+    {
+        extern const unsigned char web_index_html_start[]   asm("_binary_index_html_start");
+        extern const unsigned char web_index_html_end[]     asm("_binary_index_html_end");
+        httpd_resp_set_type(req, "text/html");
+        httpd_resp_set_hdr(req, "Cache-Control", "no-cache");
+        return httpd_resp_send(req, 
+                               (const char*)web_index_html_start,
+                               web_index_html_end - web_index_html_start);
+    }
+    else if (strcmp(requested, "img/amp_disabled.png") == 0) 
+    {
+        extern const unsigned char web_img_amp_disabled_png_start[] asm("_binary_amp_disabled_png_start");
+        extern const unsigned char web_img_amp_disabled_png_end[]   asm("_binary_amp_disabled_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_amp_disabled_png_start, web_img_amp_disabled_png_end - web_img_amp_disabled_png_start);
+    }
+    else if (strcmp(requested, "img/amp_off.png") == 0) 
+    {
+        extern const unsigned char web_img_amp_off_png_start[] asm("_binary_amp_off_png_start");
+        extern const unsigned char web_img_amp_off_png_end[]   asm("_binary_amp_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_amp_off_png_start, web_img_amp_off_png_end - web_img_amp_off_png_start);
+    }
+    else if (strcmp(requested, "img/amp_on.png") == 0) 
+    {
+        extern const unsigned char web_img_amp_on_png_start[] asm("_binary_amp_on_png_start");
+        extern const unsigned char web_img_amp_on_png_end[]   asm("_binary_amp_on_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_amp_on_png_start, web_img_amp_on_png_end - web_img_amp_on_png_start);
+    }
+    else if (strcmp(requested, "img/cab_disabled.png") == 0) 
+    {
+        extern const unsigned char web_img_cab_disabled_png_start[] asm("_binary_cab_disabled_png_start");
+        extern const unsigned char web_img_cab_disabled_png_end[]   asm("_binary_cab_disabled_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_cab_disabled_png_start, web_img_cab_disabled_png_end - web_img_cab_disabled_png_start);
+    }
+    else if (strcmp(requested, "img/cab_off.png") == 0) 
+    {
+        extern const unsigned char web_img_cab_off_png_start[] asm("_binary_cab_off_png_start");
+        extern const unsigned char web_img_cab_off_png_end[]   asm("_binary_cab_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_cab_off_png_start, web_img_cab_off_png_end - web_img_cab_off_png_start);
+    }
+    else if (strcmp(requested, "img/cab_on.png") == 0) 
+    {
+        extern const unsigned char web_img_cab_on_png_start[] asm("_binary_cab_on_png_start");
+        extern const unsigned char web_img_cab_on_png_end[]   asm("_binary_cab_on_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_cab_on_png_start, web_img_cab_on_png_end - web_img_cab_on_png_start);
+    }
+    else if (strcmp(requested, "img/dly_off.png") == 0) 
+    {
+        extern const unsigned char web_img_dly_off_png_start[] asm("_binary_dly_off_png_start");
+        extern const unsigned char web_img_dly_off_png_end[]   asm("_binary_dly_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_dly_off_png_start, web_img_dly_off_png_end - web_img_dly_off_png_start);
+    }
+    else if (strcmp(requested, "img/dly_on.png") == 0) 
+    {
+        extern const unsigned char web_img_dly_on_png_start[] asm("_binary_dly_on_png_start");
+        extern const unsigned char web_img_dly_on_png_end[]   asm("_binary_dly_on_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_dly_on_png_start, web_img_dly_on_png_end - web_img_dly_on_png_start);
+    }
+    else if (strcmp(requested, "img/dst_off.png") == 0) 
+    {
+        extern const unsigned char web_img_dst_off_png_start[] asm("_binary_dst_off_png_start");
+        extern const unsigned char web_img_dst_off_png_end[]   asm("_binary_dst_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_dst_off_png_start, web_img_dst_off_png_end - web_img_dst_off_png_start);
+    }
+    else if (strcmp(requested, "img/dst_on.png") == 0) 
+    {
+        extern const unsigned char web_img_dst_on_png_start[] asm("_binary_dst_on_png_start");
+        extern const unsigned char web_img_dst_on_png_end[]   asm("_binary_dst_on_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_dst_on_png_start, web_img_dst_on_png_end - web_img_dst_on_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_amp_off.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_amp_off_png_start[] asm("_binary_effect_icon_amp_off_png_start");
+        extern const unsigned char web_img_effect_icon_amp_off_png_end[]   asm("_binary_effect_icon_amp_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_amp_off_png_start, web_img_effect_icon_amp_off_png_end - web_img_effect_icon_amp_off_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_amp_on.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_amp_on_png_start[] asm("_binary_effect_icon_amp_on_png_start");
+        extern const unsigned char web_img_effect_icon_amp_on_png_end[]   asm("_binary_effect_icon_amp_on_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_amp_on_png_start, web_img_effect_icon_amp_on_png_end - web_img_effect_icon_amp_on_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_cab_off.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_cab_off_png_start[] asm("_binary_effect_icon_cab_off_png_start");
+        extern const unsigned char web_img_effect_icon_cab_off_png_end[]   asm("_binary_effect_icon_cab_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_cab_off_png_start, web_img_effect_icon_cab_off_png_end - web_img_effect_icon_cab_off_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_cab_on.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_cab_on_png_start[] asm("_binary_effect_icon_cab_on_png_start");
+        extern const unsigned char web_img_effect_icon_cab_on_png_end[]   asm("_binary_effect_icon_cab_on_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_cab_on_png_start, web_img_effect_icon_cab_on_png_end - web_img_effect_icon_cab_on_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_comp_off.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_comp_off_png_start[] asm("_binary_effect_icon_comp_off_png_start");
+        extern const unsigned char web_img_effect_icon_comp_off_png_end[]   asm("_binary_effect_icon_comp_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_comp_off_png_start, web_img_effect_icon_comp_off_png_end - web_img_effect_icon_comp_off_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_comp_on.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_comp_on_png_start[] asm("_binary_effect_icon_comp_on_png_start");
+        extern const unsigned char web_img_effect_icon_comp_on_png_end[]   asm("_binary_effect_icon_comp_on_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_comp_on_png_start, web_img_effect_icon_comp_on_png_end - web_img_effect_icon_comp_on_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_delay_off.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_delay_off_png_start[] asm("_binary_effect_icon_delay_off_png_start");
+        extern const unsigned char web_img_effect_icon_delay_off_png_end[]   asm("_binary_effect_icon_delay_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_delay_off_png_start, web_img_effect_icon_delay_off_png_end - web_img_effect_icon_delay_off_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_delay_on_d.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_delay_on_d_png_start[] asm("_binary_effect_icon_delay_on_d_png_start");
+        extern const unsigned char web_img_effect_icon_delay_on_d_png_end[]   asm("_binary_effect_icon_delay_on_d_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_delay_on_d_png_start, web_img_effect_icon_delay_on_d_png_end - web_img_effect_icon_delay_on_d_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_delay_on_t.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_delay_on_t_png_start[] asm("_binary_effect_icon_delay_on_t_png_start");
+        extern const unsigned char web_img_effect_icon_delay_on_t_png_end[]   asm("_binary_effect_icon_delay_on_t_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_delay_on_t_png_start, web_img_effect_icon_delay_on_t_png_end - web_img_effect_icon_delay_on_t_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_eq.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_eq_png_start[] asm("_binary_effect_icon_eq_png_start");
+        extern const unsigned char web_img_effect_icon_eq_png_end[]   asm("_binary_effect_icon_eq_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_eq_png_start, web_img_effect_icon_eq_png_end - web_img_effect_icon_eq_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_gate_off.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_gate_off_png_start[] asm("_binary_effect_icon_gate_off_png_start");
+        extern const unsigned char web_img_effect_icon_gate_off_png_end[]   asm("_binary_effect_icon_gate_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_gate_off_png_start, web_img_effect_icon_gate_off_png_end - web_img_effect_icon_gate_off_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_gate_on.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_gate_on_png_start[] asm("_binary_effect_icon_gate_on_png_start");
+        extern const unsigned char web_img_effect_icon_gate_on_png_end[]   asm("_binary_effect_icon_gate_on_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_gate_on_png_start, web_img_effect_icon_gate_on_png_end - web_img_effect_icon_gate_on_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_mod_off.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_mod_off_png_start[] asm("_binary_effect_icon_mod_off_png_start");
+        extern const unsigned char web_img_effect_icon_mod_off_png_end[]   asm("_binary_effect_icon_mod_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_mod_off_png_start, web_img_effect_icon_mod_off_png_end - web_img_effect_icon_mod_off_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_mod_on_chorus.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_mod_on_chorus_png_start[] asm("_binary_effect_icon_mod_on_chorus_png_start");
+        extern const unsigned char web_img_effect_icon_mod_on_chorus_png_end[]   asm("_binary_effect_icon_mod_on_chorus_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_mod_on_chorus_png_start, web_img_effect_icon_mod_on_chorus_png_end - web_img_effect_icon_mod_on_chorus_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_mod_on_flanger.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_mod_on_flanger_png_start[] asm("_binary_effect_icon_mod_on_flanger_png_start");
+        extern const unsigned char web_img_effect_icon_mod_on_flanger_png_end[]   asm("_binary_effect_icon_mod_on_flanger_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_mod_on_flanger_png_start, web_img_effect_icon_mod_on_flanger_png_end - web_img_effect_icon_mod_on_flanger_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_mod_on_phaser.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_mod_on_phaser_png_start[] asm("_binary_effect_icon_mod_on_phaser_png_start");
+        extern const unsigned char web_img_effect_icon_mod_on_phaser_png_end[]   asm("_binary_effect_icon_mod_on_phaser_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_mod_on_phaser_png_start, web_img_effect_icon_mod_on_phaser_png_end - web_img_effect_icon_mod_on_phaser_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_mod_on_rotary.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_mod_on_rotary_png_start[] asm("_binary_effect_icon_mod_on_rotary_png_start");
+        extern const unsigned char web_img_effect_icon_mod_on_rotary_png_end[]   asm("_binary_effect_icon_mod_on_rotary_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_mod_on_rotary_png_start, web_img_effect_icon_mod_on_rotary_png_end - web_img_effect_icon_mod_on_rotary_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_mod_on_tremolo.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_mod_on_tremolo_png_start[] asm("_binary_effect_icon_mod_on_tremolo_png_start");
+        extern const unsigned char web_img_effect_icon_mod_on_tremolo_png_end[]   asm("_binary_effect_icon_mod_on_tremolo_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_mod_on_tremolo_png_start, web_img_effect_icon_mod_on_tremolo_png_end - web_img_effect_icon_mod_on_tremolo_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_reverb_off.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_reverb_off_png_start[] asm("_binary_effect_icon_reverb_off_png_start");
+        extern const unsigned char web_img_effect_icon_reverb_off_png_end[]   asm("_binary_effect_icon_reverb_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_reverb_off_png_start, web_img_effect_icon_reverb_off_png_end - web_img_effect_icon_reverb_off_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_reverb_on.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_reverb_on_png_start[] asm("_binary_effect_icon_reverb_on_png_start");
+        extern const unsigned char web_img_effect_icon_reverb_on_png_end[]   asm("_binary_effect_icon_reverb_on_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_reverb_on_png_start, web_img_effect_icon_reverb_on_png_end - web_img_effect_icon_reverb_on_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_reverb_on_p.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_reverb_on_p_png_start[] asm("_binary_effect_icon_reverb_on_p_png_start");
+        extern const unsigned char web_img_effect_icon_reverb_on_p_png_end[]   asm("_binary_effect_icon_reverb_on_p_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_reverb_on_p_png_start, web_img_effect_icon_reverb_on_p_png_end - web_img_effect_icon_reverb_on_p_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_reverb_on_r.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_reverb_on_r_png_start[] asm("_binary_effect_icon_reverb_on_r_png_start");
+        extern const unsigned char web_img_effect_icon_reverb_on_r_png_end[]   asm("_binary_effect_icon_reverb_on_r_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_reverb_on_r_png_start, web_img_effect_icon_reverb_on_r_png_end - web_img_effect_icon_reverb_on_r_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_reverb_on_s1.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_reverb_on_s1_png_start[] asm("_binary_effect_icon_reverb_on_s1_png_start");
+        extern const unsigned char web_img_effect_icon_reverb_on_s1_png_end[]   asm("_binary_effect_icon_reverb_on_s1_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_reverb_on_s1_png_start, web_img_effect_icon_reverb_on_s1_png_end - web_img_effect_icon_reverb_on_s1_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_reverb_on_s2.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_reverb_on_s2_png_start[] asm("_binary_effect_icon_reverb_on_s2_png_start");
+        extern const unsigned char web_img_effect_icon_reverb_on_s2_png_end[]   asm("_binary_effect_icon_reverb_on_s2_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_reverb_on_s2_png_start, web_img_effect_icon_reverb_on_s2_png_end - web_img_effect_icon_reverb_on_s2_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_reverb_on_s3.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_reverb_on_s3_png_start[] asm("_binary_effect_icon_reverb_on_s3_png_start");
+        extern const unsigned char web_img_effect_icon_reverb_on_s3_png_end[]   asm("_binary_effect_icon_reverb_on_s3_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_reverb_on_s3_png_start, web_img_effect_icon_reverb_on_s3_png_end - web_img_effect_icon_reverb_on_s3_png_start);
+    }
+    else if (strcmp(requested, "img/effect_icon_reverb_on_s4.png") == 0) 
+    {
+        extern const unsigned char web_img_effect_icon_reverb_on_s4_png_start[] asm("_binary_effect_icon_reverb_on_s4_png_start");
+        extern const unsigned char web_img_effect_icon_reverb_on_s4_png_end[]   asm("_binary_effect_icon_reverb_on_s4_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_effect_icon_reverb_on_s4_png_start, web_img_effect_icon_reverb_on_s4_png_end - web_img_effect_icon_reverb_on_s4_png_start);
+    }
+    else if (strcmp(requested, "img/eq_off.png") == 0) 
+    {
+        extern const unsigned char web_img_eq_off_png_start[] asm("_binary_eq_off_png_start");
+        extern const unsigned char web_img_eq_off_png_end[]   asm("_binary_eq_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_eq_off_png_start, web_img_eq_off_png_end - web_img_eq_off_png_start);
+    }
+    else if (strcmp(requested, "img/eq_on.png") == 0) 
+    {
+        extern const unsigned char web_img_eq_on_png_start[] asm("_binary_eq_on_png_start");
+        extern const unsigned char web_img_eq_on_png_end[]   asm("_binary_eq_on_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_eq_on_png_start, web_img_eq_on_png_end - web_img_eq_on_png_start);
+    }
+    else if (strcmp(requested, "img/mod_off.png") == 0) 
+    {
+        extern const unsigned char web_img_mod_off_png_start[] asm("_binary_mod_off_png_start");
+        extern const unsigned char web_img_mod_off_png_end[]   asm("_binary_mod_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_mod_off_png_start, web_img_mod_off_png_end - web_img_mod_off_png_start);
+    }
+    else if (strcmp(requested, "img/mod_on.png") == 0) 
+    {
+        extern const unsigned char web_img_mod_on_png_start[] asm("_binary_mod_on_png_start");
+        extern const unsigned char web_img_mod_on_png_end[]   asm("_binary_mod_on_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_mod_on_png_start, web_img_mod_on_png_end - web_img_mod_on_png_start);
+    }
+    else if (strcmp(requested, "img/nr_off.png") == 0) 
+    {
+        extern const unsigned char web_img_nr_off_png_start[] asm("_binary_nr_off_png_start");
+        extern const unsigned char web_img_nr_off_png_end[]   asm("_binary_nr_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_nr_off_png_start, web_img_nr_off_png_end - web_img_nr_off_png_start);
+    }
+    else if (strcmp(requested, "img/nr_on.png") == 0) 
+    {
+        extern const unsigned char web_img_nr_on_png_start[] asm("_binary_nr_on_png_start");
+        extern const unsigned char web_img_nr_on_png_end[]   asm("_binary_nr_on_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_nr_on_png_start, web_img_nr_on_png_end - web_img_nr_on_png_start);
+    }
+    else if (strcmp(requested, "img/pre_off.png") == 0) 
+    {
+        extern const unsigned char web_img_pre_off_png_start[] asm("_binary_pre_off_png_start");
+        extern const unsigned char web_img_pre_off_png_end[]   asm("_binary_pre_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_pre_off_png_start, web_img_pre_off_png_end - web_img_pre_off_png_start);
+    }
+    else if (strcmp(requested, "img/pre_on.png") == 0) 
+    {
+        extern const unsigned char web_img_pre_on_png_start[] asm("_binary_pre_on_png_start");
+        extern const unsigned char web_img_pre_on_png_end[]   asm("_binary_pre_on_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_pre_on_png_start, web_img_pre_on_png_end - web_img_pre_on_png_start);
+    }
+    else if (strcmp(requested, "img/rvb_off.png") == 0) 
+    {
+        extern const unsigned char web_img_rvb_off_png_start[] asm("_binary_rvb_off_png_start");
+        extern const unsigned char web_img_rvb_off_png_end[]   asm("_binary_rvb_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_rvb_off_png_start, web_img_rvb_off_png_end - web_img_rvb_off_png_start);
+    }
+    else if (strcmp(requested, "img/rvb_on.png") == 0) 
+    {
+        extern const unsigned char web_img_rvb_on_png_start[] asm("_binary_rvb_on_png_start");
+        extern const unsigned char web_img_rvb_on_png_end[]   asm("_binary_rvb_on_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_rvb_on_png_start, web_img_rvb_on_png_end - web_img_rvb_on_png_start);
+    }
+    else if (strcmp(requested, "img/tc_off.png") == 0) 
+    {
+        extern const unsigned char web_img_tc_off_png_start[] asm("_binary_tc_off_png_start");
+        extern const unsigned char web_img_tc_off_png_end[]   asm("_binary_tc_off_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_tc_off_png_start, web_img_tc_off_png_end - web_img_tc_off_png_start);
+    }
+    else if (strcmp(requested, "img/tc_on.png") == 0) 
+    {
+        extern const unsigned char web_img_tc_on_png_start[] asm("_binary_tc_on_png_start");
+        extern const unsigned char web_img_tc_on_png_end[]   asm("_binary_tc_on_png_end");
+        return send_embedded_png_file(req, (const char*)web_img_tc_on_png_start, web_img_tc_on_png_end - web_img_tc_on_png_start);
+    }
+    else if (strcmp(requested, "favicon.ico") == 0) 
+    {
+        extern const unsigned char web_favicon_ico_start[] asm("_binary_favicon_ico_start");
+        extern const unsigned char web_favicon_ico_end[]   asm("_binary_favicon_ico_end");
+        httpd_resp_set_type(req, "image/x-icon");
+        httpd_resp_set_hdr(req, "Cache-Control", "public, max-age=604800");
+        return httpd_resp_send(req, (const char*)web_favicon_ico_start, web_favicon_ico_end - web_favicon_ico_start);
+    }
+
+    // Not found
+    httpd_resp_send_404(req);
+    return ESP_OK;
 }
 
 /****************************************************************************
@@ -1425,19 +1743,20 @@ static esp_err_t http_server_init(void)
     http_config.keep_alive_count = 5;
     http_config.open_fn = NULL;
     http_config.close_fn = NULL;
-    http_config.uri_match_fn = NULL;
+    http_config.uri_match_fn = httpd_uri_match_wildcard;    //NULL;
     http_config.lru_purge_enable = true;
 
 	if (httpd_start(&http_server, &http_config) == ESP_OK) 
     {
         if (http_server != NULL)
         {
-            ESP_LOGI(TAG, "Http register uri 1");
-    	    httpd_register_uri_handler(http_server, &index_get);
-
             // Registering the ws handler
             ESP_LOGI(TAG, "Registering ws handler");
             httpd_register_uri_handler(http_server, &ws);
+
+            ESP_LOGI(TAG, "Http register uri 1");
+    	    //httpd_register_uri_handler(http_server, &index_get);
+            httpd_register_uri_handler(http_server, &embedded_uri);           
         }
 	}
 

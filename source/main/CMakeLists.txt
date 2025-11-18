@@ -1,11 +1,22 @@
-
 idf_component_register(SRCS "platform_pirate_pro_169.c" "platform_pirate_max35.c" "valeton_params.c" "midi_control.c" "control.c" "footswitches.c" "CH422G.c" "display.c" "main.c" "tonex_params.c" "SX1509.c" "display_tonex.c" "display_valeton.c"
                             "usb_comms.c" "usb_tonex_one.c" "usb_tonex_common.c" "usb_tonex.c" "usb_valeton_gp5.c" "CH422G.c" "midi_serial.c" "wifi_config.c" "leds.c" "midi_helper.c" "midi_helper_tonex.c" "midi_helper_valeton.c" "LP5562.c"
                             "platform_devkitc.c" "platform_lgtdisps3.c" "platform_m5atoms3r.c" "platform_ws19t.c" "platform_ws43.c" "platform_wszero.c" "platform_ws169.c" 
                             "platform_ws35b.c" "platform_jc3248w.c"
-                            INCLUDE_DIRS "." "./"
-                            EMBED_TXTFILES index.html)
-                                                       
+                            INCLUDE_DIRS "." "./" 
+                            EMBED_FILES
+                                "web/index.html" "web/amp_disabled.png" "web/amp_off.png" "web/amp_on.png" "web/cab_disabled.png" "web/cab_off.png" "web/cab_on.png"
+                                "web/dly_off.png" "web/dly_on.png" "web/dst_off.png" "web/dst_on.png" "web/effect_icon_amp_off.png" "web/effect_icon_amp_on.png" 
+                                "web/effect_icon_cab_off.png" "web/effect_icon_cab_on.png" "web/effect_icon_comp_off.png" "web/effect_icon_comp_on.png"
+                                "web/effect_icon_delay_off.png" "web/effect_icon_delay_on_d.png" "web/effect_icon_delay_on_t.png" "web/effect_icon_eq.png"
+                                "web/effect_icon_gate_on.png" "web/effect_icon_gate_off.png" "web/effect_icon_mod_off.png" "web/effect_icon_mod_on_chorus.png"
+                                "web/effect_icon_mod_on_flanger.png" "web/effect_icon_mod_on_phaser.png" "web/effect_icon_mod_on_rotary.png" "web/effect_icon_mod_on_tremolo.png"
+                                "web/effect_icon_reverb_off.png" "web/effect_icon_reverb_on.png" "web/effect_icon_reverb_on_p.png" "web/effect_icon_reverb_on_r.png"
+                                "web/effect_icon_reverb_on_s1.png" "web/effect_icon_reverb_on_s2.png" "web/effect_icon_reverb_on_s3.png" "web/effect_icon_reverb_on_s4.png"
+                                "web/eq_off.png" "web/eq_on.png" "web/mod_off.png" "web/mod_on.png" "web/nr_off.png" "web/nr_on.png" "web/pre_off.png" "web/pre_on.png"
+                                "web/rvb_off.png" "web/rvb_on.png" "web/tc_off.png" "web/tc_on.png"
+                                "web/favicon.ico"
+)                           
+                             
 if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY)
     target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated_800x480land")
 
