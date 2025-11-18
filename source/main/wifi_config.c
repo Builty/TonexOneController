@@ -49,10 +49,10 @@ limitations under the License.
 #include "usb_comms.h"
 #include "task_priorities.h"
 #include "tonex_params.h"
+#include "valeton_params.h"
 #include "usb_comms.h"
 #include "usb_tonex_one.h"
 #include "display.h"
-//#include "embed_files.h"          // <-- generated header
 
 #define WIFI_CONFIG_TASK_STACK_SIZE   (3 * 1024)
 
@@ -86,9 +86,6 @@ static void wifi_kill_all(void);
 static void wifi_build_params_json(void);
 static void wifi_build_config_json(void);
 static void wifi_build_preset_json(void);
-
-extern const uint8_t embedded_files_start[] asm("_binary_embedded_files_start");
-extern const uint8_t embedded_files_end[]   asm("_binary_embedded_files_end");
 
 enum WiFivents
 {
@@ -308,25 +305,59 @@ static void wifi_build_params_json(void)
 
     json_gen_push_object(&pWebConfig->jstr, "PARAMS");
 
-    for (uint16_t loop = 0; loop < TONEX_GLOBAL_LAST; loop++)
+    switch (usb_get_connected_modeller_type())
     {
-        // get access to parameters
-        tonex_params_get_locked_access(&param_ptr);
+        case AMP_MODELLER_TONEX_ONE:    // fallthrough
+        case AMP_MODELLER_TONEX:        // fallthrough
+        default:
+        {
+            // send Tonex params
+            for (uint16_t loop = 0; loop < TONEX_GLOBAL_LAST; loop++)
+            {
+                // get access to parameters
+                tonex_params_get_locked_access(&param_ptr);
 
-        // add param index
-        sprintf(str_val, "%d", loop);
-        json_gen_push_object(&pWebConfig->jstr, str_val);
+                // add param index
+                sprintf(str_val, "%d", loop);
+                json_gen_push_object(&pWebConfig->jstr, str_val);
 
-        // add param details
-        json_gen_obj_set_float(&pWebConfig->jstr, "Val", param_ptr[loop].Value);
-        json_gen_obj_set_float(&pWebConfig->jstr, "Min", param_ptr[loop].Min);
-        json_gen_obj_set_float(&pWebConfig->jstr, "Max", param_ptr[loop].Max);
-        json_gen_obj_set_string(&pWebConfig->jstr, "NAME", param_ptr[loop].Name);
+                // add param details
+                json_gen_obj_set_float(&pWebConfig->jstr, "Val", param_ptr[loop].Value);
+                json_gen_obj_set_float(&pWebConfig->jstr, "Min", param_ptr[loop].Min);
+                json_gen_obj_set_float(&pWebConfig->jstr, "Max", param_ptr[loop].Max);
+                json_gen_obj_set_string(&pWebConfig->jstr, "NAME", param_ptr[loop].Name);
 
-        json_gen_pop_object(&pWebConfig->jstr);
+                json_gen_pop_object(&pWebConfig->jstr);
 
-        // don't hog the param pointer                    
-        tonex_params_release_locked_access();
+                // don't hog the param pointer                    
+                tonex_params_release_locked_access();
+            }
+        } break;
+
+        case AMP_MODELLER_VALETON_GP5:
+        {
+            // send GP5 params
+            for (uint16_t loop = 0; loop < VALETON_GLOBAL_LAST; loop++)
+            {
+                // get access to parameters
+                valeton_params_get_locked_access(&param_ptr);
+
+                // add param index
+                sprintf(str_val, "%d", loop);
+                json_gen_push_object(&pWebConfig->jstr, str_val);
+
+                // add param details
+                json_gen_obj_set_float(&pWebConfig->jstr, "Val", param_ptr[loop].Value);
+                json_gen_obj_set_float(&pWebConfig->jstr, "Min", param_ptr[loop].Min);
+                json_gen_obj_set_float(&pWebConfig->jstr, "Max", param_ptr[loop].Max);
+                json_gen_obj_set_string(&pWebConfig->jstr, "NAME", param_ptr[loop].Name);
+
+                json_gen_pop_object(&pWebConfig->jstr);
+
+                // don't hog the param pointer                    
+                valeton_params_release_locked_access();
+            }
+        } break;
     }
     
     // add the } for PARAMS
@@ -504,6 +535,7 @@ static void wifi_build_modeller_data_json(void)
     // set modeller values
     json_gen_obj_set_int(&pWebConfig->jstr, "MAX_PRESETS", usb_get_max_presets_for_connected_modeller());
     json_gen_obj_set_int(&pWebConfig->jstr, "START_PRESET", usb_get_first_preset_index_for_connected_modeller());
+    json_gen_obj_set_int(&pWebConfig->jstr, "MODELLER_TYPE", usb_get_connected_modeller_type());
 
     // add the }
     json_gen_end_object(&pWebConfig->jstr);
