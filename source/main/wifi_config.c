@@ -1657,6 +1657,22 @@ static esp_err_t embedded_files_handler(httpd_req_t *req)
         httpd_resp_set_hdr(req, "Cache-Control", "public, max-age=604800");
         return httpd_resp_send(req, (const char*)web_jquery_js_start, web_jquery_js_end - web_jquery_js_start);
     }
+    else if (strcmp(requested, "index.css") == 0) 
+    {
+        extern const unsigned char web_index_css_start[] asm("_binary_index_css_start");
+        extern const unsigned char web_index_css_end[]   asm("_binary_index_css_end");
+        httpd_resp_set_type(req, "text/css");
+        httpd_resp_set_hdr(req, "Cache-Control", "public, max-age=604800");
+        return httpd_resp_send(req, (const char*)web_index_css_start, web_index_css_end - web_index_css_start);
+    }
+    else if (strcmp(requested, "bootstrap.css") == 0) 
+    {
+        extern const unsigned char web_bootstrap_css_start[] asm("_binary_bootstrap_css_start");
+        extern const unsigned char web_bootstrap_css_end[]   asm("_binary_bootstrap_css_end");
+        httpd_resp_set_type(req, "text/css");
+        httpd_resp_set_hdr(req, "Cache-Control", "public, max-age=604800");
+        return httpd_resp_send(req, (const char*)web_bootstrap_css_start, web_bootstrap_css_end - web_bootstrap_css_start);
+    }
 
     // Not found
     httpd_resp_send_404(req);

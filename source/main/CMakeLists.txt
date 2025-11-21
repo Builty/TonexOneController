@@ -14,7 +14,7 @@ idf_component_register(SRCS "platform_pirate_pro_169.c" "platform_pirate_max35.c
                                 "web/effect_icon_reverb_on_s1.png" "web/effect_icon_reverb_on_s2.png" "web/effect_icon_reverb_on_s3.png" "web/effect_icon_reverb_on_s4.png"
                                 "web/eq_off.png" "web/eq_on.png" "web/mod_off.png" "web/mod_on.png" "web/nr_off.png" "web/nr_on.png" "web/pre_off.png" "web/pre_on.png"
                                 "web/rvb_off.png" "web/rvb_on.png" "web/tc_off.png" "web/tc_on.png"
-                                "web/favicon.ico" "web/bootstrap.js" "web/jquery.js"
+                                "web/favicon.ico" "web/bootstrap.js" "web/jquery.js" "web/index.css" "web/bootstrap.css"
 )                           
                              
 if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY)

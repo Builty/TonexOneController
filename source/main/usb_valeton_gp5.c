@@ -1339,6 +1339,13 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
             // 0080   00 00 00 00 00 00 00 f7
         } break;
 
+        case 0x73:
+        {
+            // unknown, happens on first preset change
+            ESP_LOGI(TAG, "Got unknown 0x73");
+            usb_valeton_gp5_request_current_preset();
+        } break;
+
         default:
         {
             ESP_LOGI(TAG, "Unknown function type %X", function);
