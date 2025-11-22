@@ -1561,7 +1561,7 @@ static void usb_valeton_gp5_set_effect_block_model(uint8_t block_index, uint8_t 
 {
     //                               | block  |                                      | block  |                                      |          effect code                       |
     uint8_t midi_tx[] = {0x04, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    uint32_t effect_code = 0;
+    uint32_t effect_code = 0xFF;
 
     // set the block index (twice)
     midi_tx[2] = block_index >> 4;
@@ -1591,7 +1591,7 @@ static void usb_valeton_gp5_set_effect_block_model(uint8_t block_index, uint8_t 
         }
     }
 
-    if (effect_code != 0)
+    if (effect_code != 0xFF)
     {
         ESP_LOGI(TAG, "Set Effect Block model %d %d %X", (int)block_index, (int)model, (int)effect_code);
 

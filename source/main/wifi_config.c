@@ -70,6 +70,10 @@ limitations under the License.
 #define LOCATER_PORT            12106
 #define LOCATER_TIMER_MSEC      3000        // ticks
 
+#ifndef CONFIG_HTTPD_MAX_CLIENTS
+#define CONFIG_HTTPD_MAX_CLIENTS 16
+#endif
+
 static int s_retry_num = 0;
 static int wifi_connect_status = 0;
 static const char *TAG = "wifi_config";
@@ -160,6 +164,62 @@ static tWebConfigData* pWebConfig;
 static tLocaterData LocaterData;
 
 /****************************************************************************
+* NAME:        wifi_send_ws_async
+* DESCRIPTION: Sends a JSON message to ALL connected WebSocket clients immediately
+* PARAMETERS:  payload - null-terminated JSON string
+* RETURN:      void
+*****************************************************************************/
+static void wifi_send_ws_async(const char* payload)
+{
+    size_t max_fds = CONFIG_HTTPD_MAX_CLIENTS;
+    int client_fds[CONFIG_HTTPD_MAX_CLIENTS];
+    size_t fds_count = max_fds;
+
+    if (!payload || !http_server) 
+    {
+        return;
+    }
+
+    // Get list of all connected clients (WebSocket + normal HTTP)
+    esp_err_t ret = httpd_get_client_list(http_server, &fds_count, client_fds);
+
+    if (ret != ESP_OK) 
+    {          
+        ESP_LOGW(TAG, "httpd_get_client_list failed: %s", esp_err_to_name(ret));
+        return;
+    }
+
+    if (fds_count == 0) 
+    {
+        return;
+    }
+
+    ESP_LOGD(TAG, "Broadcasting to %d client(s)", (int)fds_count);
+
+    httpd_ws_frame_t ws_pkt = {
+        .type    = HTTPD_WS_TYPE_TEXT,
+        .payload = (uint8_t*)payload,
+        .len     = strlen(payload),
+        .final   = true
+    };
+
+    for (size_t i = 0; i < fds_count; i++) 
+    {
+        int fd = client_fds[i];
+
+        // Check if this fd belongs to a WebSocket session
+        if (httpd_ws_get_fd_info(http_server, fd) == HTTPD_WS_CLIENT_WEBSOCKET) 
+        {
+            esp_err_t send_ret = httpd_ws_send_frame_async(http_server, fd, &ws_pkt);
+            if (send_ret != ESP_OK) 
+            {
+                ESP_LOGD(TAG, "WS send to fd %d failed: %s", fd, esp_err_to_name(send_ret));
+            }
+        }
+    }
+}
+
+/****************************************************************************
 * NAME:        
 * DESCRIPTION: 
 * PARAMETERS:  
@@ -175,7 +235,8 @@ static uint8_t process_wifi_command(tWiFiMessage* message)
     {
         case EVENT_SYNC_PARAMS:
         {
-            pWebConfig->ParamsChanged = 1;
+            wifi_build_params_json();
+            wifi_send_ws_async(pWebConfig->TempBuffer);
         } break;
 
         case EVENT_SYNC_PRESET_NAME:
@@ -188,12 +249,14 @@ static uint8_t process_wifi_command(tWiFiMessage* message)
         {
             // save preset details
             pWebConfig->PresetIndex = message->Value;
-            pWebConfig->PresetChanged = 1;
+            wifi_build_preset_json();
+            wifi_send_ws_async(pWebConfig->TempBuffer);
         } break;
 
         case EVENT_SYNC_CONFIG:
         {
-            pWebConfig->ConfigChanged = 1;
+            wifi_build_config_json();
+            wifi_send_ws_async(pWebConfig->TempBuffer);
         } break;    
     }
 
@@ -1672,6 +1735,14 @@ static esp_err_t embedded_files_handler(httpd_req_t *req)
         httpd_resp_set_type(req, "text/css");
         httpd_resp_set_hdr(req, "Cache-Control", "public, max-age=604800");
         return httpd_resp_send(req, (const char*)web_bootstrap_css_start, web_bootstrap_css_end - web_bootstrap_css_start);
+    }
+    else if (strcmp(requested, "script.js") == 0) 
+    {
+        extern const unsigned char web_script_js_start[] asm("_binary_script_js_start");
+        extern const unsigned char web_script_js_end[]   asm("_binary_script_js_end");
+        httpd_resp_set_type(req, "application/javascript");
+        httpd_resp_set_hdr(req, "Cache-Control", "public, max-age=604800");
+        return httpd_resp_send(req, (const char*)web_script_js_start, web_script_js_end - web_script_js_start);
     }
 
     // Not found
