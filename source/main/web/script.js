@@ -28,6 +28,8 @@ var curent_model_7 = 0xFF;
 var curent_model_8 = 0xFF;
 var curent_model_9 = 0xFF;
 
+var effect_icon_order = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
 // Tonex param models
 const TONEX_REVERB_SPRING_1 = 0;
 const TONEX_REVERB_SPRING_2 = 1;
@@ -337,6 +339,20 @@ const ValetonParameters = {
 
     // must be last actual global
     VALETON_GLOBAL_LAST: 122
+};
+
+const ValetonEffectBlocks = {
+    VALETON_EFFECT_BLOCK_NR:    0,
+    VALETON_EFFECT_BLOCK_PRE:   1,
+    VALETON_EFFECT_BLOCK_DST:   2,
+    VALETON_EFFECT_BLOCK_AMP:   3,
+    VALETON_EFFECT_BLOCK_CAB:   4,
+    VALETON_EFFECT_BLOCK_EQ:    5,
+    VALETON_EFFECT_BLOCK_MOD:   6,
+    VALETON_EFFECT_BLOCK_DLY:   7,
+    VALETON_EFFECT_BLOCK_RVB:   8,
+    VALETON_EFFECT_BLOCK_NS:    9,
+    VALETON_EFFECT_BLOCK_LAST:  10
 };
 
 const ValetonEffectPre = {
@@ -661,14 +677,6 @@ const THROTTLE_DELAY = 200; // ms between WebSocket sends
 let lastSendTime = 0;
 let throttleTimeout = null;
 
-// waveform display
-let canvas = null; 
-let ctx = null;
-
-// Canvas dimensions
-let width = 0;
-let height = 0;
-            
 function onload(event) {
     // Get the element with id="defaultOpen" and click on it
     document.getElementById("defaultOpen").click();
@@ -938,8 +946,7 @@ function setEffectIcons() {
         {
             // nr
             var fxImage = document.getElementById("fx_image_nr");
-            var fxState = document.getElementById("ng_enable"); //todo
-
+            var fxState = document.getElementById("val_nr_enable");
             if (fxState.checked) {
                 fxImage.src = "img/nr_on.png";
             } 
@@ -949,11 +956,17 @@ function setEffectIcons() {
 
             // pre
             fxImage = document.getElementById("fx_image_pre");
-            fxImage.src = "img/pre_on.png"; 
-
+            fxState = document.getElementById("val_pre_enable");        
+            if (fxState.checked) {
+                fxImage.src = "img/pre_on.png";
+            } 
+            else {
+                fxImage.src = "img/pre_off.png";
+            }
+            
             // dst
-            var fxImage = document.getElementById("fx_image_dst");
-            var fxState = document.getElementById("ng_enable"); //todo
+            fxImage = document.getElementById("fx_image_dst");
+            fxState = document.getElementById("val_dst_enable");
 
             if (fxState.checked) {
                 fxImage.src = "img/dst_on.png";
@@ -964,27 +977,49 @@ function setEffectIcons() {
 
             // amp 
             fxImage = document.getElementById("fx_image_amp");
-            fxState = document.getElementById("am_ampen");
-            if (fxState.checked) {
-                fxImage.src = "img/amp_on.png";
-            } 
+            fxState = document.getElementById("val_amp_enable");
+            nsState = document.getElementById("val_ns_enable");
+            if (nsState.checked) {
+                if (fxState.checked) {
+                    fxImage.src = "img/amp_disabled.png";
+                } 
+                else {
+                    fxImage.src = "img/amp_off.png";
+                }
+            }
             else {
-                fxImage.src = "img/amp_off.png";
+                if (fxState.checked) {
+                    fxImage.src = "img/amp_on.png";
+                } 
+                else {
+                    fxImage.src = "img/amp_off.png";
+                }
             }
 
             // cab
             fxImage = document.getElementById("fx_image_cab");
-            fxState = document.getElementById("am_cabtype");
-            if (fxState.value == 2) {
-                fxImage.src = "img/cab_off.png";
-            } 
-            else {
-                fxImage.src = "img/cab_on.png";
+            fxState = document.getElementById("val_cab_enable");
+            nsState = document.getElementById("val_ns_enable");
+            if (nsState.checked) {
+                if (fxState.checked) {
+                    fxImage.src = "img/cab_disabled.png";
+                } 
+                else {
+                    fxImage.src = "img/cab_off.png";
+                }
             }
-            
+            else {
+                if (fxState.checked) {
+                    fxImage.src = "img/cab_on.png";
+                } 
+                else {
+                    fxImage.src = "img/cab_off.png";
+                }
+            }
+
             // eq    
             fxImage = document.getElementById("fx_image_eq");
-            fxState = document.getElementById("cp_enable");
+            fxState = document.getElementById("val_eq_enable");
             if (fxState.checked) {
                 fxImage.src = "img/eq_on.png";
             } 
@@ -994,7 +1029,7 @@ function setEffectIcons() {
 
             // mod
             fxImage = document.getElementById("fx_image_mod");
-            fxState = document.getElementById("mo_enable");
+            fxState = document.getElementById("val_mod_enable");
             if (fxState.checked) {
                fxImage.src = "img/mod_on.png";
             } 
@@ -1004,7 +1039,7 @@ function setEffectIcons() {
 
             // dly
             fxImage = document.getElementById("fx_image_dly");
-            fxState = document.getElementById("dl_enable");
+            fxState = document.getElementById("val_dly_enable");
             if (fxState.checked) {
                 fxImage.src = "img/dly_on.png";
             } 
@@ -1014,7 +1049,7 @@ function setEffectIcons() {
 
             // rvb
             fxImage = document.getElementById("fx_image_rvb");
-            fxState = document.getElementById("rv_enable");
+            fxState = document.getElementById("val_rvb_enable");
             if (fxState.checked) {
                 fxImage.src = "img/rvb_on.png";
             } 
@@ -1024,13 +1059,78 @@ function setEffectIcons() {
 
             // ns
             fxImage = document.getElementById("fx_image_ns");
-            fxState = document.getElementById("rv_enable");
+            fxState = document.getElementById("val_ns_enable");
             if (fxState.checked) {
                 fxImage.src = "img/tc_on.png";
             } 
             else {
                 fxImage.src = "img/tc_off.png";
             }
+
+            // set effect icon order
+            const container = document.querySelector('.fx_icon_container');
+            const images = Array.from(container.querySelectorAll('img'));
+            var newOrderIds = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+            for (var loop = ValetonEffectBlocks.VALETON_EFFECT_BLOCK_NR; loop < ValetonEffectBlocks.VALETON_EFFECT_BLOCK_LAST; loop++)
+            {
+                switch (effect_icon_order[loop])
+                {
+                    case ValetonEffectBlocks.VALETON_EFFECT_BLOCK_NR:
+                    {
+                        newOrderIds[loop] = 'fx_image_nr';
+                    } break;
+
+                    case ValetonEffectBlocks.VALETON_EFFECT_BLOCK_PRE:
+                    {
+                        newOrderIds[loop] = 'fx_image_pre';
+                    } break;
+
+                    case ValetonEffectBlocks.VALETON_EFFECT_BLOCK_DST:
+                    {
+                        newOrderIds[loop] = 'fx_image_dst';
+                    } break;
+
+                    case ValetonEffectBlocks.VALETON_EFFECT_BLOCK_AMP:
+                    {
+                        newOrderIds[loop] = 'fx_image_amp';
+                    } break;
+
+                    case ValetonEffectBlocks.VALETON_EFFECT_BLOCK_CAB:
+                    {
+                        newOrderIds[loop] = 'fx_image_cab';
+                    } break;
+
+                    case ValetonEffectBlocks.VALETON_EFFECT_BLOCK_EQ:
+                    {
+                        newOrderIds[loop] = 'fx_image_eq';
+                    } break;
+
+                    case ValetonEffectBlocks.VALETON_EFFECT_BLOCK_MOD:
+                    {
+                        newOrderIds[loop] = 'fx_image_mod';
+                    } break;
+                    
+                    case ValetonEffectBlocks.VALETON_EFFECT_BLOCK_DLY:
+                    {
+                        newOrderIds[loop] = 'fx_image_dly';
+                    } break;
+
+                    case ValetonEffectBlocks.VALETON_EFFECT_BLOCK_RVB:
+                    {
+                        newOrderIds[loop] = 'fx_image_rvb';
+                    } break;
+
+                    case ValetonEffectBlocks.VALETON_EFFECT_BLOCK_NS:
+                    {
+                        newOrderIds[loop] = 'fx_image_ns';
+                    } break;
+                }                
+            }
+
+            const orderedImages = newOrderIds.map(id => images.find(img => img.id === id));
+            container.innerHTML = ''; // Clear the container
+            orderedImages.forEach(img => container.appendChild(img));
         } break;
     }
 }
@@ -1047,10 +1147,6 @@ function pageTimerEvent(){
     else {
         if (isSyncDone == 0) {
             sendWS({"CMD": "GETSYNCCOMPLETE"});
-        }
-        else {
-            // request sending of anything changed
-            // no longer needed sendWS({"CMD": "GETCHANGES"});
         }
 
         if (modal._isShown) {
@@ -2302,6 +2398,8 @@ function processReturnCmd(data) {
                                             configureParam('val_amp_param2', true,  "Volume");
                                             configureParam('val_amp_param3', false);
                                             configureParam('val_amp_param4', false);
+                                            configureParam('val_amp_param5', false);
+                                            configureParam('val_amp_param6', false);
                                         } break;
 
                                         case ValetonEffectAmp.VALETON_EFFECT_AMP_BELLMAN_59N:
@@ -2327,7 +2425,8 @@ function processReturnCmd(data) {
                                             configureParam('val_amp_param2', true,  "Volume");
                                             configureParam('val_amp_param3', true,  "Bass");
                                             configureParam('val_amp_param4', true,  "Middle");
-                                            // TODO: Treble (likely controlled by switch)
+                                            configureParam('val_amp_param5', true,  "Treble");
+                                            configureParam('val_amp_param6', false);
                                         } break;
 
                                         case ValetonEffectAmp.VALETON_EFFECT_AMP_DARK_TWIN:
@@ -2339,6 +2438,8 @@ function processReturnCmd(data) {
                                             configureParam('val_amp_param3', true,  "Middle");
                                             configureParam('val_amp_param4', true,  "Treble");
                                             // TODO: Bright switch
+                                            configureParam('val_amp_param5', false);
+                                            configureParam('val_amp_param6', false);
                                         } break;
 
                                         case ValetonEffectAmp.VALETON_EFFECT_AMP_FOXY_30N:
@@ -2349,6 +2450,8 @@ function processReturnCmd(data) {
                                             //todo bright switch
                                             configureParam('val_amp_param3', false);
                                             configureParam('val_amp_param4', false);
+                                            configureParam('val_amp_param5', false);
+                                            configureParam('val_amp_param6', false);
                                         } break;
 
                                         case ValetonEffectAmp.VALETON_EFFECT_AMP_J_120_CL:
@@ -2356,11 +2459,11 @@ function processReturnCmd(data) {
                                             configureParam('val_amp_param0', true,  "Volume");
                                             configureParam('val_amp_param1', true,  "Bass");
                                             configureParam('val_amp_param2', true,  "Middle");
-                                            configureParam('val_amp_param3', true,  "Treble");
-                                            
-                                            //todo bright switch
-                                            
+                                            configureParam('val_amp_param3', true,  "Treble");                                        
+                                            //todo bright switch                                            
                                             configureParam('val_amp_param4', false);
+                                            configureParam('val_amp_param5', false);
+                                            configureParam('val_amp_param6', false);
                                         } break;
                                         
                                         case ValetonEffectAmp.VALETON_EFFECT_AMP_UK_50JP:
@@ -2370,7 +2473,8 @@ function processReturnCmd(data) {
                                             configureParam('val_amp_param2', true,  "Volume");
                                             configureParam('val_amp_param3', true,  "Bass");
                                             configureParam('val_amp_param4', true,  "Middle");
-                                            //todo treble, gain 2
+                                            configureParam('val_amp_param5', true,  "Treble");
+                                            configureParam('val_amp_param6', true,  "Gain 2");
                                         } break;
 
                                         case ValetonEffectAmp.VALETON_EFFECT_AMP_FOXY_30TB:
@@ -2381,6 +2485,8 @@ function processReturnCmd(data) {
                                             configureParam('val_amp_param3', true,  "Bass");
                                             configureParam('val_amp_param4', true,  "Treble");
                                             //todo character switch
+                                            configureParam('val_amp_param5', false);
+                                            configureParam('val_amp_param6', false);
                                         } break;
 
                                         case ValetonEffectAmp.VALETON_EFFECT_AMP_SUPDUAL_OD:
@@ -2390,6 +2496,8 @@ function processReturnCmd(data) {
                                             configureParam('val_amp_param2', true,  "Gain 2");
                                             configureParam('val_amp_param3', true,  "Tone 2");
                                             configureParam('val_amp_param4', true,  "Volume");
+                                            configureParam('val_amp_param5', false);
+                                            configureParam('val_amp_param6', false);
                                         } break;
 
                                         case ValetonEffectAmp.VALETON_EFFECT_AMP_Z38_OD:
@@ -2399,6 +2507,8 @@ function processReturnCmd(data) {
                                             configureParam('val_amp_param2', true,  "Volume");
                                             configureParam('val_amp_param3', true,  "Bass");
                                             configureParam('val_amp_param4', true,  "Middle");
+                                            configureParam('val_amp_param5', false);
+                                            configureParam('val_amp_param6', false);
                                         } break;
 
                                         case ValetonEffectAmp.VALETON_EFFECT_AMP_EV_51:
@@ -2408,6 +2518,8 @@ function processReturnCmd(data) {
                                             configureParam('val_amp_param2', true,  "Bass");
                                             configureParam('val_amp_param3', true,  "Mid");
                                             configureParam('val_amp_param4', true,  "Middle");
+                                            configureParam('val_amp_param5', false);
+                                            configureParam('val_amp_param6', false);
                                         } break;
 
                                         case ValetonEffectAmp.VALETON_EFFECT_AMP_CLASSIC_BASS:
@@ -2417,7 +2529,8 @@ function processReturnCmd(data) {
                                             configureParam('val_amp_param2', true,  "Middle");
                                             configureParam('val_amp_param3', true,  "Mid Freq");
                                             configureParam('val_amp_param4', true,  "Treble");
-                                            //todo volume
+                                            configureParam('val_amp_param5', true,  "Volume");
+                                            configureParam('val_amp_param6', false);
                                         } break;
 
                                         case ValetonEffectAmp.VALETON_EFFECT_AMP_FOXY_BASS:
@@ -2427,6 +2540,8 @@ function processReturnCmd(data) {
                                             configureParam('val_amp_param2', true,  "Treble");
                                             configureParam('val_amp_param3', false);
                                             configureParam('val_amp_param4', false);
+                                            configureParam('val_amp_param5', false);
+                                            configureParam('val_amp_param6', false);
                                         } break;
 
                                         case ValetonEffectAmp.VALETON_EFFECT_AMP_MESS_BASS:
@@ -2436,6 +2551,8 @@ function processReturnCmd(data) {
                                             configureParam('val_amp_param2', true,  "Bass");
                                             configureParam('val_amp_param3', true,  "Mid");
                                             configureParam('val_amp_param4', true,  "Treble");
+                                            configureParam('val_amp_param5', false);
+                                            configureParam('val_amp_param6', false);
                                         } break;  
                                         
                                         case ValetonEffectAmp.VALETON_EFFECT_AMP_AC_PRE1:
@@ -2446,7 +2563,8 @@ function processReturnCmd(data) {
                                             configureParam('val_amp_param2', true,  "Balance");
                                             configureParam('val_amp_param3', true,  "EQ Freq");
                                             configureParam('val_amp_param4', true,  "EQ Q");
-                                            //todo EQ gain
+                                            configureParam('val_amp_param5', true,  "EQ Gain");
+                                            configureParam('val_amp_param6', false);
                                         } break;  
                                     }
                                 }
@@ -2486,7 +2604,7 @@ function processReturnCmd(data) {
                                             configureParam('val_eq_param2', true, "800 Hz");
                                             configureParam('val_eq_param3', true, "1.6 kHz");
                                             configureParam('val_eq_param4', true, "4 kHz");
-                                            // TODO: Volume control (maybe a separate param or switch?)
+                                            configureParam('val_eq_param5', true, "Volume");
                                         } break;
 
                                         case ValetonEffectEQ.VALETON_EFFECT_EQ_GUITAR_EQ2:
@@ -2496,7 +2614,7 @@ function processReturnCmd(data) {
                                             configureParam('val_eq_param2', true, "1 kHz");
                                             configureParam('val_eq_param3', true, "3 kHz");
                                             configureParam('val_eq_param4', true, "6 kHz");
-                                            // TODO: Volume
+                                            configureParam('val_eq_param5', true, "Volume");
                                         } break;
 
                                         case ValetonEffectEQ.VALETON_EFFECT_EQ_BASS_EQ1:
@@ -2506,7 +2624,7 @@ function processReturnCmd(data) {
                                             configureParam('val_eq_param2', true, "600 Hz");
                                             configureParam('val_eq_param3', true, "2 kHz");
                                             configureParam('val_eq_param4', true, "8 kHz");
-                                            // TODO: Volume
+                                            configureParam('val_eq_param5', true, "Volume");
                                         } break;
 
                                         case ValetonEffectEQ.VALETON_EFFECT_EQ_BASS_EQ2:
@@ -2516,7 +2634,7 @@ function processReturnCmd(data) {
                                             configureParam('val_eq_param2', true, "400 Hz");
                                             configureParam('val_eq_param3', true, "800 Hz");
                                             configureParam('val_eq_param4', true, "4.5 kHz");
-                                            // TODO: Volume
+                                            configureParam('val_eq_param5', true, "Volume");
                                         } break;
 
                                         case ValetonEffectEQ.VALETON_EFFECT_EQ_MESS_EQ:
@@ -2526,6 +2644,7 @@ function processReturnCmd(data) {
                                             configureParam('val_eq_param2', true, "750 Hz");
                                             configureParam('val_eq_param3', true, "2.2 kHz");
                                             configureParam('val_eq_param4', true, "6.6 kHz");
+                                            configureParam('val_eq_param5', false);
                                         } break;
 
                                         default:
@@ -2535,6 +2654,7 @@ function processReturnCmd(data) {
                                             configureParam('val_eq_param2', false);
                                             configureParam('val_eq_param3', false);
                                             configureParam('val_eq_param4', false);
+                                            configureParam('val_eq_param5', false);
                                         } break;
                                     }
                                 }
@@ -2645,7 +2765,9 @@ function processReturnCmd(data) {
                                             configureParam('val_dly_param2', true,  "F.Back");
                                             configureParam('val_dly_param3', false);
                                             configureParam('val_dly_param4', false);
-                                            // TODO: Trail switch (on/off when delay is bypassed)
+                                            configureParam('val_dly_param5', false);
+                                            //todo configureParam('val_dly_param6', true,  "Trail");
+                                            configureParam('val_dly_param6', false);
                                         } break;
 
                                         case ValetonEffectDly.VALETON_EFFECT_DLY_RING_ECHO:
@@ -2655,7 +2777,9 @@ function processReturnCmd(data) {
                                             configureParam('val_dly_param2', true,  "F.Back");
                                             configureParam('val_dly_param3', true,  "R-Mix");
                                             configureParam('val_dly_param4', true,  "Freq");
-                                            // TODO: Tone control + Trail switch
+                                            configureParam('val_dly_param5', true,  "Tone");
+                                            //todo configureParam('val_dly_param6', true,  "Trail");
+                                            configureParam('val_dly_param6', false);
                                         } break;
 
                                         case ValetonEffectDly.VALETON_EFFECT_DLY_SWEEP_ECHO:
@@ -2665,7 +2789,9 @@ function processReturnCmd(data) {
                                             configureParam('val_dly_param2', true,  "F.Back");
                                             configureParam('val_dly_param3', true,  "S-Depth");
                                             configureParam('val_dly_param4', true,  "S-Rate");
-                                            // TODO: Trail switch
+                                            //to do trail switch on param 5
+                                            configureParam('val_dly_param5', false);
+                                            configureParam('val_dly_param6', false);
                                         } break;
 
                                         default:
@@ -2675,6 +2801,8 @@ function processReturnCmd(data) {
                                             configureParam('val_dly_param2', false);
                                             configureParam('val_dly_param3', false);
                                             configureParam('val_dly_param4', false);
+                                            configureParam('val_dly_param5', false);
+                                            configureParam('val_dly_param6', false);
                                         } break;
                                     }
                                 }
@@ -2759,47 +2887,47 @@ function processReturnCmd(data) {
 
                             // General
                             case ValetonParameters.VALETON_PARAM_PATCH_VOLUME: {
-                                // Your code here
+                                //todo
                                 break;
                             }
                             case ValetonParameters.VALETON_PARAM_EFFECT_SLOT_0: {
-                                // Your code here
+                                effect_icon_order[0] = value;
                                 break;
                             }
                             case ValetonParameters.VALETON_PARAM_EFFECT_SLOT_1: {
-                                // Your code here
+                                effect_icon_order[1] = value;
                                 break;
                             }
                             case ValetonParameters.VALETON_PARAM_EFFECT_SLOT_2: {
-                                // Your code here
+                                effect_icon_order[2] = value;
                                 break;
                             }
                             case ValetonParameters.VALETON_PARAM_EFFECT_SLOT_3: {
-                                // Your code here
+                                effect_icon_order[3] = value;
                                 break;
                             }
                             case ValetonParameters.VALETON_PARAM_EFFECT_SLOT_4: {
-                                // Your code here
+                                effect_icon_order[4] = value;
                                 break;
                             }
                             case ValetonParameters.VALETON_PARAM_EFFECT_SLOT_5: {
-                                // Your code here
+                                effect_icon_order[5] = value;
                                 break;
                             }
                             case ValetonParameters.VALETON_PARAM_EFFECT_SLOT_6: {
-                                // Your code here
+                                effect_icon_order[6] = value;
                                 break;
                             }
                             case ValetonParameters.VALETON_PARAM_EFFECT_SLOT_7: {
-                                // Your code here
+                                effect_icon_order[7] = value;
                                 break;
                             }
                             case ValetonParameters.VALETON_PARAM_EFFECT_SLOT_8: {
-                                // Your code here
+                                effect_icon_order[8] = value;
                                 break;
                             }
                             case ValetonParameters.VALETON_PARAM_EFFECT_SLOT_9: {
-                                // Your code here
+                                effect_icon_order[9] = value;
                                 break;
                             }
 
@@ -2927,13 +3055,13 @@ function processReturnCmd(data) {
                                 break;
 
                             case ValetonParameters.VALETON_PARAM_AMP_PARAM_5:
-                                //configureParamRange("val_amp_param5", value, min, max);
-                                //setParamData("val_amp_param5", parseInt(key));
+                                configureParamRange("val_amp_param5", value, min, max);
+                                setParamData("val_amp_param5", parseInt(key));
                                 break;
 
                             case ValetonParameters.VALETON_PARAM_AMP_PARAM_6:
-                                //configureParamRange("val_amp_param6", value, min, max);
-                                //setParamData("val_amp_param6", parseInt(key));
+                                configureParamRange("val_amp_param6", value, min, max);
+                                setParamData("val_amp_param6", parseInt(key));
                                 break;
 
                             case ValetonParameters.VALETON_PARAM_AMP_PARAM_7:
@@ -3007,8 +3135,8 @@ function processReturnCmd(data) {
                                 break;
 
                             case ValetonParameters.VALETON_PARAM_EQ_PARAM_5:
-                                //configureParamRange("val_eq_param5", value, min, max);
-                                //setParamData("val_eq_param5", parseInt(key));
+                                configureParamRange("val_eq_param5", value, min, max);
+                                setParamData("val_eq_param5", parseInt(key));
                                 break;
 
                             case ValetonParameters.VALETON_PARAM_EQ_PARAM_6:
@@ -3087,12 +3215,12 @@ function processReturnCmd(data) {
                                 break;
 
                             case ValetonParameters.VALETON_PARAM_DLY_PARAM_5:
-                                //configureParamRange("val_dly_param5", value, min, max);
-                                //setParamData("val_dly_param5", parseInt(key));
+                                configureParamRange("val_dly_param5", value, min, max);
+                                setParamData("val_dly_param5", parseInt(key));
                                 break;
 
                             case ValetonParameters.VALETON_PARAM_DLY_PARAM_6:
-                                //configureParamRange("val_dly_param6", value, min, max);
+                                //configureParamSwitch("val_dly_param6", value);
                                 //setParamData("val_dly_param6", parseInt(key));
                                 break;
 
