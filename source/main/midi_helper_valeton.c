@@ -93,7 +93,6 @@ esp_err_t midi_helper_valeton_adjust_param_via_midi(uint8_t change_num, uint8_t 
     float value = 0.0f;
     tModellerParameter* param_ptr;
 
-    // Midi mapping done to match the big Tonex pedal
     switch (change_num)
     {
         case 0:

@@ -488,184 +488,313 @@ const ValetonEffectAmp = {
     VALETON_EFFECT_AMP_AC_PRE2:        31
 };
 
-// External Footswitch midi associations
-const midiControlChangeAssociations = new Map();
+// External Footswitch midi associations - Tonex
+const tonexMidiControlChangeAssociations = new Map();
 
 // MAIN
-midiControlChangeAssociations.set("MAIN", null);
-midiControlChangeAssociations.set(102, { param: "GAIN", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(103, { param: "VOLUME", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(104, { param: "MODEL MIX", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(23, { param: "BASS", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(24, { param: "BASS HZ", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(25, { param: "MID", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(26, { param: "MID Q", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(27, { param: "MID HZ", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(28, { param: "TREBLE", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(29, { param: "TREBLE HZ", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(30, { param: "EQ POSITION", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(106, { param: "PRESENCE", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(107, { param: "DEPTH", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("MAIN", null);
+tonexMidiControlChangeAssociations.set(102, { param: "GAIN", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(103, { param: "VOLUME", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(104, { param: "MODEL MIX", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(23, { param: "BASS", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(24, { param: "BASS HZ", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(25, { param: "MID", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(26, { param: "MID Q", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(27, { param: "MID HZ", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(28, { param: "TREBLE", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(29, { param: "TREBLE HZ", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(30, { param: "EQ POSITION", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(106, { param: "PRESENCE", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(107, { param: "DEPTH", value: { type: "RANGE" } })
 
 // GATE
-midiControlChangeAssociations.set("GATE", null);
-midiControlChangeAssociations.set(14, { param: "GATE POWER", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(15, { param: "GATE THRESHOLD", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(16, { param: "GATE RELEASE", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(17, { param: "GATE DEPTH", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(13, { param: "GATE POSITION", value: { type: "CHOICE", values: { 0: "FIRST", 127: "POST AMP" } } })
+tonexMidiControlChangeAssociations.set("GATE", null);
+tonexMidiControlChangeAssociations.set(14, { param: "GATE POWER", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(15, { param: "GATE THRESHOLD", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(16, { param: "GATE RELEASE", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(17, { param: "GATE DEPTH", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(13, { param: "GATE POSITION", value: { type: "CHOICE", values: { 0: "FIRST", 127: "POST AMP" } } })
 
 // COMP
-midiControlChangeAssociations.set("COMP", null);
-midiControlChangeAssociations.set(18, { param: "COMP POWER", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(19, { param: "COMP THRESHOLD", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(20, { param: "COMP GAIN", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(21, { param: "COMP ATTACK", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(22, { param: "COMP POSITION", value: { type: "CHOICE", values: { 0: "PRE AMP", 127: "POST AMP" } } })
+tonexMidiControlChangeAssociations.set("COMP", null);
+tonexMidiControlChangeAssociations.set(18, { param: "COMP POWER", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(19, { param: "COMP THRESHOLD", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(20, { param: "COMP GAIN", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(21, { param: "COMP ATTACK", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(22, { param: "COMP POSITION", value: { type: "CHOICE", values: { 0: "PRE AMP", 127: "POST AMP" } } })
 
 // VIR
-midiControlChangeAssociations.set("VIR", null);
-midiControlChangeAssociations.set(108, { param: "VIR RESO", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(109, { param: "VIR MIC 1", value: { type: "CHOICE", values: { 0: "COND", 1: "DYN", 2: "RBN" } } })
-midiControlChangeAssociations.set(110, { param: "VIR MIC 1 X", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(111, { param: "VIR MIC 1 Z", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(112, { param: "VIR MIC 2", value: { type: "CHOICE", values: { 0: "COND", 1: "DYN", 2: "RBN" } } })
-midiControlChangeAssociations.set(113, { param: "VIR MIC 2 X", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(114, { param: "VIR MIC 2 Z", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(115, { param: "VIR BLEND", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("VIR", null);
+tonexMidiControlChangeAssociations.set(108, { param: "VIR RESO", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(109, { param: "VIR MIC 1", value: { type: "CHOICE", values: { 0: "COND", 1: "DYN", 2: "RBN" } } })
+tonexMidiControlChangeAssociations.set(110, { param: "VIR MIC 1 X", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(111, { param: "VIR MIC 1 Z", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(112, { param: "VIR MIC 2", value: { type: "CHOICE", values: { 0: "COND", 1: "DYN", 2: "RBN" } } })
+tonexMidiControlChangeAssociations.set(113, { param: "VIR MIC 2 X", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(114, { param: "VIR MIC 2 Z", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(115, { param: "VIR BLEND", value: { type: "RANGE" } })
 
 // MOD
-midiControlChangeAssociations.set("MOD", null);
-midiControlChangeAssociations.set(32, { param: "MOD POWER", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(33, { param: "MOD TYPE", value: { type: "CHOICE", values: { 0: "CHORUS", 1: "TREMOLO", 2: "PHASER", 3: "FLANGER", 4: "ROTARY" } } })
-midiControlChangeAssociations.set(31, { param: "MOD POSITION", value: { type: "CHOICE", values: { 0: "PRE AMP", 127: "POST AMP" } } })
+tonexMidiControlChangeAssociations.set("MOD", null);
+tonexMidiControlChangeAssociations.set(32, { param: "MOD POWER", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(33, { param: "MOD TYPE", value: { type: "CHOICE", values: { 0: "CHORUS", 1: "TREMOLO", 2: "PHASER", 3: "FLANGER", 4: "ROTARY" } } })
+tonexMidiControlChangeAssociations.set(31, { param: "MOD POSITION", value: { type: "CHOICE", values: { 0: "PRE AMP", 127: "POST AMP" } } })
 
 // MOD / CHORUS
-midiControlChangeAssociations.set("MOD / CHORUS", null);
-midiControlChangeAssociations.set(34, { param: "MOD CHORUS SYNC", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(35, { param: "MOD CHORUS RATE (TIMESIGN)", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(36, { param: "MOD CHORUS DEPTH", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(37, { param: "MOD CHORUS LEVEL", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("MOD / CHORUS", null);
+tonexMidiControlChangeAssociations.set(34, { param: "MOD CHORUS SYNC", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(35, { param: "MOD CHORUS RATE (TIMESIGN)", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(36, { param: "MOD CHORUS DEPTH", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(37, { param: "MOD CHORUS LEVEL", value: { type: "RANGE" } })
 
 // MOD / TREMOLO
-midiControlChangeAssociations.set("MOD / TREMOLO", null);
-midiControlChangeAssociations.set(38, { param: "MOD TREMOLO SYNC", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(39, { param: "MOD TREMOLO RATE (TIMESIGN)", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(40, { param: "MOD TREMOLO SHAPE", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(41, { param: "MOD TREMOLO SPREAD", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(42, { param: "MOD TREMOLO LEVEL", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("MOD / TREMOLO", null);
+tonexMidiControlChangeAssociations.set(38, { param: "MOD TREMOLO SYNC", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(39, { param: "MOD TREMOLO RATE (TIMESIGN)", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(40, { param: "MOD TREMOLO SHAPE", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(41, { param: "MOD TREMOLO SPREAD", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(42, { param: "MOD TREMOLO LEVEL", value: { type: "RANGE" } })
 
 // MOD / TREMOLO
-midiControlChangeAssociations.set("MOD / TREMOLO", null);
-midiControlChangeAssociations.set(43, { param: "MOD PHASER SYNC", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(44, { param: "MOD PHASER RATE (TIMESIGN)", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(45, { param: "MOD PHASER DEPTH", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(46, { param: "MOD PHASER LEVEL", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("MOD / TREMOLO", null);
+tonexMidiControlChangeAssociations.set(43, { param: "MOD PHASER SYNC", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(44, { param: "MOD PHASER RATE (TIMESIGN)", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(45, { param: "MOD PHASER DEPTH", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(46, { param: "MOD PHASER LEVEL", value: { type: "RANGE" } })
 
 // MOD / FLANGER
-midiControlChangeAssociations.set("MOD / FLANGER", null);
-midiControlChangeAssociations.set(47, { param: "MOD FLANGER SYNC", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(48, { param: "MOD FLANGER RATE (TIMESIGN)", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(49, { param: "MOD FLANGER DEPTH", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(50, { param: "MOD FLANGER FEEDBACK", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(51, { param: "MOD FLANGER LEVEL", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("MOD / FLANGER", null);
+tonexMidiControlChangeAssociations.set(47, { param: "MOD FLANGER SYNC", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(48, { param: "MOD FLANGER RATE (TIMESIGN)", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(49, { param: "MOD FLANGER DEPTH", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(50, { param: "MOD FLANGER FEEDBACK", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(51, { param: "MOD FLANGER LEVEL", value: { type: "RANGE" } })
 
 // MOD / ROTARY
-midiControlChangeAssociations.set("MOD / ROTARY", null);
-midiControlChangeAssociations.set(52, { param: "MOD ROTARY SYNC", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(53, { param: "MOD ROTARY SPEED (TIMESIGN)", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(54, { param: "MOD ROTARY RADIUS", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(55, { param: "MOD ROTARY SPREAD", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(56, { param: "MOD ROTARY LEVEL", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("MOD / ROTARY", null);
+tonexMidiControlChangeAssociations.set(52, { param: "MOD ROTARY SYNC", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(53, { param: "MOD ROTARY SPEED (TIMESIGN)", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(54, { param: "MOD ROTARY RADIUS", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(55, { param: "MOD ROTARY SPREAD", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(56, { param: "MOD ROTARY LEVEL", value: { type: "RANGE" } })
 
 // DELAY
-midiControlChangeAssociations.set("DELAY", null);
-midiControlChangeAssociations.set(2, { param: "DELAY POWER", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(3, { param: "DELAY TYPE", value: { type: "CHOICE", values: { 0: "DIGITAL", 1: "TAPE" } } })
-midiControlChangeAssociations.set(1, { param: "DELAY POSITION", value: { type: "CHOICE", values: { 0: "PRE AMP", 127: "POST AMP" } } })
+tonexMidiControlChangeAssociations.set("DELAY", null);
+tonexMidiControlChangeAssociations.set(2, { param: "DELAY POWER", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(3, { param: "DELAY TYPE", value: { type: "CHOICE", values: { 0: "DIGITAL", 1: "TAPE" } } })
+tonexMidiControlChangeAssociations.set(1, { param: "DELAY POSITION", value: { type: "CHOICE", values: { 0: "PRE AMP", 127: "POST AMP" } } })
 
 // DELAY / DIGITAL
-midiControlChangeAssociations.set("DELAY / DIGITAL", null);
-midiControlChangeAssociations.set(4, { param: "DELAY DIGITAL SYNC", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(5, { param: "DELAY DIGITAL TIME (TIMESIGN)", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(6, { param: "DELAY DIGITAL FEEDBACK", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(7, { param: "DELAY DIGITAL MODE", value: { type: "CHOICE", values: { 0: "NORMAL", 64: "PING.PONG" } } })
-midiControlChangeAssociations.set(8, { param: "DELAY DIGITAL MIX", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("DELAY / DIGITAL", null);
+tonexMidiControlChangeAssociations.set(4, { param: "DELAY DIGITAL SYNC", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(5, { param: "DELAY DIGITAL TIME (TIMESIGN)", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(6, { param: "DELAY DIGITAL FEEDBACK", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(7, { param: "DELAY DIGITAL MODE", value: { type: "CHOICE", values: { 0: "NORMAL", 64: "PING.PONG" } } })
+tonexMidiControlChangeAssociations.set(8, { param: "DELAY DIGITAL MIX", value: { type: "RANGE" } })
 
 // DELAY / TAPE
-midiControlChangeAssociations.set("DELAY / TAPE", null);
-midiControlChangeAssociations.set(91, { param: "DELAY TAPE SYNC", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(92, { param: "DELAY TAPE TIME (TIMESIGN)", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(93, { param: "DELAY TAPE FEEDBACK", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(94, { param: "DELAY TAPE MODE", value: { type: "CHOICE", values: { 0: "NORMAL", 64: "PING.PONG" } } })
-midiControlChangeAssociations.set(95, { param: "DELAY TAPE MIX", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("DELAY / TAPE", null);
+tonexMidiControlChangeAssociations.set(91, { param: "DELAY TAPE SYNC", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(92, { param: "DELAY TAPE TIME (TIMESIGN)", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(93, { param: "DELAY TAPE FEEDBACK", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(94, { param: "DELAY TAPE MODE", value: { type: "CHOICE", values: { 0: "NORMAL", 64: "PING.PONG" } } })
+tonexMidiControlChangeAssociations.set(95, { param: "DELAY TAPE MIX", value: { type: "RANGE" } })
 
 // REVERB
-midiControlChangeAssociations.set("REVERB", null);
-midiControlChangeAssociations.set(75, { param: "REVERB POWER", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(85, { param: "REVERB TYPE", value: { type: "CHOICE", values: { 0: "SPRING 1", 1: "SPRING 2", 2: "SPRING 3", 3: "SPRING 4", 4: "ROOM", 5: "PLATE" } } })
-midiControlChangeAssociations.set(84, { param: "REVERB POSITION", value: { type: "CHOICE", values: { 0: "POST AMP", 127: "LAST" } } })
+tonexMidiControlChangeAssociations.set("REVERB", null);
+tonexMidiControlChangeAssociations.set(75, { param: "REVERB POWER", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(85, { param: "REVERB TYPE", value: { type: "CHOICE", values: { 0: "SPRING 1", 1: "SPRING 2", 2: "SPRING 3", 3: "SPRING 4", 4: "ROOM", 5: "PLATE" } } })
+tonexMidiControlChangeAssociations.set(84, { param: "REVERB POSITION", value: { type: "CHOICE", values: { 0: "POST AMP", 127: "LAST" } } })
 
 // REVERB / SPRING 1
-midiControlChangeAssociations.set("REVERB / SPRING 1", null);
-midiControlChangeAssociations.set(59, { param: "REVERB SPRING 1 TIME", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(60, { param: "REVERB SPRING 1 PRE.DELAY", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(61, { param: "REVERB SPRING 1 COLOR", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(62, { param: "REVERB SPRING 1 MIX", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("REVERB / SPRING 1", null);
+tonexMidiControlChangeAssociations.set(59, { param: "REVERB SPRING 1 TIME", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(60, { param: "REVERB SPRING 1 PRE.DELAY", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(61, { param: "REVERB SPRING 1 COLOR", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(62, { param: "REVERB SPRING 1 MIX", value: { type: "RANGE" } })
 
 // REVERB / SPRING 2
-midiControlChangeAssociations.set("REVERB / SPRING 2", null);
-midiControlChangeAssociations.set(63, { param: "REVERB SPRING 2 TIME", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(64, { param: "REVERB SPRING 2 PRE.DELAY", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(65, { param: "REVERB SPRING 2 COLOR", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(66, { param: "REVERB SPRING 2 MIX", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("REVERB / SPRING 2", null);
+tonexMidiControlChangeAssociations.set(63, { param: "REVERB SPRING 2 TIME", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(64, { param: "REVERB SPRING 2 PRE.DELAY", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(65, { param: "REVERB SPRING 2 COLOR", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(66, { param: "REVERB SPRING 2 MIX", value: { type: "RANGE" } })
 
 // REVERB / SPRING 3
-midiControlChangeAssociations.set("REVERB / SPRING 3", null);
-midiControlChangeAssociations.set(67, { param: "REVERB SPRING 3 TIME", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(68, { param: "REVERB SPRING 3 PRE.DELAY", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(69, { param: "REVERB SPRING 3 COLOR", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(70, { param: "REVERB SPRING 3 MIX", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("REVERB / SPRING 3", null);
+tonexMidiControlChangeAssociations.set(67, { param: "REVERB SPRING 3 TIME", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(68, { param: "REVERB SPRING 3 PRE.DELAY", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(69, { param: "REVERB SPRING 3 COLOR", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(70, { param: "REVERB SPRING 3 MIX", value: { type: "RANGE" } })
 
 // REVERB / SPRING 4
-midiControlChangeAssociations.set("REVERB / SPRING 4", null);
-midiControlChangeAssociations.set(80, { param: "REVERB SPRING 4 TIME", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(81, { param: "REVERB SPRING 4 PRE.DELAY", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(82, { param: "REVERB SPRING 4 COLOR", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(83, { param: "REVERB SPRING 4 MIX", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("REVERB / SPRING 4", null);
+tonexMidiControlChangeAssociations.set(80, { param: "REVERB SPRING 4 TIME", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(81, { param: "REVERB SPRING 4 PRE.DELAY", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(82, { param: "REVERB SPRING 4 COLOR", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(83, { param: "REVERB SPRING 4 MIX", value: { type: "RANGE" } })
 
 // REVERB / ROOM
-midiControlChangeAssociations.set("REVERB / ROOM", null);
-midiControlChangeAssociations.set(71, { param: "REVERB ROOM TIME", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(72, { param: "REVERB ROOM PRE.DELAY", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(73, { param: "REVERB ROOM COLOR", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(74, { param: "REVERB ROOM MIX", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("REVERB / ROOM", null);
+tonexMidiControlChangeAssociations.set(71, { param: "REVERB ROOM TIME", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(72, { param: "REVERB ROOM PRE.DELAY", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(73, { param: "REVERB ROOM COLOR", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(74, { param: "REVERB ROOM MIX", value: { type: "RANGE" } })
 
 // REVERB / PLATE
-midiControlChangeAssociations.set("REVERB / PLATE", null);
-midiControlChangeAssociations.set(76, { param: "REVERB PLATE TIME", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(77, { param: "REVERB PLATE PRE.DELAY", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(78, { param: "REVERB PLATE COLOR", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(79, { param: "REVERB PLATE MIX", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("REVERB / PLATE", null);
+tonexMidiControlChangeAssociations.set(76, { param: "REVERB PLATE TIME", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(77, { param: "REVERB PLATE PRE.DELAY", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(78, { param: "REVERB PLATE COLOR", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(79, { param: "REVERB PLATE MIX", value: { type: "RANGE" } })
 
 // GLOBAL
-midiControlChangeAssociations.set("GLOBAL", null);
-// not supported midiControlChangeAssociations.set(12, { param: "PRESET ON/OFF", value: { type: "TOGGLE" } })
-// not supported midiControlChangeAssociations.set(11, { param: "EXPRESSION PEDAL", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(0, { param: "MIDI PATCH BANK", value: { type: "CHOICE", values: { 0: "000", 1: "001" } } })
-midiControlChangeAssociations.set(86, { param: "PRESET DOWN", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(87, { param: "PRESET UP", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(88, { param: "BPM", value: { type: "RANGE" } })
-// not supported midiControlChangeAssociations.set(89, { param: "BANK DOWN", value: { type: "TOGGLE" } })
-// not supported midiControlChangeAssociations.set(90, { param: "BANK UP", value: { type: "TOGGLE" } })
-//not supported midiControlChangeAssociations.set(9, { param: "TUNER", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(10, { param: "TAP TEMPO", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(116, { param: "INPUT TRIM", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(117, { param: "CABSIM BYPASS", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(118, { param: "TEMPO SOURCE", value: { type: "TOGGLE" } })
-midiControlChangeAssociations.set(119, { param: "TUNING REFERENCE", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(122, { param: "GLOBAL VOLUME", value: { type: "RANGE" } })
-midiControlChangeAssociations.set(127, { param: "SET PRESET", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set("GLOBAL", null);
+// not supported tonexMidiControlChangeAssociations.set(12, { param: "PRESET ON/OFF", value: { type: "TOGGLE" } })
+// not supported tonexMidiControlChangeAssociations.set(11, { param: "EXPRESSION PEDAL", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(0, { param: "MIDI PATCH BANK", value: { type: "CHOICE", values: { 0: "000", 1: "001" } } })
+tonexMidiControlChangeAssociations.set(86, { param: "PRESET DOWN", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(87, { param: "PRESET UP", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(88, { param: "BPM", value: { type: "RANGE" } })
+// not supported tonexMidiControlChangeAssociations.set(89, { param: "BANK DOWN", value: { type: "TOGGLE" } })
+// not supported tonexMidiControlChangeAssociations.set(90, { param: "BANK UP", value: { type: "TOGGLE" } })
+//not supported tonexMidiControlChangeAssociations.set(9, { param: "TUNER", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(10, { param: "TAP TEMPO", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(116, { param: "INPUT TRIM", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(117, { param: "CABSIM BYPASS", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(118, { param: "TEMPO SOURCE", value: { type: "TOGGLE" } })
+tonexMidiControlChangeAssociations.set(119, { param: "TUNING REFERENCE", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(122, { param: "GLOBAL VOLUME", value: { type: "RANGE" } })
+tonexMidiControlChangeAssociations.set(127, { param: "SET PRESET", value: { type: "RANGE" } })
+
+
+
+// External Footswitch midi associations - GP5
+const valetonMidiControlChangeAssociations = new Map();
+
+// General
+valetonMidiControlChangeAssociations.set("GENERAL", null);
+valetonMidiControlChangeAssociations.set(20, { param: "PATCH VOL", value: { type: "RANGE" } })
+
+// NR
+valetonMidiControlChangeAssociations.set("NR", null);
+valetonMidiControlChangeAssociations.set(0, { param: "NR ENABLE", value: { type: "TOGGLE" } })
+valetonMidiControlChangeAssociations.set(21, { param: "NR THRESHOLD", value: { type: "RANGE" } })
+
+// PRE
+valetonMidiControlChangeAssociations.set("PRE", null);
+valetonMidiControlChangeAssociations.set(1, { param: "PRE ENABLE", value: { type: "TOGGLE" } })
+valetonMidiControlChangeAssociations.set(11, { param: "PRE TYPE", value: { type: "CHOICE", values: { 0: "Comp", 1: "Comp 4", 2: "Boost", 3: "Micro Boost", 4: "B-Boost", 5: "Toucher", 6: "Crier", 7: "Octa", 8: "Pitch", 9: "Detune"} } })
+valetonMidiControlChangeAssociations.set(31, { param: "PRE PARAM0", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(32, { param: "PRE PARAM1", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(33, { param: "PRE PARAM2", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(34, { param: "PRE PARAM3", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(35, { param: "PRE PARAM4", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(36, { param: "PRE PARAM5", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(37, { param: "PRE PARAM6", value: { type: "RANGE" } })
+
+// DST  
+valetonMidiControlChangeAssociations.set("DST", null);
+valetonMidiControlChangeAssociations.set(2, { param: "DST ENABLE", value: { type: "TOGGLE" } })
+valetonMidiControlChangeAssociations.set(12, { param: "DST TYPE", value: { type: "CHOICE", values: { 0: "Green OD", 1: "Yellow OD", 2: "Super OD", 3: "SM Dist", 4: "Plustortion", 5: "La Charger", 6: "Darktale", 7: "Sora Fuzz", 8: "Red Haze", 9: "Bass OD"} } })
+valetonMidiControlChangeAssociations.set(38, { param: "DST PARAM0", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(39, { param: "DST PARAM1", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(40, { param: "DST PARAM2", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(41, { param: "DST PARAM3", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(42, { param: "DST PARAM4", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(43, { param: "DST PARAM5", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(44, { param: "DST PARAM6", value: { type: "RANGE" } })
+
+// AMP
+valetonMidiControlChangeAssociations.set("AMP", null);
+valetonMidiControlChangeAssociations.set(3, { param: "AMP ENABLE", value: { type: "TOGGLE" } })
+valetonMidiControlChangeAssociations.set(13, { param: "AMP TYPE", value: { type: "CHOICE", values: { 0: "Tweedy", 1: "Bellman 59N", 2: "Dark Twin", 3: "Foxy 30N", 4: "J-120 Clean", 5: "Match Clean", 6: "L-Star Clean", 7: "UK 45", 8: "UK 50 JP", 9: "UK 800", 10: "Bellman 59B", 11: "Foxy 30TB", 12: "Sup Dual OD", 13: "Solo 100 OD", 14: "Z38 OD", 15: "Bad KT OD", 16: "Juice R100", 17: "Dizz VH", 18: "Dizz VH+", 19: "Eagle 120", 20: "EV51", 21: "Solo 100 LD", 22: "Mess DualV", 23: "Mess DualM", 24: "Power LD", 25: "Flagman+", 26: "Bog RedV", 27: "Classic Bass", 28: "Foxy Bass", 29: "Mess Bass", 30: "AC Pre1", 31: "AC Pre2"} } })
+valetonMidiControlChangeAssociations.set(46, { param: "AMP PARAM0", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(47, { param: "AMP PARAM1", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(48, { param: "AMP PARAM2", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(49, { param: "AMP PARAM3", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(50, { param: "AMP PARAM4", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(51, { param: "AMP PARAM5", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(52, { param: "AMP PARAM6", value: { type: "RANGE" } })
+
+// CAB
+valetonMidiControlChangeAssociations.set("CAB", null);
+valetonMidiControlChangeAssociations.set(4, { param: "CAB ENABLE", value: { type: "TOGGLE" } })
+valetonMidiControlChangeAssociations.set(14, { param: "CAB TYPE", value: { type: "CHOICE", values: { 0: "TWD CP", 1: "Dark VIT", 2: "Foxy 1x12", 3: "L-Star 1x12", 4: "Dark CS 2x12", 5: "Dark Twin 2x12", 6: "Sup Star 2x12", 7: "J-120 2x12", 8: "Foxy 2x12", 9: "UK Grn 2x12", 10: "UK Grn 4x12", 11: "Bog 4x12", 12: "Dizz 4x12", 13: "EV 4x12", 14: "Solo 4x12", 15: "Mess 4x12", 16: "Eagle 4x12", 17: "Juice 4x12", 18: "Bellman 2x12", 19: "Ampg 4x10"} } })
+valetonMidiControlChangeAssociations.set(46, { param: "CAB VOLUME", value: { type: "RANGE" } })
+
+// EQ
+valetonMidiControlChangeAssociations.set("EQ", null);
+valetonMidiControlChangeAssociations.set(5, { param: "EQ ENABLE", value: { type: "TOGGLE" } })
+valetonMidiControlChangeAssociations.set(15, { param: "EQ TYPE", value: { type: "CHOICE", values: { 0: "Guitae EQ1", 1: "Guitar EQ2", 2: "Bass EQ1", 3: "Bass EQ2", 4: "Mess EQ"} } })
+valetonMidiControlChangeAssociations.set(62, { param: "EQ PARAM0", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(63, { param: "EQ PARAM1", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(64, { param: "EQ PARAM2", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(65, { param: "EQ PARAM3", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(66, { param: "EQ PARAM4", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(67, { param: "EQ PARAM5", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(68, { param: "EQ PARAM6", value: { type: "RANGE" } })
+
+// MOD
+valetonMidiControlChangeAssociations.set("MOD", null);
+valetonMidiControlChangeAssociations.set(6, { param: "MOD ENABLE", value: { type: "TOGGLE" } })
+valetonMidiControlChangeAssociations.set(16, { param: "MOD TYPE", value: { type: "CHOICE", values: { 0: "A-Chorus", 1: "B-Chorus", 2: "Jet", 3: "N-Jet", 4: "O-Phase", 5: "M-Vibe", 6: "V-Roto", 7: "Vibrato", 8: "O-Trem", 9: "Sine Trem", 10: "Bias Trem"} } })
+valetonMidiControlChangeAssociations.set(70, { param: "MOD PARAM0", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(71, { param: "MOD PARAM1", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(72, { param: "MOD PARAM2", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(73, { param: "MOD PARAM3", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(74, { param: "MOD PARAM4", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(75, { param: "MOD PARAM5", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(76, { param: "MOD PARAM6", value: { type: "RANGE" } })
+
+// DLY
+valetonMidiControlChangeAssociations.set("DLY", null);
+valetonMidiControlChangeAssociations.set(7, { param: "DLY ENABLE", value: { type: "TOGGLE" } })
+valetonMidiControlChangeAssociations.set(17, { param: "DLY TYPE", value: { type: "CHOICE", values: { 0: "Pure", 1: "Analog", 2: "Slapback", 3: "Sweet Echo", 4: "Tape", 5: "Tube", 6: "Rev Echo", 7: "Ring Echo", 8: "Sweep Echo", 9: "Ping Pong"} } })
+valetonMidiControlChangeAssociations.set(78, { param: "DLY PARAM0", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(79, { param: "DLY PARAM1", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(80, { param: "DLY PARAM2", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(81, { param: "DLY PARAM3", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(82, { param: "DLY PARAM4", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(83, { param: "DLY PARAM5", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(84, { param: "DLY PARAM6", value: { type: "RANGE" } })
+
+// RVB
+valetonMidiControlChangeAssociations.set("RVB", null);
+valetonMidiControlChangeAssociations.set(8, { param: "RVB ENABLE", value: { type: "TOGGLE" } })
+valetonMidiControlChangeAssociations.set(18, { param: "RVB TYPE", value: { type: "CHOICE", values: { 0: "Air", 1: "Room", 2: "Hall", 3: "Church", 4: "Plate L", 5: "Plate", 6: "Spring", 7: "N-Star", 8: "Deepsea", 9: "Sweet Space"} } })
+valetonMidiControlChangeAssociations.set(86, { param: "RVB PARAM0", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(87, { param: "RVB PARAM1", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(88, { param: "RVB PARAM2", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(89, { param: "RVB PARAM3", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(90, { param: "RVB PARAM4", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(91, { param: "RVB PARAM5", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(92, { param: "RVB PARAM6", value: { type: "RANGE" } })
+
+// NS
+valetonMidiControlChangeAssociations.set("NS", null);
+valetonMidiControlChangeAssociations.set(10, { param: "NS ENABLE", value: { type: "TOGGLE" } })
+valetonMidiControlChangeAssociations.set(19, { param: "NS TYPE", value: { type: "CHOICE", values: { 0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9",  10: "10", 11: "11", 12: "12", 13: "13", 14: "14", 15: "15", 16: "16", 17: "17", 18: "18", 19: "19",  20: "20", 21: "21", 22: "22", 23: "23", 24: "24", 25: "25", 26: "26", 27: "27", 28: "28", 29: "29", 30: "30", 31: "31", 32: "32", 33: "33", 34: "34", 35: "35", 36: "36", 37: "37", 38: "38", 39: "39", 40: "40", 41: "41", 42: "42", 43: "43", 44: "44", 45: "45", 46: "46", 47: "47", 48: "48", 49: "49", 50: "50", 51: "51", 52: "52", 53: "53", 54: "54", 55: "55", 56: "56", 57: "57", 58: "58", 59: "59", 60: "60", 61: "61", 62: "62", 63: "63", 64: "64", 65: "65", 66: "66", 67: "67", 68: "68", 69: "69", 70: "70", 71: "71", 72: "72", 73: "73", 74: "74", 75: "75", 76: "76", 77: "77", 78: "78", 79: "79"} } })
+valetonMidiControlChangeAssociations.set(94, { param: "NS PARAM0", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(95, { param: "NS PARAM1", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(96, { param: "NS PARAM2", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(97, { param: "NS PARAM3", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(98, { param: "NS PARAM4", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(99, { param: "NS PARAM5", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(100, { param: "NS PARAM6", value: { type: "RANGE" } })
+
+
+// GLOBAL
+valetonMidiControlChangeAssociations.set("GLOBAL", null);
+valetonMidiControlChangeAssociations.set(118, { param: "BPM", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(119, { param: "TAP TEMPO", value: { type: "TOGGLE" } })
+valetonMidiControlChangeAssociations.set(120, { param: "INPUT TRIM", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(121, { param: "CABSIM BYPASS", value: { type: "TOGGLE" } })
+valetonMidiControlChangeAssociations.set(122, { param: "GLOBAL VOLUME", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(123, { param: "RECORD LEVEL", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(124, { param: "MONITOR LEVEL", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(125, { param: "BT LEVEL", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(127, { param: "SET PRESET", value: { type: "RANGE" } })
 
 // tap tempo
 let globalTapTempo = new TapTempo();
@@ -697,9 +826,7 @@ function onload(event) {
     // initialize animations
     bpmBlink();
     delayBlink();
-    modulationAnimate();
-    populateExternalFootswitches();
-    populateInternalFootswitches();
+    modulationAnimate(); 
     setEffectIcons();    
     
     document.addEventListener('mouseup', () => {
@@ -2887,7 +3014,8 @@ function processReturnCmd(data) {
 
                             // General
                             case ValetonParameters.VALETON_PARAM_PATCH_VOLUME: {
-                                //todo
+                                configureParamRange("val_pt_vol", value, min, max);
+                                setParamData("val_pt_vol", parseInt(key));
                                 break;
                             }
                             case ValetonParameters.VALETON_PARAM_EFFECT_SLOT_0: {
@@ -3404,6 +3532,11 @@ function processReturnCmd(data) {
                     updateVisibleTabs("Valeton");
                     break;
             }
+
+            // now we know modeller type, update footswitch stuff
+            populateExternalFootswitches();
+            populateInternalFootswitches();
+            break;
 
         case 'GETSYNCCOMPLETE':
             var syncState = isSyncDone;
@@ -4143,11 +4276,28 @@ function modulationAnimate() {
 
 // External footswitch control
 function populateExternalFootswitches() {
+    var midi_map;
+
+    switch (modellerType)
+    {
+        case AMP_MODELLER_TONEX_ONE:
+        case AMP_MODELLER_TONEX:
+        default:
+        {    
+            midi_map = tonexMidiControlChangeAssociations;
+        } break;
+
+        case AMP_MODELLER_VALETON_GP5:
+        {
+            midi_map = valetonMidiControlChangeAssociations;
+        } break;
+    }
+
     for (i=1; i<=8; i++) {
         var select = document.getElementById(`extfx${i}cc`);
         var optgroup = null;
 
-        for (const [key, value] of midiControlChangeAssociations) {
+        for (const [key, value] of midi_map) {
             if (typeof key === "string") {
                 optgroup = document.createElement("optgroup");
                 optgroup.label = key;
@@ -4169,8 +4319,25 @@ function populateExternalFootswitches() {
 }
 
 function extFSChanged(fx) {
+    var midi_map;
+
+    switch (modellerType)
+    {
+        case AMP_MODELLER_TONEX_ONE:
+        case AMP_MODELLER_TONEX:
+        default:
+        {    
+            midi_map = tonexMidiControlChangeAssociations;
+        } break;
+
+        case AMP_MODELLER_VALETON_GP5:
+        {
+            midi_map = valetonMidiControlChangeAssociations;
+        } break;
+    }
+
     var controlChange = document.getElementById(`${fx}cc`);
-    var association = midiControlChangeAssociations.get(parseInt(controlChange.value));
+    var association = midi_map.get(parseInt(controlChange.value));
 
     var number1 = document.getElementById(`${fx}v1`);
     var number2 = document.getElementById(`${fx}v2`);
@@ -4234,8 +4401,25 @@ function setExtFSValue(objname, value) {
 
 
 function getExtFSValue(fs, value) {
+    var midi_map;
+
+    switch (modellerType)
+    {
+        case AMP_MODELLER_TONEX_ONE:
+        case AMP_MODELLER_TONEX:
+        default:
+        {    
+            midi_map = tonexMidiControlChangeAssociations;
+        } break;
+
+        case AMP_MODELLER_VALETON_GP5:
+        {
+            midi_map = valetonMidiControlChangeAssociations;
+        } break;
+    }
+
     var extfxcc = document.getElementById(`extfx${fs}cc`).value;
-    var association = midiControlChangeAssociations.get(parseInt(extfxcc));
+    var association = midi_map.get(parseInt(extfxcc));
 
     switch (association.value.type) {
         case "RANGE":
@@ -4254,11 +4438,28 @@ function getExtFSValue(fs, value) {
 }
 
 function populateInternalFootswitches() {
+    var midi_map;
+
+    switch (modellerType)
+    {
+        case AMP_MODELLER_TONEX_ONE:
+        case AMP_MODELLER_TONEX:
+        default:
+        {    
+            midi_map = tonexMidiControlChangeAssociations;
+        } break;
+
+        case AMP_MODELLER_VALETON_GP5:
+        {
+            midi_map = valetonMidiControlChangeAssociations;
+        } break;
+    }
+
     for (i=1; i<=4; i++) {
         var select = document.getElementById(`intfx${i}cc`);
         var optgroup = null;
 
-        for (const [key, value] of midiControlChangeAssociations) {
+        for (const [key, value] of midi_map) {
             if (typeof key === "string") {
                 optgroup = document.createElement("optgroup");
                 optgroup.label = key;
@@ -4280,8 +4481,25 @@ function populateInternalFootswitches() {
 }
 
 function getIntFSValue(fs, value) {
+    var midi_map;
+
+    switch (modellerType)
+    {
+        case AMP_MODELLER_TONEX_ONE:
+        case AMP_MODELLER_TONEX:
+        default:
+        {    
+            midi_map = tonexMidiControlChangeAssociations;
+        } break;
+
+        case AMP_MODELLER_VALETON_GP5:
+        {
+            midi_map = valetonMidiControlChangeAssociations;
+        } break;
+    }
+
     var intfxcc = document.getElementById(`intfx${fs}cc`).value;
-    var association = midiControlChangeAssociations.get(parseInt(intfxcc));
+    var association = midi_map.get(parseInt(intfxcc));
 
     switch (association.value.type) {
         case "RANGE":

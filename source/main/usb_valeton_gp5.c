@@ -112,6 +112,7 @@ static const char *TAG = "app_Valeton_GP5";
 #define VALETON_GP5_RX_TEMP_BUFFER_SIZE             8192
 #define VALETON_GP5_TX_TEMP_BUFFER_SIZE             1024
 #define VALETON_GP5_USB_TX_BUFFER_SIZE              128
+#define VALETON_GP5_INTER_MESSAGE_DELAY             20  // msec
 
 enum CommsState
 {
@@ -1744,6 +1745,8 @@ static void usb_valeton_gp5_set_global(uint16_t param_index, float value)
 
     usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
 
+    vTaskDelay(VALETON_GP5_INTER_MESSAGE_DELAY);
+
     // read back to update UI
     usb_valeton_gp5_request_globals();
 }
@@ -1770,8 +1773,8 @@ static void usb_valeton_gp5_set_patch_volume(float value)
         temp_val = (uint16_t)value;
     }
 
-    midi_tx[10] = temp_val >> 8;
-    midi_tx[11] = temp_val & 0xFF;
+    midi_tx[10] = (uint8_t)(temp_val / 16);
+    midi_tx[11] = (uint8_t)(temp_val % 16);
 
     ESP_LOGI(TAG, "Set Patch volume %f", value);
 
@@ -1779,6 +1782,16 @@ static void usb_valeton_gp5_set_patch_volume(float value)
     //ESP_LOG_BUFFER_HEXDUMP(TAG, midi_tx, sizeof(midi_tx), ESP_LOG_INFO);
 
     usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
+
+    // if we have messages waiting in the queue, it will trigger another
+    // change that will overwrite this one. Skip the UI refresh to save time
+    if (uxQueueMessagesWaiting(input_queue) == 0)
+    {
+        vTaskDelay(VALETON_GP5_INTER_MESSAGE_DELAY);
+
+        // read back params to get the changed value
+        usb_valeton_gp5_request_preset_params();
+    }
 }
 
 /****************************************************************************
@@ -1866,6 +1879,8 @@ static esp_err_t usb_valeton_gp5_send_single_parameter(uint16_t index, float val
         // change that will overwrite this one. Skip the UI refresh to save time
         if (uxQueueMessagesWaiting(input_queue) == 0)
         {
+            vTaskDelay(VALETON_GP5_INTER_MESSAGE_DELAY);
+
             usb_valeton_gp5_request_preset_params();
         }
 

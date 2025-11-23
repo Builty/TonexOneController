@@ -62,6 +62,7 @@
         <button class="tablinks" data-show-for="Valeton" onclick="openTab(event, 'ValDly')">Dly</button>
         <button class="tablinks" data-show-for="Valeton" onclick="openTab(event, 'ValRvb')">Rvb</button>
         <button class="tablinks" data-show-for="Valeton" onclick="openTab(event, 'ValNS')">NS</button>
+        <button class="tablinks" data-show-for="Valeton" onclick="openTab(event, 'ValPatch')">Patch</button>
         <button class="tablinks" data-show-for="Valeton" onclick="openTab(event, 'ValGlobal')">Global</button>
         
         <!-- Common tabs -->
@@ -1243,6 +1244,18 @@
         </div>
     </div>
 
+    <div id="ValPatch" class="tabcontent">
+        <div class="col py-3 text-white">
+            <h5 class="selected_text">Patch</h5>
+            <p class="lead">
+                <div class="container">
+                    <label for="val_pt_vol" class="form-label">Patch Volume</label>
+                    <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_pt_vol">
+                </div>
+            </p>
+        </div>
+    </div>
+
     <div id="ValGlobal" class="tabcontent">
         <div class="col py-3 text-white">
             <h5 class="selected_text">Global</h5>
@@ -2067,7 +2080,7 @@
                 <div class="container">
                     <div class="form-check form-switch">
                        <input class="form-check-input" type="checkbox" role="switch" value="on" id="looparound">
-                       <label class="form-check-label" for="looparound">Preset and Bank switching loop around</label>
+                       <label class="form-check-label" for="looparound">Preset/Bank switch loop</label>
                     </div> 
                 </div>
                 <br>
