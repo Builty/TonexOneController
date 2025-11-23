@@ -3331,31 +3331,38 @@ function processReturnCmd(data) {
 
                             // Globals
                             case ValetonParameters.VALETON_GLOBAL_BPM: {
-                                // Your code here
+                                configureParamRange("val_gb_bpm", value, min, max, 1);
+                                setParamData("val_gb_bpm", parseInt(key));
                                 break;
                             }
                             case ValetonParameters.VALETON_GLOBAL_INPUT_TRIM: {
-                                // Your code here
+                                configureParamRange("val_gb_trim", value, min, max, 1);
+                                setParamData("val_gb_trim", parseInt(key));
                                 break;
                             }
                             case ValetonParameters.VALETON_GLOBAL_CABSIM_BYPASS: {
-                                // Your code here
+                                configureParamSwitch("val_gb_cabsim", value);
+                                setParamData("val_gb_cabsim", parseInt(key));
                                 break;
                             }
                             case ValetonParameters.VALETON_GLOBAL_MASTER_VOLUME: {
-                                // Your code here
+                                configureParamRange("val_gb_vol", value, min, max, 1);
+                                setParamData("val_gb_vol", parseInt(key));
                                 break;
                             }
                             case ValetonParameters.VALETON_GLOBAL_RECORD_LEVEL: {
-                                // Your code here
+                                configureParamRange("val_gb_rec", value, min, max, 1);
+                                setParamData("val_gb_rec", parseInt(key));
                                 break;
                             }
                             case ValetonParameters.VALETON_GLOBAL_MONITOR_LEVEL: {
-                                // Your code here
+                                configureParamRange("val_gb_mon", value, min, max, 1);
+                                setParamData("val_gb_mon", parseInt(key));
                                 break;
                             }
                             case ValetonParameters.VALETON_GLOBAL_BT_LEVEL: {
-                                // Your code here
+                                configureParamRange("val_gb_bt", value, min, max, 1);
+                                setParamData("val_gb_bt", parseInt(key));
                                 break;
                             }
                             case ValetonParameters.VALETON_GLOBAL_LAST: {
@@ -4038,14 +4045,35 @@ function TapTempo() {
 }
 
 function globalTempoTap() {
-    let input = document.getElementById("gb_bpm");
-    let bpm = globalTapTempo.tap(input);
-    if (bpm > 0) {
-        setParamValue("gb_bpm", bpm);
-        showValue(input, false);
+    switch (modellerType)
+    {
+        case AMP_MODELLER_TONEX_ONE:
+        case AMP_MODELLER_TONEX:
+        default:
+        {    
+            let input = document.getElementById("gb_bpm");
+            let bpm = globalTapTempo.tap(input);
+            if (bpm > 0) {
+                setParamValue("gb_bpm", bpm);
+                showValue(input, false);
 
-        var event = new Event('change');
-        input.dispatchEvent(event);
+                var event = new Event('change');
+                input.dispatchEvent(event);
+            }
+        } break;
+        
+        case AMP_MODELLER_VALETON_GP5:
+        {    
+            let input = document.getElementById("val_gb_bpm");
+            let bpm = globalTapTempo.tap(input);
+            if (bpm > 0) {
+                setParamValue("val_gb_bpm", bpm);
+                showValue(input, false);
+
+                var event = new Event('change');
+                input.dispatchEvent(event);
+            }
+        } break;
     }
 }
 

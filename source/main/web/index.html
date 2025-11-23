@@ -62,9 +62,10 @@
         <button class="tablinks" data-show-for="Valeton" onclick="openTab(event, 'ValDly')">Dly</button>
         <button class="tablinks" data-show-for="Valeton" onclick="openTab(event, 'ValRvb')">Rvb</button>
         <button class="tablinks" data-show-for="Valeton" onclick="openTab(event, 'ValNS')">NS</button>
+        <button class="tablinks" data-show-for="Valeton" onclick="openTab(event, 'ValGlobal')">Global</button>
         
         <!-- Common tabs -->
-        <button class="tablinks" data-show-for="Tonex Valeton" onclick="openTab(event, 'Presets')">Presets</button>
+        <button class="tablinks" data-show-for="Tonex Valeton" onclick="openTab(event, 'Presets')">Preset</button>
         <button class="tablinks" data-show-for="Tonex Valeton" onclick="openTab(event, 'Bluetooth')">BT</button>
         <button class="tablinks" data-show-for="Tonex Valeton" onclick="openTab(event, 'Midi')">Midi</button>
         <button class="tablinks" data-show-for="Tonex Valeton" onclick="openTab(event, 'Internal')">Int</button>
@@ -1237,6 +1238,56 @@
                 <div class="container">
                     <label for="val_ns_param4" class="form-label">Param4</label>
                     <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_ns_param4">
+                </div>
+            </p>
+        </div>
+    </div>
+
+    <div id="ValGlobal" class="tabcontent">
+        <div class="col py-3 text-white">
+            <h5 class="selected_text">Global</h5>
+            <p class="lead">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="val_gb_cabsim">
+                                <label class="form-check-label" for="val_gb_cabsim">Cab Bypass</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="container">
+                    <div id="val_gb_tap" class="bpm-tap d-flex user-select-none" onclick="globalTempoTap()" ontouchstart="">
+                        <div class="justify-content-center align-self-center text-center w-100">TAP</div>
+                    </div>
+                </div>
+                <div class="container">
+                    <label for="val_gb_bpm" class="form-label">BPM</label>
+                    <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_gb_bpm">
+                </div>
+                <div class="container">
+                    <label for="val_gb_trim" class="form-label">Input Level</label>
+                    <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_gb_trim">
+                </div>
+                <div class="container">
+                    <label for="val_gb_vol" class="form-label">Master Volume</label>
+                    <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_gb_vol">
+                </div>
+                <div class="container">
+                    <label for="val_gb_rec" class="form-label">Record Level</label>
+                    <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_gb_rec">
+                </div>
+                <div class="container">
+                    <label for="val_gb_mon" class="form-label">Monitor Level</label>
+                    <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_gb_mon">
+                </div>
+                <div class="container">
+                    <label for="val_gb_bt" class="form-label">BT Level</label>
+                    <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_gb_bt">
                 </div>
             </p>
         </div>

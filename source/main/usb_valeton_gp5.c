@@ -116,7 +116,12 @@ static const char *TAG = "app_Valeton_GP5";
 enum CommsState
 {
     COMMS_STATE_IDLE,
-    COMMS_STATE_SYNC,
+    COMMS_STATE_GET_PRESET_DATA,
+    COMMS_STATE_GET_CURRENT_PRESET,
+    COMMS_STATE_GET_CURRENT_PRESET_PARAMS,
+    COMMS_STATE_GET_GLOBALS,
+    COMMS_STATE_GET_SNAPTONES,
+    COMMS_STATE_GET_IR,
     COMMS_STATE_READY
 };
 
@@ -139,6 +144,16 @@ typedef struct __attribute__ ((packed))
     uint32_t byte_sequence;
 } EffectMapEntry_t;
 
+typedef struct
+{
+    uint8_t GotPresetData : 1;
+    uint8_t GotCurrentPreset : 1;
+    uint8_t GotCurrentPresetParams : 1;
+    uint8_t GotGlobals : 1;
+    uint8_t GotSnaptones : 1;
+    uint8_t GotIRs : 1;
+} tBootFlags;
+
 /*
 ** Static vars
 */
@@ -149,7 +164,7 @@ static QueueHandle_t input_queue;
 static volatile tInputBufferEntry* InputBuffers;
 static uint8_t* ProcessingBuffer;
 static uint8_t* TransmitBuffer;
-static uint8_t boot_sync_done = 0;
+static tBootFlags BootFlags;
 
 static const EffectMapEntry_t effect_map_nr[] = {
                                             {VALETON_EFFECT_NR_GATE, 0x1B000000},
@@ -888,6 +903,27 @@ static int16_t usb_valeton_gp5_convert_hex_byte_pair_s16(uint8_t byte1, uint8_t 
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+static void usb_valeton_gp5_request_ui_update(void) 
+{
+    // if we have messages waiting in the queue, it will trigger another
+    // change that will overwrite this one. Skip the UI refresh to save time
+    if (uxQueueMessagesWaiting(input_queue) == 0)
+    {        
+        // signal to refresh param UI
+        UI_RefreshParameterValues();
+
+        // update web UI
+        wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint32_t len) 
 {
     uint32_t read_index = 0;
@@ -924,10 +960,7 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
             tModellerParameter* param_ptr;
 
             ESP_LOGI(TAG, "Got Globals");
-            
-            // debug
-            //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
-           
+                                 
             // skip to master volume
             read_index += 40;
 
@@ -958,26 +991,20 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
                 read_index += 10;
 
                 // footswitch mode is next byte
-
                 valeton_params_release_locked_access();
             }
 
-            // debug
+            // debug            
             //valeton_dump_parameters();
-            
-            // set param ranges
-            valeton_params_set_min_max();
 
-            // signal to refresh param UI
-            UI_RefreshParameterValues();
-
-            // update web UI
-            wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
-
-            control_set_sync_complete();
-
-            // request nams
-            usb_valeton_gp5_request_nams();
+            if (BootFlags.GotGlobals == 0)
+            {
+                BootFlags.GotGlobals = 1;
+            }
+            else
+            {
+                usb_valeton_gp5_request_ui_update();
+            }
         } break;
 
         case 0x1B:
@@ -993,19 +1020,16 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
         {
             // IRs
             //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
-
             ESP_LOGI(TAG, "Got IRs");
+            BootFlags.GotIRs = 1;
         } break;
 
         case 0x24:
         {
             // NAM models/Snaptones
             //ESP_LOG_BUFFER_HEXDUMP(TAG, (uint8_t*)&buffer[read_index], len - read_index, ESP_LOG_INFO);
-
             ESP_LOGI(TAG, "Got Snaptones");
-
-            // request ITs
-            usb_valeton_gp5_request_ir();
+            BootFlags.GotSnaptones = 1;
         } break;
 
         case 0x40:
@@ -1041,12 +1065,9 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
 
                 // don't smash the control input queue too hard
                 vTaskDelay(10);
-            }
-
-            // request the preset
-            usb_valeton_gp5_request_current_preset();
+            }  
             
-            ValetonGP5Data->State = COMMS_STATE_READY;
+            BootFlags.GotPresetData = 1;
         } break;
         
         case 0x41: 
@@ -1191,26 +1212,15 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
                 ESP_LOGW(TAG, "Param mutex failed!");  
             }
          
-            if (!boot_sync_done)
+            valeton_params_set_min_max();
+
+            if (BootFlags.GotCurrentPresetParams == 0)
             {
-                // request globals once only
-                usb_valeton_gp5_request_globals();
-                boot_sync_done = 1;
+                BootFlags.GotCurrentPresetParams = 1;
             }
             else
             {
-                // if we have messages waiting in the queue, it will trigger another
-                // change that will overwrite this one. Skip the UI refresh to save time
-                if (uxQueueMessagesWaiting(input_queue) == 0)
-                {
-                    valeton_params_set_min_max();
-
-                    // signal to refresh param UI
-                    UI_RefreshParameterValues();
-
-                    // update web UI
-                    wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
-                }
+                usb_valeton_gp5_request_ui_update();
             }
         } break;
 
@@ -1225,8 +1235,7 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
             // update UI
             control_sync_preset_details(current_preset, "");
 
-            // request params
-            usb_valeton_gp5_request_preset_params();
+            BootFlags.GotCurrentPreset = 1;
         } break;
         
         case 0x45:
@@ -1304,6 +1313,8 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
 
                 valeton_params_release_locked_access();
             }
+
+            usb_valeton_gp5_request_ui_update();
         } break;
 
         case 0x49:
@@ -1723,8 +1734,8 @@ static void usb_valeton_gp5_set_global(uint16_t param_index, float value)
         temp_val = (uint16_t)value;
     }
 
-    midi_tx[10] = temp_val >> 8;
-    midi_tx[11] = temp_val & 0xFF;
+    midi_tx[10] = (uint8_t)(temp_val / 16);
+    midi_tx[11] = (uint8_t)(temp_val % 16);
 
     ESP_LOGI(TAG, "Set Global %d: %f", param_index, value);
 
@@ -1732,6 +1743,9 @@ static void usb_valeton_gp5_set_global(uint16_t param_index, float value)
     //ESP_LOG_BUFFER_HEXDUMP(TAG, midi_tx, sizeof(midi_tx), ESP_LOG_INFO);
 
     usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
+
+    // read back to update UI
+    usb_valeton_gp5_request_globals();
 }
 
 /****************************************************************************
@@ -1909,21 +1923,82 @@ void usb_valeton_gp5_handle(class_driver_t* driver_obj)
     switch (ValetonGP5Data->State)
     {
         case COMMS_STATE_IDLE:
-        default:
         {
-            usb_valeton_gp5_request_preset_sync();
+           usb_valeton_gp5_request_preset_sync();
 
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
             // show sync message
             UI_SetPresetLabel(0, "Syncing....");
 #endif
 
-            ValetonGP5Data->State = COMMS_STATE_SYNC;
+            ValetonGP5Data->State = COMMS_STATE_GET_PRESET_DATA;
         } break;
 
-        case COMMS_STATE_SYNC:
+        case COMMS_STATE_GET_PRESET_DATA:
         {
-            // waiting for Sync to complete
+            if (BootFlags.GotPresetData)
+            {
+                ESP_LOGI(TAG, "Boot: Got preset data");
+                usb_valeton_gp5_request_current_preset();            
+                ValetonGP5Data->State = COMMS_STATE_GET_CURRENT_PRESET;
+            }
+        } break;
+
+        case COMMS_STATE_GET_CURRENT_PRESET:
+        {
+            if (BootFlags.GotCurrentPreset)
+            {
+                ESP_LOGI(TAG, "Boot: Got current preset");
+
+                // request params
+                usb_valeton_gp5_request_preset_params();
+                ValetonGP5Data->State = COMMS_STATE_GET_CURRENT_PRESET_PARAMS;
+            }
+        } break;
+
+        case COMMS_STATE_GET_CURRENT_PRESET_PARAMS:
+        {
+            if (BootFlags.GotCurrentPresetParams)
+            {
+                ESP_LOGI(TAG, "Boot: Got preset params");
+                usb_valeton_gp5_request_globals();
+                ValetonGP5Data->State = COMMS_STATE_GET_GLOBALS;
+            }
+        } break;
+
+        case COMMS_STATE_GET_GLOBALS:
+        {
+            if (BootFlags.GotGlobals)
+            {
+                ESP_LOGI(TAG, "Boot: Got globals");
+                usb_valeton_gp5_request_nams();
+                ValetonGP5Data->State = COMMS_STATE_GET_SNAPTONES;            
+            }
+        } break;
+
+        case COMMS_STATE_GET_SNAPTONES:
+        {
+            if (BootFlags.GotSnaptones)
+            {                
+                ESP_LOGI(TAG, "Boot: Got Snaptones");
+                //bug to fix  usb_valeton_gp5_request_ir();
+                ValetonGP5Data->State = COMMS_STATE_GET_IR;
+            }
+        } break;
+
+        case COMMS_STATE_GET_IR:
+        {
+            if (1)  // issue here to be fixed BootFlags.GotIRs)
+            {
+                ESP_LOGI(TAG, "Boot: Got IRs");
+
+                // update UI
+                usb_valeton_gp5_request_ui_update();
+
+                control_set_sync_complete();
+                ValetonGP5Data->State = COMMS_STATE_READY;
+                ESP_LOGI(TAG, "Boot: Ready");
+            }
         } break;
 
         case COMMS_STATE_READY:
@@ -2115,6 +2190,7 @@ void usb_valeton_gp5_init(class_driver_t* driver_obj, QueueHandle_t comms_queue)
     }
 
     memset((void*)ValetonGP5Data, 0, sizeof(tValetonGP5Data));
+    memset((void*)&BootFlags, 0, sizeof(BootFlags));
     ValetonGP5Data->State = COMMS_STATE_IDLE;
 
     // install Midi host driver

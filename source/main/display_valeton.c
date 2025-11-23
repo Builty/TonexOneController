@@ -672,6 +672,10 @@ void valeton_action_parameter_changed(lv_event_t * e)
     {
         usb_modify_parameter(VALETON_GLOBAL_MASTER_VOLUME, ((float)lv_slider_get_value(obj)));
     }
+    else if (obj == objects.ui_val_patch_vol_slider)
+    {
+        usb_modify_parameter(VALETON_PARAM_PATCH_VOLUME, ((float)lv_slider_get_value(obj)));
+    }
 #endif // CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI          
 }
 
@@ -3123,6 +3127,54 @@ uint8_t valeton_update_ui_parameters(void)
                     {
                         lv_obj_set_style_border_color(objects.ui_rstatus, lv_color_hex(0x563F2A), LV_PART_MAIN | LV_STATE_DEFAULT);
                     }
+                } break;
+
+                case VALETON_GLOBAL_BPM:
+                {
+                    // not exposed on UI
+                } break;
+
+                case VALETON_GLOBAL_INPUT_TRIM:
+                {
+                    lv_slider_set_value(objects.ui_val_glob_input_level_slider, round(param_entry->Value), LV_ANIM_OFF);
+                    sprintf(value_string, "%d", (int)round(param_entry->Value));
+                    lv_label_set_text(objects.ui_val_glob_input_level_value, value_string);
+                } break;
+
+                case VALETON_GLOBAL_CABSIM_BYPASS:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_obj_add_state(objects.ui_val_glob_no_cab_switch, LV_STATE_CHECKED);
+                    }
+                    else
+                    {
+                        lv_obj_clear_state(objects.ui_val_glob_no_cab_switch, LV_STATE_CHECKED);
+                    }                    
+                } break;
+
+                case VALETON_GLOBAL_MASTER_VOLUME:
+                {
+                    lv_slider_set_value(objects.ui_val_glob_master_vol_slider, round(param_entry->Value), LV_ANIM_OFF);
+                    sprintf(value_string, "%d", (int)round(param_entry->Value));
+                    lv_label_set_text(objects.ui_val_glob_master_vol_value, value_string);
+
+                    ESP_LOGI(TAG, "VALETON_GLOBAL_MASTER_VOLUME: %f", param_entry->Value);
+                } break;
+
+                case VALETON_GLOBAL_RECORD_LEVEL:
+                {
+                    // not exposed on UI
+                } break;
+
+                case VALETON_GLOBAL_MONITOR_LEVEL:
+                {
+                    // not exposed on UI
+                } break;
+
+                case VALETON_GLOBAL_BT_LEVEL:
+                {
+                    // not exposed on UI
                 } break;
 
             }
