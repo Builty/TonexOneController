@@ -107,7 +107,7 @@ static const char *TAG = "app_Valeton_GP5";
 
 
 #define VALETON_GP5_MIDI_INTERFACE_INDEX            3
-#define MAX_INPUT_BUFFERS                           2
+#define MAX_INPUT_BUFFERS                           3
 #define MAX_STATE_DATA                              512
 #define VALETON_GP5_RX_TEMP_BUFFER_SIZE             8192
 #define VALETON_GP5_TX_TEMP_BUFFER_SIZE             1024
@@ -166,6 +166,7 @@ static volatile tInputBufferEntry* InputBuffers;
 static uint8_t* ProcessingBuffer;
 static uint8_t* TransmitBuffer;
 static tBootFlags BootFlags;
+static uint32_t last_transmit_time = 0;
 
 static const EffectMapEntry_t effect_map_nr[] = {
                                             {VALETON_EFFECT_NR_GATE, 0x1B000000},
@@ -507,6 +508,15 @@ static esp_err_t usb_valeton_gp5_send_sysex(const uint8_t* buffer, uint8_t len, 
     uint8_t triplets;
     uint8_t triplet_count;
     uint8_t usb_transfer[64];
+    uint32_t current_time = xTaskGetTickCount();
+    uint32_t elapsed_time = current_time - last_transmit_time;
+
+    // don't send messages too close together
+    if (elapsed_time < VALETON_GP5_INTER_MESSAGE_DELAY)
+    {
+        vTaskDelay(VALETON_GP5_INTER_MESSAGE_DELAY - elapsed_time);
+    }
+    last_transmit_time = current_time;
 
     // packet structure - max 64 bytes to suit USB transfer size
     // 0xF0 start marker
@@ -1236,7 +1246,15 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
             // update UI
             control_sync_preset_details(current_preset, "");
 
-            BootFlags.GotCurrentPreset = 1;
+            if (BootFlags.GotCurrentPreset == 0)
+            {
+                BootFlags.GotCurrentPreset = 1;
+            }
+            else
+            {
+                // request params
+                usb_valeton_gp5_request_preset_params();
+            }
         } break;
         
         case 0x45:
@@ -1508,8 +1526,8 @@ static void __attribute__((unused)) usb_valeton_gp5_get_preset(uint8_t index)
     uint8_t midi_tx[] = {0x04, 0x03, 0x00, 0x00, 0x00, 0x00};
 
     // set the index
-    midi_tx[2] = index >> 4;
-    midi_tx[3] = index & 0x0F;
+    midi_tx[2] = (uint8_t)(index / 16);
+    midi_tx[3] = (uint8_t)(index % 16);
 
     ESP_LOGI(TAG, "Get preset %d", index);
 
@@ -1527,13 +1545,26 @@ static void usb_valeton_gp5_set_preset(uint8_t index)
 {
     ESP_LOGI(TAG, "Set preset %d", index);
 
+#if 0    
+    // issue here with random pedal lockup!
     uint8_t midi_tx[] = {0x04, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
     // set the preset index
-    midi_tx[2] = index >> 4;
-    midi_tx[3] = index & 0x0F;
+    midi_tx[2] = (uint8_t)(index / 16);
+    midi_tx[3] = (uint8_t)(index % 16);
 
     usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
+#endif
+
+    // send control change
+    uint8_t midi_tx[4];
+
+    midi_tx[0] = 0x0B;
+    midi_tx[1] = 0xB0;
+    midi_tx[2] = 0x00;
+    midi_tx[3] = index;
+
+    midi_host_data_tx_blocking(midi_dev, (const uint8_t*)midi_tx, sizeof(midi_tx), 50);
 }
 
 /****************************************************************************
@@ -1745,8 +1776,6 @@ static void usb_valeton_gp5_set_global(uint16_t param_index, float value)
 
     usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
 
-    vTaskDelay(VALETON_GP5_INTER_MESSAGE_DELAY);
-
     // read back to update UI
     usb_valeton_gp5_request_globals();
 }
@@ -1787,8 +1816,6 @@ static void usb_valeton_gp5_set_patch_volume(float value)
     // change that will overwrite this one. Skip the UI refresh to save time
     if (uxQueueMessagesWaiting(input_queue) == 0)
     {
-        vTaskDelay(VALETON_GP5_INTER_MESSAGE_DELAY);
-
         // read back params to get the changed value
         usb_valeton_gp5_request_preset_params();
     }
@@ -1879,8 +1906,6 @@ static esp_err_t usb_valeton_gp5_send_single_parameter(uint16_t index, float val
         // change that will overwrite this one. Skip the UI refresh to save time
         if (uxQueueMessagesWaiting(input_queue) == 0)
         {
-            vTaskDelay(VALETON_GP5_INTER_MESSAGE_DELAY);
-
             usb_valeton_gp5_request_preset_params();
         }
 
