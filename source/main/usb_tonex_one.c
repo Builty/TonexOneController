@@ -71,7 +71,7 @@ static const uint8_t ToneOnePresetByteMarker[] = {0xB9, 0x04, 0xB9, 0x02, 0xBC, 
 #define TONEX_ONE_RESP_OFFSET_PRESET_NAME_LEN       32
 #define TONEX_ONE_CDC_INTERFACE_INDEX               0
 
-#define MAX_INPUT_BUFFERS                           2
+#define MAX_INPUT_BUFFERS                           3
 
 #define MAX_STATE_DATA                              512
 

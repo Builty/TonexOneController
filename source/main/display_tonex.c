@@ -78,7 +78,7 @@ limitations under the License.
 #include "tonex_params.h"
 #include "platform_common.h"
 
-static const char *TAG = "app_display_tonex";
+static const char __attribute__((unused)) *TAG = "app_display_tonex";
 
 /****************************************************************************
 * NAME:        

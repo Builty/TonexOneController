@@ -721,7 +721,7 @@ valetonMidiControlChangeAssociations.set(52, { param: "AMP PARAM6", value: { typ
 valetonMidiControlChangeAssociations.set("CAB", null);
 valetonMidiControlChangeAssociations.set(4, { param: "CAB ENABLE", value: { type: "TOGGLE" } })
 valetonMidiControlChangeAssociations.set(14, { param: "CAB TYPE", value: { type: "CHOICE", values: { 0: "TWD CP", 1: "Dark VIT", 2: "Foxy 1x12", 3: "L-Star 1x12", 4: "Dark CS 2x12", 5: "Dark Twin 2x12", 6: "Sup Star 2x12", 7: "J-120 2x12", 8: "Foxy 2x12", 9: "UK Grn 2x12", 10: "UK Grn 4x12", 11: "Bog 4x12", 12: "Dizz 4x12", 13: "EV 4x12", 14: "Solo 4x12", 15: "Mess 4x12", 16: "Eagle 4x12", 17: "Juice 4x12", 18: "Bellman 2x12", 19: "Ampg 4x10"} } })
-valetonMidiControlChangeAssociations.set(46, { param: "CAB VOLUME", value: { type: "RANGE" } })
+valetonMidiControlChangeAssociations.set(54, { param: "CAB VOLUME", value: { type: "RANGE" } })
 
 // EQ
 valetonMidiControlChangeAssociations.set("EQ", null);
@@ -4190,8 +4190,9 @@ function globalTempoTap() {
                 setParamValue("gb_bpm", bpm);
                 showValue(input, false);
 
-                var event = new Event('change');
-                input.dispatchEvent(event);
+                ['input', 'change'].forEach(eventType => {
+                    input.dispatchEvent(new Event(eventType, { bubbles: true }));
+                });
             }
         } break;
         
@@ -4203,8 +4204,9 @@ function globalTempoTap() {
                 setParamValue("val_gb_bpm", bpm);
                 showValue(input, false);
 
-                var event = new Event('change');
-                input.dispatchEvent(event);
+                ['input', 'change'].forEach(eventType => {
+                    input.dispatchEvent(new Event(eventType, { bubbles: true }));
+                });
             }
         } break;
     }

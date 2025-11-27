@@ -2128,6 +2128,14 @@ void usb_valeton_gp5_handle(class_driver_t* driver_obj)
                                 // adjust delay time
                                 usb_valeton_gp5_modify_parameter(VALETON_PARAM_DLY_PARAM_1, delay_time);
                                 usb_valeton_gp5_send_single_parameter(VALETON_PARAM_DLY_PARAM_1, delay_time);
+
+                                // save the value
+                                tModellerParameter* param_ptr = NULL;
+                                if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
+                                {
+                                    param_ptr[VALETON_GLOBAL_BPM].Value = message.PayloadFloat;
+                                    valeton_params_release_locked_access();
+                                }
                             }
                             else
                             {
