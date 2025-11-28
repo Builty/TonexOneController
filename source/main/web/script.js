@@ -806,10 +806,109 @@ const THROTTLE_DELAY = 200; // ms between WebSocket sends
 let lastSendTime = 0;
 let throttleTimeout = null;
 
+// menu contents, different for each modeller
+const DEVICE_MENUS = {
+    tonex: `
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Amp</a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item menu-link" data-target="Amplifier" href="#">Amplifier</a></li>
+                <li><a class="dropdown-item menu-link" data-target="Cabinet" href="#">Cabinet</a></li>
+            </ul>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Effects</a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item menu-link" data-target="NoiseGate" href="#">Gate</a></li>
+                <li><a class="dropdown-item menu-link" data-target="Compressor" href="#">Compressor</a></li>
+                <li><a class="dropdown-item menu-link" data-target="Equalisation" href="#">EQ</a></li>
+                <li><a class="dropdown-item menu-link" data-target="Reverb" href="#">Reverb</a></li>
+                <li><a class="dropdown-item menu-link" data-target="Modulation" href="#">Modulation</a></li>
+                <li><a class="dropdown-item menu-link" data-target="Delay" href="#">Delay</a></li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link menu-link" data-target="Global" href="#">Globals</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Config</a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item menu-link" data-target="Presets" href="#">Preset Map</a></li>
+                <li><a class="dropdown-item menu-link" data-target="Bluetooth" href="#">Bluetooth</a></li>
+                <li><a class="dropdown-item menu-link" data-target="Midi" href="#">Midi</a></li>
+                <li><a class="dropdown-item menu-link" data-target="Internal" href="#">Direct FS</a></li>
+                <li><a class="dropdown-item menu-link" data-target="External" href="#">External FS</a></li>
+                <li><a class="dropdown-item menu-link" data-target="WiFi" href="#">WiFi</a></li>
+                <li><a class="dropdown-item menu-link" data-target="Miscellaneous" href="#">Miscellaneous</a></li>
+            </ul>
+        </li>
+    `,
+
+    valeton: `
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Amp</a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item menu-link" data-target="ValAmp" href="#">Amplifier</a></li>
+                <li><a class="dropdown-item menu-link" data-target="ValCab" href="#">Cabinet</a></li>
+                <li><a class="dropdown-item menu-link" data-target="ValNS" href="#">Snaptone</a></li>
+                <li><a class="dropdown-item menu-link" data-target="ValPatch" href="#">Patch</a></li>
+            </ul>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Effects</a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item menu-link" data-target="ValNR" href="#">Noise Reduction</a></li>
+                <li><a class="dropdown-item menu-link" data-target="ValPre" href="#">Preamp</a></li>
+                <li><a class="dropdown-item menu-link" data-target="ValEQ" href="#">EQ</a></li>
+                <li><a class="dropdown-item menu-link" data-target="ValDst" href="#">Distortion</a></li>
+                <li><a class="dropdown-item menu-link" data-target="ValMod" href="#">Modulation</a></li>
+                <li><a class="dropdown-item menu-link" data-target="ValDly" href="#">Delay</a></li>
+                <li><a class="dropdown-item menu-link" data-target="ValRvb" href="#">Reverb</a></li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link menu-link" data-target="ValGlobal" href="#">Globals</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Config</a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item menu-link" data-target="Presets" href="#">Preset Map</a></li>
+                <li><a class="dropdown-item menu-link" data-target="Bluetooth" href="#">Bluetooth</a></li>
+                <li><a class="dropdown-item menu-link" data-target="Midi" href="#">Midi</a></li>
+                <li><a class="dropdown-item menu-link" data-target="Internal" href="#">Direct FS</a></li>
+                <li><a class="dropdown-item menu-link" data-target="External" href="#">External FS</a></li>
+                <li><a class="dropdown-item menu-link" data-target="WiFi" href="#">WiFi</a></li>
+                <li><a class="dropdown-item menu-link" data-target="Miscellaneous" href="#">Miscellaneous</a></li>
+            </ul>
+        </li>
+    `
+};
+
+
 function onload(event) {
-    // Get the element with id="defaultOpen" and click on it
-    document.getElementById("defaultOpen").click();
-    
+    document.querySelectorAll('.menu-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();  // prevent # jump
+
+            const target = this.getAttribute('data-target');
+            const section = document.getElementById(target);
+
+            // Hide all
+            document.querySelectorAll('.content-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+
+            // Show clicked one
+            if (section) section.classList.add('active');
+
+            // Close mobile menu
+            const navbar = document.querySelector('.navbar-collapse');
+            if (navbar.classList.contains('show')) {
+                bootstrap.Collapse.getInstance(navbar)?.hide();
+            }
+        });
+    });
+
     document.getElementById("defaultFX").click();
     document.getElementById("defaultIFX").click();
 
@@ -3516,23 +3615,44 @@ function processReturnCmd(data) {
             // set modeller type
             modellerType = data['MODELLER_TYPE'];
 
-            // enable the relevant menu tabs
-            document.querySelectorAll('.tab-group').forEach(group => {
-                group.classList.remove('active');
-            });
+            // enable the relevant menu
+            const menuContainer = document.getElementById('nav-items-list');
 
             switch (modellerType) {
                 case AMP_MODELLER_TONEX_ONE:
                 case AMP_MODELLER_TONEX:
                 default:
-                    updateVisibleTabs("Tonex");
+                    console.log("Setting Tonex menu");
+                    menuContainer.innerHTML = DEVICE_MENUS['tonex'];
                     break;
 
                 case AMP_MODELLER_VALETON_GP5:
-                    updateVisibleTabs("Valeton");
+                    console.log("Setting Valeton menu");
+                    menuContainer.innerHTML = DEVICE_MENUS['valeton'];
                     break;
             }
 
+            //console.log('Injected HTML:', menuContainer.innerHTML);
+            menuContainer.style.display = 'flex';
+            menuContainer.parentElement.style.display = 'block';
+
+            document.querySelectorAll('.menu-link').forEach(link => {
+                link.onclick = function(e) {
+                    e.preventDefault();
+                    const target = this.getAttribute('data-target');
+                    console.log('Clicked:', target);
+                    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                    const section = document.getElementById(target);
+                    if (section) section.classList.add('active');
+                };
+            });
+
+            document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+                // Destroy any old instance first (prevents duplicates)
+                if (toggle.dropdown) toggle.dropdown.dispose();
+                toggle.dropdown = new bootstrap.Dropdown(toggle);
+            });
+            
             // now we know modeller type, update footswitch stuff
             populateExternalFootswitches();
             populateInternalFootswitches();

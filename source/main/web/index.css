@@ -34,6 +34,7 @@ input[type=range]::-webkit-slider-thumb {
     border-radius: 50%;
     background: #FB9230;
     margin-top: -4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6);
 }
 
 input[type=range]:focus {
@@ -41,20 +42,7 @@ input[type=range]:focus {
 }
 
 input[type=range]:focus::-webkit-slider-runnable-track {
-    background: #ccc;
-}
-
-.nav-pills > li > a.active {
-  background-color: #ffffff !important;
-  color: #FB9230 !important;
-}
-
-.nav-pills > li > a:hover {
-  color: #FB9230 !important;
-}
-
-.nav-link-color {
-  color: #FB9230;
+    background: #888;
 }
 
 .tab {
@@ -412,3 +400,40 @@ canvas {
     .navbar-brand { margin-bottom: 8px !important; }  
 }
 
+.content-section {
+    display: none;                    /* hidden by default */
+    padding: 0.4rem 0.4rem;        /* reduced padding, especially on mobile */
+    min-height: calc(100vh - 66px);  /* full height minus navbar height */
+}
+.content-section.active {
+    display: block;                   /* shown when it has .active */
+}
+
+/* Optional smooth fade */
+.content-section {
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+.content-section.active {
+    opacity: 1;
+}
+
+.content-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 90vw;               
+}
+
+/* Preset selector: full-width on small screens, nice max on large screens */
+#set_preset {
+    width: 300px;
+    max-width: 500px;        /* looks perfect on desktop/tablet */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* On phones: add safe side padding so it never touches the edge */
+@media (max-width: 576px) {
+    .px-3 { padding-left: 1rem !important; padding-right: 1rem !important; }
+    #set_preset { max-width: none !important; }   /* full width but with padding */
+}
