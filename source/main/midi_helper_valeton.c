@@ -91,7 +91,6 @@ esp_err_t midi_helper_valeton_adjust_param_via_midi(uint8_t change_num, uint8_t 
 {
     uint16_t param = 0;
     float value = 0.0f;
-    tModellerParameter* param_ptr;
 
     switch (change_num)
     {
@@ -1140,7 +1139,6 @@ esp_err_t midi_helper_valeton_adjust_param_via_midi(uint8_t change_num, uint8_t 
 uint16_t midi_helper_valeton_get_param_for_change_num(uint8_t change_num, uint8_t midi_value_1, uint8_t midi_value_2)
 {
     uint16_t param = TONEX_UNKNOWN;
-    tModellerParameter* param_ptr;
 
     switch (change_num)
     {

@@ -5086,7 +5086,7 @@ void create_screen_val_settings() {
                 }
                 {
                     // ui_ValGlobTab
-                    lv_obj_t *obj = lv_tabview_add_tab(parent_obj, "Glob");
+                    lv_obj_t *obj = lv_tabview_add_tab(parent_obj, "Glb");
                     objects.ui_val_glob_tab = obj;
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE|LV_OBJ_FLAG_SCROLL_CHAIN_HOR|LV_OBJ_FLAG_SCROLL_CHAIN_VER|LV_OBJ_FLAG_SCROLL_ELASTIC|LV_OBJ_FLAG_SCROLL_MOMENTUM|LV_OBJ_FLAG_SCROLL_WITH_ARROW);
                     lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);

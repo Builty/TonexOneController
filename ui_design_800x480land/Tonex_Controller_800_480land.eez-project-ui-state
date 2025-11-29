@@ -1,6 +1,7 @@
 {
   "navigation": {
     "selectedUserPageObject": "[Tonex_Controller_800_480land.eez-project]:/userPages/2",
+    "selectedBitmapObject": "[Tonex_Controller_800_480land.eez-project]:/bitmaps/113",
     "subnavigationSelectedItems": {}
   },
   "layoutModel": {
@@ -1020,11 +1021,7 @@
       "selection": {
         "0": {
           "0": {
-            "11": {
-              "3": {
-                "$selected": true
-              }
-            }
+            "$selected": true
           }
         }
       },

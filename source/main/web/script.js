@@ -839,7 +839,7 @@ const DEVICE_MENUS = {
                 <li><a class="dropdown-item menu-link" data-target="Internal" href="#">Direct FS</a></li>
                 <li><a class="dropdown-item menu-link" data-target="External" href="#">External FS</a></li>
                 <li><a class="dropdown-item menu-link" data-target="WiFi" href="#">WiFi</a></li>
-                <li><a class="dropdown-item menu-link" data-target="Miscellaneous" href="#">Miscellaneous</a></li>
+                <li><a class="dropdown-item menu-link" data-target="Miscellaneous" href="#">Misc</a></li>
             </ul>
         </li>
     `,
