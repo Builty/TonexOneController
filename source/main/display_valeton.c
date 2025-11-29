@@ -3011,7 +3011,18 @@ uint8_t valeton_update_ui_parameters(void)
 
                 case VALETON_GLOBAL_BPM:
                 {
-                    //todo
+                    // show value and units
+                    // todo 
+                    // sprintf(value_string, "%1.1f", param_entry->Value);
+                    //lv_label_set_text(objects.ui_val_bpm_value, value_string);                                                                                                         
+
+                    char buf[128];
+                    sprintf(buf, "%.1f", param_entry->Value);
+                    lv_label_set_text(objects.ui_bpm_value_label, buf);
+                    
+#if CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR                            
+                    ui_BPMAnimate(objects.ui_bpm_indicator, 1000 * 60 / param_entry->Value);
+#endif                            
                 } break;
     
                 case VALETON_GLOBAL_INPUT_TRIM:
