@@ -1,10 +1,12 @@
-# Tonex Controller: An open-source controller and display interface for the IK Multimedia Tonex One and Tonex guitar pedals
+# Tonex Controller: An open-source controller and display interface for the IK Multimedia Tonex One, Tonex Pedal, and Valeton GP5
 This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a bridge to the IK Multimedia Tonex One (which does not have native Midi capability) or the bigger Tonex pedal (new in V2.0.0.2.)
+New in V2.0.2.2. is support for the Valeton GP5.
 <br>It allows selection of the 20 different presets in the pedal, by any or all of touch screen, WiFi, wired footswitches, bluetooth footswitches, bluetooth servers, and midi programs.
 <br>A variety of hardware is supported, from a $6 board with no display, up to a $44 board with a 4.3" touch screen LCD and a pretty graphical user interface.
 
 **Note: this project is not endorsed by IK Multimedia. Amplifier skin images copyright is owned by IK Multimedia.**
 **TONEX is a registered trademark of IK Multimedia Production Srl**
+**Valeton is a registered trademark of Changsha Hotone Audio Co., Ltd.**
 
 # Code Use Notice
 A number of people have taken significant portions of this project, undertaked minor modifications, and then released commercial products using it. Whilst commercial use of this open source is permitted, it is only permitted if the user provides "attribution", that is, publically states in literature that portions of their product are based on this project, and provide a link to it.<br>
@@ -142,6 +144,13 @@ For more information about the firmware development and customisation, refer to 
 - https://github.com/vit3k/tonex_controller for great work on reverse engineering the Tonex One USB protocol
 
 ## Firmware Release Notes <a name="release_notes"></a>
+V2.0.2.2 beta 1
+- Major update. Added support for the Valeton GP5.
+- Reworked Web UI extensively. Menu system; Split into separate files; Larger effect images; Faster response with asyncronous web sockets.
+- Ported all user interfaces over to use EEZ Studio. 4.3" and 3.5" now have number values next to the sliders. No more 150 object limit from Squareline Studio. 
+- New method of storing and handling Amp/Pedal skins. All skins now available in the same build.
+
+
 V2.0.1.2
 - Minor bug fix release. No features
 - Fixed issues with wired Midi on Waveshare 4.3B

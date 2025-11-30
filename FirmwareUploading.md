@@ -37,7 +37,8 @@ Thanks to user DrD85 for this method.
 - A list of serial ports is shown. Look for the port that your ESP32-S3 is using. It may be called "USB JTAG/serial debug unit", or something similar (it may vary with operating system.) Select the port
 ![image](https://github.com/user-attachments/assets/59729ba8-67f1-4716-9685-93286365d6a3)
 - For older firmware versions, the Waveshare Zero required 3 files to uploaded. As of V1.0.7.2, all platforms are now the same, requiring 4 files that need to be uploaded. The needed files can be found in the location you unzipped the release to, in the "bin" folder
-- Enter the 4 addresses, and browse to the files in the bin folder, such that the screen looks like the below applicable screen shots
+- Starting with V2.0.2.2, now 5 files need to be updloaded for platforms that use amp/pedal skins (4.3B, 3.5B etc)
+- Enter the 4/5 addresses, and browse to the files in the bin folder, such that the screen looks like the below applicable screen shots
 - Once this is set, press the Program button
 - The Output windows should show the progress. Once completed, unplug the USB cable, and then power the board normally
 ![image](https://github.com/user-attachments/assets/aada9df3-826b-450f-a06c-2f5bab24da5b)
