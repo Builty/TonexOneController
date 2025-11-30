@@ -41,244 +41,155 @@ static SemaphoreHandle_t ParamMutex;
 //MODELLER_PARAM_TYPE_SWITCH
 // MODELLER_PARAM_TYPE_RANGE
 // "value" below is just a default, is overridden by the preset on load
+// Data1 = block
+// Data2
+// Data3
 static tModellerParameter ValetonParameters[VALETON_GLOBAL_LAST] = 
 {
-    //value, Min,                       Max,                        Name           Type
-    {0,      0,                         1,                          "NG EN",       MODELLER_PARAM_TYPE_SWITCH},           //VALETON_PARAM_NR_ENABLE   
-    {0,      0,                         100,                        "NG THRESH",   MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_NR_THRESHOLD   
+    //value, Min,                       Max,                        Name           Type                        Data1                    Data2                 Data 3
+    // Block Enables
+    {0,      0,                         1,                          "NG EN",       MODELLER_PARAM_TYPE_SWITCH, VALETON_EFFECT_BLOCK_NR, VALETON_BLOCK_ENABLE,  0},           //VALETON_PARAM_NR_ENABLE   
+    {0,      0,                         1,                          "PRE EN",      MODELLER_PARAM_TYPE_SWITCH, VALETON_EFFECT_BLOCK_PRE, VALETON_BLOCK_ENABLE,  0},           //VALETON_PARAM_PRE_ENABLE,
+    {0,      0,                         1,                          "DST EN",      MODELLER_PARAM_TYPE_SWITCH, VALETON_EFFECT_BLOCK_DST, VALETON_BLOCK_ENABLE, 0},           //VALETON_PARAM_DIST_ENABLE,
+    {0,      0,                         1,                          "AMP EN",      MODELLER_PARAM_TYPE_SWITCH, VALETON_EFFECT_BLOCK_AMP, VALETON_BLOCK_ENABLE, 0},                    //VALETON_PARAM_AMP_ENABLE
+    {0,      0,                         1,                          "CAB EN",      MODELLER_PARAM_TYPE_SWITCH, VALETON_EFFECT_BLOCK_CAB, VALETON_BLOCK_ENABLE, 0},                  //VALETON_PARAM_CAB_ENABLE
+    {0,      0,                         1,                          "EQ EN",       MODELLER_PARAM_TYPE_SWITCH, VALETON_EFFECT_BLOCK_EQ, VALETON_BLOCK_ENABLE, 0},            //VALETON_PARAM_EQ_ENABLE,
+    {0,      0,                         1,                          "MOD EN",      MODELLER_PARAM_TYPE_SWITCH, VALETON_EFFECT_BLOCK_MOD, VALETON_BLOCK_ENABLE, 0},            // VALETON_PARAM_MOD_ENABLE,
+    {0,      0,                         1,                          "DLY EN",      MODELLER_PARAM_TYPE_SWITCH, VALETON_EFFECT_BLOCK_DLY, VALETON_BLOCK_ENABLE, 0},            // VALETON_PARAM_DLY_ENABLE,
+    {0,      0,                         1,                          "RVB EN",      MODELLER_PARAM_TYPE_SWITCH, VALETON_EFFECT_BLOCK_RVB, VALETON_BLOCK_ENABLE, 0},            // VALETON_PARAM_RVB_ENABLE,
+    {0,      0,                         1,                          "NS EN",       MODELLER_PARAM_TYPE_SWITCH, VALETON_EFFECT_BLOCK_NS, VALETON_BLOCK_ENABLE, 0},                   //VALETON_PARAM_NS_ENABLE
     
-    {0,      0,                         1,                          "PRE EN",      MODELLER_PARAM_TYPE_SWITCH},           //VALETON_PARAM_PRE_ENABLE,
-    {0,      VALETON_EFFECT_PRE_COMP,   VALETON_EFFECT_PRE_DETUNE,  "PRE TP",      MODELLER_PARAM_TYPE_SELECT},           //VALETON_PARAM_PRE_TYPE,    
-    {0,      0,                         100,                        "PRE COS",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_COMP_SUSTAIN,
-    {0,      0,                         100,                        "PRE COV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_COMP_VOL,
-    {0,      0,                         100,                        "PRE C4S",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_COMP4_SUSTAIN,
-    {0,      0,                         100,                        "PRE C4A",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_COMP4_ATTACK,
-    {0,      0,                         100,                        "PRE C4V",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_COMP4_VOL,
-    {0,      0,                         100,                        "PRE C4C",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_COMP4_CLIP,
-    {0,      0,                         100,                        "PRE BG",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_BOOST_GAIN,
-    {0,      0,                         1,                          "PRE B3S",     MODELLER_PARAM_TYPE_SWITCH},           //VALETON_PARAM_PRE_BOOST_3DB,
-    {0,      0,                         1,                          "PRE BBR",     MODELLER_PARAM_TYPE_SWITCH},           //VALETON_PARAM_PRE_BOOST_BRIGHT,
-    {0,      0,                         100,                        "PRE MBG",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_MICRO_BOOST_GAIN,
-    {0,      0,                         100,                        "PRE BBG",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_B_BOOST_GAIN,
-    {0,      0,                         100,                        "PRE BBV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_B_BOOST_VOL,
-    {0,      0,                         100,                        "PRE BBB",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_B_BOOST_BASS,
-    {0,      0,                         100,                        "PRE BBT",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_B_BOOST_TREBLE,
-    {0,      0,                         100,                        "PRE TOS",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_TOUCHER_SENSE,
-    {0,      0,                         100,                        "PRE TOR",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_TOUCHER_RANGE,
-    {0,      0,                         100,                        "PRE TOQ",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_TOUCHER_Q,
-    {0,      0,                         100,                        "PRE TOM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_TOUCHER_MIX,
-    {0,      0,                         1,                          "PRE TOO",     MODELLER_PARAM_TYPE_SWITCH},           //VALETON_PARAM_PRE_TOUCHER_MODE
-    {0,      0,                         100,                        "PRE CRD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_CRIER_DEPTH,
-    {0,      0,                         100,                        "PRE CRR",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_CRIER_RATE,
-    {0,      0,                         100,                        "PRE CRV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_CRIER_VOL,
-    {0,      0,                         100,                        "PRE CRL",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_CRIER_LOW,
-    {0,      0,                         100,                        "PRE CRQ",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_CRIER_Q,
-    {0,      0,                         100,                        "PRE OCL",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_OCTA_LOW,
-    {0,      0,                         100,                        "PRE OCH",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_OCTA_HIGH,
-    {0,      0,                         100,                        "PRE OCD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_OCTA_DRY,
-    {0,      0,                         100,                        "PRE PIH",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_PITCH_HIGH,
-    {0,      0,                         100,                        "PRE PIL",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_PITCH_LOW,
-    {0,      0,                         100,                        "PRE PID",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_PITCH_DRY,
-    {0,      0,                         100,                        "PRE PIHV",    MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_PITCH_H_VOL,
-    {0,      0,                         100,                        "PRE PILV",    MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_PITCH_L_VOL,
-    {0,      -50,                       50,                         "PRE DED",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_DETUNE_DETUNE,
-    {0,      0,                         100,                        "PRE DEW",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_DETUNE_WET,
-    {0,      0,                         100,                        "PRE DER",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_PRE_DETUNE_DRY,
+    // effect block selections
+    {0,      0,                         1,                          "NR TP",       MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_NR, VALETON_BLOCK_SELECTION, 0},           //VALETON_PARAM_NR_TYPE,    
+    {0,      VALETON_EFFECT_PRE_COMP,   VALETON_EFFECT_PRE_DETUNE,  "PRE TP",      MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_PRE, VALETON_BLOCK_SELECTION, 0},           //VALETON_PARAM_PRE_TYPE,    
+    {0,      VALETON_EFFECT_DIST_GREEN_OD,VALETON_EFFECT_DIST_BASS_OD,"DST TP",    MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_DST, VALETON_BLOCK_SELECTION, 0},           //VALETON_PARAM_DIST_TYPE 
+    {0,      VALETON_EFFECT_AMP_TWEEDY, VALETON_EFFECT_AMP_AC_PRE2, "AMP TP",      MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_AMP, VALETON_BLOCK_SELECTION, 0},               //VALETON_PARAM_AMP_TYPE
+    {0,      VALETON_EFFECT_CAB_TWD_CP, VALETON_EFFECT_CAB_AMPG_4X10,"CAB TP",     MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_CAB, VALETON_BLOCK_SELECTION, 0},               //VALETON_PARAM_CAB_TYPE
+    {0,      VALETON_EFFECT_EQ_GUITAR_EQ1, VALETON_EFFECT_EQ_MESS_EQ,"EQ TP",      MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_EQ, VALETON_BLOCK_SELECTION, 0},            //VALETON_PARAM_EQ_TYPE
+    {0,      VALETON_EFFECT_MOD_A_CHORUS, VALETON_EFFECT_MOD_BIAS_TREM,"MOD TP",   MODELLER_PARAM_TYPE_SELECT,VALETON_EFFECT_BLOCK_MOD, VALETON_BLOCK_SELECTION, 0},            //VALETON_PARAM_MOD_TYPE,
+    {0,      VALETON_EFFECT_DLY_PURE,   VALETON_EFFECT_DLY_PING_PONG,"DL TP",      MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_DLY, VALETON_BLOCK_SELECTION, 0},            //VALETON_PARAM_DLY_TYPE,
+    {0,      VALETON_EFFECT_RVB_AIR,     VALETON_EFFECT_RVB_SWEET_SPACE, "RVB TP", MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_RVB, VALETON_BLOCK_SELECTION, 0},            //VALETON_PARAM_RVB_TYPE,
+    {0,      0,                         1,                          "NS TP",       MODELLER_PARAM_TYPE_SELECT, VALETON_EFFECT_BLOCK_NS, VALETON_BLOCK_SELECTION, 0},                //VALETON_PARAM_NS_TYPE
+
+    // general
+    {0,      0,                         100,                        "PVOL",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_PATCH_VOLUME
+    {0,      0,                         10,                         "ESL0",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_0
+    {0,      0,                         10,                         "ESL1",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_1
+    {0,      0,                         10,                         "ESL2",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_2
+    {0,      0,                         10,                         "ESL3",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_3
+    {0,      0,                         10,                         "ESL4",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_4
+    {0,      0,                         10,                         "ESL5",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_5
+    {0,      0,                         10,                         "ESL6",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_6
+    {0,      0,                         10,                         "ESL7",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_7
+    {0,      0,                         10,                         "ESL8",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_8
+    {0,      0,                         10,                         "ESL9",        MODELLER_PARAM_TYPE_RANGE,   0,                      0,                       0},            //VALETON_PARAM_EFFECT_SLOT_9
+
+    // effect params
+    {0,      0,                         100,                        "NR 0",      MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NR, 0, 0},            //VALETON_PARAM_NR_PARAM_0
+    {0,      0,                         100,                        "NR 1",      MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NR, 0, 1},            //VALETON_PARAM_NR_PARAM_1
+    {0,      0,                         100,                        "NR 2",      MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NR, 0, 2},            //VALETON_PARAM_NR_PARAM_2
+    {0,      0,                         100,                        "NR 3",      MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NR, 0, 3},            //VALETON_PARAM_NR_PARAM_3
+    {0,      0,                         100,                        "NR 4",      MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NR, 0, 4},            //VALETON_PARAM_NR_PARAM_4
+    {0,      0,                         100,                        "NR 5",      MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NR, 0, 5},            //VALETON_PARAM_NR_PARAM_5
+    {0,      0,                         100,                        "NR 6",      MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NR, 0, 6},            //VALETON_PARAM_NR_PARAM_6
+    {0,      0,                         100,                        "NR 7",      MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NR, 0, 7},            //VALETON_PARAM_NR_PARAM_7
     
-    {0,      0,                         1,                          "DST EN",      MODELLER_PARAM_TYPE_SWITCH},           //VALETON_PARAM_DIST_ENABLE,
-    {0,      VALETON_EFFECT_DIST_GREEN_OD,VALETON_EFFECT_DIST_BASS_OD,"DST TP",    MODELLER_PARAM_TYPE_SELECT},           //VALETON_PARAM_DIST_TYPE
-    {0,      0,                         100,                        "DST GRG",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_GREEN_OD_GAIN,
-    {0,      0,                         100,                        "DST GRT",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_GREEN_OD_TONE,
-    {0,      0,                         100,                        "DST GRV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_GREEN_OD_VOL,
-    {0,      0,                         100,                        "DST YEG",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_YELLOW_OD_GAIN,
-    {0,      0,                         100,                        "DST YEV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_YELLOW_OD_VOL,
-    {0,      0,                         100,                        "DST SUG",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_SUPER_OD_GAIN,
-    {0,      0,                         100,                        "DST SUT",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_SUPER_OD_TONE,
-    {0,      0,                         100,                        "DST SUV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_SUPER_OD_VOL,
-    {0,      0,                         100,                        "DST SMG",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_SM_DIST_GAIN,
-    {0,      0,                         100,                        "DST SMT",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_SM_DIST_TONE,
-    {0,      0,                         100,                        "DST SMV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_SM_DIST_VOL,
-    {0,      0,                         100,                        "DST PLG",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_PLUSTORTION_GAIN,
-    {0,      0,                         100,                        "DST PLV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_PLUSTORTION_VOL,
-    {0,      0,                         100,                        "DST LAG",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_LA_CHARGER_GAIN,
-    {0,      0,                         100,                        "DST LAT",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_LA_CHARGER_TONE,
-    {0,      0,                         100,                        "DST LAV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_LA_CHARGER_VOL,
-    {0,      0,                         100,                        "DST DKG",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_DARKTALE_GAIN,
-    {0,      0,                         100,                        "DST DKF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_DARKTALE_FILTER,
-    {0,      0,                         100,                        "DST DKV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_DARKTALE_VOL,
-    {0,      0,                         100,                        "DST SOF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_SORA_FUZZ_FUZZ,
-    {0,      0,                         100,                        "DST SOV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_SORA_FUZZ_VOL,
-    {0,      0,                         100,                        "DST RHF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_RED_HAZE_FUZZ,
-    {0,      0,                         100,                        "DST RHV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_RED_HAZE_VOL,
-    {0,      0,                         100,                        "DST BOG",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_BASS_OD_GAIN,
-    {0,      0,                         100,                        "DST BOB",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_BASS_OD_BLEND,
-    {0,      0,                         100,                        "DST BOV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_BASS_OD_VOL,
-    {0,      0,                         100,                        "DST BOA",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_BASS_OD_BASS,
-    {0,      0,                         100,                        "DST BOT",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DIST_BASS_OD_TREBLE,
+    {0,      0,                         100,                        "PRE 0",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_PRE, 0, 0},            //VALETON_PARAM_PRE_PARAM_0,
+    {0,      0,                         100,                        "PRE 1",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_PRE, 0, 1},            //VALETON_PARAM_PRE_PARAM_1,
+    {0,      0,                         100,                        "PRE 2",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_PRE, 0, 2},            //VALETON_PARAM_PRE_PARAM_2,
+    {0,      0,                         100,                        "PRE 3",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_PRE, 0, 3},            //VALETON_PARAM_PRE_PARAM_3,
+    {0,      0,                         100,                        "PRE 4",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_PRE, 0, 4},            //VALETON_PARAM_PRE_PARAM_4,
+    {0,      0,                         100,                        "PRE 5",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_PRE, 0, 5},            //VALETON_PARAM_PRE_PARAM_5,
+    {0,      0,                         100,                        "PRE 6",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_PRE, 0, 6},            //VALETON_PARAM_PRE_PARAM_6,
+    {0,      0,                         100,                        "PRE 7",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_PRE, 0, 7},            //VALETON_PARAM_PRE_PARAM_7,
+    
+    {0,      0,                         100,                        "DST 0",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DST, 0, 0},            //VALETON_PARAM_DIST_PARAM_0,
+    {0,      0,                         100,                        "DST 1",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DST, 0, 1},            //VALETON_PARAM_DIST_PARAM_1,
+    {0,      0,                         100,                        "DST 2",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DST, 0, 2},            //VALETON_PARAM_DIST_PARAM_2,
+    {0,      0,                         100,                        "DST 3",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DST, 0, 3},            //VALETON_PARAM_DIST_PARAM_3,
+    {0,      0,                         100,                        "DST 4",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DST, 0, 4},            //VALETON_PARAM_DIST_PARAM_4,
+    {0,      0,                         100,                        "DST 5",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DST, 0, 5},            //VALETON_PARAM_DIST_PARAM_5,
+    {0,      0,                         100,                        "DST 6",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DST, 0, 6},            //VALETON_PARAM_DIST_PARAM_6,
+    {0,      0,                         100,                        "DST 7",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DST, 0, 7},            //VALETON_PARAM_DIST_PARAM_7,
 
-    {0,      0,                         1,                          "EQ EN",       MODELLER_PARAM_TYPE_SWITCH},            //VALETON_PARAM_EQ_ENABLE,
-    {0,      VALETON_EFFECT_EQ_GUITAR_EQ1, VALETON_EFFECT_EQ_MESS_EQ,"EQ TP",      MODELLER_PARAM_TYPE_SELECT},            //VALETON_PARAM_EQ_TYPE
-    {0,      0,                         100,                        "EQ G11",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_GUITAR_EQ1_125HZ,
-    {0,      0,                         100,                        "EQ G14",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_GUITAR_EQ1_400HZ,
-    {0,      0,                         100,                        "EQ G18",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_GUITAR_EQ1_800HZ,
-    {0,      0,                         100,                        "EQ G16",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_GUITAR_EQ1_1600HZ,
-    {0,      0,                         100,                        "EQ G10",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_GUITAR_EQ1_4000HZ,
-    {0,      0,                         100,                        "EQ G1V",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_GUITAR_EQ1_VOL,
-    {0,      0,                         100,                        "EQ G21",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_GUITAR_EQ2_100HZ,
-    {0,      0,                         100,                        "EQ G25",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_GUITAR_EQ2_500HZ,
-    {0,      0,                         100,                        "EQ G20",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_GUITAR_EQ2_1000HZ,
-    {0,      0,                         100,                        "EQ G23",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_GUITAR_EQ2_3000HZ,
-    {0,      0,                         100,                        "EQ G26",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_GUITAR_EQ2_6000HZ,
-    {0,      0,                         100,                        "EQ G2V",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_GUITAR_EQ2_VOL,
-    {0,      0,                         100,                        "EQ B13",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_BASS_EQ1_33HZ,
-    {0,      0,                         100,                        "EQ B11",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_BASS_EQ1_150HZ,
-    {0,      0,                         100,                        "EQ B16",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_BASS_EQ1_600HZ,
-    {0,      0,                         100,                        "EQ B12",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_BASS_EQ1_2000HZ,
-    {0,      0,                         100,                        "EQ B18",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_BASS_EQ1_8000HZ,
-    {0,      0,                         100,                        "EQ B1V",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_BASS_EQ1_VOL,
-    {0,      0,                         100,                        "EQ B25",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_BASS_EQ2_50HZ,
-    {0,      0,                         100,                        "EQ B21",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_BASS_EQ2_120HZ,
-    {0,      0,                         100,                        "EQ B24",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_BASS_EQ2_400HZ,
-    {0,      0,                         100,                        "EQ B28",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_BASS_EQ2_800HZ,
-    {0,      0,                         100,                        "EQ B25",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_BASS_EQ2_4500HZ,
-    {0,      0,                         100,                        "EQ B2V",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_BASS_EQ2_VOL,
-    {0,      0,                         100,                        "EQ ME8",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_MESS_EQ_80HZ,
-    {0,      0,                         100,                        "EQ ME2",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_MESS_EQ_240HZ,
-    {0,      0,                         100,                        "EQ ME7",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_MESS_EQ_750HZ,
-    {0,      0,                         100,                        "EQ ME0",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_MESS_EQ_2200HZ,
-    {0,      0,                         100,                        "EQ ME6",      MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_EQ_MESS_EQ_6600HZ,
+    {0,      0,                         100,                        "AMP 0",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_AMP, 0, 0},            //VALETON_PARAM_AMP_PARAM_0,
+    {0,      0,                         100,                        "AMP 1",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_AMP, 0, 1},            //VALETON_PARAM_AMP_PARAM_1,
+    {0,      0,                         100,                        "AMP 2",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_AMP, 0, 2},            //VALETON_PARAM_AMP_PARAM_2,
+    {0,      0,                         100,                        "AMP 3",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_AMP, 0, 3},            //VALETON_PARAM_AMP_PARAM_3,
+    {0,      0,                         100,                        "AMP 4",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_AMP, 0, 4},            //VALETON_PARAM_AMP_PARAM_4,
+    {0,      0,                         100,                        "AMP 5",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_AMP, 0, 5},            //VALETON_PARAM_AMP_PARAM_5,
+    {0,      0,                         100,                        "AMP 6",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_AMP, 0, 6},            //VALETON_PARAM_AMP_PARAM_6,
+    {0,      0,                         100,                        "AMP 7",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_AMP, 0, 7},            //VALETON_PARAM_AMP_PARAM_7,
 
-    {0,      0,                         1,                          "MOD EN",      MODELLER_PARAM_TYPE_SWITCH},            // VALETON_PARAM_MOD_ENABLE,
-    {0,      VALETON_EFFECT_MOD_A_CHORUS, VALETON_EFFECT_MOD_BIAS_TREM,"MOD TP",   MODELLER_PARAM_TYPE_SELECT},            //VALETON_PARAM_MOD_TYPE,
-    {0,      0,                         100,                        "MOD ACD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_A_CHORUS_DEPTH,
-    {0,      0,                         10,                         "MOD ACR",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_A_CHORUS_RATE,
-    {0,      0,                         100,                        "MOD ACT",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_A_CHORUS_TONE,
-    {0,      0,                         100,                        "MOD BCD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_B_CHORUS_DEPTH,
-    {0,      0,                         10,                         "MOD BCR",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_B_CHORUS_RATE,
-    {0,      0,                         100,                        "MOD BCV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_B_CHORUS_VOL,
-    {0,      0,                         100,                        "MOD JED",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_JET_DEPTH,
-    {0,      0,                         10,                         "MOD JER",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_JET_RATE,
-    {0,      0,                         100,                        "MOD JEP",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_JET_PDELAY,
-    {0,      0,                         100,                        "MOD JEF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_JET_FBACK,
-    {0,      0,                         100,                        "MOD NJD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_N_JET_DEPTH,
-    {0,      0,                         10,                         "MOD NJR",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_N_JET_RATE,
-    {0,      0,                         100,                        "MOD NJP",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_N_JET_PDELAY,
-    {0,      0,                         100,                        "MOD NJF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_N_JET_FBACK,
-    {0,      0,                         10,                         "MOD OPR",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_O_PHASE_RATE,
-    {0,      0,                         100,                        "MOD MVD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_M_VIBE_DEPTH,
-    {0,      0,                         10,                         "MOD MVR",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_M_VIBE_RATE,
-    {0,      0,                         100,                        "MOD VRD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_V_ROTO_DEPTH,
-    {0,      0,                         10,                         "MOD VRR",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_V_ROTO_RATE,
-    {0,      0,                         100,                        "MOD VID",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_VIBRATO_DEPTH,
-    {0,      0,                         10,                         "MOD VIR",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_VIBRATO_RATE,
-    {0,      0,                         100,                        "MOD VIV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_VIBRATO_VOL,
-    {0,      0,                         100,                        "MOD OTD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_OD_O_TREM_DEPTH,
-    {0,      0,                         10,                         "MOD OTR",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_OD_O_TREM_RATE,
-    {0,      0,                         100,                        "MOD SID",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_SINE_TREM_DEPTH,
-    {0,      0,                         10,                         "MOD SIR",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_SINE_TREM_RATE,
-    {0,      0,                         100,                        "MOD SIV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_MOD_SINE_TREM_VOL,
-    {0,      0,                         100,                        "MOD ODD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_OD_BIAS_TREM_DEPTH,
-    {0,      0,                         10,                         "MOD ODR",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_OD_BIAS_TREM_RATE,
-    {0,      0,                         100,                        "MOD ODV",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_OD_BIAS_TREM_VOL,
-    {0,      0,                         100,                        "MOD ODB",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_OD_BIAS_TREM_BIAS,
+    {0,      0,                         100,                        "CAB 0",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_CAB, 0, 0},            //VALETON_PARAM_CAB_PARAM_0,
+    {0,      0,                         100,                        "CAB 1",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_CAB, 0, 1},            //VALETON_PARAM_CAB_PARAM_1,
+    {0,      0,                         100,                        "CAB 2",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_CAB, 0, 2},            //VALETON_PARAM_CAB_PARAM_2,
+    {0,      0,                         100,                        "CAB 3",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_CAB, 0, 3},            //VALETON_PARAM_CAB_PARAM_3,
+    {0,      0,                         100,                        "CAB 4",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_CAB, 0, 4},            //VALETON_PARAM_CAB_PARAM_4,
+    {0,      0,                         100,                        "CAB 5",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_CAB, 0, 5},            //VALETON_PARAM_CAB_PARAM_5,
+    {0,      0,                         100,                        "CAB 6",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_CAB, 0, 6},            //VALETON_PARAM_CAB_PARAM_6,
+    {0,      0,                         100,                        "CAB 7",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_CAB, 0, 7},            //VALETON_PARAM_CAB_PARAM_7,
 
-    {0,      0,                         1,                          "DLY EN",      MODELLER_PARAM_TYPE_SWITCH},            // VALETON_PARAM_DLY_ENABLE,
-    {0,      VALETON_EFFECT_DLY_PURE,   VALETON_EFFECT_DLY_PING_PONG,"DL TP",      MODELLER_PARAM_TYPE_SELECT},            //VALETON_PARAM_DLY_TYPE,
-    {0,      0,                         100,                        "DLY PUM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_PURE_MIX,
-    {0,      0,                         1000,                       "DLY PUT",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_PURE_TIME,
-    {0,      0,                         100,                        "DLY PUF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_PURE_FEEDBACK,
-    {0,      0,                         1,                          "DLY PUT",     MODELLER_PARAM_TYPE_SWITCH},            // VALETON_PARAM_DLY_PURE_TRAIL,
-    {0,      0,                         100,                        "DLY ANM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_ANALOG_MIX,
-    {0,      0,                         1000,                       "DLY ANT",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_ANALOG_TIME,
-    {0,      0,                         100,                        "DLY ANF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_ANALOG_FEEDBACK,
-    {0,      0,                         1,                          "DLY ANT",     MODELLER_PARAM_TYPE_SWITCH},            // VALETON_PARAM_DLY_ANALOG_TRAIL,
-    {0,      0,                         100,                        "DLY SLM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_SLAPBACK_MIX,
-    {0,      0,                         1000,                       "DLY SLT",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_SLAPBACK_TIME,
-    {0,      0,                         100,                        "DLY SLF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_SLAPBACK_FEEDBACK,
-    {0,      0,                         1,                          "DLY STT",     MODELLER_PARAM_TYPE_SWITCH},            // VALETON_PARAM_DLY_SLAPBACK_TRAIL,
-    {0,      0,                         100,                        "DLY SEM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_SWEET_ECHO_MIX,
-    {0,      0,                         1000,                       "DLY SET",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_SWEET_ECHO_TIME,
-    {0,      0,                         100,                        "DLY SEF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_SWEET_ECHO_FEEDBACK,
-    {0,      0,                         1,                          "DLY SET",     MODELLER_PARAM_TYPE_SWITCH},            // VALETON_PARAM_DLY_SWEET_ECHO_TRAIL,
-    {0,      0,                         100,                        "DLY TPM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_TAPE_MIX,
-    {0,      0,                         1000,                       "DLY TPT",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_TAPE_TIME,
-    {0,      0,                         100,                        "DLY TPF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_TAPE_FEEDBACK,
-    {0,      0,                         1,                          "DLY TPT",     MODELLER_PARAM_TYPE_SWITCH},            // VALETON_PARAM_DLY_TAPE_TRAIL,
-    {0,      0,                         100,                        "DLY TUM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_TUBE_MIX,
-    {0,      0,                         1000,                       "DLY TUT",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_TUBE_TIME,
-    {0,      0,                         100,                        "DLY TUF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_TUBE_FEEDBACK,
-    {0,      0,                         1,                          "DLY TUT",     MODELLER_PARAM_TYPE_SWITCH},            // VALETON_PARAM_DLY_TUBE_TRAIL,
-    {0,      0,                         100,                        "DLY ECM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_REV_ECHO_MIX,
-    {0,      0,                         1000,                       "DLY ECT",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_REV_ECHO_TIME,
-    {0,      0,                         100,                        "DLY ECF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_REV_ECHO_FEEDBACK,
-    {0,      0,                         1,                          "DLY ECT",     MODELLER_PARAM_TYPE_SWITCH},            // VALETON_PARAM_DLY_REV_ECHO_TRAIL,
-    {0,      0,                         100,                        "DLY REM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_RING_ECHO_MIX,
-    {0,      0,                         1000,                       "DLY REI",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_RING_ECHO_TIME,
-    {0,      0,                         100,                        "DLY REF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_RING_ECHO_FEEDBACK,
-    {0,      0,                         100,                        "DLY REM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_RING_ECHO_R_MIX,
-    {0,      0,                         100,                        "DLY REF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_RING_ECHO_FREQ,
-    {0,      0,                         100,                        "DLY REN",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_RING_ECHO_TONE,
-    {0,      0,                         1,                          "DLY RET",     MODELLER_PARAM_TYPE_SWITCH},            // VALETON_PARAM_DLY_RING_ECHO_TRAIL,
-    {0,      0,                         100,                        "DLY SEM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_SWEEP_ECHO_MIX,
-    {0,      0,                         1000,                       "DLY SET",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_SWEEP_ECHO_TIME,
-    {0,      0,                         100,                        "DLY SEF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_SWEEP_ECHO_FBACK,
-    {0,      0,                         100,                        "DLY SES",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_SWEEP_ECHO_S_DEPTH,
-    {0,      0,                         100,                        "DLY SER",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_SWEEP_ECHO_S_RATE,
-    {0,      0,                         1,                          "DLY SET",     MODELLER_PARAM_TYPE_SWITCH},            // VALETON_PARAM_DLY_SWEEP_ECHO_TRAIL,
-    {0,      0,                         100,                        "DLY PPM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_PING_PONG_MIX,
-    {0,      0,                         1000,                       "DLY PPI",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_PING_PONG_TIME,
-    {0,      0,                         100,                        "DLY PPF",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_DLY_PING_PONG_FEEDBACK,
-    {0,      0,                         1,                          "DLY PPT",     MODELLER_PARAM_TYPE_SWITCH},            // VALETON_PARAM_DLY_PING_PONG_TRAIL,
+    {0,      0,                         100,                        "EQ 0",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_EQ, 0, 0},            //VALETON_PARAM_EQ_PARAM_0,
+    {0,      0,                         100,                        "EQ 1",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_EQ, 0, 1},            //VALETON_PARAM_EQ_PARAM_1,
+    {0,      0,                         100,                        "EQ 2",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_EQ, 0, 2},            //VALETON_PARAM_EQ_PARAM_2,
+    {0,      0,                         100,                        "EQ 3",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_EQ, 0, 3},            //VALETON_PARAM_EQ_PARAM_3,
+    {0,      0,                         100,                        "EQ 4",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_EQ, 0, 4},            //VALETON_PARAM_EQ_PARAM_4,
+    {0,      0,                         100,                        "EQ 5",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_EQ, 0, 5},            //VALETON_PARAM_EQ_PARAM_5,
+    {0,      0,                         100,                        "EQ 6",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_EQ, 0, 6},            //VALETON_PARAM_EQ_PARAM_6,
+    {0,      0,                         100,                        "EQ 7",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_EQ, 0, 7},            //VALETON_PARAM_EQ_PARAM_7,
 
-    {0,      0,                         1,                          "RVB EN",      MODELLER_PARAM_TYPE_SWITCH},            // VALETON_PARAM_RVB_ENABLE,
-    {0,      VALETON_EFFECT_RVB_AIR,     VALETON_EFFECT_RVB_SWEET_SPACE, "RVB TP", MODELLER_PARAM_TYPE_SELECT},            //VALETON_PARAM_RVB_TYPE,
-    {0,      0,                         100,                        "RVB AIM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_AIR_MIX,
-    {0,      0,                         100,                        "RVB AID",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_AIR_DECAY,
-    {0,      0,                         100,                        "RVB AID",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_AIR_DAMP,
-    {0,      0,                         1,                          "RVB AIT",     MODELLER_PARAM_TYPE_SWITCH},          //VALETON_PARAM_RVB_AIR_TRAIL,
-    {0,      0,                         100,                        "RVB RMT",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_ROOM_MIX,
-    {0,      0,                         100,                        "RVB RMD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_ROOM_DECAY,
-    {0,      0,                         1,                          "RVB RMT",     MODELLER_PARAM_TYPE_SWITCH},          //VALETON_PARAM_RVB_ROOM_TRAIL,
-    {0,      0,                         100,                        "RVB HAM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_HALL_MIX,
-    {0,      0,                         100,                        "RVB HAD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_HALL_DECAY,
-    {0,      0,                         1,                          "RVB HAT",     MODELLER_PARAM_TYPE_SWITCH},          //VALETON_PARAM_RVB_HALL_TRAIL,
-    {0,      0,                         100,                        "RVB CHM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_CHURCH_MIX,
-    {0,      0,                         100,                        "RVB CHD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_CHURCH_DECAY,
-    {0,      0,                         1,                          "RVB CHT",     MODELLER_PARAM_TYPE_SWITCH},          //VALETON_PARAM_RVB_CHURCH_TRAIL,
-    {0,      0,                         100,                        "RVB P1M",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_PLATE_L_MIX,
-    {0,      0,                         100,                        "RVB P1D",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_PLATE_L_DECAY,
-    {0,      0,                         1,                          "RVB P1T",     MODELLER_PARAM_TYPE_SWITCH},          //VALETON_PARAM_RVB_PLATE_L_TRAIL,
-    {0,      0,                         100,                        "RVB PLM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_PLATE_MIX,
-    {0,      0,                         100,                        "RVB PLD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_PLATE_DECAY,
-    {0,      0,                         100,                        "RVB PLR",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_PLATE_DAMP,
-    {0,      0,                         1,                          "RVB PLT",     MODELLER_PARAM_TYPE_SWITCH},          //VALETON_PARAM_RVB_PLATE_TRAIL,
-    {0,      0,                         100,                        "RVB SPM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_SPRING_MIX,
-    {0,      0,                         100,                        "RVB SPD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_SPRING_DECAY,
-    {0,      0,                         1,                          "RVB ST",      MODELLER_PARAM_TYPE_SWITCH},          //VALETON_PARAM_RVB_SPRING_TRAIL,
-    {0,      0,                         100,                        "RVB NSM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_N_STAR_MIX,
-    {0,      0,                         100,                        "RVB NSD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_N_STAR_DECAY,
-    {0,      0,                         1,                          "RVB NST",     MODELLER_PARAM_TYPE_SWITCH},          //VALETON_PARAM_RVB_N_STAR_TRAIL,
-    {0,      0,                         100,                        "RVB DSM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_DEEPSEA_MIX,
-    {0,      0,                         100,                        "RVB DSD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_DEEPSEA_DECAY,
-    {0,      0,                         1,                          "RVB DST",     MODELLER_PARAM_TYPE_SWITCH},          //VALETON_PARAM_RVB_DEEPSEA_TRAIL,
-    {0,      0,                         100,                        "RVB SPM",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_SWEET_SPACE_MIX,
-    {0,      0,                         100,                        "RVB SPD",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_SWEET_SPACE_DECAY,
-    {0,      0,                         100,                        "RVB SPA",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_SWEET_SPACE_DAMP,
-    {0,      0,                         100,                        "RVB SPO",     MODELLER_PARAM_TYPE_RANGE},            //VALETON_PARAM_RVB_SWEET_SPACE_MOD,
-    {0,      0,                         1,                          "RVB SPT",     MODELLER_PARAM_TYPE_SWITCH},          //VALETON_PARAM_RVB_SWEET_SPACE_TRAIL,
+    {0,      0,                         100,                        "MOD 0",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_MOD, 0, 0},            //VALETON_PARAM_MOD_PARAM_0,
+    {0,      0,                         100,                        "MOD 1",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_MOD, 0, 1},            //VALETON_PARAM_MOD_PARAM_1,
+    {0,      0,                         100,                        "MOD 2",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_MOD, 0, 2},            //VALETON_PARAM_MOD_PARAM_2,
+    {0,      0,                         100,                        "MOD 3",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_MOD, 0, 3},            //VALETON_PARAM_MOD_PARAM_3,
+    {0,      0,                         100,                        "MOD 4",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_MOD, 0, 4},            //VALETON_PARAM_MOD_PARAM_4,
+    {0,      0,                         100,                        "MOD 5",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_MOD, 0, 5},            //VALETON_PARAM_MOD_PARAM_5,
+    {0,      0,                         100,                        "MOD 6",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_MOD, 0, 6},            //VALETON_PARAM_MOD_PARAM_6,
+    {0,      0,                         100,                        "MOD 7",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_MOD, 0, 7},            //VALETON_PARAM_MOD_PARAM_7,
+
+    {0,      0,                         100,                        "DLY 0",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DLY, 0, 0},            //VALETON_PARAM_DLY_PARAM_0,
+    {0,      0,                         100,                        "DLY 1",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DLY, 0, 1},            //VALETON_PARAM_DLY_PARAM_1,
+    {0,      0,                         100,                        "DLY 2",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DLY, 0, 2},            //VALETON_PARAM_DLY_PARAM_2,
+    {0,      0,                         100,                        "DLY 3",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DLY, 0, 3},            //VALETON_PARAM_DLY_PARAM_3,
+    {0,      0,                         100,                        "DLY 4",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DLY, 0, 4},            //VALETON_PARAM_DLY_PARAM_4,
+    {0,      0,                         100,                        "DLY 5",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DLY, 0, 5},            //VALETON_PARAM_DLY_PARAM_5,
+    {0,      0,                         100,                        "DLY 6",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DLY, 0, 6},            //VALETON_PARAM_DLY_PARAM_6,
+    {0,      0,                         100,                        "DLY 7",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_DLY, 0, 7},            //VALETON_PARAM_DLY_PARAM_7,
+
+    {0,      0,                         100,                        "RVB 0",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_RVB, 0, 0},            //VALETON_PARAM_RVB_PARAM_0,
+    {0,      0,                         100,                        "RVB 1",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_RVB, 0, 1},            //VALETON_PARAM_RVB_PARAM_1,
+    {0,      0,                         100,                        "RVB 2",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_RVB, 0, 2},            //VALETON_PARAM_RVB_PARAM_2,
+    {0,      0,                         100,                        "RVB 3",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_RVB, 0, 3},            //VALETON_PARAM_RVB_PARAM_3,
+    {0,      0,                         100,                        "RVB 4",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_RVB, 0, 4},            //VALETON_PARAM_RVB_PARAM_4,
+    {0,      0,                         100,                        "RVB 5",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_RVB, 0, 5},            //VALETON_PARAM_RVB_PARAM_5,
+    {0,      0,                         100,                        "RVB 6",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_RVB, 0, 6},            //VALETON_PARAM_RVB_PARAM_6,
+    {0,      0,                         100,                        "RVB 7",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_RVB, 0, 7},            //VALETON_PARAM_RVB_PARAM_7,
+
+    {0,      0,                         100,                        "NS 0",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NS, 0, 0},            //VALETON_PARAM_NS_PARAM_0,
+    {0,      0,                         100,                        "NS 1",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NS, 0, 1},            //VALETON_PARAM_NS_PARAM_1,
+    {0,      0,                         100,                        "NS 2",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NS, 0, 2},            //VALETON_PARAM_NS_PARAM_2,
+    {0,      0,                         100,                        "NS 3",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NS, 0, 3},            //VALETON_PARAM_NS_PARAM_3,
+    {0,      0,                         100,                        "NS 4",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NS, 0, 4},            //VALETON_PARAM_NS_PARAM_4,
+    {0,      0,                         100,                        "NS 5",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NS, 0, 5},            //VALETON_PARAM_NS_PARAM_5,
+    {0,      0,                         100,                        "NS 6",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NS, 0, 6},            //VALETON_PARAM_NS_PARAM_6,
+    {0,      0,                         100,                        "NS 7",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NS, 0, 7},            //VALETON_PARAM_NS_PARAM_7,
+    {0,      0,                         100,                        "NS 8",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NS, 0, 8},            //VALETON_PARAM_NS_PARAM_8,
+    {0,      0,                         100,                        "NS 9",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NS, 0, 9},            //VALETON_PARAM_NS_PARAM_9,
+    {0,      0,                         100,                        "NS 10",     MODELLER_PARAM_TYPE_RANGE, VALETON_EFFECT_BLOCK_NS, 0, 10},            //VALETON_PARAM_NS_PARAM_10,
 
     // dummy end of params marker
-    {0,      0,                         0,                          "LAST",        MODELLER_PARAM_TYPE_RANGE},                // TONEX_PARAM_LAST,
+    {0,      0,                         0,                          "LAST",        MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},                // VALETON_PARAM_LAST,
 
     //************* Global params *****************
-    {80,     40,                        240,                        "BPM",         MODELLER_PARAM_TYPE_RANGE},                 // VALETON_GLOBAL_BPM
-    {0,      -15,                       15,                         "TRIM",        MODELLER_PARAM_TYPE_RANGE},                // VALETON_GLOBAL_INPUT_TRIM
-    {0,      0,                         1,                          "CABSIM",      MODELLER_PARAM_TYPE_SWITCH},              // VALETON_GLOBAL_CABSIM_BYPASS
-    {440,    415,                       465,                        "TUNEREF",     MODELLER_PARAM_TYPE_RANGE},              // VALETON_GLOBAL_TUNING_REFERENCE
-    {0,      0,                         1,                          "BYPASS",      MODELLER_PARAM_TYPE_SWITCH},             // VALETON_GLOBAL_BYPASS
-    {0,     -40,                        3,                          "MVOL",        MODELLER_PARAM_TYPE_RANGE},                 // VALETON_GLOBAL_MASTER_VOLUME
+    {80,     40,                        240,                        "BPM",         MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},                 // VALETON_GLOBAL_BPM
+    {0,     -20,                        20,                         "TRIM",        MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},                 // VALETON_GLOBAL_INPUT_TRIM
+    {0,      0,                         1,                          "CABSIM",      MODELLER_PARAM_TYPE_SWITCH, 0, 0, 0},                // VALETON_GLOBAL_CABSIM_BYPASS
+    {0,      0,                         100,                        "MVOL",        MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},                 // VALETON_GLOBAL_MASTER_VOLUME
+    {0,     -20,                        20,                         "RLEV",        MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},                 // VALETON_GLOBAL_RECORD_LEVEL
+    {0,     -20,                        20,                         "MONL",        MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},                 // VALETON_GLOBAL_MONITOR_LEVEL
+    {0,     -20,                        20,                         "BTLV",        MODELLER_PARAM_TYPE_RANGE, 0, 0, 0},                 // VALETON_GLOBAL_BT_LEVEL
 };
-
 
 /****************************************************************************
 * NAME:        
@@ -390,6 +301,1035 @@ float valeton_params_clamp_value(uint16_t param_index, float value)
     }
 
     return 0;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void valeton_params_set_min_max(void)
+{
+    tModellerParameter* param_ptr;
+    
+    if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
+    {
+        // NR
+        switch ((int)param_ptr[VALETON_PARAM_NR_TYPE].Value)
+        {
+            case VALETON_EFFECT_NR_GATE:
+            {
+                // threshold
+                param_ptr[VALETON_PARAM_NR_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_NR_PARAM_0].Max = 100;
+            } break;
+        } 
+
+        // Pre
+        switch ((int)param_ptr[VALETON_PARAM_PRE_TYPE].Value)
+        {
+            case VALETON_EFFECT_PRE_COMP:
+            {
+                // sustain
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;
+
+                // volume
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_PRE_COMP4:
+            {
+                // sustain
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;
+                
+                // attack
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 100;
+
+                // vol
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 100;
+
+                // clip
+                param_ptr[VALETON_PARAM_PRE_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_3].Max = 100;                
+            } break;
+
+            case VALETON_EFFECT_PRE_BOOST:
+            {
+                // gain
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;
+
+                // +3db
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 1;
+
+                // bright
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 1;
+            } break;
+
+            case VALETON_EFFECT_PRE_MICRO_BOOST:
+            {
+                // gain
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;            
+            } break;
+
+            case VALETON_EFFECT_PRE_B_BOOST:
+            {
+                // gain
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;
+                
+                // vol
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 100;
+
+                // bass
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 100;
+
+                // treble
+                param_ptr[VALETON_PARAM_PRE_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_3].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_PRE_TOUCHER:
+            {
+                // sense
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;
+                
+                // range
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 100;
+
+                // Q
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 100;
+
+                // mix
+                param_ptr[VALETON_PARAM_PRE_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_3].Max = 100;
+
+                // mode
+                param_ptr[VALETON_PARAM_PRE_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_4].Max = 1;
+            } break;
+
+            case VALETON_EFFECT_PRE_CRIER:
+            {
+                // depth
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;
+                
+                // rate
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 10;
+
+                // vol
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 100;
+
+                // low
+                param_ptr[VALETON_PARAM_PRE_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_3].Max = 100;
+
+                // Q
+                param_ptr[VALETON_PARAM_PRE_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_4].Max = 100;
+
+                // High
+                param_ptr[VALETON_PARAM_PRE_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_5].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_PRE_OCTA:
+            {
+                // Low
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 100;
+                
+                // high
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 100;
+
+                // Dry
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_PRE_PITCH:
+            {
+                // High
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 24;
+
+                // Low
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = -24;
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 0;
+
+                // Dry
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 100;
+
+                // H-Vol
+                param_ptr[VALETON_PARAM_PRE_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_3].Max = 100;
+
+                // L-Vol
+                param_ptr[VALETON_PARAM_PRE_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_4].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_PRE_DETUNE:
+            {
+                // Detune
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Min = -50;
+                param_ptr[VALETON_PARAM_PRE_PARAM_0].Max = 50;
+                
+                // Wet
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_1].Max = 100;
+
+                // Dry
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_PRE_PARAM_2].Max = 100;
+            } break;
+        } 
+         
+        // Dist
+        switch ((int)param_ptr[VALETON_PARAM_DIST_TYPE].Value)
+        {
+            case VALETON_EFFECT_DIST_GREEN_OD:      // fallthrough
+            case VALETON_EFFECT_DIST_SUPER_OD:      // fallthrough
+            case VALETON_EFFECT_DIST_SM_DIST:       // fallthrough
+            case VALETON_EFFECT_DIST_LA_CHARGER:
+            {
+                // Gain
+                param_ptr[VALETON_PARAM_DIST_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_DIST_PARAM_0].Max = 100;
+                
+                // Tone
+                param_ptr[VALETON_PARAM_DIST_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_DIST_PARAM_1].Max = 100;
+
+                // Vol
+                param_ptr[VALETON_PARAM_DIST_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_DIST_PARAM_2].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_DIST_YELLOW_OD:     // fallthrough
+            case VALETON_EFFECT_DIST_PLUSTORTION:
+            {
+                // Gain
+                param_ptr[VALETON_PARAM_DIST_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_DIST_PARAM_0].Max = 100;
+                
+                // Vol
+                param_ptr[VALETON_PARAM_DIST_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_DIST_PARAM_1].Max = 100;
+            } break;
+        
+            case VALETON_EFFECT_DIST_DARKTALE:
+            {
+                // Gain
+                param_ptr[VALETON_PARAM_DIST_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_DIST_PARAM_0].Max = 100;
+                
+                // Filter
+                param_ptr[VALETON_PARAM_DIST_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_DIST_PARAM_1].Max = 100;
+
+                // Vol
+                param_ptr[VALETON_PARAM_DIST_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_DIST_PARAM_2].Max = 100;
+            } break;
+            
+            case VALETON_EFFECT_DIST_SORA_FUZZ:     // fallthrough
+            case VALETON_EFFECT_DIST_RED_HAZE:
+            {
+                // Fuzz
+                param_ptr[VALETON_PARAM_DIST_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_DIST_PARAM_0].Max = 100;
+                
+                // Vol
+                param_ptr[VALETON_PARAM_DIST_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_DIST_PARAM_1].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_DIST_BASS_OD:
+            {
+                // Gain
+                param_ptr[VALETON_PARAM_DIST_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_DIST_PARAM_0].Max = 100;
+                
+                // Blend
+                param_ptr[VALETON_PARAM_DIST_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_DIST_PARAM_1].Max = 100;
+
+                // Vol
+                param_ptr[VALETON_PARAM_DIST_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_DIST_PARAM_2].Max = 100;
+
+                // Bass
+                param_ptr[VALETON_PARAM_DIST_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_DIST_PARAM_3].Max = 100;
+
+                // Treble
+                param_ptr[VALETON_PARAM_DIST_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_DIST_PARAM_4].Max = 100;
+            } break;
+        }
+
+        // Amp
+        switch ((int)param_ptr[VALETON_PARAM_AMP_TYPE].Value)
+        {
+            case VALETON_EFFECT_AMP_TWEEDY:
+            {
+                // Gain
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
+
+                // Tone
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
+
+                // Vol
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_AMP_BELLMAN_59N:    // fallthrough
+            case VALETON_EFFECT_AMP_MATCH_CL:       // fallthrough
+            case VALETON_EFFECT_AMP_L_STAR_CL:      // fallthrough
+            case VALETON_EFFECT_AMP_UK_45:          // fallthough
+            case VALETON_EFFECT_AMP_UK_800:         // fallthrough
+            case VALETON_EFFECT_AMP_BELLMAN_59B:    // fallthough
+            case VALETON_EFFECT_AMP_SOLO100_OD:     // fallthrough
+            case VALETON_EFFECT_AMP_BAD_KT_OD:      // fallthough
+            case VALETON_EFFECT_AMP_DIZZ_VH:        // fallthrough
+            case VALETON_EFFECT_AMP_DIZZ_VH_PLUS:   // fallthrough
+            case VALETON_EFFECT_AMP_EAGLE_120:      // fallthrough
+            case VALETON_EFFECT_AMP_SOLO100_LD:     // fallthrough
+            case VALETON_EFFECT_AMP_MESS_DUALV:     // fallthrough
+            case VALETON_EFFECT_AMP_MESS_DUALM:     // fallthrough
+            case VALETON_EFFECT_AMP_POWER_LD:       // fallthrough
+            case VALETON_EFFECT_AMP_FLAGMAN_PLUS:   // fallthrough
+            case VALETON_EFFECT_AMP_BOG_REDV:
+            {
+                // Gain
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
+
+                // Pres
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
+
+                // Vol
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
+
+                // Bass
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
+
+                // Middle
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
+
+                // Treble
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_AMP_DARK_TWIN:
+            case VALETON_EFFECT_AMP_JUICE_R100:
+            {
+                // Gain
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
+
+                // Vol
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
+
+                // Bass
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
+
+                // Middle
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
+
+                // Treble
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
+
+                // Bright
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 1;
+            } break;
+
+            case VALETON_EFFECT_AMP_FOXY_30N:
+            {
+                // Gain
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
+
+                // Tone Cut
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
+
+                // Vol
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
+
+                // Bright
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 1;
+            } break;
+
+            case VALETON_EFFECT_AMP_J_120_CL:
+            {
+                // Vol
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
+
+                // Bass
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
+
+                // Middle
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
+
+                // Treble
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
+
+                // Bright
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 1;
+            } break;
+
+            case VALETON_EFFECT_AMP_UK_50JP:
+            {
+                // Gain 1
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
+
+                // Pres
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
+
+                // Vol
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
+
+                // Bass
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
+
+                // Middle
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
+
+                // Treble
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 100;
+
+                // Gain 2
+                param_ptr[VALETON_PARAM_AMP_PARAM_6].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_6].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_AMP_FOXY_30TB:
+            {
+                // Gain
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
+
+                // Tone Cut
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
+
+                // Vol
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
+
+                // Bass
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
+
+                // Treble
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
+
+                // Character
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 1;
+            } break;
+
+            case VALETON_EFFECT_AMP_SUPDUAL_OD:
+            {
+                // Gain 1
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
+
+                // Tone 1
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
+
+                // Gain 2
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
+
+                // Tone 2
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
+
+                // Vol
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
+            } break;
+            
+            case VALETON_EFFECT_AMP_Z38_OD:
+            {
+                // Gain
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
+
+                // Tone Cut
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
+
+                // Vol
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
+
+                // Bass
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
+
+                // Middle
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
+
+                // Treble
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_AMP_EV_51:
+            {
+                // Gain
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
+
+                // Vol
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
+
+                // Bass
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
+
+                // Middle
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
+
+                // Treble
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
+
+                // Pres
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_AMP_CLASSIC_BASS:
+            {
+                // Gain
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
+
+                // Bass
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
+
+                // Middle
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
+
+                // Mid freq
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 4;
+
+                // Treble
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
+
+                // Vol
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 100;
+            } break;
+            
+            case VALETON_EFFECT_AMP_FOXY_BASS:
+            {
+                // Vol
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
+
+                // Bass
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
+
+                // Treble
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_AMP_MESS_BASS:
+            {
+                // Gain
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
+
+                // Vol
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
+
+                // Bass
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
+
+                // Middle
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
+
+                // Treble
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_AMP_AC_PRE1:    // fallthrough
+            case VALETON_EFFECT_AMP_AC_PRE2:
+            {
+                // Vol
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_0].Max = 100;
+
+                // Tone
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_1].Max = 100;
+
+                // Balance
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_2].Max = 100;
+
+                // EQ Freq
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_3].Max = 100;
+
+                // EQ Q
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_4].Max = 100;
+
+                // EQ Gain
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_AMP_PARAM_5].Max = 100;
+            } break;
+        }
+                
+        // Cab
+        // all cabs have volume only
+        // Vol
+        param_ptr[VALETON_PARAM_CAB_PARAM_0].Min = 0;
+        param_ptr[VALETON_PARAM_CAB_PARAM_0].Max = 100;
+                    
+        // EQ
+        // all have same range
+        // band 1
+        param_ptr[VALETON_PARAM_EQ_PARAM_0].Min = -50;
+        param_ptr[VALETON_PARAM_EQ_PARAM_0].Max = 50;
+
+        // band 2
+        param_ptr[VALETON_PARAM_EQ_PARAM_1].Min = -50;
+        param_ptr[VALETON_PARAM_EQ_PARAM_1].Max = 50;
+
+        // band 3
+        param_ptr[VALETON_PARAM_EQ_PARAM_2].Min = -50;
+        param_ptr[VALETON_PARAM_EQ_PARAM_2].Max = 50;
+
+        // band 4
+        param_ptr[VALETON_PARAM_EQ_PARAM_3].Min = -50;
+        param_ptr[VALETON_PARAM_EQ_PARAM_3].Max = 50;
+
+        // band 5
+        param_ptr[VALETON_PARAM_EQ_PARAM_4].Min = -50;
+        param_ptr[VALETON_PARAM_EQ_PARAM_4].Max = 50;
+
+        // Vol
+        param_ptr[VALETON_PARAM_EQ_PARAM_5].Min = 0;
+        param_ptr[VALETON_PARAM_EQ_PARAM_5].Max = 100;
+
+        // Mod
+        switch ((int)param_ptr[VALETON_PARAM_MOD_TYPE].Value)
+        {
+            case VALETON_EFFECT_MOD_A_CHORUS:   // fallthrough
+            case VALETON_EFFECT_MOD_B_CHORUS:
+            {
+                // Depth
+                param_ptr[VALETON_PARAM_MOD_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_0].Max = 100;
+
+                // Rate
+                param_ptr[VALETON_PARAM_MOD_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_1].Max = 10;
+
+                // Tone
+                param_ptr[VALETON_PARAM_MOD_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_2].Max = 100;
+
+            } break;
+            
+            case VALETON_EFFECT_MOD_JET:       // Fallthrough
+            case VALETON_EFFECT_MOD_N_JET:
+            {
+                // Depth
+                param_ptr[VALETON_PARAM_MOD_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_0].Max = 100;
+
+                // Rate
+                param_ptr[VALETON_PARAM_MOD_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_1].Max = 10;
+
+                // P.Delay
+                param_ptr[VALETON_PARAM_MOD_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_2].Max = 100;
+
+                // F.Back
+                param_ptr[VALETON_PARAM_MOD_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_3].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_MOD_O_PHASE:
+            {
+                // Rate
+                param_ptr[VALETON_PARAM_MOD_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_0].Max = 10;
+            } break;
+
+            case VALETON_EFFECT_MOD_M_VIBE:     // fallthrough
+            case VALETON_EFFECT_MOD_V_ROTO:     // fallthrough
+            case VALETON_EFFECT_MOD_O_TREM:
+            {
+                // Depth
+                param_ptr[VALETON_PARAM_MOD_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_0].Max = 100;
+
+                // Rate
+                param_ptr[VALETON_PARAM_MOD_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_1].Max = 10;
+
+            } break;
+
+            case VALETON_EFFECT_MOD_VIBRATO:        // fallthrough
+            case VALETON_EFFECT_MOD_SINE_TREM:
+            {
+                // Depth
+                param_ptr[VALETON_PARAM_MOD_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_0].Max = 100;
+
+                // Rate
+                param_ptr[VALETON_PARAM_MOD_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_1].Max = 10;
+
+                // Vol
+                param_ptr[VALETON_PARAM_MOD_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_2].Max = 100;
+            } break;
+
+            case VALETON_EFFECT_MOD_BIAS_TREM:
+            {
+                // Depth
+                param_ptr[VALETON_PARAM_MOD_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_0].Max = 100;
+
+                // Rate
+                param_ptr[VALETON_PARAM_MOD_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_1].Max = 10;
+
+                // Vol
+                param_ptr[VALETON_PARAM_MOD_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_2].Max = 100;
+
+                // Bias
+                param_ptr[VALETON_PARAM_MOD_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_MOD_PARAM_3].Max = 100;
+            } break;
+        }
+
+        // Delay
+        switch ((int)param_ptr[VALETON_PARAM_DLY_TYPE].Value)
+        {
+            case VALETON_EFFECT_DLY_PURE:       // fallthrough
+            case VALETON_EFFECT_DLY_SWEET_ECHO: // fallthrough
+            case VALETON_EFFECT_DLY_TAPE:       // fallthrough
+            case VALETON_EFFECT_DLY_TUBE:
+            {
+                // Mix
+                param_ptr[VALETON_PARAM_DLY_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_0].Max = 100;
+
+                // Time
+                param_ptr[VALETON_PARAM_DLY_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_1].Max = 1000;
+
+                // F.Back
+                param_ptr[VALETON_PARAM_DLY_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_2].Max = 100;
+
+                // Trail
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Max = 1;
+            } break;
+
+            case VALETON_EFFECT_DLY_ANALOG:    
+            {
+                // Mix
+                param_ptr[VALETON_PARAM_DLY_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_0].Max = 100;
+
+                // Time
+                param_ptr[VALETON_PARAM_DLY_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_1].Max = 4000;
+
+                // Feedback
+                param_ptr[VALETON_PARAM_DLY_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_2].Max = 100;
+
+                // Trail
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Max = 1;
+            } break;
+
+            case VALETON_EFFECT_DLY_SLAPBACK:   
+            {
+                // Mix
+                param_ptr[VALETON_PARAM_DLY_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_0].Max = 100;
+
+                // Time
+                param_ptr[VALETON_PARAM_DLY_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_1].Max = 300;
+
+                // F.Back
+                param_ptr[VALETON_PARAM_DLY_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_2].Max = 100;
+
+                // Trail
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Max = 1;
+            } break;
+
+            case VALETON_EFFECT_DLY_REV_ECHO:   
+            {
+                // Mix
+                param_ptr[VALETON_PARAM_DLY_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_0].Max = 100;
+
+                // Time
+                param_ptr[VALETON_PARAM_DLY_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_1].Max = 780;
+
+                // F.Back
+                param_ptr[VALETON_PARAM_DLY_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_2].Max = 100;
+
+                // Trail
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Max = 1;
+            } break;
+
+            case VALETON_EFFECT_DLY_PING_PONG:
+            {
+                // Mix
+                param_ptr[VALETON_PARAM_DLY_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_0].Max = 100;
+
+                // Time
+                param_ptr[VALETON_PARAM_DLY_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_1].Max = 500;
+
+                // F.Back
+                param_ptr[VALETON_PARAM_DLY_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_2].Max = 100;
+
+                // Trail
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Max = 1;
+            } break;
+
+            case VALETON_EFFECT_DLY_RING_ECHO:
+            {
+                // Mix
+                param_ptr[VALETON_PARAM_DLY_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_0].Max = 100;
+
+                // Time
+                param_ptr[VALETON_PARAM_DLY_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_1].Max = 1000;
+
+                // F.Back
+                param_ptr[VALETON_PARAM_DLY_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_2].Max = 100;
+
+                // R-Mix
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Max = 100;
+
+                // Freq
+                param_ptr[VALETON_PARAM_DLY_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_4].Max = 100;
+
+                // Tone
+                param_ptr[VALETON_PARAM_DLY_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_5].Max = 100;
+
+                // Trail
+                param_ptr[VALETON_PARAM_DLY_PARAM_6].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_6].Max = 1;
+            } break;
+
+            case VALETON_EFFECT_DLY_SWEEP_ECHO:
+            {
+                // Mix
+                param_ptr[VALETON_PARAM_DLY_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_0].Max = 100;
+
+                // Time
+                param_ptr[VALETON_PARAM_DLY_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_1].Max = 1000;
+
+                // F.Back
+                param_ptr[VALETON_PARAM_DLY_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_2].Max = 100;
+
+                // S-Depth
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_3].Max = 100;
+
+                // S-Rate
+                param_ptr[VALETON_PARAM_DLY_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_4].Max = 100;
+
+                // Trail
+                param_ptr[VALETON_PARAM_DLY_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_DLY_PARAM_5].Max = 1;
+            } break;
+        }
+
+        // Reverb
+        switch ((int)param_ptr[VALETON_PARAM_RVB_TYPE].Value)
+        {
+            case VALETON_EFFECT_RVB_AIR:       // fallthrough
+            case VALETON_EFFECT_RVB_PLATE:
+            {
+                // Mix
+                param_ptr[VALETON_PARAM_RVB_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_0].Max = 100;
+
+                // Decay
+                param_ptr[VALETON_PARAM_RVB_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_1].Max = 100;
+
+                // Damp
+                param_ptr[VALETON_PARAM_RVB_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_2].Max = 100;
+
+                // Trail
+                param_ptr[VALETON_PARAM_RVB_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_3].Max = 1;
+            } break;
+
+            case VALETON_EFFECT_RVB_ROOM:       // fallthrough
+            case VALETON_EFFECT_RVB_HALL:       // fallthrough
+            case VALETON_EFFECT_RVB_CHURCH:     // fallthrough
+            case VALETON_EFFECT_RVB_PLATE_L:    // fallthrough
+            case VALETON_EFFECT_RVB_SPRING:     // fallthrough
+            case VALETON_EFFECT_RVB_N_STAR:     // fallthrough
+            case VALETON_EFFECT_RVB_DEEPSEA:
+            {
+                // Mix
+                param_ptr[VALETON_PARAM_RVB_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_0].Max = 100;
+
+                // Decay
+                param_ptr[VALETON_PARAM_RVB_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_1].Max = 100;
+
+                // Trail
+                param_ptr[VALETON_PARAM_RVB_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_2].Max = 1;
+            } break;
+    
+            case VALETON_EFFECT_RVB_SWEET_SPACE:
+            {
+                // Mix
+                param_ptr[VALETON_PARAM_RVB_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_0].Max = 100;
+
+                // Decay
+                param_ptr[VALETON_PARAM_RVB_PARAM_1].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_1].Max = 100;
+
+                // Damp
+                param_ptr[VALETON_PARAM_RVB_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_2].Max = 100;
+
+                // Mod
+                param_ptr[VALETON_PARAM_RVB_PARAM_3].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_3].Max = 100;
+
+                // Trail
+                param_ptr[VALETON_PARAM_RVB_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_4].Max = 1;
+            } break;
+        }
+
+        // NS
+        // all models have same params
+        // Gain
+        param_ptr[VALETON_PARAM_NS_PARAM_0].Min = 0;
+        param_ptr[VALETON_PARAM_NS_PARAM_0].Max = 100;
+
+        // Vol
+        param_ptr[VALETON_PARAM_NS_PARAM_1].Min = 0;
+        param_ptr[VALETON_PARAM_NS_PARAM_1].Max = 100;
+
+        // Bass
+        param_ptr[VALETON_PARAM_NS_PARAM_2].Min = 0;
+        param_ptr[VALETON_PARAM_NS_PARAM_2].Max = 100;
+
+        // Mid
+        param_ptr[VALETON_PARAM_NS_PARAM_3].Min = 0;
+        param_ptr[VALETON_PARAM_NS_PARAM_3].Max = 100;
+
+        // Treble
+        param_ptr[VALETON_PARAM_NS_PARAM_4].Min = 0;
+        param_ptr[VALETON_PARAM_NS_PARAM_4].Max = 100;
+
+        valeton_params_release_locked_access();
+    }
 }
 
 /****************************************************************************

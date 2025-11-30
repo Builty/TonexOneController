@@ -430,7 +430,7 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 192,
+                      "zoom": 160,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     },
@@ -526,7 +526,7 @@
                       "setPivot": false,
                       "pivotX": 0,
                       "pivotY": 0,
-                      "zoom": 192,
+                      "zoom": 180,
                       "angle": 0,
                       "innerAlign": "CENTER"
                     }

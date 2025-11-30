@@ -36,6 +36,12 @@ menu "Tonex Controller Configuration"
         
         config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
             bool "Waveshare 1.9 Touch"
+
+        config TONEX_CONTROLLER_HARDWARE_PLATFORM_PIRATE_MIDI_POLAR_PRO
+            bool "Pirate Midi Polar Pro 1.69"
+
+        config TONEX_CONTROLLER_HARDWARE_PLATFORM_PIRATE_MIDI_POLAR_MAX_V2
+            bool "Pirate Midi Polar Max V2 3.5 touch"
             
     endchoice
     
@@ -94,11 +100,41 @@ menu "Tonex Controller Configuration"
             Enable this option to show BPM indicator
 
     config TONEX_CONTROLLER_ENABLE_MIDI_THRU
-       bool "Enable Midi Thru"
+        bool "Enable Midi Thru"
         default "y"
         help
             Enable this option if the platform can support Midi Transmit
-        
+       
+    choice TONEX_CONTROLLER_LED_CONTROL_MODE
+        prompt "Led control mode"
+        default TONEX_CONTROLLER_LED_CONTROL_DISABLED
+    
+        config TONEX_CONTROLLER_LED_CONTROL_DISABLED
+            bool "Disabled"
+
+        config TONEX_CONTROLLER_LED_CONTROL_BOOT_FLASH
+            bool "Boot flash"
+    endchoice
+
+    choice TONEX_CONTROLLER_LED_COLOUR_ORDER
+        prompt "Led colour order"
+        default TONEX_CONTROLLER_LED_COLOUR_ORDER_RGB
+    
+        config TONEX_CONTROLLER_LED_COLOUR_ORDER_RGB
+            bool "RGB"
+
+        config TONEX_CONTROLLER_LED_COLOUR_ORDER_GBR
+            bool "GBR"
+   
+    endchoice    
+    
+    config TONEX_CONTROLLER_LED_NUMBER
+        int "Number of Leds"
+        range 0 16
+        default 0
+        help
+            Set the number of leds the platform has 
+            
     config EXAMPLE_DOUBLE_FB
         bool "Use double Frame Buffer"
         default "n"

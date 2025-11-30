@@ -3,24 +3,5 @@
 
 build_distrib/temp
 
-# ignore SquareLine Studio files
-ui_design/backup
-ui_design/cache
-ui_design/autosave
-ui_design_0.85/backup
-ui_design_0.85/cache
-ui_design_0.85/autosave
-ui_design_1.69/backup
-ui_design_1.69/cache
-ui_design_1.69/autosave
-ui_design_1.69_land/backup
-ui_design_1.69_land/cache
-ui_design_1.69_land/autosave
-ui_design_1.9/backup
-ui_design_1.9/cache
-ui_design_1.9/autosave
-ui_design_480x320land/backup
-ui_design_480x320land/cache
-ui_design_480x320land/autosave
-
-
+# ignore EEZ Studio state files
+**/*.eez-project-ui-state

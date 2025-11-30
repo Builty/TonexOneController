@@ -42,8 +42,9 @@ limitations under the License.
 #include "usb_tonex_one.h"
 #include "leds.h"
 
+#if !CONFIG_TONEX_CONTROLLER_LED_CONTROL_DISABLED
+
 #define RMT_LED_STRIP_RESOLUTION_HZ     10000000 // 10MHz resolution, 1 tick = 0.1us (led strip needs a high resolution)
-#define LED_NUMBER                      1
 
 enum LedStates
 {
@@ -74,7 +75,7 @@ typedef struct
     uint32_t timer;
     uint32_t counter;
 
-    uint8_t led_strip_pixels[LED_NUMBER * 3];
+    uint8_t led_strip_pixels[CONFIG_TONEX_CONTROLLER_LED_NUMBER * 3];
     rmt_channel_handle_t led_chan;
     rmt_encoder_handle_t led_encoder;
     rmt_transmit_config_t tx_config;
@@ -82,9 +83,7 @@ typedef struct
 
 static const char *TAG = "app_leds";
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_ZERO || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_DEVKITC    
 static tLedControl LedControl;
-#endif
 
 /****************************************************************************
 * NAME:        
@@ -316,6 +315,7 @@ err:
 
     return ret;
 }
+#endif //CONFIG_TONEX_CONTROLLER_LED_CONTROL_DISABLED
 
 /****************************************************************************
 * NAME:        
@@ -326,7 +326,7 @@ err:
 *****************************************************************************/
 void leds_handle(void)
 {    
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_ZERO || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_DEVKITC    
+#if !CONFIG_TONEX_CONTROLLER_LED_CONTROL_DISABLED    
     uint32_t red = 0;
     uint32_t green = 0;
     uint32_t blue = 10;
@@ -335,13 +335,13 @@ void leds_handle(void)
     {
         case LED_STATE_BOOT_FLASH_ON:
         {
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_DEVKITC
+#if CONFIG_TONEX_CONTROLLER_LED_COLOUR_ORDER_GBR
             // led is GBR colour order
             LedControl.led_strip_pixels[0] = green;
             LedControl.led_strip_pixels[1] = blue;
             LedControl.led_strip_pixels[2] = red;
 #endif        
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_ZERO 
+#if CONFIG_TONEX_CONTROLLER_LED_COLOUR_ORDER_RGB
             // led is RGB colour order
             LedControl.led_strip_pixels[0] = red;
             LedControl.led_strip_pixels[1] = green;
@@ -396,7 +396,7 @@ void leds_handle(void)
             // nothing to do
         } break;
     }
-#endif    
+#endif //CONFIG_TONEX_CONTROLLER_LED_CONTROL_DISABLED    
 }
 
 /****************************************************************************
@@ -408,7 +408,7 @@ void leds_handle(void)
 *****************************************************************************/
 void leds_init(void)
 {
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_ZERO || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_DEVKITC    
+#if !CONFIG_TONEX_CONTROLLER_LED_CONTROL_DISABLED
     ESP_LOGI(TAG, "Leds Init start");
 
     // init memory
@@ -439,5 +439,5 @@ void leds_init(void)
 
     ESP_LOGI(TAG, "Enable RMT TX channel");
     ESP_ERROR_CHECK(rmt_enable(LedControl.led_chan));    
-#endif     
+#endif    //CONFIG_TONEX_CONTROLLER_LED_CONTROL_DISABLED 
 }

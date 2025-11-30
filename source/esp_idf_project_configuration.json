@@ -466,5 +466,57 @@
       "postBuild": "",
       "postFlash": ""
     }
+  },
+  "PiratePro": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_piratepro",
+      "sdkconfigDefaults": [
+        "sdkconfig.defaults",
+        "sdkconfig.piratepro"        
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_piratepro"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "PirateMaxV2": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_piratemax35",
+      "sdkconfigDefaults": [
+        "sdkconfig.defaults",
+        "sdkconfig.piratemax35"        
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_piratemax35"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
   }
 }

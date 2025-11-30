@@ -355,7 +355,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     // somehow fixes it, and simulates the way that older versions of the project
     // did it (a lot of PSRAM was allocated for skin images.)
     // If anybody figures out the root cause here I'd love to hear it.
-    void* psram_workaround_ptr = heap_caps_malloc(75000, MALLOC_CAP_SPIRAM);
+    void* psram_workaround_ptr = heap_caps_malloc(80000, MALLOC_CAP_SPIRAM);
     ESP_ERROR_CHECK(esp_lcd_new_rgb_panel(&panel_config, &panel_handle));
     free(psram_workaround_ptr);   
 

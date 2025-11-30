@@ -160,30 +160,30 @@
 #else       /*LV_MEM_CUSTOM*/
     #ifndef LV_MEM_CUSTOM_INCLUDE
         #ifdef CONFIG_LV_MEM_CUSTOM_INCLUDE
-            #define LV_MEM_CUSTOM_INCLUDE CONFIG_LV_MEM_CUSTOM_INCLUDE
+            #define LV_MEM_CUSTOM_INCLUDE "esp_heap_caps.h"   //CONFIG_LV_MEM_CUSTOM_INCLUDE
         #else
-            #define LV_MEM_CUSTOM_INCLUDE <stdlib.h>   /*Header for the dynamic memory function*/
+            #define LV_MEM_CUSTOM_INCLUDE "esp_heap_caps.h"   /*Header for the dynamic memory function*/
         #endif
     #endif
     #ifndef LV_MEM_CUSTOM_ALLOC
         #ifdef CONFIG_LV_MEM_CUSTOM_ALLOC
             #define LV_MEM_CUSTOM_ALLOC CONFIG_LV_MEM_CUSTOM_ALLOC
         #else
-            #define LV_MEM_CUSTOM_ALLOC   malloc
+            #define LV_MEM_CUSTOM_ALLOC(size)   heap_caps_malloc((size), MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT)
         #endif
     #endif
     #ifndef LV_MEM_CUSTOM_FREE
         #ifdef CONFIG_LV_MEM_CUSTOM_FREE
             #define LV_MEM_CUSTOM_FREE CONFIG_LV_MEM_CUSTOM_FREE
         #else
-            #define LV_MEM_CUSTOM_FREE    free
+            #define LV_MEM_CUSTOM_FREE(ptr)    heap_caps_free(ptr)
         #endif
     #endif
     #ifndef LV_MEM_CUSTOM_REALLOC
         #ifdef CONFIG_LV_MEM_CUSTOM_REALLOC
             #define LV_MEM_CUSTOM_REALLOC CONFIG_LV_MEM_CUSTOM_REALLOC
         #else
-            #define LV_MEM_CUSTOM_REALLOC realloc
+            #define LV_MEM_CUSTOM_REALLOC(ptr, new_size) heap_caps_realloc((ptr), (new_size), MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT)
         #endif
     #endif
 #endif     /*LV_MEM_CUSTOM*/

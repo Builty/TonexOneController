@@ -80,7 +80,7 @@ static const uint8_t TonexPresetIndexByteMarker[] = {0xB9, 0x04, 0x00, 0x00};
 #define TONEX_RESP_OFFSET_PRESET_NAME_LEN           32
 #define TONEX_CDC_INTERFACE_INDEX                   0
 
-#define MAX_INPUT_BUFFERS                           2
+#define MAX_INPUT_BUFFERS                           3
 
 #define MAX_GLOBAL_CONFIG                           3584
 
@@ -467,7 +467,7 @@ static bool usb_tonex_handle_rx(const uint8_t* data, size_t data_len, void* arg)
 
     if (data_len > TONEX_RX_TEMP_BUFFER_SIZE)
     {
-        ESP_LOGE(TAG, "usb_tonex_one_handle_rx data too long! %d", (int)data_len);
+        ESP_LOGE(TAG, "usb_tonex_handle_rx data too long! %d", (int)data_len);
         return false;
     }
     else
@@ -493,7 +493,7 @@ static bool usb_tonex_handle_rx(const uint8_t* data, size_t data_len, void* arg)
         }
     }
 
-    ESP_LOGE(TAG, "usb_tonex_one_handle_rx no available buffers!");
+    ESP_LOGE(TAG, "usb_tonex_handle_rx no available buffers!");
     return false;
 }
 
@@ -847,7 +847,7 @@ static TonexStatus usb_tonex_parse_global_config(uint8_t* unframed, uint16_t len
         }
     }
 
-    usb_tonex_dump_globals();
+    //usb_tonex_dump_globals();
 
     return STATUS_OK;
 }

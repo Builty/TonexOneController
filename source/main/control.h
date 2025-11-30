@@ -191,7 +191,7 @@ enum WiFiTxPower
     WIFI_TX_POWER_100
 };
 
-enum ConfigTabs43B
+enum ConfigTabs43BTonex
 {
     CONFIG_TAB_GATE,
     CONFIG_TAB_COMPRESSOR,
@@ -201,6 +201,21 @@ enum ConfigTabs43B
     CONFIG_TAB_DELAY,
     CONFIG_TAB_REVERB,
     CONFIG_TAB_GLOBAL,
+};
+
+enum ConfigTabs43BValeton
+{
+    CONFIG_TAB_VAL_NR,
+    CONFIG_TAB_VAL_PRE,
+    CONFIG_TAB_VAL_DST,
+    CONFIG_TAB_VAL_AMP,
+    CONFIG_TAB_VAL_CAB,
+    CONFIG_TAB_VAL_EQ,
+    CONFIG_TAB_VAL_MOD,
+    CONFIG_TAB_VAL_DLY,
+    CONFIG_TAB_VAL_RVB,
+    CONFIG_TAB_VAL_NS,
+    CONFIG_TAB_VAL_GLOBAL,
 };
 
 enum FootswitchLayouts
@@ -254,6 +269,9 @@ enum ParamTypes
 
 #define MAX_PARAM_NAME          12
 
+// special cases for handling effect switches that use Midi but don't change a parameter
+#define TONEX_UNKNOWN           0xFFFF
+
 typedef struct
 {
     float Value;
@@ -261,6 +279,9 @@ typedef struct
     float Max;
     char Name[MAX_PARAM_NAME];
     uint8_t Type;
+    uint8_t Data1;  // usage depends on connected modeller
+    uint8_t Data2;  // usage depends on connected modeller
+    uint8_t Data3;  // usage depends on connected modeller
 } tModellerParameter;
 
 typedef struct __attribute__ ((packed)) 

@@ -71,7 +71,7 @@ static const uint8_t ToneOnePresetByteMarker[] = {0xB9, 0x04, 0xB9, 0x02, 0xBC, 
 #define TONEX_ONE_RESP_OFFSET_PRESET_NAME_LEN       32
 #define TONEX_ONE_CDC_INTERFACE_INDEX               0
 
-#define MAX_INPUT_BUFFERS                           2
+#define MAX_INPUT_BUFFERS                           3
 
 #define MAX_STATE_DATA                              512
 
@@ -656,6 +656,12 @@ static esp_err_t usb_tonex_one_modify_global(uint16_t global_val, float value)
             scaled_value = ((value + 40.0f) / 43.0f) * 10.0f;
 
             usb_tonex_one_send_master_volume(scaled_value);
+
+            // wait a little
+            vTaskDelay(20);
+
+            // read value back to update the UI
+            usb_tonex_one_request_master_volume();
 
             // bit of a hack here. Return fail code, so caller can avoid sending the state data unneccessarily
             res = ESP_FAIL;

@@ -120,6 +120,8 @@ extern const lv_img_dsc_t img_rvb_off;
 extern const lv_img_dsc_t img_rvb_on;
 extern const lv_img_dsc_t img_tc_off;
 extern const lv_img_dsc_t img_tc_on;
+extern const lv_img_dsc_t img_amp_disabled;
+extern const lv_img_dsc_t img_cab_disabled;
 
 #ifndef EXT_IMG_DESC_T
 #define EXT_IMG_DESC_T
@@ -129,7 +131,7 @@ typedef struct _ext_img_desc_t {
 } ext_img_desc_t;
 #endif
 
-extern const ext_img_desc_t images[113];
+extern const ext_img_desc_t images[115];
 
 
 #ifdef __cplusplus

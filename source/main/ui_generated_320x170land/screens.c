@@ -96,7 +96,7 @@ void create_screen_screen1() {
                             lv_obj_set_pos(obj, 183, -21);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_wifi_conn);
-                            lv_img_set_zoom(obj, 192);
+                            lv_img_set_zoom(obj, 160);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                         }
                         {
@@ -116,7 +116,7 @@ void create_screen_screen1() {
                             lv_obj_set_pos(obj, 248, -21);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_usb_ok);
-                            lv_img_set_zoom(obj, 192);
+                            lv_img_set_zoom(obj, 180);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                         }
                     }

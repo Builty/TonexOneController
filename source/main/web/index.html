@@ -1,0 +1,2132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tonex One">
+    <title>Tonex/GP5 Controller Project</title>
+    
+  </head>
+  
+  <body class="bg">    
+    <link rel="stylesheet" href="bootstrap.css">
+    <link rel="stylesheet" href="index.css">
+    <script src="bootstrap.js"></script>
+    <script src="jquery.js"></script>
+              
+    <nav class="navbar navbar-dark bg-dark px-3 py-2">
+        <div class="container-fluid d-flex flex-column flex-md-row align-items-center align-items-md-start justify-content-between">
+
+            <!-- Title -->
+            <div class="navbar-brand text-orange m-0 text-center text-md-start order-1"
+                style="font-size: 2.1rem; font-weight: 450; line-height: 1.2;">
+            Tonex/GP5 Controller
+            </div>
+
+           <!-- Preset selector – full-width on phone, capped on large screens -->
+            <div class="order-2 order-md-2 mt-2 mt-md-0 px-3 px-md-0">
+                <select class="form-select form-select-lg text-white bg-dark border-secondary shadow-sm"
+                        id="set_preset"
+                        onchange="onPresetChange()"
+                        style="height: 52px; font-size: 1.1rem;">
+                    <!-- your <option>s here -->
+                </select>
+            </div>
+        </div>
+    </nav>
+
+    <nav class="navbar navbar-expand bg-dark navbar-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand menu-link" data-target="Home" href="#">Home</a>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav me-auto" id="nav-items-list">
+                    <!-- JavaScript will inject the menu here -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        <div id="Home" class="content-section active">
+            <div class="col py-3 text-white">
+                <div class="fx_icon_container">
+                    <img id="fx_image_gate">
+                    <img id="fx_image_eq">
+                    <img id="fx_image_amp">
+                    <img id="fx_image_cab">
+                    <img id="fx_image_comp">
+                    <img id="fx_image_mod">
+                    <img id="fx_image_dly">
+                    <img id="fx_image_rvb">
+                </div> 
+                <br>
+                <div class="container" style="text-align: center;">
+                    <label class="home-label">Version V2.0.2.2</label>
+                </div>  
+                <div class="container" style="text-align: center; color:#FB9230;">
+                    <label>github.com/Builty/TonexOneController</label>
+                </div>    
+                <br>
+                <br>
+                <div class="container" style="text-align: center; color:#777;">
+                    <label>TONEX is a registered trademark of IK Multimedia Production Srl</label>
+                    <br>
+                    <label>Valeton is a registered trademark of Changsha Hotone Audio Co., Ltd.</label>
+                </div>              
+            </div>
+        </div>
+
+        <div id="NoiseGate" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Noise Gate</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="ng_enable">
+                                    <label class="form-check-label" for="ng_enable">Enable</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="ng_post">
+                                    <label class="form-check-label" for="ng_post">Post</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                    <br>
+                    <div class="container">
+                        <label for="ng_thresh" class="form-label" unit="dB">Threshold</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="ng_thresh">
+                    </div>
+                    <div class="container">
+                        <label for="ng_release" class="form-label" unit="ms">Release</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="ng_release">
+                    </div>
+                    <div class="container">
+                        <label for="ng_depth" class="form-label" unit="dB">Depth</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="ng_depth">
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="Compressor" class="content-section">
+        <div class="col py-3 text-white">
+                <h5 class="selected_text">Compressor</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="cp_enable">
+                                    <label class="form-check-label" for="cp_enable">Enable</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="cp_post">
+                                    <label class="form-check-label" for="cp_post">Post</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                    <br>
+                    <div class="container">
+                        <label for="cp_thresh" class="form-label" unit="dB">Threshold</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="cp_thresh">
+                    </div>
+                    <div class="container">
+                        <label for="cp_attack" class="form-label" unit="ms">Attack</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="cp_attack">
+                    </div>
+                    <div class="container">
+                        <label for="cp_gain" class="form-label" unit="dB">Gain</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="cp_gain">
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="Equalisation" class="content-section">
+        <div class="col py-3 text-white">
+                <h5 class="selected_text">Equalisation</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="eq_post">
+                                    <label class="form-check-label" for="eq_post">Post</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check">
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                    <br>
+                    
+                    <div class="container">
+                        <label for="eq_bass" class="form-label">Bass</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="eq_bass">
+                    </div>
+                    <div class="container">
+                        <label for="eq_bassf" class="form-label" unit="Hz">Bass Freq</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="eq_bassf">
+                    </div>
+                    <div class="container">
+                        <label for="eq_mid" class="form-label">Mid</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="eq_mid">
+                    </div>
+                    <div class="container">
+                        <label for="eq_midf" class="form-label" unit="Hz">Mid Freq</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="eq_midf">
+                    </div>
+                    <div class="container">
+                        <label for="eq_midq" class="form-label">Mid Q</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="eq_midq">
+                    </div>
+                    <div class="container">
+                        <label for="eq_treble" class="form-label">Treble</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="eq_treble">
+                    </div>
+                    <div class="container">
+                        <label for="eq_treblef" class="form-label" unit="Hz">Treble Freq</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="eq_treblef">
+                    </div>
+                </p>
+            </div>
+        </div>
+        
+        <div id="Reverb" class="content-section">
+        <div class="col py-3 text-white">
+                <h5 class="selected_text">Reverb</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="rv_enable">
+                                    <label class="form-check-label" for="rv_enable">Enable</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="rv_post">
+                                    <label class="form-check-label" for="rv_post">Post</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="rv_model">Model</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="rv_model">
+                        <option value="0" selected>Spring 1</option>
+                        <option value="1">Spring 2</option>
+                        <option value="2">Spring 3</option>
+                        <option value="3">Spring 4</option>
+                        <option value="4">Room</option>
+                        <option value="5">Plate</option>
+                        </select>            
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label for="rv_mix" class="form-label" unit="%">Mix</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="rv_mix">
+                    </div>
+                    <div class="container">
+                        <label for="rv_time" class="form-label" unit="s">Time</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="rv_time">
+                    </div>
+                    <div class="container">
+                        <label for="rv_predelay" class="form-label" unit="ms">Pre-Delay</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="rv_predelay">
+                    </div>
+                    <div class="container">
+                        <label for="rv_color" class="form-label">Color</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="rv_color">
+                    </div>
+
+                </p>
+            </div>
+        </div>
+        
+        <div id="Modulation" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Modulation</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="mo_enable">
+                                    <label class="form-check-label" for="mo_enable">Enable</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="mo_post">
+                                    <label class="form-check-label" for="mo_post">Post</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>   
+                    <div class="container">
+                        <div class="row">                
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="mo_sync">
+                                    <label class="form-check-label" for="mo_sync">Sync</label>         
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                </div>
+                            </div>
+                        </div>
+                    </div>                  
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="mo_model">Model</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="mo_model">
+                            <option value="0" selected>Chorus</option>
+                            <option value="1">Tremolo</option>
+                            <option value="2">Phaser</option>
+                            <option value="3">Flanger</option>
+                            <option value="4">Rotary</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="mo_timesign">Timesign</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="mo_timesign">
+                            <option value="0">1/32</option>
+                            <option value="1">1/32 D</option>
+                            <option value="2">1/32 T</option>
+                            <option value="3">1/16</option>
+                            <option value="4">1/16 D</option>
+                            <option value="5">1/16 T</option>
+                            <option value="6">1/8</option>
+                            <option value="7">1/8 D</option>
+                            <option value="8">1/8 T</option>
+                            <option value="9" selected>1/4</option>
+                            <option value="10">1/4 D</option>
+                            <option value="11">1/4 T</option>
+                            <option value="12">1/2</option>
+                            <option value="13">1/2 D</option>
+                            <option value="14">1/2 T</option>
+                            <option value="15">1/1</option>
+                            <option value="16">1/1 D</option>
+                            <option value="17">1/1 T</option>
+                        </select>
+                        <br>
+                    </div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <label for="mo_param1" id="mo_param1l" class="form-label">Param1</label>
+                            </div>
+                            <div class="col">
+                                <div id="mo_indicator" class="mo-indicator user-select-none"></div>
+                            </div>
+                        </div>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="mo_param1">
+                    </div>
+                    <div class="container">
+                        <label for="mo_param2" id="mo_param2l" class="form-label">Param2</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="mo_param2">
+                    </div>
+                    <div class="container">
+                        <label for="mo_param3" id="mo_param3l" class="form-label">Param3</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="mo_param3">
+                    </div>
+                    <div class="container">
+                        <label for="mo_param4" id="mo_param4l" class="form-label">Param4</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="mo_param4">
+                    </div>
+                </p>
+            </div>
+        </div>
+        
+        <div id="Delay" class="content-section">
+        <div class="col py-3 text-white">
+                <h5 class="selected_text">Delay</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="dl_enable">
+                                    <label class="form-check-label" for="dl_enable">Enable</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="dl_post">
+                                    <label class="form-check-label" for="dl_post">Post</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                    <br>               
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="dl_sync">
+                                    <label class="form-check-label" for="dl_sync">Sync</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="dl_pingpong">
+                                    <label class="form-check-label" for="dl_pingpong">PPng</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="rv_model">Model</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="dl_model">
+                            <option value="0" selected>Digital</option>
+                            <option value="1">Tape</option>
+                        </select>            
+                    </div>
+                    <br>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <label for="dl_time" class="form-label" unit="ms">Time</label>
+                            </div>
+                            <div class="col">
+                                <div id="dl_indicator" class="dl-indicator user-select-none"></div>
+                            </div>
+                        </div>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="dl_time">
+                    </div>
+                    <div class="container">
+                        <label class="form-check-label" for="dl_timesign">Timesign</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="dl_timesign">
+                            <option value="0">1/32</option>
+                            <option value="1">1/32 D</option>
+                            <option value="2">1/32 T</option>
+                            <option value="3">1/16</option>
+                            <option value="4">1/16 D</option>
+                            <option value="5">1/16 T</option>
+                            <option value="6">1/8</option>
+                            <option value="7">1/8 D</option>
+                            <option value="8">1/8 T</option>
+                            <option value="9" selected>1/4</option>
+                            <option value="10">1/4 D</option>
+                            <option value="11">1/4 T</option>
+                            <option value="12">1/2</option>
+                            <option value="13">1/2 D</option>
+                            <option value="14">1/2 T</option>
+                            <option value="15">1/1</option>
+                            <option value="16">1/1 D</option>
+                            <option value="17">1/1 T</option>
+                        </select>
+                        <br>
+                    </div>
+                    <div class="container">
+                        <label for="dl_feedback" class="form-label" unit="%">Feedback</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="dl_feedback">
+                    </div>
+                    <div class="container">
+                        <label for="dl_mix" class="form-label" unit="%">Mix</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="dl_mix">
+                    </div>
+                </p>
+            </div>
+        </div>
+        
+        <div id="Amplifier" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Amplifier</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="am_ampen">
+                                    <label class="form-check-label" for="am_ampen">Amp Enable</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label for="am_gain" class="form-label">Gain</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="am_gain">
+                    </div>
+                    <div class="container">
+                        <label for="am_volume" class="form-label">Volume</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="am_volume">
+                    </div>
+                    <div class="container">
+                        <label for="am_mix" class="form-label" unit="%">Mix</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="am_mix">
+                    </div>
+
+                    <div class="container">
+                        <label for="am_presence" class="form-label">Presence</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="am_presence">
+                    </div>
+
+                    <div class="container">
+                        <label for="am_depth" class="form-label">Depth</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="am_depth">
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="Cabinet" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Cabinet</h5>
+                <p class="lead">
+                    <div class="container">
+                        <label class="form-check-label" for="am_cabtype">Cabinet Type</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="am_cabtype">
+                            <option value="0" selected>Tone Model</option>
+                            <option value="1">VIR</option>
+                            <option value="2">Disabled</option>
+                        </select>            
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="Global" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Global</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="gb_cabsim">
+                                    <label class="form-check-label" for="gb_cabsim">Cab Bypass</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="gb_tempos">
+                                    <label class="form-check-label" for="gb_tempos">Tempo Src</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="gb_bypass">
+                                    <label class="form-check-label" for="gb_bypass">Bypass</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <div id="gb_tap" class="bpm-tap d-flex user-select-none" onclick="globalTempoTap()" ontouchstart="">
+                            <div class="justify-content-center align-self-center text-center w-100">TAP</div>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <label for="gb_bpm" class="form-label">BPM</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="gb_bpm">
+                    </div>
+                    <div class="container">
+                        <label for="gb_trim" class="form-label" unit="dB">Input Trim</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="gb_trim">
+                    </div>
+                    <div class="container">
+                        <label for="gb_tref" class="form-label" unit="Hz">Tuning Reference</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="gb_tref">
+                    </div>
+                    <div class="container">
+                        <label for="gb_vol" class="form-label">Master Volume</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="gb_vol">
+                    </div>
+                </p>
+            </div>
+        </div>
+        
+        <div id="ValNR" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Noise Reduction</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="val_nr_enable">
+                                    <label class="form-check-label" for="val_nr_enable">Enable</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="val_nr_type">Model</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="val_nr_type">
+                            <option value="0" selected>Noise Gate</option>
+                        </select>            
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label for="val_nr_param0" class="form-label">Threshold</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_nr_param0">
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="ValPre" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Pre</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="val_pre_enable">
+                                    <label class="form-check-label" for="val_pre_enable">Enable</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="val_pre_type">Model</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="val_pre_type">
+                            <option value="0" selected>Comp</option>
+                            <option value="1">Comp4</option>
+                            <option value="2">Boost</option>
+                            <option value="3">Micro Boost</option>
+                            <option value="4">B Boost</option>
+                            <option value="5">Toucher</option>
+                            <option value="6">Crier</option>
+                            <option value="7">Octa</option>
+                            <option value="8">Pitch</option>
+                            <option value="9">Detune</option>                        
+                        </select>            
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label for="val_pre_param0" class="form-label">Param0</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_pre_param0">
+                    </div>
+                    <div class="container">
+                        <label for="val_pre_param1" class="form-label">Param1</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_pre_param1">
+                    </div>
+                    <div class="container">
+                        <label for="val_pre_param2" class="form-label">Param2</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_pre_param2">
+                    </div>
+                    <div class="container">
+                        <label for="val_pre_param3" class="form-label">Param3</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_pre_param3">
+                    </div>
+                    <div class="container">
+                        <label for="val_pre_param4" class="form-label">Param4</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_pre_param4">
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="ValAmp" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Amplifier</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="val_amp_enable">
+                                    <label class="form-check-label" for="val_amp_enable">Enable</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="val_amp_type">Model</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="val_amp_type">
+                            <option value="0" selected>Tweedy</option>
+                            <option value="1">Bellman 59N</option>
+                            <option value="2">Dark Twin</option>
+                            <option value="3">Foxy 30N</option>
+                            <option value="4">J-120 Clean</option>
+                            <option value="5">Match Clean</option>
+                            <option value="6">L-Star Clean</option>
+                            <option value="7">UK45</option>
+                            <option value="8">UK45 JP</option>
+                            <option value="9">UK800</option>
+                            <option value="10">Bellman 59B</option>
+                            <option value="11">Foxy 30TB</option>
+                            <option value="12">Sup Dual OD</option>
+                            <option value="13">Solo 100 OD</option>
+                            <option value="14">Z38 OD</option>
+                            <option value="15">Bad KT OD</option>
+                            <option value="16">Juice R100</option>
+                            <option value="17">Dizz VH</option>
+                            <option value="18">Dizz VH Plus</option>
+                            <option value="19">Eagle 120</option>
+                            <option value="20">EV51</option>
+                            <option value="21">Solo 100 OD</option>
+                            <option value="22">Mess Dual V</option>
+                            <option value="23">Mess Dual M</option>
+                            <option value="24">Power LD</option>
+                            <option value="25">Flagman Plus</option>
+                            <option value="26">Bog Red V</option>
+                            <option value="27">Classic Bass</option>
+                            <option value="28">Foxy Bass</option>
+                            <option value="29">Mess Bass</option>
+                            <option value="30">AC Pre 1</option>
+                            <option value="31">AC Pre 2</option>
+                        </select>            
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label for="val_amp_param0" class="form-label">Param0</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_amp_param0">
+                    </div>
+                    <div class="container">
+                        <label for="val_amp_param1" class="form-label">Param1</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_amp_param1">
+                    </div>
+                    <div class="container">
+                        <label for="val_amp_param2" class="form-label">Param2</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_amp_param2">
+                    </div>
+                    <div class="container">
+                        <label for="val_amp_param3" class="form-label">Param3</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_amp_param3">
+                    </div>
+                    <div class="container">
+                        <label for="val_amp_param4" class="form-label">Param4</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_amp_param4">
+                    </div>
+                    <div class="container">
+                        <label for="val_amp_param5" class="form-label">Param5</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_amp_param5">
+                    </div>
+                    <div class="container">
+                        <label for="val_amp_param6" class="form-label">Param6</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_amp_param6">
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="ValCab" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Cabinet</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="val_cab_enable">
+                                    <label class="form-check-label" for="val_cab_enable">Enable</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="val_cab_type">Model</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="val_cab_type">
+                            <option value="0" selected>TWD CP</option>
+                            <option value="1">Dark VIT</option>
+                            <option value="2">Foxy 1x12</option>
+                            <option value="3">L-Star 1x12</option>
+                            <option value="4">Dark CS 2x12</option>
+                            <option value="5">Dark Twin 2x12</option>
+                            <option value="6">Sup Star 2x12</option>
+                            <option value="7">J-120 2x12</option>
+                            <option value="8">Foxy 2x12</option>
+                            <option value="9">UK GRN 2x12</option>
+                            <option value="10">UK GRN 4x12</option>
+                            <option value="11">Bog 4x12</option>
+                            <option value="12">Dizz 4x12</option>
+                            <option value="13">EV 4x12</option>
+                            <option value="14">Solo 4x12</option>
+                            <option value="15">Mess 4x12</option>
+                            <option value="16">Eagle 4x12</option>
+                            <option value="17">Juice 4x12</option>
+                            <option value="18">Bellman 2x12</option>
+                            <option value="19">AMPG 4x10</option>
+                        </select>            
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label for="val_cab_param0" class="form-label">Param0</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_cab_param0">
+                    </div>
+                    <div class="container">
+                        <label for="val_cab_param1" class="form-label">Param1</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_cab_param1">
+                    </div>
+                    <div class="container">
+                        <label for="val_cab_param2" class="form-label">Param2</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_cab_param2">
+                    </div>
+                    <div class="container">
+                        <label for="val_cab_param3" class="form-label">Param3</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_cab_param3">
+                    </div>
+                    <div class="container">
+                        <label for="val_cab_param4" class="form-label">Param4</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_cab_param4">
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="ValEQ" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Equaliser</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="val_eq_enable">
+                                    <label class="form-check-label" for="val_eq_enable">Enable</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="val_eq_type">Model</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="val_eq_type">
+                            <option value="0" selected>Guitar EQ1</option>
+                            <option value="1">Guitar EQ2</option>
+                            <option value="2">Bass EQ1</option>
+                            <option value="3">Bass EQ2</option>
+                            <option value="4">Mess EQ</option>
+                        </select>            
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label for="val_eq_param0" class="form-label">Param0</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_eq_param0">
+                    </div>
+                    <div class="container">
+                        <label for="val_eq_param1" class="form-label">Param1</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_eq_param1">
+                    </div>
+                    <div class="container">
+                        <label for="val_eq_param2" class="form-label">Param2</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_eq_param2">
+                    </div>
+                    <div class="container">
+                        <label for="val_eq_param3" class="form-label">Param3</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_eq_param3">
+                    </div>
+                    <div class="container">
+                        <label for="val_eq_param4" class="form-label">Param4</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_eq_param4">
+                    </div>
+                    <div class="container">
+                        <label for="val_eq_param5" class="form-label">Param5</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_eq_param5">
+                    </div>
+
+                </p>
+            </div>
+        </div>
+
+        <div id="ValDst" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Distortion</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="val_dst_enable">
+                                    <label class="form-check-label" for="val_dst_enable">Enable</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="val_dst_type">Model</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="val_dst_type">
+                            <option value="0" selected>Green OD</option>
+                            <option value="1">Yellow OD</option>
+                            <option value="2">Super OD</option>
+                            <option value="3">SM Dist</option>
+                            <option value="4">Plustortion</option>
+                            <option value="5">La Charger</option>
+                            <option value="6">Darktale</option>
+                            <option value="7">Sora Fuzz</option>
+                            <option value="8">Red Haze</option>
+                            <option value="9">Bass OD</option>
+                        </select>            
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label for="val_dst_param0" class="form-label">Param0</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_dst_param0">
+                    </div>
+                    <div class="container">
+                        <label for="val_dst_param1" class="form-label">Param1</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_dst_param1">
+                    </div>
+                        <div class="container">
+                        <label for="val_dst_param2" class="form-label">Param2</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_dst_param2">
+                    </div>
+                        <div class="container">
+                        <label for="val_dst_param3" class="form-label">Param3</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_dst_param3">
+                    </div>
+                        <div class="container">
+                        <label for="val_dst_param4" class="form-label">Param4</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_dst_param4">
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="ValMod" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Modulation</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="val_mod_enable">
+                                    <label class="form-check-label" for="val_mod_enable">Enable</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="val_mod_type">Model</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="val_mod_type">
+                            <option value="0" selected>A Chorus</option>
+                            <option value="1">B Chorus</option>
+                            <option value="2">Jet</option>
+                            <option value="3">N-Jet</option>
+                            <option value="4">O-Phase</option>
+                            <option value="5">M-Vibe</option>
+                            <option value="6">V-Roto</option>
+                            <option value="7">Vibrato</option>
+                            <option value="8">O-Trem</option>
+                            <option value="9">Sine Trem</option>
+                            <option value="10">Bias Trem</option>
+                        </select>            
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label for="val_mod_param0" class="form-label">Param0</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_mod_param0">
+                    </div>
+                    <div class="container">
+                        <label for="val_mod_param1" class="form-label">Param1</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_mod_param1">
+                    </div>
+                    <div class="container">
+                        <label for="val_mod_param2" class="form-label">Param2</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_mod_param2">
+                    </div>
+                    <div class="container">
+                        <label for="val_mod_param3" class="form-label">Param3</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_mod_param3">
+                    </div>
+                    <div class="container">
+                        <label for="val_mod_param4" class="form-label">Param4</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_mod_param4">
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="ValDly" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Delay</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="val_dly_enable">
+                                    <label class="form-check-label" for="val_dly_enable">Enable</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="val_dly_type">Model</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="val_dly_type">
+                            <option value="0" selected>Pure</option>
+                            <option value="1">Analog</option>
+                            <option value="2">Slapback</option>
+                            <option value="3">Sweet Echo</option>
+                            <option value="4">Tape</option>
+                            <option value="5">Tube</option>
+                            <option value="6">Rev Echo</option>
+                            <option value="7">Ring Echo</option>
+                            <option value="8">Sweep Echo</option>
+                            <option value="9">Ping Pong</option>
+                        </select>            
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label for="val_dly_param0" class="form-label">Param0</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_dly_param0">
+                    </div>
+                    <div class="container">
+                        <label for="val_dly_param1" class="form-label">Param1</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_dly_param1">
+                    </div>
+                    <div class="container">
+                        <label for="val_dly_param2" class="form-label">Param2</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_dly_param2">
+                    </div>
+                    <div class="container">
+                        <label for="val_dly_param3" class="form-label">Param3</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_dly_param3">
+                    </div>
+                    <div class="container">
+                        <label for="val_dly_param4" class="form-label">Param4</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_dly_param4">
+                    </div>
+                    <div class="container">
+                        <label for="val_dly_param5" class="form-label">Param5</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_dly_param5">
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="ValRvb" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Reverb</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="val_rvb_enable">
+                                    <label class="form-check-label" for="val_rvb_enable">Enable</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="val_rvb_type">Model</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="val_rvb_type">
+                            <option value="0" selected>Air</option>
+                            <option value="1">Room</option>
+                            <option value="2">Hall</option>
+                            <option value="3">Church</option>
+                            <option value="4">Plate L</option>
+                            <option value="5">Plate</option>
+                            <option value="6">Spring</option>
+                            <option value="7">N-Star</option>
+                            <option value="8">Deepsea</option>
+                            <option value="9">Sweet Space</option>
+                        </select>            
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label for="val_rvb_param0" class="form-label">Param0</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_rvb_param0">
+                    </div>
+                    <div class="container">
+                        <label for="val_rvb_param1" class="form-label">Param1</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_rvb_param1">
+                    </div>
+                    <div class="container">
+                        <label for="val_rvb_param2" class="form-label">Param2</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_rvb_param2">
+                    </div>
+                    <div class="container">
+                        <label for="val_rvb_param3" class="form-label">Param3</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_rvb_param3">
+                    </div>
+                    <div class="container">
+                        <label for="val_rvb_param4" class="form-label">Param4</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_rvb_param4">
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="ValNS" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Snaptone</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="val_ns_enable">
+                                    <label class="form-check-label" for="val_ns_enable">Enable</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="val_ns_type">Model</label>
+                        <select class="form-select select_style" data-index-number="dummy" onchange="onParamChange(event)" id="val_ns_type">
+                            <option value="0" selected>0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="13">13</option>
+                            <option value="14">14</option>
+                            <option value="15">15</option>
+                            <option value="16">16</option>
+                            <option value="17">17</option>
+                            <option value="18">18</option>
+                            <option value="19">19</option>
+                            <option value="20">20</option>
+                            <option value="21">21</option>
+                            <option value="22">22</option>
+                            <option value="23">23</option>
+                            <option value="24">24</option>
+                            <option value="25">25</option>
+                            <option value="26">26</option>
+                            <option value="27">27</option>
+                            <option value="28">28</option>
+                            <option value="29">29</option>
+                            <option value="30">30</option>
+                            <option value="31">31</option>
+                            <option value="32">32</option>
+                            <option value="33">33</option>
+                            <option value="34">34</option>
+                            <option value="35">35</option>
+                            <option value="36">36</option>
+                            <option value="37">37</option>
+                            <option value="38">38</option>
+                            <option value="39">39</option>
+                            <option value="40">40</option>
+                            <option value="41">41</option>
+                            <option value="42">42</option>
+                            <option value="43">43</option>
+                            <option value="44">44</option>
+                            <option value="45">45</option>
+                            <option value="46">46</option>
+                            <option value="47">47</option>
+                            <option value="48">48</option>
+                            <option value="49">49</option>
+                            <option value="50">50</option>
+                            <option value="51">51</option>
+                            <option value="52">52</option>
+                            <option value="53">53</option>
+                            <option value="54">54</option>
+                            <option value="55">55</option>
+                            <option value="56">56</option>
+                            <option value="57">57</option>
+                            <option value="58">58</option>
+                            <option value="59">59</option>
+                            <option value="60">60</option>
+                            <option value="61">61</option>
+                            <option value="62">62</option>
+                            <option value="63">63</option>
+                            <option value="64">64</option>
+                            <option value="65">65</option>
+                            <option value="66">66</option>
+                            <option value="67">67</option>
+                            <option value="68">68</option>
+                            <option value="69">69</option>
+                            <option value="70">70</option>
+                            <option value="71">71</option>
+                            <option value="72">72</option>
+                            <option value="73">73</option>
+                            <option value="74">74</option>
+                            <option value="75">75</option>
+                            <option value="76">76</option>
+                            <option value="77">77</option>
+                            <option value="78">78</option>
+                            <option value="79">79</option>
+                        </select>            
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label for="val_ns_param0" class="form-label">Param0</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_ns_param0">
+                    </div>
+                    <div class="container">
+                        <label for="val_ns_param1" class="form-label">Param1</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_ns_param1">
+                    </div>
+                    <div class="container">
+                        <label for="val_ns_param2" class="form-label">Param2</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_ns_param2">
+                    </div>
+                    <div class="container">
+                        <label for="val_ns_param3" class="form-label">Param3</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_ns_param3">
+                    </div>
+                    <div class="container">
+                        <label for="val_ns_param4" class="form-label">Param4</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_ns_param4">
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="ValPatch" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Patch</h5>
+                <p class="lead">
+                    <div class="container">
+                        <label for="val_pt_vol" class="form-label">Patch Volume</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_pt_vol">
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="ValGlobal" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Global</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" data-index-number="dummy" onchange="onParamChange(event)" type="checkbox" role="switch" value="" id="val_gb_cabsim">
+                                    <label class="form-check-label" for="val_gb_cabsim">Cab Bypass</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <div id="val_gb_tap" class="bpm-tap d-flex user-select-none" onclick="globalTempoTap()" ontouchstart="">
+                            <div class="justify-content-center align-self-center text-center w-100">TAP</div>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <label for="val_gb_bpm" class="form-label">BPM</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_gb_bpm">
+                    </div>
+                    <div class="container">
+                        <label for="val_gb_trim" class="form-label">Input Level</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_gb_trim">
+                    </div>
+                    <div class="container">
+                        <label for="val_gb_vol" class="form-label">Master Volume</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_gb_vol">
+                    </div>
+                    <div class="container">
+                        <label for="val_gb_rec" class="form-label">Record Level</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_gb_rec">
+                    </div>
+                    <div class="container">
+                        <label for="val_gb_mon" class="form-label">Monitor Level</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_gb_mon">
+                    </div>
+                    <div class="container">
+                        <label for="val_gb_bt" class="form-label">BT Level</label>
+                        <input type="range" data-index-number="dummy" onchange="onParamChange(event)" class="form-range" id="val_gb_bt">
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="Presets" class="content-section">
+            <div class="col py-3 text-white">
+            <h5 class="selected_text">Presets</h5>
+                <p class="lead">
+                    <div class="container">
+                        <div class="row">
+                        <div class="col-1" id="preset-orderbank-column">
+                        </div>
+
+                        <div id="preset-order-list" class="col-10" style="margin-left: 4px">                      
+                        </div>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="container">
+                        <button type="button" onclick="savePresetOrder()" class="btn btn-success">Save preset order</button>
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="Bluetooth" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Bluetooth</h5>
+                <p class="lead">
+                    <div class="container">
+                        <label for="btmode" class="style3 style2">Bluetooth Mode</label>
+                        <select id="btmode" class="form-select select_style" name="btmode">
+                            <option value="0" class="style6">Disabled</option>
+                            <option value="1" class="style6" selected>Central</option>
+                            <option value="2" class="style6">Peripheral</option>                                                    
+                        </select> 
+                    </div>
+                    <br>
+                    <div class="container">
+                        <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" value="on" id="mvavechoc" checked>
+                        <label class="form-check-label" for="mvavechoc">Chocolate Series</label>
+                        </div>                            
+                    </div>
+                    <br>
+                    <div class="container">
+                        <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" value="on" id="xvivemd1" checked>
+                        <label class="form-check-label" for="xvivemd1">X-Vive MD1</label>
+                        </div> 
+                    </div>
+                    <br>
+                    <br>
+                    <div class="container">
+                        <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" value="on" id="custombte">
+                        <label class="form-check-label" for="custombte">Custom BT Device</label>
+                        </div> 
+                    </div>
+                    <br>
+                    <div class="container">
+                        <input type="text" id="custombt" name="custombt" class="form-control text_entry_style" maxlength="24" size="24" value="Enter Name">
+                    </div>
+                    <br>
+                    <br>
+                    <div class="container">
+                        <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" value="on" id="btmidicc">
+                        <label class="form-check-label" for="btmidicc">Midi CC on BT</label>
+                        </div> 
+                    </div>
+                    <br>
+                    <br>
+                    <div class="container">
+                        <button type="button" onclick="saveSettings()" class="btn btn-success">Save and Reboot</button>
+                    </div>
+                </p>
+            </div>
+        </div>
+                    
+        <div id="Midi" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">Midi</h5>
+                <p class="lead">             
+                    <div class="container">
+                        <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" value="on" id="midienabled">
+                        <label class="form-check-label" for="midienabled">Wired Midi</label>
+                        </div> 
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="midichannel">Midi Channel</label>
+                        <select class="form-select select_style" id="midichannel">
+                        <option value="1" selected>1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        </select>  
+                    </div>
+                    <br>
+                    <br>
+                    <div class="container">
+                        <button type="button" onclick="saveSettings()" class="btn btn-success">Save and Reboot</button>
+                    </div>                
+                </p>
+            </div>
+        </div>
+                    
+        <div id="Internal" class="content-section">
+            <div class="col py-3 text-white">
+            <h5 class="selected_text">Directly Connected Footswitches</h5>
+                <p class="lead">                         
+                    <div class="container">
+                        <label class="form-check-label" for="intfslay">Preset Switch Layout</label>
+                        <select class="form-select select_style" id="intfslay" onchange="updatePresetOrderBanks()">
+                            <option value="255" class="style6">Disabled</option>
+                            <option value="0" class="style6">1x2 Next/Previous</option>
+                            <option value="1" class="style6">1x3</option>
+                            <option value="2" class="style6" Selected>1x4</option>
+                            <option value="15" class="style6">1x4 Binary</option>     
+                        </select>            
+                    </div>
+                    <br> 
+                    <br> 
+                    <div class="fxtab btn-group" role="group">
+                        <button class="ifxtablink" id="defaultIFX" onclick="openIFX(event, 'IFX1')">FX1</button>
+                        <button class="ifxtablink" onclick="openIFX(event, 'IFX2')">FX2</button>
+                        <button class="ifxtablink" onclick="openIFX(event, 'IFX3')">FX3</button>
+                        <button class="ifxtablink" onclick="openIFX(event, 'IFX4')">FX4</button>
+                    </div>
+                    <br> 
+                    <div id="IFX1" class="ifxtabcontent">
+                        <div class="container">
+                            <label class="form-check-label" for="intfx1sw">Foot Switch Number</label>
+                            <select class="form-select select_style" id="intfx1sw">
+                                <option value="255" class="style6" Selected>Disabled</option>
+                                <option value="0" class="style6">1</option>
+                                <option value="1" class="style6">2</option>     
+                                <option value="2" class="style6">3</option>     
+                                <option value="3" class="style6">4</option>     
+                            </select>                           
+                        </div> 
+                        <br>                 
+                        <div class="container">
+                            <label class="form-check-label" for="intfx1cc">Control Change Number</label>
+                            <select class="form-select select_style" id="intfx1cc" name="intfx1cc" onchange="extFSChanged('intfx1')">
+                            </select> 
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="intfx1v1">Midi Value 1</label>
+                            <input type="number" id="intfx1v1" name="intfx1v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="intfx1v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="intfx1v1_s" name="intfx1v1_s">
+                            </select>
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="intfx1v2">Midi Value 2</label>
+                            <input type="number" id="intfx1v2" name="intfx1v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="intfx1v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="intfx1v2_s" name="intfx1v2_s">
+                            </select>
+                        </div>
+                    </div>
+                    <div id="IFX2" class="ifxtabcontent">
+                        <div class="container">
+                            <label class="form-check-label" for="intfx2sw">Foot Switch Number</label>
+                            <select class="form-select select_style" id="intfx2sw">
+                                <option value="255" class="style6" Selected>Disabled</option>
+                                <option value="0" class="style6">1</option>
+                                <option value="1" class="style6">2</option>     
+                                <option value="2" class="style6">3</option>     
+                                <option value="3" class="style6">4</option>     
+                            </select>                           
+                        </div> 
+                        <br>                 
+                        <div class="container">
+                            <label class="form-check-label" for="intfx2cc">Control Change Number</label>
+                            <select class="form-select select_style" id="intfx2cc" name="intfx2cc" onchange="extFSChanged('intfx2')">
+                            </select> 
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="intfx2v1">Midi Value 1</label>
+                            <input type="number" id="intfx2v1" name="intfx2v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="intfx2v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="intfx2v1_s" name="intfx2v1_s">
+                            </select> 
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="intfx2v2">Midi Value 2</label>
+                            <input type="number" id="intfx2v2" name="intfx2v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="intfx2v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="intfx2v2_s" name="intfx2v2_s">
+                            </select>
+                        </div>
+                    </div>
+                    <div id="IFX3" class="ifxtabcontent">
+                        <div class="container">
+                            <label class="form-check-label" for="intfx3sw">Foot Switch Number</label>
+                            <select class="form-select select_style" id="intfx3sw">
+                                <option value="255" class="style6" Selected>Disabled</option>
+                                <option value="0" class="style6">1</option>
+                                <option value="1" class="style6">2</option>     
+                                <option value="2" class="style6">3</option>     
+                                <option value="3" class="style6">4</option>     
+                            </select>                           
+                        </div> 
+                        <br>                 
+                        <div class="container">
+                            <label class="form-check-label" for="intfx3cc">Control Change Number</label>
+                            <select class="form-select select_style" id="intfx3cc" name="intfx3cc" onchange="extFSChanged('intfx3')">
+                            </select> 
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="intfx3v1">Midi Value 1</label>
+                            <input type="number" id="intfx3v1" name="intfx3v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="intfx3v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="intfx3v1_s" name="intfx3v1_s">
+                            </select> 
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="intfx3v2">Midi Value 2</label>
+                            <input type="number" id="intfx3v2" name="intfx3v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="intfx3v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="intfx3v2_s" name="intfx3v2_s">
+                            </select>
+                        </div>
+                    </div>
+                    <div id="IFX4" class="ifxtabcontent">
+                        <div class="container">
+                            <label class="form-check-label" for="intfx4sw">Foot Switch Number</label>
+                            <select class="form-select select_style" id="intfx4sw">
+                                <option value="255" class="style6" Selected>Disabled</option>
+                                <option value="0" class="style6">1</option>
+                                <option value="1" class="style6">2</option>     
+                                <option value="2" class="style6">3</option>     
+                                <option value="3" class="style6">4</option>     
+                            </select>                           
+                        </div> 
+                        <br>                 
+                        <div class="container">
+                            <label class="form-check-label" for="intfx4cc">Control Change Number</label>
+                            <select class="form-select select_style" id="intfx4cc" name="intfx4cc" onchange="extFSChanged('intfx4')">
+                            </select> 
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="intfx4v1">Midi Value 1</label>
+                            <input type="number" id="intfx4v1" name="intfx4v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="intfx4v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="intfx4v1_s" name="intfx4v1_s">
+                            </select> 
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="intfx4v2">Midi Value 2</label>
+                            <input type="number" id="intfx4v2" name="intfx4v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="intfx4v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="intfx4v2_s" name="intfx4v2_s">
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="container">
+                        <button type="button" onclick="saveSettings()" class="btn btn-success">Save and Reboot</button>
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="External" class="content-section">
+            <div class="col py-3 text-white">
+            <h5 class="selected_text">External Expander Footswitches</h5>
+                <p class="lead">     
+                    <div class="container">
+                        <label class="form-check-label" for="extfslay">Preset Switch Layout</label>
+                        <select class="form-select select_style" id="extfslay" onchange="updatePresetOrderBanks()">
+                            <option value="255" class="style6">Disabled</option>
+                            <option value="0" class="style6">1x2 Next/Previous</option>
+                            <option value="1" class="style6">1x3</option>
+                            <option value="2" class="style6" Selected>1x4</option>
+                            <option value="3" class="style6">1x5A</option>     
+                            <option value="4" class="style6">1x5B</option>     
+                            <option value="5" class="style6">1x6A</option>     
+                            <option value="6" class="style6">1x6B</option>     
+                            <option value="7" class="style6">1x7A</option>     
+                            <option value="8" class="style6">1x7B</option>     
+                            <option value="9" class="style6">2x3</option>     
+                            <option value="10" class="style6">2x4</option>     
+                            <option value="11" class="style6">2x5A</option>     
+                            <option value="12" class="style6">2x5B</option>     
+                            <option value="13" class="style6">2x6A</option>     
+                            <option value="14" class="style6">2x6B</option>     
+                            <option value="15" class="style6">1x4 Binary</option>     
+                        </select>                           
+                    </div>
+                    <br> 
+                    <br> 
+                    <div class="fxtab btn-group" role="group">
+                        <button class="fxtablink" id="defaultFX" onclick="openFX(event, 'FX1')">FX1</button>
+                        <button class="fxtablink" onclick="openFX(event, 'FX2')">FX2</button>
+                        <button class="fxtablink" onclick="openFX(event, 'FX3')">FX3</button>
+                        <button class="fxtablink" onclick="openFX(event, 'FX4')">FX4</button>
+                        <button class="fxtablink" onclick="openFX(event, 'FX5')">FX5</button>
+                        <button class="fxtablink" onclick="openFX(event, 'FX6')">FX6</button>
+                        <button class="fxtablink" onclick="openFX(event, 'FX7')">FX7</button>
+                        <button class="fxtablink" onclick="openFX(event, 'FX8')">FX8</button>
+                    </div>
+                    <br> 
+                    <div id="FX1" class="fxtabcontent">
+                        <div class="container">
+                            <label class="form-check-label" for="extfx1sw">Foot Switch Number</label>
+                            <select class="form-select select_style" id="extfx1sw">
+                                <option value="255" class="style6" Selected>Disabled</option>
+                                <option value="0" class="style6">1</option>
+                                <option value="1" class="style6">2</option>     
+                                <option value="2" class="style6">3</option>     
+                                <option value="3" class="style6">4</option>     
+                                <option value="4" class="style6">5</option>     
+                                <option value="5" class="style6">6</option>     
+                                <option value="6" class="style6">7</option>     
+                                <option value="7" class="style6">8</option>  
+                                <option value="8" class="style6">9</option>
+                                <option value="9" class="style6">10</option>     
+                                <option value="10" class="style6">11</option>     
+                                <option value="11" class="style6">12</option>     
+                                <option value="12" class="style6">13</option>     
+                                <option value="13" class="style6">14</option>     
+                                <option value="14" class="style6">15</option>     
+                                <option value="15" class="style6">16</option>        
+                            </select>
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx1cc">Control Change Number</label>
+                            <select class="form-select select_style" id="extfx1cc" name="extfx1cc" onchange="extFSChanged('extfx1')">
+                            </select>
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx1v1">Midi Value 1</label>
+                            <input type="number" id="extfx1v1" name="extfx1v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx1v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx1v1_s" name="extfx1v1_s">
+                            </select>
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx1v2">Midi Value 2</label>
+                            <input type="number" id="extfx1v2" name="extfx1v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx1v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx1v2_s" name="extfx1v2_s">
+                            </select>
+                        </div>
+                    </div>
+                    <div id="FX2" class="fxtabcontent">
+                        <div class="container">
+                            <label class="form-check-label" for="extfx2sw">Foot Switch Number</label>
+                            <select class="form-select select_style" id="extfx2sw">
+                                <option value="255" class="style6" Selected>Disabled</option>
+                                <option value="0" class="style6">1</option>
+                                <option value="1" class="style6">2</option>     
+                                <option value="2" class="style6">3</option>     
+                                <option value="3" class="style6">4</option>     
+                                <option value="4" class="style6">5</option>     
+                                <option value="5" class="style6">6</option>     
+                                <option value="6" class="style6">7</option>     
+                                <option value="7" class="style6">8</option>  
+                                <option value="8" class="style6">9</option>
+                                <option value="9" class="style6">10</option>     
+                                <option value="10" class="style6">11</option>     
+                                <option value="11" class="style6">12</option>     
+                                <option value="12" class="style6">13</option>     
+                                <option value="13" class="style6">14</option>     
+                                <option value="14" class="style6">15</option>     
+                                <option value="15" class="style6">16</option>        
+                            </select>                           
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx2cc">Control Change Number</label>
+                            <select class="form-select select_style" id="extfx2cc" name="extfx2cc" onchange="extFSChanged('extfx2')">
+                            </select>
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx2v1">Midi Value 1</label>
+                            <input type="number" id="extfx2v1" name="extfx2v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx2v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx2v1_s" name="extfx2v1_s">
+                            </select>
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx2v2">Midi Value 2</label>
+                            <input type="number" id="extfx2v2" name="extfx2v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx2v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx2v2_s" name="extfx2v2_s">
+                            </select>
+                        </div>
+                    </div>
+                    <div id="FX3" class="fxtabcontent">
+                        <div class="container">
+                            <label class="form-check-label" for="extfx3sw">Foot Switch Number</label>
+                            <select class="form-select select_style" id="extfx3sw">
+                                <option value="255" class="style6" Selected>Disabled</option>
+                                <option value="0" class="style6">1</option>
+                                <option value="1" class="style6">2</option>     
+                                <option value="2" class="style6">3</option>     
+                                <option value="3" class="style6">4</option>     
+                                <option value="4" class="style6">5</option>     
+                                <option value="5" class="style6">6</option>     
+                                <option value="6" class="style6">7</option>     
+                                <option value="7" class="style6">8</option>  
+                                <option value="8" class="style6">9</option>
+                                <option value="9" class="style6">10</option>     
+                                <option value="10" class="style6">11</option>     
+                                <option value="11" class="style6">12</option>     
+                                <option value="12" class="style6">13</option>     
+                                <option value="13" class="style6">14</option>     
+                                <option value="14" class="style6">15</option>     
+                                <option value="15" class="style6">16</option>        
+                            </select>                           
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx3cc">Control Change Number</label>
+                            <select class="form-select select_style" id="extfx3cc" name="extfx3cc" onchange="extFSChanged('extfx3')">
+                            </select>
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx3v1">Midi Value 1</label>
+                            <input type="number" id="extfx3v1" name="extfx3v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx3v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx3v1_s" name="extfx3v1_s">
+                            </select>
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx3v2">Midi Value 2</label>
+                            <input type="number" id="extfx3v2" name="extfx3v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx3v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx3v2_s" name="extfx3v2_s">
+                            </select>
+                        </div>
+                    </div>
+                    <div id="FX4" class="fxtabcontent">
+                        <div class="container">
+                            <label class="form-check-label" for="extfx4sw">Foot Switch Number</label>
+                            <select class="form-select select_style" id="extfx4sw">
+                                <option value="255" class="style6" Selected>Disabled</option>
+                                <option value="0" class="style6">1</option>
+                                <option value="1" class="style6">2</option>     
+                                <option value="2" class="style6">3</option>     
+                                <option value="3" class="style6">4</option>     
+                                <option value="4" class="style6">5</option>     
+                                <option value="5" class="style6">6</option>     
+                                <option value="6" class="style6">7</option>     
+                                <option value="7" class="style6">8</option>  
+                                <option value="8" class="style6">9</option>
+                                <option value="9" class="style6">10</option>     
+                                <option value="10" class="style6">11</option>     
+                                <option value="11" class="style6">12</option>     
+                                <option value="12" class="style6">13</option>     
+                                <option value="13" class="style6">14</option>     
+                                <option value="14" class="style6">15</option>     
+                                <option value="15" class="style6">16</option>        
+                            </select>                           
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx4cc">Control Change Number</label>
+                            <select class="form-select select_style" id="extfx4cc" name="extfx4cc" onchange="extFSChanged('extfx4')">
+                            </select>
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx4v1">Midi Value 1</label>
+                            <input type="number" id="extfx4v1" name="extfx4v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx4v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx4v1_s" name="extfx4v1_s">
+                            </select>
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx4v2">Midi Value 2</label>
+                            <input type="number" id="extfx4v2" name="extfx4v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx4v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx4v2_s" name="extfx4v2_s">
+                            </select>
+                        </div>
+                    </div>
+                    <div id="FX5" class="fxtabcontent">
+                        <div class="container">
+                            <label class="form-check-label" for="extfx5sw">Foot Switch Number</label>
+                            <select class="form-select select_style" id="extfx5sw">
+                                <option value="255" class="style6" Selected>Disabled</option>
+                                <option value="0" class="style6">1</option>
+                                <option value="1" class="style6">2</option>     
+                                <option value="2" class="style6">3</option>     
+                                <option value="3" class="style6">4</option>     
+                                <option value="4" class="style6">5</option>     
+                                <option value="5" class="style6">6</option>     
+                                <option value="6" class="style6">7</option>     
+                                <option value="7" class="style6">8</option>  
+                                <option value="8" class="style6">9</option>
+                                <option value="9" class="style6">10</option>     
+                                <option value="10" class="style6">11</option>     
+                                <option value="11" class="style6">12</option>     
+                                <option value="12" class="style6">13</option>     
+                                <option value="13" class="style6">14</option>     
+                                <option value="14" class="style6">15</option>     
+                                <option value="15" class="style6">16</option>        
+                            </select>                           
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx5cc">Control Change Number</label>
+                            <select class="form-select select_style" id="extfx5cc" name="extfx5cc" onchange="extFSChanged('extfx5')">
+                            </select>
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx5v1">Midi Value 1</label>
+                            <input type="number" id="extfx5v1" name="extfx5v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx5v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx5v1_s" name="extfx5v1_s">
+                            </select>
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx5v2">Midi Value 2</label>
+                            <input type="number" id="extfx5v2" name="extfx5v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx5v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx5v2_s" name="extfx5v2_s">
+                            </select>
+                        </div>
+                    </div>
+                    <div id="FX6" class="fxtabcontent">
+                        <div class="container">
+                            <label class="form-check-label" for="extfx6sw">Foot Switch Number</label>
+                            <select class="form-select select_style" id="extfx6sw">
+                                <option value="255" class="style6" Selected>Disabled</option>
+                                <option value="0" class="style6">1</option>
+                                <option value="1" class="style6">2</option>     
+                                <option value="2" class="style6">3</option>     
+                                <option value="3" class="style6">4</option>     
+                                <option value="4" class="style6">5</option>     
+                                <option value="5" class="style6">6</option>     
+                                <option value="6" class="style6">7</option>     
+                                <option value="7" class="style6">8</option>  
+                                <option value="8" class="style6">9</option>
+                                <option value="9" class="style6">10</option>     
+                                <option value="10" class="style6">11</option>     
+                                <option value="11" class="style6">12</option>     
+                                <option value="12" class="style6">13</option>     
+                                <option value="13" class="style6">14</option>     
+                                <option value="14" class="style6">15</option>     
+                                <option value="15" class="style6">16</option>        
+                            </select>                           
+                        </div> 
+                        <br>                 
+                        <div class="container">
+                            <label class="form-check-label" for="extfx6cc">Control Change Number</label>
+                            <select class="form-select select_style" id="extfx6cc" name="extfx6cc" onchange="extFSChanged('extfx6')">
+                            </select> 
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx6v1">Midi Value 1</label>
+                            <input type="number" id="extfx6v1" name="extfx1v6" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx6v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx6v1_s" name="extfx6v1_s">
+                            </select>
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx6v2">Midi Value 2</label>
+                            <input type="number" id="extfx6v2" name="extfx6v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx6v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx6v2_s" name="extfx6v2_s">
+                            </select>
+                        </div>
+                    </div>
+                    <div id="FX7" class="fxtabcontent">
+                        <div class="container">
+                            <label class="form-check-label" for="extfx7sw">Foot Switch Number</label>
+                            <select class="form-select select_style" id="extfx7sw">
+                                <option value="255" class="style6" Selected>Disabled</option>
+                                <option value="0" class="style6">1</option>
+                                <option value="1" class="style6">2</option>     
+                                <option value="2" class="style6">3</option>     
+                                <option value="3" class="style6">4</option>     
+                                <option value="4" class="style6">5</option>     
+                                <option value="5" class="style6">6</option>     
+                                <option value="6" class="style6">7</option>     
+                                <option value="7" class="style6">8</option>  
+                                <option value="8" class="style6">9</option>
+                                <option value="9" class="style6">10</option>     
+                                <option value="10" class="style6">11</option>     
+                                <option value="11" class="style6">12</option>     
+                                <option value="12" class="style6">13</option>     
+                                <option value="13" class="style6">14</option>     
+                                <option value="14" class="style6">15</option>     
+                                <option value="15" class="style6">16</option>        
+                            </select>                           
+                        </div> 
+                        <br>                 
+                        <div class="container">
+                            <label class="form-check-label" for="extfx7cc">Control Change Number</label>
+                            <select class="form-select select_style" id="extfx7cc" name="extfx7cc" onchange="extFSChanged('extfx7')">
+                            </select> 
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx7v1">Midi Value 1</label>
+                            <input type="number" id="extfx7v1" name="extfx7v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx7v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx7v1_s" name="extfx7v1_s">
+                            </select>
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx7v2">Midi Value 2</label>
+                            <input type="number" id="extfx7v2" name="extfx1v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx7v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx7v2_s" name="extfx7v2_s">
+                            </select>
+                        </div>
+                    </div>
+                    <div id="FX8" class="fxtabcontent">
+                        <div class="container">
+                            <label class="form-check-label" for="extfx8sw">Foot Switch Number</label>
+                            <select class="form-select select_style" id="extfx8sw">
+                                <option value="255" class="style6" Selected>Disabled</option>
+                                <option value="0" class="style6">1</option>
+                                <option value="1" class="style6">2</option>     
+                                <option value="2" class="style6">3</option>     
+                                <option value="3" class="style6">4</option>     
+                                <option value="4" class="style6">5</option>     
+                                <option value="5" class="style6">6</option>     
+                                <option value="6" class="style6">7</option>     
+                                <option value="7" class="style6">8</option>  
+                                <option value="8" class="style6">9</option>
+                                <option value="9" class="style6">10</option>     
+                                <option value="10" class="style6">11</option>     
+                                <option value="11" class="style6">12</option>     
+                                <option value="12" class="style6">13</option>     
+                                <option value="13" class="style6">14</option>     
+                                <option value="14" class="style6">15</option>     
+                                <option value="15" class="style6">16</option>        
+                            </select>                           
+                        </div> 
+                        <br>                 
+                        <div class="container">
+                            <label class="form-check-label" for="extfx8cc">Control Change Number</label>
+                            <select class="form-select select_style" id="extfx8cc" name="extfx8cc" onchange="extFSChanged('extfx8')">
+                            </select> 
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx8v1">Midi Value 1</label>
+                            <input type="number" id="extfx8v1" name="extfx8v1" class="form-control text_entry_style" maxlength="3" size="3" value="0" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx8v1_r" class="form-range" value="0" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx8v1_s" name="extfx8v1_s">
+                            </select>
+                        </div>
+                        <br>
+                        <div class="container">
+                            <label class="form-check-label" for="extfx8v2">Midi Value 2</label>
+                            <input type="number" id="extfx8v2" name="extfx1v2" class="form-control text_entry_style" maxlength="3" size="3" value="127" min="0" max="127" oninput="this.nextElementSibling.value = this.value">
+                            <input type="range" id="extfx8v2_r" class="form-range" value="127" min="0" max="127" oninput="this.previousElementSibling.value = this.value">
+                            <select class="form-select select_style" id="extfx8v2_s" name="extfx8v2_s">
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="container">
+                        <button type="button" onclick="saveSettings()" class="btn btn-success">Save and Reboot</button>
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <div id="WiFi" class="content-section">
+            <div class="col py-3 text-white">
+                <h5 class="selected_text">WiFi</h5>
+                <p class="lead">
+                    <div class="container">
+                        <label class="form-check-label" for="wifimode">WiFi Mode</label>
+                        <select class="form-select select_style" id="wifimode" onChange="onWiFiStationSelected()">
+                            <option value="0" class="style6" selected>Access Point Timed</option>
+                            <option value="1" class="style6">Station</option>
+                            <option value="2" class="style6">Access Point</option>     
+                        </select>                           
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="wifitxpower">WiFi Transmit Power</label>
+                        <select class="form-select select_style" id="wifitxpower">
+                            <option value="0" class="style6" selected>25%</option>
+                            <option value="1" class="style6">50%</option>
+                            <option value="2" class="style6">75%</option>     
+                            <option value="3" class="style6">100%</option>     
+                        </select>                           
+                    </div>
+                    <div class="container">
+                        <div class="form-check form-switch">
+                        </div> 
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="wifiname">WiFi SSID</label>
+                        <input type="text" id="wifiname" name="wifiname" class="form-control text_entry_style" maxlength="40" size="40" value="WiFi SSID">
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="wifipassword">WiFi Password</label>
+                        <input type="password" id="wifipassword" name="wifipassword" class="form-control text_entry_style" maxlength="40" size="40" value="WiFi Password">
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="mdnsname">mDNS Name</label>
+                        <input type="text" id="mdnsname" name="mdnsname" class="form-control text_entry_style" maxlength="32" size="32" value="tonex">
+                    </div>                
+                    <br>
+                    <br>
+                    <div class="container">
+                        <button type="button" onclick="SaveWifi()" class="btn btn-success">Save and Reboot</button>
+                    </div>
+                </p>
+            </div>
+        </div>        
+        
+        <div id="Misc" class="content-section">
+            <div class="col py-3 text-white">
+            <h5 class="selected_text">Miscellaneous</h5>
+                <p class="lead">                         
+                    <div class="container">
+                        <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" value="on" id="togglebypass">
+                        <label class="form-check-label" for="togglebypass">Toggle Bypass</label>
+                        </div> 
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="screenrot">Screen Rotation</label>
+                        <select class="form-select select_style" id="screenrot">
+                            <option value="0" class="style6" selected>0 degrees</option>
+                            <option value="1" class="style6">180 degrees</option>
+                        </select>                           
+                    </div>
+                    <br>
+                    <div class="container">
+                        <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" value="on" id="looparound">
+                        <label class="form-check-label" for="looparound">Preset/Bank switch loop</label>
+                        </div> 
+                    </div>
+                    <br>
+                    <div class="container">
+                        <label class="form-check-label" for="presetslot">Changing preset saves to slot:</label>
+                        <select class="form-select select_style" id="presetslot">
+                            <option value="0" class="style6" >Current slot</option>
+                            <option value="1" class="style6">Slot A (Dual mode)</option>
+                            <option value="2" class="style6">Slot B (Dual mode)</option>
+                            <option value="3" class="style6" selected>Slot C (Stomp mode)</option>
+                        </select>                           
+                    </div>
+                    <br>
+                    <div class="container">
+                        <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" value="off" id="hitchsense">
+                        <label class="form-check-label" for="hitchsense">High Touch Sensitivity</label>
+                        </div> 
+                    </div>
+                    <br>
+                    <br>
+                    <div class="container">
+                        <button type="button" onclick="saveSettings()" class="btn btn-success">Save and Reboot</button>
+                    </div>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toast"></div>
+
+    <div id="modConnectionFault" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Waiting for Connection to Controller...</h4>
+                </div>
+                <div class="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+
+	    
+    <div class="modal fade" id="value_input_bg">
+        <div class="modal-dialog  modal-dialog-centered modal-sm">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Set <label id="value_input_lbl"/>placeholder</label> value:</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p><input type="number" id="value_input_val"/></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="value_input_btn">Save changes</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
+  </body>
+  <script src="script.js" defer></script>
+</html>

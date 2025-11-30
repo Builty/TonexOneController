@@ -1,0 +1,439 @@
+.bg{
+    background-color: #1F1F1F;
+}
+
+.nav_bg{
+    background-color: #2A2A2A;
+}
+
+.nav_text{
+    color: #C0C0C0;
+}
+
+.selected_text{
+    color: #FB9230;
+}
+
+input[type=range]{
+    -webkit-appearance: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 300px;
+    height: 5px;
+    background: #666666;
+    border: none;
+    border-radius: 3px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #FB9230;
+    margin-top: -4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+input[type=range]:focus::-webkit-slider-runnable-track {
+    background: #888;
+}
+
+.tab {
+  float: left;
+  background-color: #2A2A2A;
+  width: 15%;
+  min-width: 70px;
+  height: 640px;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  display: block;
+  background-color: inherit;
+  color: #C0C0C0;
+  padding: 17px 10px;
+  width: 100%;
+  border: none;
+  outline: none;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 18px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #513D2B;
+}
+
+/* Create an active/current "tab button" class */
+.tab button.active {
+  background-color: #513D2B;
+  color: #FB9230;
+}
+
+/* Style the tab content */
+.tabcontent {
+  float: left;
+  padding: 0px 6px;
+  width: 75%;
+  border-left: none;
+  height: 500px;
+}
+
+.form-switch .form-check-input {
+    height: 20px;
+    width: 42px;
+    background-color: #666666;
+    fill: #ffffff;
+}
+
+.form-switch .form-check-input:checked {
+    background-color: #513D2B;
+    border-color: #FB9230;
+} 
+
+.bootstrap-select.btn-group .dropdown-menu li a:hover {
+     color: whitesmoke !important;
+     background: #bf5279 !important;
+ }
+ 
+/* Toast */
+#toast {
+    visibility: hidden;
+    min-width: 300px;
+    margin-left: -150px;
+    background-color: #2A2A2A;
+    color: #FFF;
+    text-align: center; /* Fallback for non-flex scenarios */
+    border-radius: 10px;
+    padding: 20px;
+    position: fixed;
+    z-index: 1050;
+    left: 50%;
+    bottom: 50%;
+    font-size: 18px;
+    outline: #FB9230 solid 5px;
+    box-sizing: border-box;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    height: auto; 
+    min-height: 90px; 
+}
+
+.toast-container{
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    width: 100%; 
+    height: 100%;
+}
+
+#toast-text{
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    white-space: normal;
+}
+
+/* Show the toast when clicking on a button (class added with JavaScript) */
+#toast.show {
+    visibility: visible; /* Show the toast */
+    /* Add animation: Take 0.5 seconds to fade in and out the toast.
+    However, delay the fade out process for 2.5 seconds */
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+.select_style {
+    width: 100%; 
+    max-width: 350px; 
+    color:white; 
+    background: #1f1f1f;
+}
+
+.text_entry_style {
+    width: 100%; 
+    max-width: 350px; 
+    color:white; 
+    background: #1f1f1f;
+}
+
+.mod-table-server-icon{
+    padding-left: 5%;
+    width: 10%;
+}
+
+.mod-table-server-text{
+    padding-left: 10%;
+    padding-top: 3%;
+}
+
+.fxtab {
+  background-color: #2A2A2A;
+  width: 100%; 
+  max-width: 370px; 
+}
+
+/* Style the buttons inside the tab */
+.fxtab button {
+  display: block;
+  background-color: inherit;
+  color: #C0C0C0;
+  padding: 10px 5px;
+  width: 100%;
+  border: none;
+  outline: none;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 14px;
+}
+
+/* Change background color of buttons on hover */
+.fxtab button:hover {
+  background-color: #513D2B;
+}
+
+/* Create an active/current "tab button" class */
+.fxtab button.active {
+  background-color: #513D2B;
+  color: #FB9230;
+}
+
+/* Style the tab content */
+.fxtabcontent {         
+  padding: 0px 6px;
+  border-left: none;
+}
+
+/* Style the buttons inside the tab */
+.fxtablink {
+  color: #C0C0C0;
+  padding: 10px 10px;
+}
+
+.ifxtabcontent {         
+  padding: 0px 6px;
+  border-left: none;
+}
+
+/* Style the buttons inside the tab */
+.ifxtablink {
+  color: #C0C0C0;
+  padding: 10px 10px;
+}
+
+.bpm-tap{
+    width: 50%;
+    height: 150px;
+    margin-left: 25%;
+    border-radius: 25px;
+    border-color: #FB9230;
+    border-width: 4px;
+    border-style: none;
+    background-color: #2A2A2A;
+    transition: background 0.2s;
+    box-shadow: 0px 2px 15px #00000030;
+}
+
+.bpm-tap:active {
+    background: #513D2B;
+}
+
+.dl-indicator{
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: #2A2A2A;
+    box-shadow: 0px 2px 15px #00000030;
+}
+
+.mo-indicator{
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: #2A2A2A;
+    box-shadow: 0px 2px 15px #00000030;
+    animation: mo-animation;
+    animation-duration: 0s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes mo-animation {
+    0% {
+        background-color: #2A2A2A;
+        box-shadow: 0px 2px 15px #00000030;
+    }
+    50% {
+        background-color: #FB9230;
+        box-shadow: 0 2px 15px #FB9230d0;
+    }
+    100% {
+        background-color: #2A2A2A;
+        box-shadow: 0px 2px 15px #00000030;
+    }
+}
+
+* {
+    /* prevents zoom when double-tapping tap tempo */
+    touch-action: manipulation;
+}
+
+.preset-order-item {
+    border: 1px solid #ced4da;
+    border-radius: .375rem;
+    padding: 2px;
+    margin: 2px;
+}
+
+.preset-order-item :first-child {
+    margin-top: -0.2em;
+}
+
+.preset-order-item :nth-child(2) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.preset-orderbank {
+    padding: 2px;
+}
+
+.preset-orderbank > div {
+    height: 100%;
+    border: 1px solid #ced4da;
+    border-radius: .375rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.preset-orderbank > div > span {
+    writing-mode: vertical-lr;
+    transform: scale(-1);
+}
+
+#value_input_bg {
+    top: 0;
+    left: 0;
+    position:fixed; 
+    height:100%;
+    width:100%;
+    z_index:0;	
+    background: rgba(0, 0,0, 0.7);
+    display: none;
+}
+
+#value_input {
+    color: #ccc;
+    opacity: 1;
+    position:fixed; 
+    background-color: #333;
+    text-align:center;
+    border: 5px solid;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+    display: none;
+}
+
+.home-label {
+    color: #ccc;
+    text-align:center;
+}
+
+.fx_icon_container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
+    gap: 8px 8px;
+    justify-items: center;
+    align-items: center;
+    width: 100%;
+    padding: 8px 8px;
+    box-sizing: border-box;
+}
+
+.fx_icon_container img {
+    height: 70px;
+    width: auto;
+    max-width: 100%;
+}
+
+@media (max-width: 560px) {
+    .fx_icon_container {
+        grid-template-columns: repeat(4, 1fr); 
+    }
+}
+
+.oscilloscope-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 400px; 
+}
+canvas {
+    width: 100%; 
+    height: 300px; 
+}
+
+.text-orange { color: #FB9230; }
+
+.tablinks:not([data-show-for]),
+.tablinks.hidden {
+  display: none !important;
+}
+
+@media (max-width: 767.98px) {
+    .navbar-brand { margin-bottom: 8px !important; }  
+}
+
+.content-section {
+    display: none;                    /* hidden by default */
+    padding: 0.4rem 0.4rem;        /* reduced padding, especially on mobile */
+    min-height: calc(100vh - 66px);  /* full height minus navbar height */
+}
+.content-section.active {
+    display: block;                   /* shown when it has .active */
+}
+
+/* Optional smooth fade */
+.content-section {
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+.content-section.active {
+    opacity: 1;
+}
+
+.content-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 90vw;               
+}
+
+/* Preset selector: full-width on small screens, nice max on large screens */
+#set_preset {
+    width: 300px;
+    max-width: 500px;        /* looks perfect on desktop/tablet */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* On phones: add safe side padding so it never touches the edge */
+@media (max-width: 576px) {
+    .px-3 { padding-left: 1rem !important; padding-right: 1rem !important; }
+    #set_preset { max-width: none !important; }   /* full width but with padding */
+}

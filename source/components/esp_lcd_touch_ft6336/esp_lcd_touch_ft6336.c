@@ -220,7 +220,7 @@ static esp_err_t esp_lcd_touch_ft6336_del(esp_lcd_touch_handle_t tp)
 }
 
 
-static esp_err_t touch_ft6336_i2c_write(esp_lcd_touch_handle_t tp, uint8_t reg, uint8_t data)
+static esp_err_t __attribute__((unused)) touch_ft6336_i2c_write(esp_lcd_touch_handle_t tp, uint8_t reg, uint8_t data)
 {
     assert(tp != NULL);
 
