@@ -657,6 +657,12 @@ static esp_err_t usb_tonex_one_modify_global(uint16_t global_val, float value)
 
             usb_tonex_one_send_master_volume(scaled_value);
 
+            // wait a little
+            vTaskDelay(20);
+
+            // read value back to update the UI
+            usb_tonex_one_request_master_volume();
+
             // bit of a hack here. Return fail code, so caller can avoid sending the state data unneccessarily
             res = ESP_FAIL;
         } break;

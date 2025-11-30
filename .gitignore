@@ -3,10 +3,5 @@
 
 build_distrib/temp
 
-# ignore EEZ Studio files
-ui_design_128x128/*.eez-project-ui-state
-ui_design_240x280port/*.eez-project-ui-state
-ui_design_280x240land/*.eez-project-ui-state
-ui_design_320x170land/*.eez-project-ui-state
-ui_design_480x320land/*.eez-project-ui-state
-ui_design_800x480land/*.eez-project-ui-state
+# ignore EEZ Studio state files
+**/*.eez-project-ui-state
