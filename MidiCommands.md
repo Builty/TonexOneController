@@ -1,7 +1,6 @@
-# Tonex One Controller: An open-source controller and display interface for the IK Multimedia Tonex One guitar pedal
-This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a bridge to the IK Multimedia Tonex One guitar pedal (which does not have native Midi capability.)
+# Tonex/GP5 Controller.
 
-# Midi Command list
+# Midi Command list - Tonex One and Tonex Pedal
 
 | Name | MIDI CC# | Value |
 | ------------ | ---------- | --------------------- |
@@ -120,3 +119,122 @@ This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a 
 | Load Preset to Slot B | 121 | 0-19 |
 | Global Volume | 122 | 0-127 |
 | Select Preset | 127 | 0-19 |
+
+
+# Midi Command list - Valeton GP5
+
+| Name | MIDI CC# | Value |
+| ------------ | ---------- | --------------------- |
+| NR block enable | 0 | On: 127, Off: 0 |
+| Pre block enable | 1 | On: 127, Off: 0 |
+| Dist block enable | 2 | On: 127, Off: 0 |
+| Amp block enable | 3 | On: 127, Off: 0 |
+| Cab block enable | 4 | On: 127, Off: 0 |
+| EQ block enable | 5 | On: 127, Off: 0 |
+| Mod block enable | 6 | On: 127, Off: 0 |
+| Delay block enable | 7 | On: 127, Off: 0 |
+| Reverb block enable | 8 | On: 127, Off: 0 |
+| Snaptone block enable | 9 | On: 127, Off: 0 |
+| NR block type | 10 | 0 = NR gate |
+| Pre block type | 11 | 0 = Comp to 9 = Detune |
+| Dist block type | 12 | 0 = Green to 9 = Bass OD |
+| Amp block type | 13 | 0 = Tweedy to 31 = AC Pre 2 |
+| Cab block type | 14 | 0 = Twd CP to 19 = Ampg 4x10 |
+| EQ block type | 15 | 0 = Guitar 1 to 4 = Mess EQ |
+| Mod block type | 16 | 0 = A Chorus to 10 = Bias Trem |
+| Delay block type | 17 | 0 = Pure to 9 = AC Ping Pong |
+| Reverb block type | 18 | 0 = Air to 9 = Sweet Space |
+| Snaptone block type | 19 | 0 to 79 |
+| Patch Volume | 20 | 0-127 |
+| NR Param 0 | 21 | 0-127 |
+| Not used (mistake) | 22 | 0 |
+| NR Param 1 | 23 | 0-127 |
+| NR Param 2 | 24 | 0-127 |
+| NR Param 3 | 25 | 0-127 |
+| NR Param 4 | 26 | 0-127 |
+| NR Param 5 | 27 | 0-127 |
+| NR Param 6 | 28 | 0-127 |
+| NR Param 7 | 29 | 0-127 |
+| Pre Param 0 | 30 | 0-127 |
+| Pre Param 1 | 31 | 0-127 |
+| Pre Param 2 | 32 | 0-127 |
+| Pre Param 3 | 33 | 0-127 |
+| Pre Param 4 | 34 | 0-127 |
+| Pre Param 5 | 35 | 0-127 |
+| Pre Param 6 | 36 | 0-127 |
+| Pre Param 7 | 37 | 0-127 |
+| Dist Param 0 | 38 | 0-127 |
+| Dist Param 1 | 39 | 0-127 |
+| Dist Param 2 | 40 | 0-127 |
+| Dist Param 3 | 41 | 0-127 |
+| Dist Param 4 | 42 | 0-127 |
+| Dist Param 5 | 43 | 0-127 |
+| Dist Param 6 | 44 | 0-127 |
+| Dist Param 7 | 45 | 0-127 |
+| Amp Param 0 | 46 | 0-127 |
+| Amp Param 1 | 47 | 0-127 |
+| Amp Param 2 | 48 | 0-127 |
+| Amp Param 3 | 49 | 0-127 |
+| Amp Param 4 | 50 | 0-127 |
+| Amp Param 5 | 51 | 0-127 |
+| Amp Param 6 | 52 | 0-127 |
+| Amp Param 7 | 53 | 0-127 |
+| Cab Param 0 | 54 | 0-127 |
+| Cab Param 1 | 55 | 0-127 |
+| Cab Param 2 | 56 | 0-127 |
+| Cab Param 3 | 57 | 0-127 |
+| Cab Param 4 | 58 | 0-127 |
+| Cab Param 5 | 59 | 0-127 |
+| Cab Param 6 | 60 | 0-127 |
+| Cab Param 7 | 61 | 0-127 |
+| EQ Param 0 | 62 | 0-127 |
+| EQ Param 1 | 63 | 0-127 |
+| EQ Param 2 | 64 | 0-127 |
+| EQ Param 3 | 65 | 0-127 |
+| EQ Param 4 | 66 | 0-127 |
+| EQ Param 5 | 67 | 0-127 |
+| EQ Param 6 | 68 | 0-127 |
+| EQ Param 7 | 69 | 0-127 |
+| Mod Param 0 | 70 | 0-127 |
+| Mod Param 1 | 71 | 0-127 |
+| Mod Param 2 | 72 | 0-127 |
+| Mod Param 3 | 73 | 0-127 |
+| Mod Param 4 | 74 | 0-127 |
+| Mod Param 5 | 75 | 0-127 |
+| Mod Param 6 | 76 | 0-127 |
+| Mod Param 7 | 77 | 0-127 |
+| Delay Param 0 | 78 | 0-127 |
+| Delay Param 1 | 79 | 0-127 |
+| Delay Param 2 | 80 | 0-127 |
+| Delay Param 3 | 81 | 0-127 |
+| Delay Param 4 | 82 | 0-127 |
+| Delay Param 5 | 83 | 0-127 |
+| Delay Param 6 | 84 | 0-127 |
+| Delay Param 7 | 85 | 0-127 |
+| Reverb Param 0 | 86 | 0-127 |
+| Reverb Param 1 | 87 | 0-127 |
+| Reverb Param 2 | 88 | 0-127 |
+| Reverb Param 3 | 89 | 0-127 |
+| Reverb Param 4 | 90 | 0-127 |
+| Reverb Param 5 | 91 | 0-127 |
+| Reverb Param 6 | 92 | 0-127 |
+| Reverb Param 7 | 93 | 0-127 |
+| Snaptone Param 0 | 94 | 0-127 |
+| Snaptone Param 1 | 95 | 0-127 |
+| Snaptone Param 2 | 96 | 0-127 |
+| Snaptone Param 3 | 97 | 0-127 |
+| Snaptone Param 4 | 98 | 0-127 |
+| Snaptone Param 5 | 99 | 0-127 |
+| Snaptone Param 6 | 100 | 0-127 |
+| Snaptone Param 7 | 101 | 0-127 |
+| Preset Down | 116 | Value not used |
+| Preset Up |  117 | Value not used |
+| BPM | 118  | 0-127 |
+| Tap Tempo | 119 | Not supported |
+| Input Level | 120 | 0-127 |
+| Cab Bypass | 121 | On: 127, Off: 0 |
+| Master Volume | 122 | 0-127 |
+| Record Level | 123 | 0-127 |
+| Monitor Level | 124 | 0-127 |
+| Bluetooth Level | 125 | 0-127 |
+| Select Preset | 127 | 0-99 |

@@ -302,6 +302,8 @@ esp_err_t midi_helper_valeton_adjust_param_via_midi(uint8_t change_num, uint8_t 
             value = valeton_params_clamp_value(param, value);
         } break;
 
+        // oops, missed 22 here
+
         case 23:
         {
             param = VALETON_PARAM_NR_PARAM_1;
