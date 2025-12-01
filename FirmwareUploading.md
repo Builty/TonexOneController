@@ -24,6 +24,9 @@ This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a 
 - When finished, close the app and disconnect the USB cable (the screen will be blank until the board has been power cycled)
 - All done!
 
+### Note!
+- If Tonex doesn't want to react to a fairly simple actions after the firmware update, e.g. changing presets, you most probably need to "Erase" the memory from the hardware (using ESP Flash Tool) and installing the firmware after that. Keep in mind, this action is going to delete **everything** from the device memory!
+
 ![image](https://github.com/user-attachments/assets/e2e21f46-1d3a-4eec-aee9-25de87c072c7)
 
 ## All OS (using Web Browser)
