@@ -95,7 +95,6 @@ extern const lv_img_dsc_t img_skin_tonexampred;
 extern const lv_img_dsc_t img_skin_whitemodern;
 extern const lv_img_dsc_t img_skin_woodamp;
 extern const lv_img_dsc_t img_smythbuilt;
-extern const lv_img_dsc_t img_tick;
 extern const lv_img_dsc_t img_usb_fail;
 extern const lv_img_dsc_t img_usb_ok;
 extern const lv_img_dsc_t img_wifi_conn;
@@ -122,6 +121,7 @@ extern const lv_img_dsc_t img_tc_off;
 extern const lv_img_dsc_t img_tc_on;
 extern const lv_img_dsc_t img_amp_disabled;
 extern const lv_img_dsc_t img_cab_disabled;
+extern const lv_img_dsc_t img_tick;
 
 #ifndef EXT_IMG_DESC_T
 #define EXT_IMG_DESC_T

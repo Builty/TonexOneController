@@ -89,7 +89,6 @@ const ext_img_desc_t images[115] = {
     { "skin_whitemodern", &img_skin_whitemodern },
     { "skin_woodamp", &img_skin_woodamp },
     { "smythbuilt", &img_smythbuilt },
-    { "tick", &img_tick },
     { "usb_fail", &img_usb_fail },
     { "usb_ok", &img_usb_ok },
     { "wifi_conn", &img_wifi_conn },
@@ -116,4 +115,5 @@ const ext_img_desc_t images[115] = {
     { "tc_on", &img_tc_on },
     { "amp_disabled", &img_amp_disabled },
     { "cab_disabled", &img_cab_disabled },
+    { "tick", &img_tick },
 };
