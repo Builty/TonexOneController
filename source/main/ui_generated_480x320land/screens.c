@@ -2454,10 +2454,9 @@ void create_screen_settings() {
             // ui_Closeimage
             lv_obj_t *obj = lv_img_create(parent_obj);
             objects.ui_closeimage = obj;
-            lv_obj_set_pos(obj, 219, 293);
+            lv_obj_set_pos(obj, 438, 293);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_img_set_src(obj, &img_tick);
-            lv_img_set_zoom(obj, 240);
             lv_obj_add_event_cb(obj, action_close_settings_page, LV_EVENT_PRESSED, (void *)0);
             lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -5241,10 +5240,9 @@ void create_screen_val_settings() {
             // ui_ValCloseimage
             lv_obj_t *obj = lv_img_create(parent_obj);
             objects.ui_val_closeimage = obj;
-            lv_obj_set_pos(obj, 219, 293);
+            lv_obj_set_pos(obj, 438, 293);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_img_set_src(obj, &img_tick);
-            lv_img_set_zoom(obj, 240);
             lv_obj_add_event_cb(obj, action_close_settings_page, LV_EVENT_PRESSED, (void *)0);
             lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
