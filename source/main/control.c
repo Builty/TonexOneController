@@ -2313,7 +2313,7 @@ static uint8_t __attribute__((unused)) LoadPresetUserText(uint16_t preset_index,
     if (err == ESP_OK) 
     {
         // read
-        required_size = MAX_PRESET_USER_TEXT_LENGTH - 1;
+        required_size = MAX_PRESET_USER_TEXT_LENGTH;
         err = nvs_get_str(my_handle, key, text, &required_size);
 
         // clamp text at max length and ensure its null terminated

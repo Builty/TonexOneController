@@ -243,7 +243,7 @@ void create_screen_screen1() {
                     objects.ui_preset_details_text_area = obj;
                     lv_obj_set_pos(obj, 8, 185);
                     lv_obj_set_size(obj, 464, 67);
-                    lv_textarea_set_max_length(obj, 128);
+                    lv_textarea_set_max_length(obj, 31);
                     lv_textarea_set_text(obj, "Preset Description...");
                     lv_textarea_set_one_line(obj, false);
                     lv_textarea_set_password_mode(obj, false);

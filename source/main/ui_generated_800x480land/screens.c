@@ -169,7 +169,7 @@ void create_screen_screen1() {
                     objects.ui_preset_details_text_area = obj;
                     lv_obj_set_pos(obj, 14, 278);
                     lv_obj_set_size(obj, 773, 104);
-                    lv_textarea_set_max_length(obj, 128);
+                    lv_textarea_set_max_length(obj, 31);
                     lv_textarea_set_text(obj, "Preset Description...");
                     lv_textarea_set_one_line(obj, false);
                     lv_textarea_set_password_mode(obj, false);
@@ -177,7 +177,7 @@ void create_screen_screen1() {
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE|LV_OBJ_FLAG_SCROLL_CHAIN_HOR|LV_OBJ_FLAG_SCROLL_CHAIN_VER|LV_OBJ_FLAG_SCROLL_ELASTIC|LV_OBJ_FLAG_SCROLL_MOMENTUM|LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_SCROLL_WITH_ARROW);
                     lv_obj_add_state(obj, LV_STATE_DISABLED);
                     lv_obj_set_style_text_color(obj, lv_color_hex(0xff808080), LV_PART_MAIN | LV_STATE_DEFAULT);
-                    lv_obj_set_style_text_font(obj, &lv_font_montserrat_30, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_text_font(obj, &lv_font_montserrat_36, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_border_color(obj, lv_color_hex(0xff563f2a), LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_bg_color(obj, lv_color_hex(0xffffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_bg_opa(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2443,7 +2443,7 @@ void create_screen_settings() {
             // ui_Closeimage
             lv_obj_t *obj = lv_img_create(parent_obj);
             objects.ui_closeimage = obj;
-            lv_obj_set_pos(obj, 354, 410);
+            lv_obj_set_pos(obj, 704, 405);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_img_set_src(obj, &img_tick);
             lv_obj_add_event_cb(obj, action_close_settings_page, LV_EVENT_PRESSED, (void *)0);
@@ -5232,7 +5232,7 @@ void create_screen_val_settings() {
             // ui_ValCloseimage
             lv_obj_t *obj = lv_img_create(parent_obj);
             objects.ui_val_closeimage = obj;
-            lv_obj_set_pos(obj, 354, 406);
+            lv_obj_set_pos(obj, 704, 405);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_img_set_src(obj, &img_tick);
             lv_obj_add_event_cb(obj, action_close_settings_page, LV_EVENT_PRESSED, (void *)0);
