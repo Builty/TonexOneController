@@ -142,9 +142,11 @@ void create_screen_screen1() {
                             // ui_SkinImage
                             lv_obj_t *obj = lv_img_create(parent_obj);
                             objects.ui_skin_image = obj;
-                            lv_obj_set_pos(obj, 32, 5);
+                            lv_obj_set_pos(obj, 14, 0);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_skin_jcm);
+                            lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE|LV_OBJ_FLAG_SCROLL_ELASTIC|LV_OBJ_FLAG_SCROLL_MOMENTUM);
+                            lv_obj_set_style_align(obj, LV_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
                         }
                     }
                 }
