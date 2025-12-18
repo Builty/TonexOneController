@@ -25,6 +25,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_preset_heading_label;
     lv_obj_t *ui_bpm_label;
     lv_obj_t *ui_bpm;
+    lv_obj_t *ui_bpm_indicator;
     lv_obj_t *bottom_container;
     lv_obj_t *ui_preset_heading_label2;
 } objects_t;

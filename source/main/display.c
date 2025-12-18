@@ -83,7 +83,7 @@ static const char *TAG = "app_display";
 
 #define DISPLAY_TASK_STACK_SIZE   (6 * 1024)
 
-#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI && CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR
+#if CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR
     //static lv_anim_t *ui_BPMAnimation = NULL;
     //static lv_anim_t PropertyAnimation_0;
     void ui_BPMAnimate(lv_obj_t *TargetObject, uint32_t duration);
@@ -1291,7 +1291,7 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
     return 1;
 }
 
-#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI && CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR
+#if CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR
 
 /****************************************************************************
 * NAME:        

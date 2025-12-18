@@ -3090,6 +3090,10 @@ uint8_t valeton_update_ui_parameters(void)
                     char buf[128];
                     sprintf(buf, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_bpm, buf);  
+
+#if CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR                            
+                    ui_BPMAnimate(objects.ui_bpm_indicator, 1000 * 60 / param_entry->Value);
+#endif                                 
                 } break;
 
                 case VALETON_PARAM_DIST_ENABLE:

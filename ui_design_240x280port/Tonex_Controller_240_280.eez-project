@@ -837,7 +837,7 @@
                   "objID": "f9439ee6-3b06-43f7-e274-830ccf1ad034",
                   "type": "LVGLLabelWidget",
                   "left": 181,
-                  "top": 56,
+                  "top": 50,
                   "width": 53,
                   "height": 22,
                   "customInputs": [],
@@ -888,7 +888,7 @@
                   "objID": "6d3b345d-c9c9-408d-b5e0-16124a5f01ad",
                   "type": "LVGLLabelWidget",
                   "left": 181,
-                  "top": 84,
+                  "top": 70,
                   "width": 53,
                   "height": 33,
                   "customInputs": [],
@@ -935,6 +935,56 @@
                   "textType": "literal",
                   "longMode": "WRAP",
                   "recolor": false
+                },
+                {
+                  "objID": "0930a1c9-18cc-45a5-d892-771fb08e157e",
+                  "type": "LVGLPanelWidget",
+                  "left": 195,
+                  "top": 101,
+                  "width": 25,
+                  "height": 25,
+                  "customInputs": [],
+                  "customOutputs": [],
+                  "style": {
+                    "objID": "3418e8d2-b661-47d2-c7ec-f3ba0a0eaa27",
+                    "useStyle": "default",
+                    "conditionalStyles": [],
+                    "childStyles": []
+                  },
+                  "timeline": [],
+                  "eventHandlers": [],
+                  "identifier": "ui_BPMIndicator",
+                  "leftUnit": "px",
+                  "topUnit": "px",
+                  "widthUnit": "px",
+                  "heightUnit": "px",
+                  "children": [],
+                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                  "hiddenFlagType": "literal",
+                  "clickableFlag": true,
+                  "clickableFlagType": "literal",
+                  "flagScrollbarMode": "",
+                  "flagScrollDirection": "",
+                  "scrollSnapX": "",
+                  "scrollSnapY": "",
+                  "checkedStateType": "literal",
+                  "disabledStateType": "literal",
+                  "states": "",
+                  "localStyles": {
+                    "objID": "e52241e5-455c-4bba-9a9a-ebd575deb0b3",
+                    "definition": {
+                      "MAIN": {
+                        "DEFAULT": {
+                          "bg_color": "D1A60C",
+                          "bg_grad_dir": "VER",
+                          "bg_grad_color": "D1B44D",
+                          "radius": 20
+                        }
+                      }
+                    }
+                  },
+                  "group": "",
+                  "groupIndex": 0
                 },
                 {
                   "objID": "68b1d01a-bb24-47f4-c728-d88e45ffee9e",

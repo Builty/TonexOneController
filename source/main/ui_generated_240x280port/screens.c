@@ -199,7 +199,7 @@ void create_screen_screen1() {
                     // ui_BPMLabel
                     lv_obj_t *obj = lv_label_create(parent_obj);
                     objects.ui_bpm_label = obj;
-                    lv_obj_set_pos(obj, 181, 56);
+                    lv_obj_set_pos(obj, 181, 50);
                     lv_obj_set_size(obj, 53, LV_SIZE_CONTENT);
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                     lv_obj_set_style_text_font(obj, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -210,13 +210,24 @@ void create_screen_screen1() {
                     // ui_BPM
                     lv_obj_t *obj = lv_label_create(parent_obj);
                     objects.ui_bpm = obj;
-                    lv_obj_set_pos(obj, 181, 84);
+                    lv_obj_set_pos(obj, 181, 70);
                     lv_obj_set_size(obj, 53, LV_SIZE_CONTENT);
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                     lv_obj_set_style_text_font(obj, &lv_font_montserrat_30, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_text_color(obj, lv_color_hex(0xffffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_label_set_text(obj, "128");
+                }
+                {
+                    // ui_BPMIndicator
+                    lv_obj_t *obj = lv_obj_create(parent_obj);
+                    objects.ui_bpm_indicator = obj;
+                    lv_obj_set_pos(obj, 195, 101);
+                    lv_obj_set_size(obj, 25, 25);
+                    lv_obj_set_style_bg_color(obj, lv_color_hex(0xffd1a60c), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_bg_grad_dir(obj, LV_GRAD_DIR_VER, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_bg_grad_color(obj, lv_color_hex(0xffd1b44d), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_radius(obj, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
                 }
                 {
                     // BottomContainer
