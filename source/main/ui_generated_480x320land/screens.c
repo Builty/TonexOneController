@@ -561,10 +561,10 @@ void create_screen_screen1() {
                     // ui_OKTick
                     lv_obj_t *obj = lv_img_create(parent_obj);
                     objects.ui_ok_tick = obj;
-                    lv_obj_set_pos(obj, 197, 258);
+                    lv_obj_set_pos(obj, 219, 259);
                     lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                     lv_img_set_src(obj, &img_tick);
-                    lv_img_set_zoom(obj, 192);
+                    lv_img_set_zoom(obj, 350);
                     lv_obj_add_event_cb(obj, action_save_skin_edit, LV_EVENT_PRESSED, (void *)0);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN|LV_OBJ_FLAG_CLICKABLE);
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -2483,7 +2483,7 @@ void create_screen_val_settings() {
             // ui_ValSettingsTabView
             lv_obj_t *obj = lv_tabview_create(parent_obj, LV_DIR_TOP, 52);
             objects.ui_val_settings_tab_view = obj;
-            lv_obj_set_pos(obj, 5, 5);
+            lv_obj_set_pos(obj, 0, 0);
             lv_obj_set_size(obj, 480, 320);
             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE|LV_OBJ_FLAG_SCROLL_CHAIN_HOR|LV_OBJ_FLAG_SCROLL_CHAIN_VER|LV_OBJ_FLAG_SCROLL_ELASTIC|LV_OBJ_FLAG_SCROLL_MOMENTUM|LV_OBJ_FLAG_SCROLL_WITH_ARROW);
             lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
@@ -5001,7 +5001,7 @@ void create_screen_val_settings() {
                             // ui_ValNSParam2Value
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.ui_val_ns_param2_value = obj;
-                            lv_obj_set_pos(obj, 413, 4);
+                            lv_obj_set_pos(obj, 417, 4);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                             lv_obj_set_style_text_font(obj, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -5038,7 +5038,7 @@ void create_screen_val_settings() {
                             // ui_ValNSParam3Value
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.ui_val_ns_param3_value = obj;
-                            lv_obj_set_pos(obj, 413, 42);
+                            lv_obj_set_pos(obj, 417, 42);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                             lv_obj_set_style_text_font(obj, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
