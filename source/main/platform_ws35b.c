@@ -107,7 +107,7 @@ static esp_lcd_touch_handle_t tp = NULL;
 static esp_lcd_panel_io_handle_t tp_io_handle = NULL;
 static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
 static esp_io_expander_handle_t expander_handle = NULL;
-static uint32_t trans_size = LCD_BUFFER_SIZE / 15;
+static uint32_t trans_size = LCD_BUFFER_SIZE / 5;
 static lv_color_t* trans_buf_1 = NULL;
 static lv_color_t* trans_buf_2 = NULL;
 static lv_color_t* trans_act = NULL;
@@ -495,16 +495,24 @@ static void lvgl_port_flush_callback(lv_disp_drv_t *drv, const lv_area_t *area, 
             {
                 draw_wait_cb(drv->user_data);
             }
-            xSemaphoreGive(trans_done_sem);
+            
+            if (xSemaphoreGive(trans_done_sem) != pdTRUE)
+            {
+                //ESP_LOGE(TAG, "Transfer sempahore give timeout");
+            }
         }
 
         if (xSemaphoreTake(trans_done_sem, pdMS_TO_TICKS(TRANS_DONE_TIMEOUT)) == pdTRUE)
         { 
-            esp_lcd_panel_draw_bitmap(panel_handle, x_draw_start, y_draw_start, x_draw_end + 1, y_draw_end + 1, to);
+            esp_err_t res = esp_lcd_panel_draw_bitmap(panel_handle, x_draw_start, y_draw_start, x_draw_end + 1, y_draw_end + 1, to); 
+            if (res != ESP_OK) 
+            {
+                ESP_LOGE(TAG, "Failed to draw bitmap %d", res);
+            }   
         }
         else
         {
-            ESP_LOGE(TAG, "Transfer sempahore timeout");
+            ESP_LOGE(TAG, "Transfer sempahore take timeout");
             break;
         }
 
@@ -607,13 +615,13 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     lv_color_t* buf2 = NULL;
     lv_color_t* buf3 = NULL;
 
-    buf1 = heap_caps_malloc(LCD_BUFFER_SIZE * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
+    buf1 = heap_caps_aligned_alloc(32, LCD_BUFFER_SIZE * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
 
-    buf2 = heap_caps_malloc(trans_size * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
+    buf2 = heap_caps_aligned_alloc(32, trans_size * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
     assert(buf2);
     trans_buf_1 = buf2;
 
-    buf3 = heap_caps_malloc(trans_size * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
+    buf3 = heap_caps_aligned_alloc(32, trans_size * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
     assert(buf3);
     trans_buf_2 = buf3;
 

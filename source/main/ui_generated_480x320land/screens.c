@@ -229,9 +229,8 @@ void create_screen_screen1() {
                     // ui_BPMIndicator
                     lv_obj_t *obj = lv_obj_create(parent_obj);
                     objects.ui_bpm_indicator = obj;
-                    lv_obj_set_pos(obj, 410, 143);
-                    lv_obj_set_size(obj, 40, 40);
-                    lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_set_pos(obj, 415, 147);
+                    lv_obj_set_size(obj, 30, 30);
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                     lv_obj_set_style_bg_color(obj, lv_color_hex(0xffd1a60c), LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_bg_grad_color(obj, lv_color_hex(0xffd1b44d), LV_PART_MAIN | LV_STATE_DEFAULT);

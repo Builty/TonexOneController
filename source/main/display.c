@@ -313,12 +313,12 @@ void __attribute__((unused)) action_gesture(lv_event_t * e)
     dir = platform_adjust_gesture(dir);
 
     // called from LVGL 
-    if (dir == LV_DIR_LEFT)
+    if (dir == LV_DIR_RIGHT)
     {
         ESP_LOGI(TAG, "UI Previous Swipe");      
         control_request_preset_down();      
     }
-    else if (dir == LV_DIR_RIGHT)
+    else if (dir == LV_DIR_LEFT)
     {
         ESP_LOGI(TAG, "UI Next Swipe");    
         control_request_preset_up();      
