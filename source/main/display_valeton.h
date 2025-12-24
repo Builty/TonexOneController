@@ -29,6 +29,8 @@ void valeton_action_effect_icon_clicked(lv_event_t* e);
 void valeton_action_parameter_changed(lv_event_t* e);
 void valeton_update_icon_order(void);
 uint8_t valeton_update_ui_parameters(void);
+void valeton_value_clicked(lv_event_t *e);
+void valeton_value_changed(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/

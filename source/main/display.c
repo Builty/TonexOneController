@@ -584,6 +584,33 @@ void action_preset_description_pressed(lv_event_t * e)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+void action_value_clicked(lv_event_t *e) 
+{
+    ESP_LOGI(TAG, "action_value_clicked");
+
+    switch (usb_get_connected_modeller_type())
+    {
+        case AMP_MODELLER_TONEX_ONE:        // fallthrough
+        case AMP_MODELLER_TONEX:            // fallthrough
+        default:
+        {
+            tonex_value_clicked(e);         
+        } break;
+
+        case AMP_MODELLER_VALETON_GP5:
+        {
+            valeton_value_clicked(e);
+        } break;
+    }    
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void BTBondsClearRequest(lv_event_t * e)
 {
     // request to clear bluetooth bonds
@@ -611,6 +638,38 @@ void action_keyboard_ok(lv_event_t * e)
         ESP_LOGI(TAG, "action_keyboard_ok: %s", text);
 
         control_set_user_text(text);  
+    }    
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void action_value_keyboard_ok(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if (event_code == LV_EVENT_READY) 
+    {
+        ESP_LOGI(TAG, "action_value_keyboard_ok");
+
+        switch (usb_get_connected_modeller_type())
+        {
+            case AMP_MODELLER_TONEX_ONE:        // fallthrough
+            case AMP_MODELLER_TONEX:            // fallthrough
+            default:
+            {
+                tonex_value_changed(e);
+            } break;
+
+            case AMP_MODELLER_VALETON_GP5:
+            {
+                valeton_value_changed(e);               
+            } break;
+        }            
     }    
 }
 

@@ -79,6 +79,10 @@ limitations under the License.
 
 static const char __attribute__((unused)) *TAG = "app_display_valeton";
 
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI          
+    static lv_obj_t* edit_object = NULL;
+#endif    
+
 /****************************************************************************
 * NAME:        
 * DESCRIPTION: 
@@ -803,6 +807,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_patch_vol_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_patch_vol_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_patch_vol_value, (void*)(uintptr_t)VALETON_PARAM_PATCH_VOLUME);
                 } break;
 
                 case VALETON_PARAM_NR_ENABLE:
@@ -858,6 +865,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_nr_param0_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_nr_param0_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_nr_param0_value, (void*)(uintptr_t)VALETON_PARAM_NR_PARAM_0);
                 } break;
 
                 case VALETON_PARAM_NR_PARAM_1: 
@@ -866,6 +876,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_nr_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_nr_param1_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_nr_param1_value, (void*)(uintptr_t)VALETON_PARAM_NR_PARAM_1);
                 } break;
 
                 case VALETON_PARAM_NR_PARAM_2: 
@@ -874,6 +887,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_nr_param2_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_nr_param2_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_nr_param2_value, (void*)(uintptr_t)VALETON_PARAM_NR_PARAM_2);
                 } break;
 
                 case VALETON_PARAM_NR_PARAM_3: 
@@ -882,6 +898,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_nr_param3_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_nr_param3_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_nr_param3_value, (void*)(uintptr_t)VALETON_PARAM_NR_PARAM_3);
                 } break;
 
                 case VALETON_PARAM_NR_PARAM_4:  
@@ -890,6 +909,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_nr_param4_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_nr_param4_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_nr_param4_value, (void*)(uintptr_t)VALETON_PARAM_NR_PARAM_4);
                 } break;
 
                 case VALETON_PARAM_NR_PARAM_5:  // fallthrough
@@ -1195,6 +1217,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_pre_param0_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_pre_param0_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_pre_param0_value, (void*)(uintptr_t)VALETON_PARAM_PRE_PARAM_0);                    
                 } break;
 
                 case VALETON_PARAM_PRE_PARAM_1:
@@ -1203,6 +1228,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_pre_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_pre_param1_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_pre_param1_value, (void*)(uintptr_t)VALETON_PARAM_PRE_PARAM_1);                    
                 } break;
 
                 case VALETON_PARAM_PRE_PARAM_2:
@@ -1211,6 +1239,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_pre_param2_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_pre_param2_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_pre_param2_value, (void*)(uintptr_t)VALETON_PARAM_PRE_PARAM_2);                    
                 } break;
 
                 case VALETON_PARAM_PRE_PARAM_3:
@@ -1219,6 +1250,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_pre_param3_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_pre_param3_value, value_string);
+                    
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_pre_param3_value, (void*)(uintptr_t)VALETON_PARAM_PRE_PARAM_3);                    
                 } break;
 
                 case VALETON_PARAM_PRE_PARAM_4:
@@ -1227,6 +1261,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_pre_param4_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_pre_param4_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_pre_param4_value, (void*)(uintptr_t)VALETON_PARAM_PRE_PARAM_4);                    
                 } break;
 
                 case VALETON_PARAM_PRE_PARAM_5:
@@ -1397,6 +1434,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_dst_param0_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_dst_param0_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_dst_param0_value, (void*)(uintptr_t)VALETON_PARAM_DIST_PARAM_0);                    
                 } break;
 
                 case VALETON_PARAM_DIST_PARAM_1:
@@ -1405,6 +1445,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_dst_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_dst_param1_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_dst_param1_value, (void*)(uintptr_t)VALETON_PARAM_DIST_PARAM_1);                    
                 } break;
 
                 case VALETON_PARAM_DIST_PARAM_2:
@@ -1413,6 +1456,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_dst_param2_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_dst_param2_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_dst_param2_value, (void*)(uintptr_t)VALETON_PARAM_DIST_PARAM_2);                    
                 } break;
 
                 case VALETON_PARAM_DIST_PARAM_3:
@@ -1421,6 +1467,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_dst_param3_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_dst_param3_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_dst_param3_value, (void*)(uintptr_t)VALETON_PARAM_DIST_PARAM_3);                    
                 } break;
                 
                 case VALETON_PARAM_DIST_PARAM_4:
@@ -1429,6 +1478,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_dst_param4_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_dst_param4_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_dst_param4_value, (void*)(uintptr_t)VALETON_PARAM_DIST_PARAM_4);
                 } break;
 
                 case VALETON_PARAM_DIST_PARAM_5:    // fallthrough
@@ -1898,6 +1950,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_amp_param0_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_amp_param0_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_amp_param0_value, (void*)(uintptr_t)VALETON_PARAM_AMP_PARAM_0);                    
                 } break;
                 
                 case VALETON_PARAM_AMP_PARAM_1:
@@ -1906,6 +1961,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_amp_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_amp_param1_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_amp_param1_value, (void*)(uintptr_t)VALETON_PARAM_AMP_PARAM_1);                    
                 } break;
 
                 case VALETON_PARAM_AMP_PARAM_2:
@@ -1914,6 +1972,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_amp_param2_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_amp_param2_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_amp_param2_value, (void*)(uintptr_t)VALETON_PARAM_AMP_PARAM_2);                    
                 } break;
 
                 case VALETON_PARAM_AMP_PARAM_3:
@@ -1922,6 +1983,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_amp_param3_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_amp_param3_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_amp_param3_value, (void*)(uintptr_t)VALETON_PARAM_AMP_PARAM_3);                    
                 } break;
 
                 case VALETON_PARAM_AMP_PARAM_4:
@@ -1930,6 +1994,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_amp_param4_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_amp_param4_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_amp_param4_value, (void*)(uintptr_t)VALETON_PARAM_AMP_PARAM_4);                    
                 } break;
 
                 case VALETON_PARAM_AMP_PARAM_5:     // fallthrough
@@ -1994,6 +2061,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_cab_param0_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_cab_param0_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_cab_param0_value, (void*)(uintptr_t)VALETON_PARAM_CAB_PARAM_0);                    
                 } break;
 
                 case VALETON_PARAM_CAB_PARAM_1:     
@@ -2002,6 +2072,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_cab_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_cab_param1_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_cab_param1_value, (void*)(uintptr_t)VALETON_PARAM_CAB_PARAM_1);                    
                 } break;
 
                 case VALETON_PARAM_CAB_PARAM_2: 
@@ -2010,6 +2083,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_cab_param2_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_cab_param2_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_cab_param2_value, (void*)(uintptr_t)VALETON_PARAM_CAB_PARAM_2);                    
                 } break;
 
                 case VALETON_PARAM_CAB_PARAM_3:
@@ -2018,6 +2094,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_cab_param3_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_cab_param3_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_cab_param3_value, (void*)(uintptr_t)VALETON_PARAM_CAB_PARAM_3);                    
                 } break;
 
                 case VALETON_PARAM_CAB_PARAM_4:     
@@ -2026,6 +2105,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_cab_param4_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_cab_param4_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_cab_param4_value, (void*)(uintptr_t)VALETON_PARAM_CAB_PARAM_4);                    
                 } break;
 
                 case VALETON_PARAM_CAB_PARAM_5:     // fallthrough
@@ -2211,6 +2293,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_eq_param0_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_eq_param0_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_eq_param0_value, (void*)(uintptr_t)VALETON_PARAM_EQ_PARAM_0);                    
                 } break;
 
                 case VALETON_PARAM_EQ_PARAM_1:
@@ -2219,6 +2304,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_eq_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_eq_param1_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_eq_param1_value, (void*)(uintptr_t)VALETON_PARAM_EQ_PARAM_1);                    
                 } break;
 
                 case VALETON_PARAM_EQ_PARAM_2:
@@ -2227,6 +2315,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_eq_param2_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_eq_param2_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_eq_param2_value, (void*)(uintptr_t)VALETON_PARAM_EQ_PARAM_2);                    
                 } break;
 
                 case VALETON_PARAM_EQ_PARAM_3:
@@ -2235,6 +2326,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_eq_param3_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_eq_param3_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_eq_param3_value, (void*)(uintptr_t)VALETON_PARAM_EQ_PARAM_3);                    
                 } break;
 
                 case VALETON_PARAM_EQ_PARAM_4:
@@ -2243,6 +2337,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_eq_param4_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_eq_param4_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_eq_param4_value, (void*)(uintptr_t)VALETON_PARAM_EQ_PARAM_4);                    
                 } break;
 
                 case VALETON_PARAM_EQ_PARAM_5:      // fallthrough
@@ -2440,6 +2537,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_mod_param0_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_mod_param0_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_mod_param0_value, (void*)(uintptr_t)VALETON_PARAM_MOD_PARAM_0);                    
                 } break;
                 
                 case VALETON_PARAM_MOD_PARAM_1:
@@ -2448,6 +2548,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_mod_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_mod_param1_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_mod_param1_value, (void*)(uintptr_t)VALETON_PARAM_MOD_PARAM_1);                    
                 } break;
 
                 case VALETON_PARAM_MOD_PARAM_2:
@@ -2456,6 +2559,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_mod_param2_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_mod_param2_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_mod_param2_value, (void*)(uintptr_t)VALETON_PARAM_MOD_PARAM_2);                    
                 } break;
 
                 case VALETON_PARAM_MOD_PARAM_3:
@@ -2464,6 +2570,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_mod_param3_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_mod_param3_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_mod_param3_value, (void*)(uintptr_t)VALETON_PARAM_MOD_PARAM_3);                    
                 } break;
 
                 case VALETON_PARAM_MOD_PARAM_4:
@@ -2472,6 +2581,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_mod_param4_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_mod_param4_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_mod_param4_value, (void*)(uintptr_t)VALETON_PARAM_MOD_PARAM_4);                    
                 } break;
 
                 case VALETON_PARAM_MOD_PARAM_5:     // fallthrough
@@ -2713,6 +2825,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_dly_param0_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_dly_param0_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_dly_param0_value, (void*)(uintptr_t)VALETON_PARAM_DLY_PARAM_0);                    
                 } break;
 
                 case VALETON_PARAM_DLY_PARAM_1:
@@ -2721,6 +2836,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_dly_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_dly_param1_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_dly_param1_value, (void*)(uintptr_t)VALETON_PARAM_DLY_PARAM_1);                    
                 } break;
 
                 case VALETON_PARAM_DLY_PARAM_2:
@@ -2729,6 +2847,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_dly_param2_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_dly_param2_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_dly_param2_value, (void*)(uintptr_t)VALETON_PARAM_DLY_PARAM_2);                    
                 } break;
 
                 case VALETON_PARAM_DLY_PARAM_3:
@@ -2737,6 +2858,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_dly_param3_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_dly_param3_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_dly_param3_value, (void*)(uintptr_t)VALETON_PARAM_DLY_PARAM_3);                    
                 } break;
 
                 case VALETON_PARAM_DLY_PARAM_4:
@@ -2745,6 +2869,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_dly_param4_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_dly_param4_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_dly_param4_value, (void*)(uintptr_t)VALETON_PARAM_DLY_PARAM_4);                    
                 } break;
 
                 case VALETON_PARAM_DLY_PARAM_5:     // fallthrough
@@ -2873,6 +3000,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_rvb_param0_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_rvb_param0_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_rvb_param0_value, (void*)(uintptr_t)VALETON_PARAM_RVB_PARAM_0);                    
                 } break;
                 
                 case VALETON_PARAM_RVB_PARAM_1:
@@ -2881,6 +3011,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_rvb_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_rvb_param1_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_rvb_param1_value, (void*)(uintptr_t)VALETON_PARAM_RVB_PARAM_1);                    
                 } break;                
                 
                 case VALETON_PARAM_RVB_PARAM_2:
@@ -2889,6 +3022,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_rvb_param2_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_rvb_param2_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_rvb_param2_value, (void*)(uintptr_t)VALETON_PARAM_RVB_PARAM_2);                    
                 } break;
                 
                 case VALETON_PARAM_RVB_PARAM_3:
@@ -2897,6 +3033,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_rvb_param3_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_rvb_param3_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_rvb_param3_value, (void*)(uintptr_t)VALETON_PARAM_RVB_PARAM_3);                    
                 } break;
                 
                 case VALETON_PARAM_RVB_PARAM_4:
@@ -2905,6 +3044,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_rvb_param4_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_rvb_param4_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_rvb_param4_value, (void*)(uintptr_t)VALETON_PARAM_RVB_PARAM_4);                    
                 } break;                
 
                 case VALETON_PARAM_RVB_PARAM_5:     // fallthrough
@@ -2965,6 +3107,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_ns_param0_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_ns_param0_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_ns_param0_value, (void*)(uintptr_t)VALETON_PARAM_NS_PARAM_0);                    
                 } break;
 
                 case VALETON_PARAM_NS_PARAM_1:
@@ -2973,6 +3118,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_ns_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_ns_param1_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_ns_param1_value, (void*)(uintptr_t)VALETON_PARAM_NS_PARAM_1);                    
                 } break;                
                 
                 case VALETON_PARAM_NS_PARAM_2:
@@ -2981,6 +3129,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_ns_param2_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_ns_param2_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_ns_param2_value, (void*)(uintptr_t)VALETON_PARAM_NS_PARAM_2);                    
                 } break;                
                 
                 case VALETON_PARAM_NS_PARAM_3:
@@ -2989,6 +3140,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_ns_param3_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_ns_param3_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_ns_param3_value, (void*)(uintptr_t)VALETON_PARAM_NS_PARAM_3);                    
                 } break;
                 
                 case VALETON_PARAM_NS_PARAM_4:
@@ -2997,6 +3151,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_ns_param4_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_ns_param4_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_ns_param4_value, (void*)(uintptr_t)VALETON_PARAM_NS_PARAM_4);                    
                 } break;
 
                 case VALETON_PARAM_NS_PARAM_5:      // fallthrough
@@ -3020,6 +3177,9 @@ uint8_t valeton_update_ui_parameters(void)
                     sprintf(buf, "%.1f", param_entry->Value);
                     lv_label_set_text(objects.ui_bpm_value_label, buf);
                     
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_bpm_value_label, (void*)(uintptr_t)VALETON_GLOBAL_BPM);                    
+
 #if CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR                            
                     ui_BPMAnimate(objects.ui_bpm_indicator, 1000 * 60 / param_entry->Value);
 #endif                            
@@ -3030,6 +3190,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_glob_input_level_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_glob_input_level_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_glob_input_level_value, (void*)(uintptr_t)VALETON_GLOBAL_INPUT_TRIM);                    
                 } break;
 
                 case VALETON_GLOBAL_CABSIM_BYPASS:
@@ -3049,6 +3212,9 @@ uint8_t valeton_update_ui_parameters(void)
                     lv_slider_set_value(objects.ui_val_glob_master_vol_slider, round(param_entry->Value), LV_ANIM_OFF);
                     sprintf(value_string, "%d", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_val_glob_master_vol_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_val_glob_master_vol_value, (void*)(uintptr_t)VALETON_GLOBAL_MASTER_VOLUME);                              
                 } break;
 
                 case VALETON_GLOBAL_RECORD_LEVEL:   // fallthrough
@@ -3157,4 +3323,58 @@ uint8_t valeton_update_ui_parameters(void)
 #endif  //CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
 
     return 1;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void valeton_value_clicked(lv_event_t *e)
+{
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI              
+    char* temp_str;
+    edit_object = lv_event_get_target(e);
+
+    // get current value
+    temp_str = lv_label_get_text(edit_object);
+    
+    // set it on text entry
+    lv_textarea_set_text(objects.ui_val_settings_text_entry, temp_str);
+
+    // show panel
+    lv_obj_clear_flag(objects.ui_val_settings_dialog, LV_OBJ_FLAG_HIDDEN);
+#endif    //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void valeton_value_changed(lv_event_t * e)
+{
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI          
+    if (edit_object != NULL)
+    {
+        // get value
+        char* text = (char*)lv_textarea_get_text(objects.ui_val_settings_text_entry);
+
+        // param index is stored in user data
+        uintptr_t user_data = (uintptr_t)lv_obj_get_user_data(edit_object);
+        uint16_t param_index = (uint16_t)user_data;
+
+        float param_value = atof(text);
+        usb_modify_parameter(param_index, param_value); 
+
+        edit_object = NULL;
+    }
+
+    // hide panel
+    lv_obj_add_flag(objects.ui_val_settings_dialog, LV_OBJ_FLAG_HIDDEN);
+#endif    //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
 }

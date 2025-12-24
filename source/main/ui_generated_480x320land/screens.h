@@ -204,6 +204,9 @@ typedef struct _objects_t {
     lv_obj_t *ui_volume_slider;
     lv_obj_t *ui_volume_value;
     lv_obj_t *ui_closeimage;
+    lv_obj_t *ui_settings_dialog;
+    lv_obj_t *ui_settings_text_entry;
+    lv_obj_t *ui_settings_keyboard;
     lv_obj_t *ui_val_settings_tab_view;
     lv_obj_t *obj7;
     lv_obj_t *ui_val_nr_tab;
@@ -419,6 +422,9 @@ typedef struct _objects_t {
     lv_obj_t *ui_val_patch_vol_slider;
     lv_obj_t *ui_val_patch_vol_value;
     lv_obj_t *ui_val_closeimage;
+    lv_obj_t *ui_val_settings_dialog;
+    lv_obj_t *ui_val_settings_text_entry;
+    lv_obj_t *ui_val_settings_keyboard;
 } objects_t;
 
 extern objects_t objects;

@@ -80,6 +80,10 @@ limitations under the License.
 
 static const char __attribute__((unused)) *TAG = "app_display_tonex";
 
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI          
+    static lv_obj_t* edit_object = NULL;
+#endif 
+
 /****************************************************************************
 * NAME:        
 * DESCRIPTION: 
@@ -1019,6 +1023,9 @@ uint8_t tonex_update_ui_parameters(void)
                     // show value and units
                     sprintf(value_string, "%d db", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_noise_gate_threshold_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_noise_gate_threshold_value, (void*)(uintptr_t)TONEX_PARAM_NOISE_GATE_THRESHOLD);                    
                 } break;
 
                 case TONEX_PARAM_NOISE_GATE_RELEASE:
@@ -1029,6 +1036,9 @@ uint8_t tonex_update_ui_parameters(void)
                     // show value and units
                     sprintf(value_string, "%d ms", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_noise_gate_release_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_noise_gate_release_value, (void*)(uintptr_t)TONEX_PARAM_NOISE_GATE_RELEASE);                    
                 } break;
 
                 case TONEX_PARAM_NOISE_GATE_DEPTH:
@@ -1039,6 +1049,9 @@ uint8_t tonex_update_ui_parameters(void)
                     // show value and units
                     sprintf(value_string, "%d db", (int)round(param_entry->Value));
                     lv_label_set_text(objects.ui_noise_gate_depth_value, value_string);
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_noise_gate_depth_value, (void*)(uintptr_t)TONEX_PARAM_NOISE_GATE_DEPTH);                    
                 } break;
 
                 case TONEX_PARAM_COMP_POST:
@@ -1074,7 +1087,10 @@ uint8_t tonex_update_ui_parameters(void)
 
                     // show value and units
                     sprintf(value_string, "%1.1f db", param_entry->Value);
-                    lv_label_set_text(objects.ui_compressor_threshold_value, value_string);                            
+                    lv_label_set_text(objects.ui_compressor_threshold_value, value_string);    
+                    
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_compressor_threshold_value, (void*)(uintptr_t)TONEX_PARAM_COMP_THRESHOLD);                                        
                 } break;
 
                 case TONEX_PARAM_COMP_MAKE_UP:
@@ -1084,7 +1100,10 @@ uint8_t tonex_update_ui_parameters(void)
 
                     // show value and units
                     sprintf(value_string, "%d db", (int)round(param_entry->Value));
-                    lv_label_set_text(objects.ui_compressor_gain_value, value_string);                            
+                    lv_label_set_text(objects.ui_compressor_gain_value, value_string);        
+                    
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_compressor_gain_value, (void*)(uintptr_t)TONEX_PARAM_COMP_MAKE_UP);                                        
                 } break;
 
                 case TONEX_PARAM_COMP_ATTACK:
@@ -1094,7 +1113,10 @@ uint8_t tonex_update_ui_parameters(void)
 
                     // show value and units
                     sprintf(value_string, "%d ms", (int)round(param_entry->Value));
-                    lv_label_set_text(objects.ui_compressor_attack_value, value_string);                            
+                    lv_label_set_text(objects.ui_compressor_attack_value, value_string);       
+
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_compressor_attack_value, (void*)(uintptr_t)TONEX_PARAM_COMP_ATTACK);                    
                 } break;
 
                 case TONEX_PARAM_EQ_POST:
@@ -1116,7 +1138,10 @@ uint8_t tonex_update_ui_parameters(void)
 
                     // show value and units
                     sprintf(value_string, "%1.1f", param_entry->Value);
-                    lv_label_set_text(objects.ui_eq_bass_value, value_string);                            
+                    lv_label_set_text(objects.ui_eq_bass_value, value_string);        
+                    
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_eq_bass_value, (void*)(uintptr_t)TONEX_PARAM_EQ_BASS);                                        
                 } break;
 
                 case TONEX_PARAM_EQ_BASS_FREQ:
@@ -1131,7 +1156,10 @@ uint8_t tonex_update_ui_parameters(void)
 
                     // show value and units
                     sprintf(value_string, "%1.1f", param_entry->Value);
-                    lv_label_set_text(objects.ui_eq_mid_value, value_string);                            
+                    lv_label_set_text(objects.ui_eq_mid_value, value_string);      
+                    
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_eq_mid_value, (void*)(uintptr_t)TONEX_PARAM_EQ_MID);                                        
                 } break;
 
                 case TONEX_PARAM_EQ_MIDQ:
@@ -1141,7 +1169,10 @@ uint8_t tonex_update_ui_parameters(void)
                     
                     // show value and units
                     sprintf(value_string, "%1.1f", param_entry->Value);
-                    lv_label_set_text(objects.ui_eq_mid_qvalue, value_string);                            
+                    lv_label_set_text(objects.ui_eq_mid_qvalue, value_string);      
+                    
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_eq_mid_qvalue, (void*)(uintptr_t)TONEX_PARAM_EQ_MIDQ);                                        
                 } break;
 
                 case TONEX_PARAM_EQ_MID_FREQ:
@@ -1156,7 +1187,10 @@ uint8_t tonex_update_ui_parameters(void)
                     
                     // show value and units
                     sprintf(value_string, "%1.1f", param_entry->Value);
-                    lv_label_set_text(objects.ui_eq_treble_value, value_string);                            
+                    lv_label_set_text(objects.ui_eq_treble_value, value_string);          
+                    
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_eq_treble_value, (void*)(uintptr_t)TONEX_PARAM_EQ_TREBLE);                                        
                 } break;
 
                 case TONEX_PARAM_EQ_TREBLE_FREQ:
@@ -1204,7 +1238,10 @@ uint8_t tonex_update_ui_parameters(void)
 
                     // show value and units
                     sprintf(value_string, "%1.1f", param_entry->Value);
-                    lv_label_set_text(objects.ui_amplifier_gain_value, value_string);                            
+                    lv_label_set_text(objects.ui_amplifier_gain_value, value_string);        
+                    
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_amplifier_gain_value, (void*)(uintptr_t)TONEX_PARAM_MODEL_GAIN);                                        
                 } break;
 
                 case TONEX_PARAM_MODEL_VOLUME:
@@ -1214,7 +1251,10 @@ uint8_t tonex_update_ui_parameters(void)
                     
                     // show value and units
                     sprintf(value_string, "%1.1f", param_entry->Value);
-                    lv_label_set_text(objects.ui_amplifier_volume_value, value_string);                                                        
+                    lv_label_set_text(objects.ui_amplifier_volume_value, value_string);         
+                    
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_amplifier_volume_value, (void*)(uintptr_t)TONEX_PARAM_MODEL_VOLUME);                                        
                 } break;
 
                 case TONEX_PARAM_MODEX_MIX:
@@ -1229,7 +1269,10 @@ uint8_t tonex_update_ui_parameters(void)
 
                     // show value and units
                     sprintf(value_string, "%1.1f", param_entry->Value);
-                    lv_label_set_text(objects.ui_amplifier_presense_value, value_string);                            
+                    lv_label_set_text(objects.ui_amplifier_presense_value, value_string);       
+                    
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_amplifier_presense_value, (void*)(uintptr_t)TONEX_PARAM_MODEL_PRESENCE);                                        
                 } break;
 
                 //case TONEX_PARAM_CABINET_UNKNOWN:
@@ -1249,7 +1292,10 @@ uint8_t tonex_update_ui_parameters(void)
 
                     // show value and units
                     sprintf(value_string, "%1.1f", param_entry->Value);
-                    lv_label_set_text(objects.ui_amplifier_depth_value, value_string);                            
+                    lv_label_set_text(objects.ui_amplifier_depth_value, value_string);          
+                    
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_amplifier_depth_value, (void*)(uintptr_t)TONEX_PARAM_MODEL_DEPTH);                                        
                 } break;
 
                 case TONEX_PARAM_VIR_RESO:
@@ -1366,7 +1412,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%1.1f", param_entry->Value);
-                        lv_label_set_text(objects.ui_reverb_time_value, value_string);                            
+                        lv_label_set_text(objects.ui_reverb_time_value, value_string);      
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_time_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING1_TIME);                    
                     }
                 } break;
 
@@ -1379,7 +1428,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d ms", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_predelay_value, value_string);                            
+                        lv_label_set_text(objects.ui_reverb_predelay_value, value_string);            
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_predelay_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING1_PREDELAY);                    
                     }
                 } break;
 
@@ -1392,7 +1444,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_color_value, value_string);                            
+                        lv_label_set_text(objects.ui_reverb_color_value, value_string);         
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_color_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING1_COLOR);                                        
                     }
                 } break;
 
@@ -1405,7 +1460,10 @@ uint8_t tonex_update_ui_parameters(void)
 
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_mix_value, value_string);                            
+                        lv_label_set_text(objects.ui_reverb_mix_value, value_string);          
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_mix_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING1_MIX);                    
                     }
                 } break;
 
@@ -1418,7 +1476,10 @@ uint8_t tonex_update_ui_parameters(void)
 
                         // show value and units
                         sprintf(value_string, "%1.1f", param_entry->Value);
-                        lv_label_set_text(objects.ui_reverb_time_value, value_string);                            
+                        lv_label_set_text(objects.ui_reverb_time_value, value_string);       
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_time_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING2_TIME);                    
                     }
                 } break;
 
@@ -1431,7 +1492,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d ms", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_predelay_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_predelay_value, value_string);         
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_predelay_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING2_PREDELAY);                    
                     }
                 } break;
 
@@ -1444,7 +1508,10 @@ uint8_t tonex_update_ui_parameters(void)
 
                         // show value and units
                         sprintf(value_string, "%d", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_color_value, value_string);                            
+                        lv_label_set_text(objects.ui_reverb_color_value, value_string);             
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_color_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING2_COLOR);                    
                     }
                 } break;
 
@@ -1457,7 +1524,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_mix_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_mix_value, value_string);          
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_mix_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING2_MIX);                    
                     }
                 } break;
 
@@ -1470,7 +1540,10 @@ uint8_t tonex_update_ui_parameters(void)
 
                         // show value and units
                         sprintf(value_string, "%1.1f", param_entry->Value);
-                        lv_label_set_text(objects.ui_reverb_time_value, value_string);                            
+                        lv_label_set_text(objects.ui_reverb_time_value, value_string);                
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_time_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING3_TIME);                    
                     }
                 } break;
 
@@ -1483,7 +1556,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d ms", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_predelay_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_predelay_value, value_string);          
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_predelay_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING3_PREDELAY);                    
                     }
                 } break;
 
@@ -1496,7 +1572,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_color_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_color_value, value_string);    
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_color_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING3_COLOR);                                            
                     }
                 } break;
 
@@ -1509,7 +1588,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_mix_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_mix_value, value_string);      
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_mix_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING3_MIX);                    
                     }
                 } break;
 
@@ -1522,7 +1604,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%1.1f", param_entry->Value);
-                        lv_label_set_text(objects.ui_reverb_time_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_time_value, value_string);            
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_time_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING4_TIME);                    
                     }
                 } break;
 
@@ -1535,7 +1620,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d ms", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_predelay_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_predelay_value, value_string);       
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_predelay_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING4_PREDELAY);                                            
                     }
                 } break;
 
@@ -1548,7 +1636,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_color_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_color_value, value_string);        
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_color_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING4_COLOR);                    
                     }
                 } break;
 
@@ -1561,7 +1652,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_mix_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_mix_value, value_string);        
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_mix_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_SPRING4_MIX);                    
                     }
                 } break;
 
@@ -1574,7 +1668,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%1.1f", param_entry->Value);
-                        lv_label_set_text(objects.ui_reverb_time_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_time_value, value_string);    
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_time_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_ROOM_TIME);                                            
                     }
                 } break;
 
@@ -1587,7 +1684,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d ms", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_predelay_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_predelay_value, value_string);      
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_predelay_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_ROOM_PREDELAY);                    
                     }
                 } break;
 
@@ -1600,7 +1700,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_color_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_color_value, value_string);       
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_color_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_ROOM_COLOR);                    
                     }
                 } break;
 
@@ -1613,7 +1716,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_mix_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_mix_value, value_string);        
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_mix_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_ROOM_MIX);                    
                     }
                 } break;
 
@@ -1626,7 +1732,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%1.1f", param_entry->Value);
-                        lv_label_set_text(objects.ui_reverb_time_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_time_value, value_string);      
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_time_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_PLATE_TIME);                    
                     }
                 } break;
 
@@ -1639,7 +1748,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d ms", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_predelay_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_predelay_value, value_string);     
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_predelay_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_PLATE_PREDELAY);                    
                     }
                 } break;
 
@@ -1652,7 +1764,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_color_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_color_value, value_string);       
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_color_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_PLATE_COLOR);                    
                     }
                 } break;
 
@@ -1665,7 +1780,10 @@ uint8_t tonex_update_ui_parameters(void)
                         
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_reverb_mix_value, value_string);                                                            
+                        lv_label_set_text(objects.ui_reverb_mix_value, value_string);        
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_reverb_mix_value, (void*)(uintptr_t)TONEX_PARAM_REVERB_PLATE_MIX);                    
                     }
                 } break;
 
@@ -1829,7 +1947,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                         
                         // show value and units
                         sprintf(value_string, "%1.1f Hz", param_entry->Value);
-                        lv_label_set_text(objects.ui_modulation_param1_value, value_string);              
+                        lv_label_set_text(objects.ui_modulation_param1_value, value_string);        
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param1_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_CHORUS_RATE);                    
                     }
                 } break;
 
@@ -1842,7 +1963,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                 
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_modulation_param2_value, value_string);                                     
+                        lv_label_set_text(objects.ui_modulation_param2_value, value_string);      
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param2_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_CHORUS_DEPTH);                    
                     }
                 } break;
 
@@ -1855,7 +1979,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                 
                         // show value and units
                         sprintf(value_string, "%1.1f", param_entry->Value);
-                        lv_label_set_text(objects.ui_modulation_param3_value, value_string);                                     
+                        lv_label_set_text(objects.ui_modulation_param3_value, value_string);      
+                                            
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param3_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_CHORUS_LEVEL);                                            
                     }
                 } break;
 
@@ -1898,6 +2025,9 @@ uint8_t tonex_update_ui_parameters(void)
                         // show value and units
                         sprintf(value_string, "%1.1f Hz", param_entry->Value);
                         lv_label_set_text(objects.ui_modulation_param1_value, value_string);     
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param1_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_TREMOLO_RATE);                    
                     }
                 } break;
 
@@ -1910,7 +2040,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                                                       
                         // show value and units
                         sprintf(value_string, "%1.1f", param_entry->Value);
-                        lv_label_set_text(objects.ui_modulation_param2_value, value_string);                                     
+                        lv_label_set_text(objects.ui_modulation_param2_value, value_string);      
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param2_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_TREMOLO_SHAPE);                    
                     }
                 } break;
 
@@ -1923,7 +2056,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                                                       
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_modulation_param3_value, value_string);                                 
+                        lv_label_set_text(objects.ui_modulation_param3_value, value_string);      
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param3_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_TREMOLO_SPREAD);                    
                     }
                 } break;
 
@@ -1936,7 +2072,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                       
                         // show value and units
                         sprintf(value_string, "%1.1f", param_entry->Value);
-                        lv_label_set_text(objects.ui_modulation_param4_value, value_string);                                                                    
+                        lv_label_set_text(objects.ui_modulation_param4_value, value_string);      
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param4_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_TREMOLO_LEVEL);                    
                     }
                 } break;
 
@@ -1978,7 +2117,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                       
                         // show value and units
                         sprintf(value_string, "%1.1f Hz", param_entry->Value);
-                        lv_label_set_text(objects.ui_modulation_param1_value, value_string);                                                                  
+                        lv_label_set_text(objects.ui_modulation_param1_value, value_string);    
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param1_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_PHASER_RATE);                    
                     }
                 } break;
 
@@ -1991,7 +2133,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                    
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_modulation_param2_value, value_string);                                          
+                        lv_label_set_text(objects.ui_modulation_param2_value, value_string);        
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param2_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_PHASER_DEPTH);                    
                     }
                 } break;
 
@@ -2004,7 +2149,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                    
                         // show value and units
                         sprintf(value_string, "%1.1f", param_entry->Value);
-                        lv_label_set_text(objects.ui_modulation_param3_value, value_string);                                                                       
+                        lv_label_set_text(objects.ui_modulation_param3_value, value_string);         
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param3_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_PHASER_LEVEL);                    
                     }
                 } break;
 
@@ -2046,7 +2194,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                    
                         // show value and units
                         sprintf(value_string, "%1.1f Hz", param_entry->Value);
-                        lv_label_set_text(objects.ui_modulation_param1_value, value_string);                                                                       
+                        lv_label_set_text(objects.ui_modulation_param1_value, value_string);    
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param1_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_FLANGER_RATE);                    
                     }
                 } break;
 
@@ -2059,7 +2210,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                   
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_modulation_param2_value, value_string);                                                                    
+                        lv_label_set_text(objects.ui_modulation_param2_value, value_string);       
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param2_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_FLANGER_DEPTH);                    
                     }
                 } break;
 
@@ -2072,7 +2226,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                   
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_modulation_param3_value, value_string);                                                                      
+                        lv_label_set_text(objects.ui_modulation_param3_value, value_string);        
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param3_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_FLANGER_FEEDBACK);                    
                     }
                 } break;
 
@@ -2085,7 +2242,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                   
                         // show value and units
                         sprintf(value_string, "%1.1f", param_entry->Value);
-                        lv_label_set_text(objects.ui_modulation_param4_value, value_string);                                                                    
+                        lv_label_set_text(objects.ui_modulation_param4_value, value_string);      
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param4_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_FLANGER_LEVEL);                    
                     }
                 } break;
 
@@ -2127,7 +2287,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                   
                         // show value and units
                         sprintf(value_string, "%d RPM", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_modulation_param1_value, value_string);                                          
+                        lv_label_set_text(objects.ui_modulation_param1_value, value_string);        
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param1_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_ROTARY_SPEED);                    
                     }
                 } break;
 
@@ -2140,7 +2303,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                  
                         // show value and units
                         sprintf(value_string, "%d mm", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_modulation_param2_value, value_string);                                                                        
+                        lv_label_set_text(objects.ui_modulation_param2_value, value_string);    
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param2_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_ROTARY_RADIUS);                    
                     }
                 } break;
 
@@ -2153,7 +2319,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                  
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_modulation_param3_value, value_string);                                                                       
+                        lv_label_set_text(objects.ui_modulation_param3_value, value_string);        
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param3_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_ROTARY_SPREAD);                    
                     }
                 } break;
 
@@ -2166,7 +2335,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                  
                         // show value and units
                         sprintf(value_string, "%1.1f", param_entry->Value);
-                        lv_label_set_text(objects.ui_modulation_param4_value, value_string);                                                                        
+                        lv_label_set_text(objects.ui_modulation_param4_value, value_string);      
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_modulation_param4_value, (void*)(uintptr_t)TONEX_PARAM_MODULATION_ROTARY_LEVEL);                    
                     }
                 } break;
                 
@@ -2253,7 +2425,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                  
                         // show value and units
                         sprintf(value_string, "%d ms", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_delay_ts_value, value_string);                                                                         
+                        lv_label_set_text(objects.ui_delay_ts_value, value_string);             
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_delay_ts_value, (void*)(uintptr_t)TONEX_PARAM_DELAY_DIGITAL_TIME);                    
                     }
                 } break;
 
@@ -2266,7 +2441,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                  
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_delay_feedback_value, value_string);                                                                         
+                        lv_label_set_text(objects.ui_delay_feedback_value, value_string);      
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_delay_feedback_value, (void*)(uintptr_t)TONEX_PARAM_DELAY_DIGITAL_FEEDBACK);                    
                     }
                 } break;
 
@@ -2294,7 +2472,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                                                 
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_delay_mix_value, value_string);                                                                                                         
+                        lv_label_set_text(objects.ui_delay_mix_value, value_string);      
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_delay_mix_value, (void*)(uintptr_t)TONEX_PARAM_DELAY_DIGITAL_MIX);                    
                     }
                 } break;
 
@@ -2336,7 +2517,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                                                  
                         // show value and units
                         sprintf(value_string, "%d ms", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_delay_ts_value, value_string);                                                                                                         
+                        lv_label_set_text(objects.ui_delay_ts_value, value_string);        
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_delay_ts_value, (void*)(uintptr_t)TONEX_PARAM_DELAY_TAPE_TIME);                    
                     }
                 } break;
 
@@ -2349,7 +2533,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                                                  
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_delay_feedback_value, value_string);                                                                                                         
+                        lv_label_set_text(objects.ui_delay_feedback_value, value_string);     
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_delay_feedback_value, (void*)(uintptr_t)TONEX_PARAM_DELAY_TAPE_FEEDBACK);                    
                     }
                 } break;
 
@@ -2377,7 +2564,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                                                  
                         // show value and units
                         sprintf(value_string, "%d%%", (int)round(param_entry->Value));
-                        lv_label_set_text(objects.ui_delay_mix_value, value_string);                                                                                                         
+                        lv_label_set_text(objects.ui_delay_mix_value, value_string);      
+                        
+                        // set user data for later use
+                        lv_obj_set_user_data(objects.ui_delay_mix_value, (void*)(uintptr_t)TONEX_PARAM_DELAY_TAPE_MIX);                    
                     }
                 } break;
 
@@ -2414,10 +2604,13 @@ uint8_t tonex_update_ui_parameters(void)
                     sprintf(value_string, "%1.1f", param_entry->Value);
                     lv_label_set_text(objects.ui_bpm_value, value_string);                                                                                                         
 
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_bpm_value, (void*)(uintptr_t)TONEX_GLOBAL_BPM);      
+
                     char buf[128];
                     sprintf(buf, "%.1f", param_entry->Value);
-                    lv_label_set_text(objects.ui_bpm_value_label, buf);
-                    
+                    lv_label_set_text(objects.ui_bpm_value_label, buf);             
+
 #if CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR                            
                     ui_BPMAnimate(objects.ui_bpm_indicator, 1000 * 60 / param_entry->Value);
 #endif                            
@@ -2430,7 +2623,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                                                                              
                     // show value and units
                     sprintf(value_string, "%1.1f db", param_entry->Value);
-                    lv_label_set_text(objects.ui_input_trim_value, value_string);                                                                                                         
+                    lv_label_set_text(objects.ui_input_trim_value, value_string);       
+                    
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_input_trim_value, (void*)(uintptr_t)TONEX_GLOBAL_INPUT_TRIM);                                        
                 } break;
                 
                 case TONEX_GLOBAL_TUNING_REFERENCE:
@@ -2440,7 +2636,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                                                                              
                     // show value and units
                     sprintf(value_string, "%d Hz", (int)round(param_entry->Value));
-                    lv_label_set_text(objects.ui_tuning_reference_value, value_string);                                                                                                         
+                    lv_label_set_text(objects.ui_tuning_reference_value, value_string);      
+                    
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_tuning_reference_value, (void*)(uintptr_t)TONEX_GLOBAL_TUNING_REFERENCE);                                        
                 } break;
 
                 case TONEX_GLOBAL_MASTER_VOLUME:
@@ -2450,7 +2649,10 @@ uint8_t tonex_update_ui_parameters(void)
                                                                                                                                                              
                     // show value and units
                     sprintf(value_string, "%1.1f db", param_entry->Value);
-                    lv_label_set_text(objects.ui_volume_value, value_string);                                                                                                         
+                    lv_label_set_text(objects.ui_volume_value, value_string);        
+                    
+                    // set user data for later use
+                    lv_obj_set_user_data(objects.ui_volume_value, (void*)(uintptr_t)TONEX_GLOBAL_MASTER_VOLUME);                                        
                 } break;
             } 
 
@@ -2538,4 +2740,64 @@ uint8_t tonex_update_ui_parameters(void)
 #endif  //CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
 
     return 1;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void tonex_value_clicked(lv_event_t* e)
+{
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI              
+    char* temp_str;
+    char temp_str_2[20];
+    edit_object = lv_event_get_target(e);
+
+    // get current value
+    temp_str = lv_label_get_text(edit_object);
+
+    // get the float part (removes the units)
+    float param_value = atof(temp_str);
+
+    // put back to string
+    sprintf(temp_str_2, "%g", param_value);
+
+    lv_textarea_set_text(objects.ui_settings_text_entry, temp_str_2);
+
+    // show panel
+    lv_obj_clear_flag(objects.ui_settings_dialog, LV_OBJ_FLAG_HIDDEN);
+#endif    //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void tonex_value_changed(lv_event_t* e)
+{
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI          
+    if (edit_object != NULL)
+    {
+        // get value
+        char* text = (char*)lv_textarea_get_text(objects.ui_settings_text_entry);
+
+        // param index is stored in user data
+        uintptr_t user_data = (uintptr_t)lv_obj_get_user_data(edit_object);
+        uint16_t param_index = (uint16_t)user_data;
+
+        float param_value = atof(text);
+        usb_modify_parameter(param_index, param_value); 
+
+        edit_object = NULL;
+    }
+
+    // hide panel
+    lv_obj_add_flag(objects.ui_settings_dialog, LV_OBJ_FLAG_HIDDEN);
+#endif    //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
 }

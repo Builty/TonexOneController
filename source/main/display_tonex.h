@@ -29,6 +29,8 @@ void tonex_action_effect_icon_clicked(lv_event_t* e);
 void tonex_action_parameter_changed(lv_event_t* e);
 void tonex_update_icon_order(void);
 uint8_t tonex_update_ui_parameters(void);
+void tonex_value_clicked(lv_event_t *e);
+void tonex_value_changed(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/

@@ -20,6 +20,8 @@ extern void action_keyboard_ok(lv_event_t * e);
 extern void action_preset_description_pressed(lv_event_t * e);
 extern void action_effect_icon_clicked(lv_event_t * e);
 extern void action_gesture(lv_event_t * e);
+extern void action_value_clicked(lv_event_t * e);
+extern void action_value_keyboard_ok(lv_event_t * e);
 
 
 #ifdef __cplusplus
