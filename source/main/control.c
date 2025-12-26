@@ -1243,6 +1243,19 @@ uint32_t control_get_current_preset_index(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+void control_get_current_preset_name(char* dest)
+{
+    memcpy((void*)dest, (void*)ControlData.PresetNames[control_get_current_preset_index()], MAX_PRESET_NAME_LENGTH);
+    dest[MAX_PRESET_NAME_LENGTH - 1] = 0;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void control_set_config_item_int(uint32_t item, uint32_t status)
 {
     tControlMessage message;

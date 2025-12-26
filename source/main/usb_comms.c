@@ -523,6 +523,34 @@ void usb_load_preset_to_slot_b(uint32_t preset)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+void usb_save_preset(void)
+{
+    tUSBMessage message;
+
+    if (usb_input_queue == NULL)
+    {
+        ESP_LOGE(TAG, "usb_save_preset queue null");            
+    }
+    else
+    {
+        message.Command = USB_COMMAND_SAVE_PRESET;
+        message.Payload = 0;
+
+        // send to queue
+        if (xQueueSend(usb_input_queue, (void*)&message, 0) != pdPASS)
+        {
+            ESP_LOGE(TAG, "usb_save_preset queue send failed!");            
+        }
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 uint8_t usb_get_max_presets_for_connected_modeller(void)
 {
     uint8_t max = MAX_PRESETS_TONEX_ONE;

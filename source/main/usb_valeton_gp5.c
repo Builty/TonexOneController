@@ -423,6 +423,7 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
 static void usb_valeton_gp5_request_ir(void);
 static void usb_valeton_gp5_request_nams(void);
 static void usb_valeton_gp5_request_globals(void);
+static void usb_valeton_gp5_save_preset(uint16_t preset_index, char* preset_name);
 
 /****************************************************************************
 * NAME:        
@@ -1600,6 +1601,48 @@ static void usb_valeton_gp5_set_effect_block_state(uint8_t block_index, uint8_t 
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+static void usb_valeton_gp5_save_preset(uint16_t preset_index, char* preset_name)
+{
+    uint8_t midi_tx[] = {0x04, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    uint8_t preset_name_length;
+    uint8_t buffer_index;
+
+    // set preset index
+    midi_tx[2] = (uint8_t)(preset_index / 16);
+    midi_tx[3] = (uint8_t)(preset_index % 16);
+
+    // set preset name
+    preset_name_length = strlen(preset_name);
+    if (preset_name_length > 10)
+    {
+        preset_name_length = 10;
+    }
+    
+    // name starts at offset 10, and is 10 characters/20 bytes long
+    buffer_index = 10;
+    for (uint32_t character = 0; character < preset_name_length; character++)
+    {
+        // break character into 2 x 4 bit nibbles e.g. 47 becomes 04 07
+        midi_tx[buffer_index++] = (preset_name[character] >> 4) & 0x0F;
+        midi_tx[buffer_index++] = preset_name[character] & 0x0F;
+    }
+
+    ESP_LOGI(TAG, "Save Preset");
+
+    // debug
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, midi_tx, sizeof(midi_tx), ESP_LOG_INFO);
+
+    usb_valeton_gp5_send_sysex((const uint8_t*)midi_tx, sizeof(midi_tx), 0x01);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 static void usb_valeton_gp5_set_effect_block_model(uint8_t block_index, uint8_t model)
 {
     //                               | block  |                                      | block  |                                      |          effect code                       |
@@ -2148,6 +2191,14 @@ void usb_valeton_gp5_handle(class_driver_t* driver_obj)
                             ESP_LOGW(TAG, "Attempt to modify unknown param %d", (int)message.Payload);
                         }
                     } break;
+
+                    case USB_COMMAND_SAVE_PRESET:
+                    {
+                        char preset_name[MAX_PRESET_NAME_LENGTH];
+                        control_get_current_preset_name(preset_name);
+
+                        usb_valeton_gp5_save_preset(control_get_current_preset_index(), preset_name);
+                    } break;
                 }
             }
         } break;
@@ -2280,6 +2331,27 @@ void usb_valeton_gp5_init(class_driver_t* driver_obj, QueueHandle_t comms_queue)
 *****************************************************************************/
 void usb_valeton_gp5_deinit(void)
 {
-    //to do here: need to clean up properly if pedal disconnected
-    //cdc_acm_host_close();
+    midi_host_close(midi_dev);
+    vTaskDelay(200);
+    midi_dev = NULL;
+    midi_host_uninstall();
+
+    // free mem
+    free((void*)InputBuffers);
+    InputBuffers = NULL;
+    
+    free((void*)ProcessingBuffer);
+    ProcessingBuffer = NULL;
+
+    free((void*)TransmitBuffer);
+    TransmitBuffer = NULL;
+
+    free((void*)TxBuffer);
+    TxBuffer = NULL;
+
+    free((void*)ValetonGP5Data);
+    ValetonGP5Data = NULL;
+
+    // preallocate big memory again, ready for freeing on reconnect
+    tonex_common_preallocate_memory();
 }

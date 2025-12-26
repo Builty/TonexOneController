@@ -480,6 +480,10 @@ void action_amp_skin_next(lv_event_t * e)
 *****************************************************************************/
 void action_close_settings_page(lv_event_t * e)
 {
+    // save preset
+    usb_save_preset();
+
+    // close settings screen
     lv_scr_load_anim(objects.screen1, LV_SCR_LOAD_ANIM_FADE_IN, 0, 0, false);
 }
 

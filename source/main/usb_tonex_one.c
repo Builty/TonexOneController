@@ -1384,6 +1384,11 @@ void usb_tonex_one_handle(class_driver_t* driver_obj)
                             ESP_LOGW(TAG, "Attempt to modify unknown param %d", (int)message.Payload);
                         }
                     } break;
+
+                    case USB_COMMAND_SAVE_PRESET:
+                    {
+                        // Tonex One uses auto save, nothing needed
+                    } break;
                 }
             }
         } break;
@@ -1624,6 +1629,29 @@ void usb_tonex_one_init(class_driver_t* driver_obj, QueueHandle_t comms_queue)
 *****************************************************************************/
 void usb_tonex_one_deinit(void)
 {
-    //to do here: need to clean up properly if pedal disconnected
-    //cdc_acm_host_close();
+    // close USB
+    cdc_acm_host_close(cdc_dev);
+    vTaskDelay(200);
+    cdc_dev = NULL;
+    cdc_acm_host_uninstall();
+
+    // dealloc mem
+    free((void*)InputBuffers);
+    InputBuffers = NULL;
+
+    free((void*)TxBuffer);    
+    TxBuffer = NULL;
+
+    free((void*)FramedBuffer);
+    FramedBuffer = NULL;
+
+    free((void*)TonexData);
+    TonexData = NULL;
+
+    boot_init_needed = 0;
+    boot_global_request = 0;
+    boot_preset_request = 0;
+
+    // preallocate big memory again, ready for freeing on reconnect
+    tonex_common_preallocate_memory();
 }

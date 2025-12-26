@@ -321,6 +321,7 @@ uint8_t* control_get_preset_order(void);
 void control_set_sync_complete(void);
 uint8_t control_get_sync_complete(void);
 uint32_t control_get_current_preset_index(void);
+void control_get_current_preset_name(char* dest);
 
 // config API
 void control_set_default_config(void);
