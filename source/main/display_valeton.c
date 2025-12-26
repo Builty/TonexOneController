@@ -368,8 +368,17 @@ void valeton_action_parameter_changed(lv_event_t * e)
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI          
     // get the object that was changed
     lv_obj_t* obj = lv_event_get_current_target(e);
+    tModellerParameter* param_ptr;
+    uint16_t reverb_mode = 0;
 
     ESP_LOGI(TAG, "Valeton Parameter changed");
+
+    if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
+    {
+        // get reverb model in case we need it
+        reverb_mode = ((int)param_ptr[VALETON_PARAM_RVB_TYPE].Value);
+        valeton_params_release_locked_access();
+    }
 
     // Block Switches
     if (obj == objects.ui_val_nr_block_switch)
@@ -628,19 +637,95 @@ void valeton_action_parameter_changed(lv_event_t * e)
     }
     else if (obj == objects.ui_val_rvb_param1_slider)
     {
-        usb_modify_parameter(VALETON_PARAM_RVB_PARAM_1, ((float)lv_slider_get_value(obj)));
+        switch (reverb_mode)
+        {                    
+            case VALETON_EFFECT_RVB_AIR:            // fallthrough
+            case VALETON_EFFECT_RVB_PLATE_L:        // fallthrough     
+            case VALETON_EFFECT_RVB_PLATE:          // fallthrough                        
+            case VALETON_EFFECT_RVB_ROOM:           // fallthrough
+            case VALETON_EFFECT_RVB_HALL:           // fallthrough
+            case VALETON_EFFECT_RVB_CHURCH:         // fallthrough    
+            case VALETON_EFFECT_RVB_SWEET_SPACE:
+            {
+                // param 2
+                usb_modify_parameter(VALETON_PARAM_RVB_PARAM_2, ((float)lv_slider_get_value(obj)));
+            } break;         
+            
+            case VALETON_EFFECT_RVB_SPRING:         // fallthrough
+            case VALETON_EFFECT_RVB_N_STAR:         // fallthrough   
+            case VALETON_EFFECT_RVB_DEEPSEA:  
+            {
+                // param 1
+                usb_modify_parameter(VALETON_PARAM_RVB_PARAM_1, ((float)lv_slider_get_value(obj)));                       
+            } break;
+        }                         
     }
     else if (obj == objects.ui_val_rvb_param2_slider)
     {
-        usb_modify_parameter(VALETON_PARAM_RVB_PARAM_2, ((float)lv_slider_get_value(obj)));
+        switch (reverb_mode)
+        {                    
+            case VALETON_EFFECT_RVB_AIR:            // fallthrough 
+            case VALETON_EFFECT_RVB_PLATE:          // fallthrough 
+            case VALETON_EFFECT_RVB_SWEET_SPACE:   
+            {   
+                // param 4
+                usb_modify_parameter(VALETON_PARAM_RVB_PARAM_4, ((float)lv_slider_get_value(obj)));                       
+            } break;
+
+            case VALETON_EFFECT_RVB_PLATE_L:        // fallthrough     
+            case VALETON_EFFECT_RVB_N_STAR:         // fallthrough
+            case VALETON_EFFECT_RVB_DEEPSEA:        // fallthrough
+            case VALETON_EFFECT_RVB_ROOM:           // fallthrough
+            case VALETON_EFFECT_RVB_HALL:           // fallthrough
+            case VALETON_EFFECT_RVB_CHURCH:         // fallthrough      
+            case VALETON_EFFECT_RVB_SPRING:
+            {
+                // not used
+            } break;
+        }               
     }
     else if (obj == objects.ui_val_rvb_param3_slider)
     {
-        usb_modify_parameter(VALETON_PARAM_RVB_PARAM_3, ((float)lv_slider_get_value(obj)));
+        switch (reverb_mode)
+        {                    
+            case VALETON_EFFECT_RVB_AIR:            // fallthrough
+            case VALETON_EFFECT_RVB_PLATE_L:        // fallthrough     
+            case VALETON_EFFECT_RVB_PLATE:          // fallthrough
+            case VALETON_EFFECT_RVB_N_STAR:         // fallthrough
+            case VALETON_EFFECT_RVB_DEEPSEA:        // fallthrough
+            case VALETON_EFFECT_RVB_ROOM:           // fallthrough
+            case VALETON_EFFECT_RVB_HALL:           // fallthrough
+            case VALETON_EFFECT_RVB_CHURCH:         // fallthrough      
+            case VALETON_EFFECT_RVB_SPRING:
+            {
+                // not used
+            } break;
+
+            case VALETON_EFFECT_RVB_SWEET_SPACE:
+            {
+                // Param 5
+                usb_modify_parameter(VALETON_PARAM_RVB_PARAM_5, ((float)lv_slider_get_value(obj)));
+            } break;
+        }               
     }
     else if (obj == objects.ui_val_rvb_param4_slider)
     {
-        usb_modify_parameter(VALETON_PARAM_RVB_PARAM_4, ((float)lv_slider_get_value(obj)));
+        switch (reverb_mode)
+        {                    
+            case VALETON_EFFECT_RVB_AIR:            // fallthrough
+            case VALETON_EFFECT_RVB_PLATE_L:        // fallthrough     
+            case VALETON_EFFECT_RVB_PLATE:          // fallthrough
+            case VALETON_EFFECT_RVB_N_STAR:         // fallthrough
+            case VALETON_EFFECT_RVB_DEEPSEA:        // fallthrough
+            case VALETON_EFFECT_RVB_ROOM:           // fallthrough
+            case VALETON_EFFECT_RVB_HALL:           // fallthrough
+            case VALETON_EFFECT_RVB_CHURCH:         // fallthrough      
+            case VALETON_EFFECT_RVB_SPRING:         // fallthrough  
+            case VALETON_EFFECT_RVB_SWEET_SPACE:
+            {
+                // not used                            
+            } break;
+        }               
     }
     // NS block
     else if (obj == objects.ui_val_ns_param0_slider)
@@ -3007,50 +3092,185 @@ uint8_t valeton_update_ui_parameters(void)
                 
                 case VALETON_PARAM_RVB_PARAM_1:
                 {
-                    lv_slider_set_range(objects.ui_val_rvb_param1_slider, param_entry->Min, param_entry->Max);
-                    lv_slider_set_value(objects.ui_val_rvb_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
-                    sprintf(value_string, "%d", (int)round(param_entry->Value));
-                    lv_label_set_text(objects.ui_val_rvb_param1_value, value_string);
+                    switch ((int)param_ptr[VALETON_PARAM_RVB_TYPE].Value)
+                    {
+                        case VALETON_EFFECT_RVB_SPRING:     // fallthrough   
+                        case VALETON_EFFECT_RVB_N_STAR:     // fallthrough
+                        case VALETON_EFFECT_RVB_DEEPSEA:
+                        {
+                            // Decay parameter
+                            lv_slider_set_range(objects.ui_val_rvb_param1_slider, param_entry->Min, param_entry->Max);
+                            lv_slider_set_value(objects.ui_val_rvb_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
+                            sprintf(value_string, "%d", (int)round(param_entry->Value));
+                            lv_label_set_text(objects.ui_val_rvb_param1_value, value_string);
 
-                    // set user data for later use
-                    lv_obj_set_user_data(objects.ui_val_rvb_param1_value, (void*)(uintptr_t)VALETON_PARAM_RVB_PARAM_1);                    
-                } break;                
-                
+                            // set user data for later use
+                            lv_obj_set_user_data(objects.ui_val_rvb_param1_value, (void*)(uintptr_t)VALETON_PARAM_RVB_PARAM_1); 
+                        } break;
+                        
+                        default:
+                        {
+                            // param not used 
+                        } break;
+                    }
+                } break;
+
                 case VALETON_PARAM_RVB_PARAM_2:
                 {
-                    lv_slider_set_range(objects.ui_val_rvb_param2_slider, param_entry->Min, param_entry->Max);
-                    lv_slider_set_value(objects.ui_val_rvb_param2_slider, round(param_entry->Value), LV_ANIM_OFF);
-                    sprintf(value_string, "%d", (int)round(param_entry->Value));
-                    lv_label_set_text(objects.ui_val_rvb_param2_value, value_string);
+                    switch ((int)param_ptr[VALETON_PARAM_RVB_TYPE].Value)
+                    {
+                        case VALETON_EFFECT_RVB_AIR:            // fallthrough
+                        case VALETON_EFFECT_RVB_ROOM:           // fallthrough
+                        case VALETON_EFFECT_RVB_HALL:           // fallthrough
+                        case VALETON_EFFECT_RVB_CHURCH:         // fallthrough
+                        case VALETON_EFFECT_RVB_PLATE_L:        // fallthrough
+                        case VALETON_EFFECT_RVB_PLATE:
+                        {
+                            // Decay parameter
+                            lv_slider_set_range(objects.ui_val_rvb_param1_slider, param_entry->Min, param_entry->Max);
+                            lv_slider_set_value(objects.ui_val_rvb_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
+                            sprintf(value_string, "%d", (int)round(param_entry->Value));
+                            lv_label_set_text(objects.ui_val_rvb_param1_value, value_string);
 
-                    // set user data for later use
-                    lv_obj_set_user_data(objects.ui_val_rvb_param2_value, (void*)(uintptr_t)VALETON_PARAM_RVB_PARAM_2);                    
-                } break;
+                            // set user data for later use
+                            lv_obj_set_user_data(objects.ui_val_rvb_param1_value, (void*)(uintptr_t)VALETON_PARAM_RVB_PARAM_2); 
+                        } break;
+
+                        case VALETON_EFFECT_RVB_SPRING:
+                        {
+                            // not used
+                        } break;
+                        
+                        case VALETON_EFFECT_RVB_N_STAR:     // fallthrough
+                        case VALETON_EFFECT_RVB_DEEPSEA:
+                        {
+                            // trail parameter - to do
+                        } break;
+
+                        case VALETON_EFFECT_RVB_SWEET_SPACE:
+                        {
+                            // decay parameter
+                            lv_slider_set_range(objects.ui_val_rvb_param1_slider, param_entry->Min, param_entry->Max);
+                            lv_slider_set_value(objects.ui_val_rvb_param1_slider, round(param_entry->Value), LV_ANIM_OFF);
+                            sprintf(value_string, "%d", (int)round(param_entry->Value));
+                            lv_label_set_text(objects.ui_val_rvb_param1_value, value_string);
+
+                            // set user data for later use
+                            lv_obj_set_user_data(objects.ui_val_rvb_param1_value, (void*)(uintptr_t)VALETON_PARAM_RVB_PARAM_2);  
+                        } break;  
+                    }                
+                } break;                
                 
                 case VALETON_PARAM_RVB_PARAM_3:
                 {
-                    lv_slider_set_range(objects.ui_val_rvb_param3_slider, param_entry->Min, param_entry->Max);
-                    lv_slider_set_value(objects.ui_val_rvb_param3_slider, round(param_entry->Value), LV_ANIM_OFF);
-                    sprintf(value_string, "%d", (int)round(param_entry->Value));
-                    lv_label_set_text(objects.ui_val_rvb_param3_value, value_string);
+                    switch ((int)param_ptr[VALETON_PARAM_RVB_TYPE].Value)
+                    {
+                        case VALETON_EFFECT_RVB_AIR:            // fallthrough
+                        case VALETON_EFFECT_RVB_PLATE_L:        // fallthrough
+                        case VALETON_EFFECT_RVB_PLATE:          // fallthrough
+                        case VALETON_EFFECT_RVB_N_STAR:         // fallthrough
+                        case VALETON_EFFECT_RVB_DEEPSEA:        // fallthrough
+                        case VALETON_EFFECT_RVB_SWEET_SPACE:
+                        {
+                            // not used
+                        } break;
 
-                    // set user data for later use
-                    lv_obj_set_user_data(objects.ui_val_rvb_param3_value, (void*)(uintptr_t)VALETON_PARAM_RVB_PARAM_3);                    
+                        case VALETON_EFFECT_RVB_ROOM:           // fallthrough
+                        case VALETON_EFFECT_RVB_HALL:           // fallthrough
+                        case VALETON_EFFECT_RVB_CHURCH:         // fallthrough      
+                        case VALETON_EFFECT_RVB_SPRING:
+                        {
+                            // trail parameter - to do
+                        } break;
+                    }                   
                 } break;
-                
+
                 case VALETON_PARAM_RVB_PARAM_4:
                 {
-                    lv_slider_set_range(objects.ui_val_rvb_param4_slider, param_entry->Min, param_entry->Max);
-                    lv_slider_set_value(objects.ui_val_rvb_param4_slider, round(param_entry->Value), LV_ANIM_OFF);
-                    sprintf(value_string, "%d", (int)round(param_entry->Value));
-                    lv_label_set_text(objects.ui_val_rvb_param4_value, value_string);
+                    switch ((int)param_ptr[VALETON_PARAM_RVB_TYPE].Value)
+                    {
+                        case VALETON_EFFECT_RVB_AIR:            // fallthrough
+                        case VALETON_EFFECT_RVB_PLATE:          // fallthrough
+                        case VALETON_EFFECT_RVB_SWEET_SPACE:
+                        {
+                            // Dampening
+                            lv_slider_set_range(objects.ui_val_rvb_param2_slider, param_entry->Min, param_entry->Max);
+                            lv_slider_set_value(objects.ui_val_rvb_param2_slider, round(param_entry->Value), LV_ANIM_OFF);
+                            sprintf(value_string, "%d", (int)round(param_entry->Value));
+                            lv_label_set_text(objects.ui_val_rvb_param2_value, value_string);
 
-                    // set user data for later use
-                    lv_obj_set_user_data(objects.ui_val_rvb_param4_value, (void*)(uintptr_t)VALETON_PARAM_RVB_PARAM_4);                    
+                            // set user data for later use
+                            lv_obj_set_user_data(objects.ui_val_rvb_param2_value, (void*)(uintptr_t)VALETON_PARAM_RVB_PARAM_4);      
+                        } break;
+
+                        case VALETON_EFFECT_RVB_PLATE_L:        // fallthrough                        
+                        case VALETON_EFFECT_RVB_N_STAR:         // fallthrough
+                        case VALETON_EFFECT_RVB_DEEPSEA:        // fallthrough
+                        case VALETON_EFFECT_RVB_ROOM:           // fallthrough
+                        case VALETON_EFFECT_RVB_HALL:           // fallthrough
+                        case VALETON_EFFECT_RVB_CHURCH:         // fallthrough      
+                        case VALETON_EFFECT_RVB_SPRING:
+                        {
+                            // not used                            
+                        } break;
+                    }                                                    
+                } break;
+                
+                case VALETON_PARAM_RVB_PARAM_5:
+                {
+                    switch ((int)param_ptr[VALETON_PARAM_RVB_TYPE].Value)
+                    {                    
+                        case VALETON_EFFECT_RVB_SWEET_SPACE:
+                        {
+                            // Modulation parameter
+                            lv_slider_set_range(objects.ui_val_rvb_param3_slider, param_entry->Min, param_entry->Max);
+                            lv_slider_set_value(objects.ui_val_rvb_param3_slider, round(param_entry->Value), LV_ANIM_OFF);
+                            sprintf(value_string, "%d", (int)round(param_entry->Value));
+                            lv_label_set_text(objects.ui_val_rvb_param3_value, value_string);
+
+                            // set user data for later use
+                            lv_obj_set_user_data(objects.ui_val_rvb_param3_value, (void*)(uintptr_t)VALETON_PARAM_RVB_PARAM_5);           
+                        } break;
+
+                        case VALETON_EFFECT_RVB_AIR:            // fallthrough
+                        case VALETON_EFFECT_RVB_PLATE:          // fallthrough
+                        case VALETON_EFFECT_RVB_PLATE_L:        // fallthrough                        
+                        case VALETON_EFFECT_RVB_N_STAR:         // fallthrough
+                        case VALETON_EFFECT_RVB_DEEPSEA:        // fallthrough
+                        case VALETON_EFFECT_RVB_ROOM:           // fallthrough
+                        case VALETON_EFFECT_RVB_HALL:           // fallthrough
+                        case VALETON_EFFECT_RVB_CHURCH:         // fallthrough      
+                        case VALETON_EFFECT_RVB_SPRING:
+                        {
+                            // not used                            
+                        } break;
+                    }                           
+                } break;
+                
+                case VALETON_PARAM_RVB_PARAM_6:
+                {
+                    switch ((int)param_ptr[VALETON_PARAM_RVB_TYPE].Value)
+                    {                    
+                        case VALETON_EFFECT_RVB_AIR:            // fallthrough
+                        case VALETON_EFFECT_RVB_PLATE_L:        // fallthrough     
+                        case VALETON_EFFECT_RVB_PLATE:          // fallthrough
+                        case VALETON_EFFECT_RVB_SWEET_SPACE:
+                        {
+                            // trail parameter
+                        } break;
+                                                                               
+                        case VALETON_EFFECT_RVB_N_STAR:         // fallthrough
+                        case VALETON_EFFECT_RVB_DEEPSEA:        // fallthrough
+                        case VALETON_EFFECT_RVB_ROOM:           // fallthrough
+                        case VALETON_EFFECT_RVB_HALL:           // fallthrough
+                        case VALETON_EFFECT_RVB_CHURCH:         // fallthrough      
+                        case VALETON_EFFECT_RVB_SPRING:
+                        {
+                            // not used                            
+                        } break;
+                    }                                        
                 } break;                
 
-                case VALETON_PARAM_RVB_PARAM_5:     // fallthrough
-                case VALETON_PARAM_RVB_PARAM_6:     // fallthrough
                 case VALETON_PARAM_RVB_PARAM_7:     
                 {
                     // not used

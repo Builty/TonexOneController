@@ -1248,17 +1248,21 @@ void valeton_params_set_min_max(void)
                 param_ptr[VALETON_PARAM_RVB_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_RVB_PARAM_0].Max = 100;
 
+                // param 1 not used     
+                
                 // Decay
-                param_ptr[VALETON_PARAM_RVB_PARAM_1].Min = 0;
-                param_ptr[VALETON_PARAM_RVB_PARAM_1].Max = 100;
-
-                // Damp
                 param_ptr[VALETON_PARAM_RVB_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_RVB_PARAM_2].Max = 100;
 
+                // param 3 not used     
+
+                // Damp
+                param_ptr[VALETON_PARAM_RVB_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_4].Max = 100;
+
                 // Trail
-                param_ptr[VALETON_PARAM_RVB_PARAM_3].Min = 0;
-                param_ptr[VALETON_PARAM_RVB_PARAM_3].Max = 1;
+                param_ptr[VALETON_PARAM_RVB_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_5].Max = 1;
             } break;
 
             case VALETON_EFFECT_RVB_ROOM:       // fallthrough
@@ -1266,6 +1270,24 @@ void valeton_params_set_min_max(void)
             case VALETON_EFFECT_RVB_CHURCH:     // fallthrough
             case VALETON_EFFECT_RVB_PLATE_L:    // fallthrough
             case VALETON_EFFECT_RVB_SPRING:     // fallthrough
+            {
+                // Mix
+                param_ptr[VALETON_PARAM_RVB_PARAM_0].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_0].Max = 100;
+
+                // param 1 not used     
+
+                // Decay
+                param_ptr[VALETON_PARAM_RVB_PARAM_2].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_2].Max = 100;
+
+                // param 3 not used     
+
+                // Trail
+                param_ptr[VALETON_PARAM_RVB_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_4].Max = 1;
+            } break;
+    
             case VALETON_EFFECT_RVB_N_STAR:     // fallthrough
             case VALETON_EFFECT_RVB_DEEPSEA:
             {
@@ -1281,28 +1303,32 @@ void valeton_params_set_min_max(void)
                 param_ptr[VALETON_PARAM_RVB_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_RVB_PARAM_2].Max = 1;
             } break;
-    
+
             case VALETON_EFFECT_RVB_SWEET_SPACE:
             {
                 // Mix
                 param_ptr[VALETON_PARAM_RVB_PARAM_0].Min = 0;
                 param_ptr[VALETON_PARAM_RVB_PARAM_0].Max = 100;
 
-                // Decay
-                param_ptr[VALETON_PARAM_RVB_PARAM_1].Min = 0;
-                param_ptr[VALETON_PARAM_RVB_PARAM_1].Max = 100;
+                // param 1 not used     
 
-                // Damp
+                // Decay
                 param_ptr[VALETON_PARAM_RVB_PARAM_2].Min = 0;
                 param_ptr[VALETON_PARAM_RVB_PARAM_2].Max = 100;
 
+                // param 3 not used     
+
+                // Damp
+                param_ptr[VALETON_PARAM_RVB_PARAM_4].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_4].Max = 100;
+
                 // Mod
-                param_ptr[VALETON_PARAM_RVB_PARAM_3].Min = 0;
-                param_ptr[VALETON_PARAM_RVB_PARAM_3].Max = 100;
+                param_ptr[VALETON_PARAM_RVB_PARAM_5].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_5].Max = 100;
 
                 // Trail
-                param_ptr[VALETON_PARAM_RVB_PARAM_4].Min = 0;
-                param_ptr[VALETON_PARAM_RVB_PARAM_4].Max = 1;
+                param_ptr[VALETON_PARAM_RVB_PARAM_6].Min = 0;
+                param_ptr[VALETON_PARAM_RVB_PARAM_6].Max = 1;
             } break;
         }
 
