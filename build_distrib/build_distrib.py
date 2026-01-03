@@ -14,7 +14,7 @@ version = '2.0.2.2_beta_5'
 
 def generate_manifest(merged_filename, chip_family, build_name):
     manifest = {
-        "name": build_name,
+        "name": version,
         "version": version,
         "improv": False,
         "new_install_prompt_erase": True, 
