@@ -83,10 +83,10 @@
       <p>Select Version</p>
       <ul class="radios">
         <li>
-          <label><input type="radio" name="version" value="https://github.com/Builty/TonexOneController/tree/Webtools_test/Releases/beta/TonexController_V2.0.2.2_beta_5_" checked /> V2.0.2.2 Beta 5</label>
+          <label><input type="radio" name="version" value="https://github.com/Builty/TonexOneController/tree/Webtools_test/Releases/beta/manifest_TonexController_V2.0.2.2_beta_5" checked /> V2.0.2.2 Beta 5</label>
         </li>
         <li>
-          <label><input type="radio" name="version" value="https://github.com/Builty/TonexOneController/tree/Webtools_test/Releases/V2.0.1.2/TonexController_V2.0.1.2_" /> V2.0.1.2</label>
+          <label><input type="radio" name="version" value="https://github.com/Builty/TonexOneController/tree/Webtools_test/Releases/V2.0.1.2/manifest_TonexController_V2.0.1.2" /> V2.0.1.2</label>
         </li>
       </ul>
 
@@ -148,12 +148,12 @@
             const button = document.querySelector('esp-web-install-button');
             
             // Construct manifest filename
-            const manifestPath = `./Releases/${version}/manifest_${type}.json`;
+            const manifestPath = `./Releases/${version}_${type}.json`;
             
             console.log(manifestPath);
             
             button.manifest = manifestPath;
-            button.classList.remove('invisible'); // Show button once selection is made
+            button.classList.remove('invisible'); 
         }
 
         // Listen for changes
@@ -161,7 +161,7 @@
             radio.addEventListener("change", updateManifest);
         });
 
-        // Initial call: set manifest for default selection (V2.0.2.2_beta_5 + first platform if needed)
+        // Initial call: set manifest for default selections
         updateManifest();
     </script>
   </body>
