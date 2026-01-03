@@ -109,7 +109,7 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
     directory = os.path.join(dirname, 'temp')
     shutil.make_archive(out_filename, 'zip', directory)    
 
-    # === Generate MERGED binary ===
+    # generate merged binary
     merged_filename = '%s_merged.bin' % out_filename
 
     print('Generating merged firmware %s' % merged_filename)
