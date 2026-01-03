@@ -80,10 +80,20 @@
   <body>
     <div class="content">
       <h1>Tonex Controller Installer</h1>
-      <p>Select your Platform</p>
+      <p>Select Version</p>
       <ul class="radios">
         <li>
-          <label><input type="radio" name="type" value="DevKitC_N8R2" /> ESP DevKitC N8R2</label>
+          <label><input type="radio" name="version" value="https://github.com/Builty/TonexOneController/tree/Webtools_test/Releases/beta/TonexController_V2.0.2.2_beta_5_" checked /> V2.0.2.2 Beta 5</label>
+        </li>
+        <li>
+          <label><input type="radio" name="version" value="https://github.com/Builty/TonexOneController/tree/Webtools_test/Releases/V2.0.1.2/TonexController_V2.0.1.2_" /> V2.0.1.2</label>
+        </li>
+      </ul>
+
+      <p>Select Platform</p>
+      <ul class="radios">
+        <li>
+          <label><input type="radio" name="type" value="DevKitC_N8R2" checked /> ESP DevKitC N8R2</label>
         </li>
         <li>
           <label><input type="radio" name="type" value="DevKitC_N16R8" /> ESP DevKitC N16R8</label>
@@ -121,7 +131,8 @@
         <li>
           <label><input type="radio" name="type" value="Waveshare_Zero" /> Waveshare Zero</label>
         </li>
-      </ul>
+      </ul>         
+
       <p class="button-row" align="center">
         <esp-web-install-button class="invisible"></esp-web-install-button>
       </p>
@@ -130,13 +141,28 @@
         Installer powered by <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a>.
       </div>
     <script>
-      document.querySelectorAll('input[name="type"]').forEach(radio =>
-        radio.addEventListener("change", () => {
-          const button = document.querySelector('esp-web-install-button');
-          button.manifest = `./web_firmware_installer/manifest_${radio.value}.json`;
-          button.classList.remove('invisible');
+        function updateManifest() {
+            const version = document.querySelector('input[name="version"]:checked').value;
+            const type = document.querySelector('input[name="type"]:checked').value;
+
+            const button = document.querySelector('esp-web-install-button');
+            
+            // Construct manifest filename
+            const manifestPath = `./Releases/${version}/manifest_${type}.json`;
+            
+            console.log(manifestPath);
+            
+            button.manifest = manifestPath;
+            button.classList.remove('invisible'); // Show button once selection is made
         }
-      ));
+
+        // Listen for changes
+        document.querySelectorAll('input[name="version"], input[name="type"]').forEach(radio => {
+            radio.addEventListener("change", updateManifest);
+        });
+
+        // Initial call: set manifest for default selection (V2.0.2.2_beta_5 + first platform if needed)
+        updateManifest();
     </script>
   </body>
 </html>

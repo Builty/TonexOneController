@@ -5,22 +5,50 @@ import time
 from pathlib import Path
 from distutils.dir_util import copy_tree
 from zipfile import ZipFile
+import json
 
 dirname = Path.cwd()
 
 # set version
 version = '2.0.2.2_beta_5'
 
+def generate_manifest(merged_filename, chip_family, build_name):
+    manifest = {
+        "name": build_name,
+        "version": version,
+        "new_install_prompt_erase": True, 
+        "builds": [
+            {
+                "chipFamily": chip_family,
+                "parts": [
+                    {
+                        "path": merged_filename,
+                        "offset": 0
+                    }
+                ]
+            }
+        ]
+    }
+
+    manifest_path = 'manifest_' + build_name + '.json'
+    with open(manifest_path, 'w', encoding='utf-8') as f:
+        json.dump(manifest, f, indent=2)
+
+    print('Generated manifest.json for %s (chip: %s)' % (build_name, chip_family))
+    
 def delete_files_in_folder(directory):
-    for filename in os.listdir(directory):
-        file_path = os.path.join(directory, filename)
-        try:
-            if os.path.isfile(file_path) or os.path.islink(file_path):
-                os.unlink(file_path)
-            elif os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-        except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (file_path, e))
+    try:
+        for filename in os.listdir(directory):
+            file_path = os.path.join(directory, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
+    except:
+        pass        
         
 def build_distribution(template, target_folder, include_ota, out_filename, skins_path=None):     
     print('BuildDistrib working in folder: ', target_folder)
@@ -81,6 +109,47 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
     directory = os.path.join(dirname, 'temp')
     shutil.make_archive(out_filename, 'zip', directory)    
 
+    # === Generate MERGED binary ===
+    merged_filename = '%s_merged.bin' % out_filename
+
+    print('Generating merged firmware %s' % merged_filename)
+
+    # List of (offset_in_hex, file_path) - add more if needed (e.g., skins)
+    parts = [
+            ("0x0000", os.path.join(directory, 'bin', 'bootloader.bin')),
+            ("0x8000", os.path.join(directory, 'bin','partition-table.bin')),
+            ("0x10000", os.path.join(directory, 'bin','TonexController.bin')),
+    ]
+
+    if include_ota:
+        parts.append(("0xd000", os.path.join(directory, 'bin', 'ota_data_initial.bin')))
+
+    if skins_path is not None:
+        parts.append(("0x4f2000", os.path.join(directory, 'bin', 'skins.bin')))
+            
+    try:
+        # Find maximum size needed
+        max_offset = max(int(offset, 16) for offset, _ in parts)
+        max_size = max(int(offset, 16) + os.path.getsize(filepath) for offset, filepath in parts)
+        data = bytearray(max_size)
+
+        for offset_str, filepath in parts:
+            offset = int(offset_str, 16)
+            with open(filepath, 'rb') as f:
+                bin_data = f.read()
+            data[offset:offset + len(bin_data)] = bin_data
+            print('Merged %s at 0x%s (%d bytes)' % (os.path.basename(filepath), offset_str[2:].upper(), len(bin_data)))
+
+        with open(merged_filename, 'wb') as out:
+            out.write(data)
+        print('Successfully created merged bin: %s (%d bytes total)' % (merged_filename, len(data)))
+        
+    except Exception as e:
+        print('Failed to create merged bin: %s' % e)
+    
+    # generate manifest file for web tool
+    generate_manifest(merged_filename, "ESP32", out_filename)
+        
     print('Build complete\n\n')
     
 # Build Waveshare 1.69" 
