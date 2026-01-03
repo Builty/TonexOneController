@@ -148,7 +148,7 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
         print('Failed to create merged bin: %s' % e)
     
     # generate manifest file for web tool
-    generate_manifest(merged_filename, "ESP32", out_filename)
+    generate_manifest(merged_filename, "ESP32-S3", out_filename)
         
     print('Build complete\n\n')
     
