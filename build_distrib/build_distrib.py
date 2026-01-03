@@ -16,6 +16,7 @@ def generate_manifest(merged_filename, chip_family, build_name):
     manifest = {
         "name": build_name,
         "version": version,
+        "improv": False,
         "new_install_prompt_erase": True, 
         "builds": [
             {
