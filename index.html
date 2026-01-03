@@ -133,7 +133,7 @@
       document.querySelectorAll('input[name="type"]').forEach(radio =>
         radio.addEventListener("change", () => {
           const button = document.querySelector('esp-web-install-button');
-          button.manifest = `./manifest_${radio.value}.json`;
+          button.manifest = `./web_firmware_installer/manifest_${radio.value}.json`;
           button.classList.remove('invisible');
         }
       ));
