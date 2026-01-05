@@ -10,6 +10,10 @@
         {
           "path": "TonexController_V2.0.2.2_beta_5_PirateMidi_PolarMax_merged.bin",
           "offset": 0
+        },
+        {
+          "path": "skins.bin",
+          "offset": 5185536
         }
       ]
     }

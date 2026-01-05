@@ -12,7 +12,7 @@ dirname = Path.cwd()
 # set version
 version = '2.0.2.2_beta_5'
 
-def generate_manifest(merged_filename, chip_family, build_name):
+def generate_manifest(merged_filename, chip_family, build_name, use_skins):
     manifest = {
         "name": version,
         "version": version,
@@ -30,6 +30,12 @@ def generate_manifest(merged_filename, chip_family, build_name):
             }
         ]
     }
+
+    if use_skins:
+        manifest["builds"][0]["parts"].append({
+        "path": "skins.bin",
+        "offset": 0x4F2000
+    })
 
     manifest_path = 'manifest_' + build_name + '.json'
     with open(manifest_path, 'w', encoding='utf-8') as f:
@@ -104,6 +110,9 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
         dest = os.path.join(dirname, 'temp', 'bin')
         print('copying: ' + src + ' to ' + dest)
         shutil.copy(src, dest)
+        
+        # also copy to root folder
+        shutil.copy(src, os.getcwd())
 
     # create zip file
     print('zip files...')
@@ -124,9 +133,6 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
 
     if include_ota:
         parts.append(("0xd000", os.path.join(directory, 'bin', 'ota_data_initial.bin')))
-
-    if skins_path is not None:
-        parts.append(("0x4f2000", os.path.join(directory, 'bin', 'skins.bin')))
             
     try:
         # Find maximum size needed
@@ -149,7 +155,7 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
         print('Failed to create merged bin: %s' % e)
     
     # generate manifest file for web tool
-    generate_manifest(merged_filename, "ESP32-S3", out_filename)
+    generate_manifest(merged_filename, "ESP32-S3", out_filename, skins_path is not None)
         
     print('Build complete\n\n')
     
