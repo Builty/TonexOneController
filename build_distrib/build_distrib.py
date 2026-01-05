@@ -84,7 +84,7 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
     merged_filename = '%s_merged.bin' % out_filename
     
     # make path for merge files
-    merged_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'merged', out_filename)
+    merged_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), out_filename)
     
     if os.path.isdir(merged_path):        
         delete_files_in_folder(merged_path)
