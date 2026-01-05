@@ -1,188 +1,267 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Tonex Controller Project Firmware Installer</title>
-    <meta
-      name="description"
-      content="Easily allow users to install Tonex Controller firmware on the web."
-    />
-    <meta name="viewport" content="width=device-width" />
+    <title>Tonex Controller Firmware Installer</title>
+    <meta name="description" content="Easily install Tonex Controller firmware directly in your browser." />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
     <style>
+      :root {
+        --bg: #ffffff;
+        --text: #1f2937;
+        --card-bg: #f8fafc;
+        --border: #e2e8f0;
+        --accent: #0ea5e9;
+        --accent-hover: #0284c7;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #111827;
+          --text: #f3f4f6;
+          --card-bg: #1f2937;
+          --border: #374151;
+        }
+      }
+
       body {
-        font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
-          Roboto, Ubuntu, sans-serif;
+        font-family: 'Inter', -apple-system, system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: 0;
+        line-height: 1.5;
+      }
+
+      .content {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 32px 16px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 48px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0 0 8px;
+      }
+
+      .repo-link {
+        color: var(--accent);
+        font-size: 1.1rem;
+      }
+
+      .section {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 32px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        margin: 0 0 20px;
+        font-weight: 600;
+      }
+
+      /* Group title inside platform section */
+      .group-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 24px 0 12px;
+        color: var(--accent);
+        border-bottom: 2px solid var(--accent);
+        padding-bottom: 6px;
+      }
+
+      .group-title:first-child {
+        margin-top: 0;
+      }
+
+      /* Custom radio cards */
+      .radios {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 12px;
+        list-style: none;
         padding: 0;
         margin: 0;
-        line-height: 1.4;
       }
-      .content {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 12px;
+
+      .radios input[type="radio"] {
+        position: absolute;
+        opacity: 0;
       }
-      h2 {
-        margin-top: 2em;
+
+      .radios label {
+        display: block;
+        padding: 16px;
+        background: var(--bg);
+        border: 2px solid var(--border);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 500;
       }
-      h3 {
-        margin-top: 1.5em;
+
+      .radios label:hover {
+        border-color: var(--accent);
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
       }
-      a {
-        color: #03a9f4;
+
+      .radios input[type="radio"]:checked + label {
+        border-color: var(--accent);
+        background: rgba(14, 165, 233, 0.08);
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+        font-weight: 600;
       }
-      .invisible {
-        visibility: hidden;
-      }
-      .hidden {
-        display: none;
-      }
-      esp-web-install-button[install-unsupported] {
-        visibility: inherit;
-      }
-      .content pre {
-        max-width: 100%;
-        overflow-y: scroll;
-      }
-      .footer {
-        margin-top: 24px;
-        border-top: 1px solid #ccc;
-        padding-top: 24px;
-        text-align: center;
-      }
-      .footer .initiative {
-        font-style: italic;
-        margin-top: 16px;
-      }
-      table {
-        border-spacing: 0;
-      }
-      td {
-        padding: 8px;
-        border-bottom: 1px solid #ccc;
-      }
-      .radios li {
-        list-style: none;
-        line-height: 2em;
-      }
+
       @media (prefers-color-scheme: dark) {
-        body {
-          background-color: #333;
-          color: #fff;
+        .radios input[type="radio"]:checked + label {
+          background: rgba(14, 165, 233, 0.15);
         }
-        a {
-          color: #58a6ff;
-        }
+      }
+
+      .button-row {
+        text-align: center;
+        margin: 40px 0;
+      }
+
+      esp-web-install-button {
+        width: 100%;
+        max-width: 400px;
+        height: 60px;
+        font-size: 1.2rem !important;
+        font-weight: 600 !important;
+      }
+
+      .footer {
+        text-align: center;
+        padding-top: 32px;
+        border-top: 1px solid var(--border);
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
       }
     </style>
+
     <script type="module" src="https://unpkg.com/esp-web-tools@latest/dist/web/install-button.js?module"></script>
   </head>
   <body>
     <div class="content">
-      <h1>Tonex Controller Firmware Installer</h1>
-      <div>https://github.com/Builty/TonexOneController</div>
-      <p>Select Version</p>
-      <ul class="radios">
-        <li>
-          <label><input type="radio" name="version" value="beta,V2.0.2.2_beta_5" checked /> V2.0.2.2 Beta 5</label>
-        </li>
-        <li>
-          <label><input type="radio" name="version" value="V2.0.1.2,V2.0.1.2" /> V2.0.1.2</label>
-        </li>
-      </ul>
+      <header>
+        <h1>Tonex Controller Firmware Installer</h1>
+        <div><a href="https://github.com/Builty/TonexOneController" class="repo-link" target="_blank">github.com/Builty/TonexOneController</a></div>
+      </header>
 
-      <p>Select Platform</p>
-      <ul class="radios">
-        <li>
-          <label><input type="radio" name="type" value="DevKitC_N8R2" checked /> ESP DevKitC N8R2</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="DevKitC_N16R8" /> ESP DevKitC N16R8</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="JC3248W" /> JC3248W</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="Lilygo-TDisplay_S3" /> Lilygo T-Display S3</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="M5AtomS3R" /> M5Stack Atom S3R</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="Waveshare_1_9" /> Waveshare 1.9"</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="Waveshare_1_69" /> Waveshare 1.69" (no Touch, Portait mode)</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="Waveshare_1_69land" /> Waveshare 1.69" (no Touch, Landscape mode)</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="Waveshare_1_69_Touch" /> Waveshare 1.69" Touch (Portait mode)</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="Waveshare_1_69_Touch_land" /> Waveshare 1.69" Touch (Landscape mode)</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="Waveshare_3_5B" /> Waveshare 3.5B</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="Waveshare_4_3B" /> Waveshare 4.3B</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="Waveshare_Zero" /> Waveshare Zero</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="PirateMidi_PolarMax" /> Pirate Midi Polar Max</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="PirateMidi_PolarMini" /> Pirate Midi Polar Mini</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="PirateMidi_PolarPlus" /> Pirate Midi Polar Plus</label>
-        </li>
-        <li>
-          <label><input type="radio" name="type" value="PirateMidi_PolarPico" /> Pirate Midi Polar Pico</label>
-        </li>
-      </ul>         
+      <div class="section">
+        <h2>Select Version</h2>
+        <ul class="radios">
+          <li>
+            <input type="radio" name="version" value="beta,V2.0.2.2_beta_5" id="ver-beta" checked />
+            <label for="ver-beta">V2.0.2.2 Beta 5</label>
+          </li>
+          <li>
+            <input type="radio" name="version" value="V2.0.1.2,V2.0.1.2" id="ver-2012" />
+            <label for="ver-2012">V2.0.1.2</label>
+          </li>
+        </ul>
+      </div>
 
-      <p class="button-row" align="center">
-        <esp-web-install-button class="invisible"></esp-web-install-button>
-      </p>
+      <div class="section">
+        <h2>Select Platform</h2>
+
+        <!-- ESP DevKit -->
+        <div class="group-title">ESP DevKit</div>
+        <ul class="radios">
+          <li><input type="radio" name="type" value="DevKitC_N8R2" id="p1" checked /><label for="p1">ESP DevKitC N8R2</label></li>
+          <li><input type="radio" name="type" value="DevKitC_N16R8" id="p2" /><label for="p2">ESP DevKitC N16R8</label></li>
+        </ul>
+
+       
+
+        <!-- Waveshare group -->
+        <div class="group-title">Waveshare</div>
+        <ul class="radios">
+          <li><input type="radio" name="type" value="Waveshare_1_9" id="p6" /><label for="p6">Waveshare 1.9"</label></li>
+          <li><input type="radio" name="type" value="Waveshare_1_69" id="p7" /><label for="p7">Waveshare 1.69" (no Touch, Portrait)</label></li>
+          <li><input type="radio" name="type" value="Waveshare_1_69land" id="p8" /><label for="p8">Waveshare 1.69" (no Touch, Landscape)</label></li>
+          <li><input type="radio" name="type" value="Waveshare_1_69_Touch" id="p9" /><label for="p9">Waveshare 1.69" Touch (Portrait)</label></li>
+          <li><input type="radio" name="type" value="Waveshare_1_69_Touch_land" id="p10" /><label for="p10">Waveshare 1.69" Touch (Landscape)</label></li>
+          <li><input type="radio" name="type" value="Waveshare_3_5B" id="p11" /><label for="p11">Waveshare 3.5B</label></li>
+          <li><input type="radio" name="type" value="Waveshare_4_3B" id="p12" /><label for="p12">Waveshare 4.3B</label></li>
+          <li><input type="radio" name="type" value="Waveshare_Zero" id="p13" /><label for="p13">Waveshare Zero</label></li>
+        </ul>
+
+        <!-- Pirate Midi group -->
+        <div class="group-title">Pirate Midi</div>
+        <ul class="radios">
+          <li><input type="radio" name="type" value="PirateMidi_PolarMax" id="p14" /><label for="p14">Pirate Midi Polar Max</label></li>
+          <li><input type="radio" name="type" value="PirateMidi_PolarMini" id="p15" /><label for="p15">Pirate Midi Polar Mini</label></li>
+          <li><input type="radio" name="type" value="PirateMidi_PolarPlus" id="p16" /><label for="p16">Pirate Midi Polar Plus</label></li>
+          <li><input type="radio" name="type" value="PirateMidi_PolarPico" id="p17" /><label for="p17">Pirate Midi Polar Pico</label></li>
+        </ul>
+        
+        <!-- Others -->
+        <div class="group-title">Other Boards</div>
+        <ul class="radios">
+            <li><input type="radio" name="type" value="JC3248W" id="p3" /><label for="p3">JC3248W</label></li>
+            <li><input type="radio" name="type" value="Lilygo-TDisplay_S3" id="p4" /><label for="p4">Lilygo T-Display S3</label></li>
+            <li><input type="radio" name="type" value="M5AtomS3R" id="p5" /><label for="p5">M5Stack Atom S3R</label></li>
+        </ul>
+      </div>
+            
+      <div class="button-row">
+        <esp-web-install-button></esp-web-install-button>
+      </div>
 
       <div class="footer">
-        Installer powered by <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a>.
+        Installer powered by <a href="https://esphome.github.io/esp-web-tools/" target="_blank">ESP Web Tools</a>.
       </div>
+    </div>
+
     <script>
-    
-        var base_path = "https://raw.githubusercontent.com/Builty/TonexOneController/Webtools_test/Releases"
-    
-        function updateManifest() {
-            const version = document.querySelector('input[name="version"]:checked').value;
-            const type = document.querySelector('input[name="type"]:checked').value;
+      const base_path = "https://raw.githubusercontent.com/Builty/TonexOneController/Webtools_test/Releases";
 
-            const button = document.querySelector('esp-web-install-button');
-                        
-            // Construct manifest filename
-            const version_joined = version.split(",");
-            var release_folder = version_joined[0];
-            var filename_part = version_joined[1];
-            
-            const manifestPath = `${base_path}/${release_folder}/merged/TonexController_${filename_part}_${type}/manifest.json`;
-            
-            console.log(manifestPath);
-            
-            button.manifest = manifestPath;
-            button.classList.remove('invisible'); 
-        }
+      function updateManifest() {
+        const version = document.querySelector('input[name="version"]:checked').value;
+        const type = document.querySelector('input[name="type"]:checked').value;
+        const button = document.querySelector('esp-web-install-button');
 
-        // Listen for changes
-        document.querySelectorAll('input[name="version"], input[name="type"]').forEach(radio => {
-            radio.addEventListener("change", updateManifest);
-        });
+        const [release_folder, filename_part] = version.split(",");
 
-        // Initial call: set manifest for default selections
-        updateManifest();
+        const manifestPath = `${base_path}/${release_folder}/merged/TonexController_${filename_part}_${type}/manifest.json`;
+
+        console.log("Manifest URL:", manifestPath);
+
+        button.manifest = manifestPath;
+      }
+
+      document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener("change", updateManifest);
+      });
+
+      updateManifest();
     </script>
   </body>
 </html>

@@ -14,8 +14,8 @@ version = '2.0.2.2_beta_5'
 
 def generate_manifest(merged_path, merged_filename, chip_family, build_name, use_skins):
     manifest = {
-        "name": "Controller",
-        "version": version,
+        "name": version,
+        "version": "Controller",
         "improv": False,
         "new_install_prompt_erase": True, 
         "builds": [
