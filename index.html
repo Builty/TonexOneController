@@ -84,10 +84,10 @@
       <p>Select Version</p>
       <ul class="radios">
         <li>
-          <label><input type="radio" name="version" value="https://raw.githubusercontent.com/Builty/TonexOneController/Webtools_test/Releases/beta/merged/manifest_TonexController_V2.0.2.2_beta_5" checked /> V2.0.2.2 Beta 5</label>
+          <label><input type="radio" name="version" value="beta,V2.0.2.2_beta_5" checked /> V2.0.2.2 Beta 5</label>
         </li>
         <li>
-          <label><input type="radio" name="version" value="https://raw.githubusercontent.com/Builty/TonexOneController/Webtools_test/Releases/V2.0.1.2/merged/manifest_TonexController_V2.0.1.2" /> V2.0.1.2</label>
+          <label><input type="radio" name="version" value="V2.0.1.2,V2.0.1.2" /> V2.0.1.2</label>
         </li>
       </ul>
 
@@ -142,14 +142,23 @@
         Installer powered by <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a>.
       </div>
     <script>
+    
+        var base_path = "https://raw.githubusercontent.com/Builty/TonexOneController/Webtools_test/Releases"
+    
         function updateManifest() {
             const version = document.querySelector('input[name="version"]:checked').value;
             const type = document.querySelector('input[name="type"]:checked').value;
 
             const button = document.querySelector('esp-web-install-button');
             
+            manifest_TonexController_V2.0.2.2_beta_5
+            
             // Construct manifest filename
-            const manifestPath = `${version}_${type}.json`;
+            const version_joined = ${version}(",");
+            var release_folder = version_joined[0];
+            var filename_part = version_joined[1];
+            
+            const manifestPath = base_path + "/" + release_folder + "/merged/TonexController_" + filename_part + ${type} + "/" + ${type} + ".json";
             
             console.log(manifestPath);
             

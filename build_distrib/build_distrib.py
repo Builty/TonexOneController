@@ -12,7 +12,7 @@ dirname = Path.cwd()
 # set version
 version = '2.0.2.2_beta_5'
 
-def generate_manifest(merged_filename, chip_family, build_name, use_skins):
+def generate_manifest(merged_path, merged_filename, chip_family, build_name, use_skins):
     manifest = {
         "name": version,
         "version": version,
@@ -37,7 +37,7 @@ def generate_manifest(merged_filename, chip_family, build_name, use_skins):
         "offset": 0x4F2000
     })
 
-    manifest_path = 'manifest_' + build_name + '.json'
+    manifest_path = os.path.join(merged_path, 'manifest_' + build_name + '.json')
     with open(manifest_path, 'w', encoding='utf-8') as f:
         json.dump(manifest, f, indent=2)
 
@@ -67,8 +67,18 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
     print('Delete files in ' + dest)
     delete_files_in_folder(dest)
     
-    os.mkdir(os.path.join(dest, 'bin'))
+    os.mkdir(os.path.join(dest, 'bin'))   
+       
+    merged_filename = '%s_merged.bin' % out_filename
     
+    # make path for merge files
+    merged_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'merged', out_filename)
+    
+    if os.path.isdir(merged_path):        
+        delete_files_in_folder(merged_path)
+    else:
+        os.mkdir(merged_path)
+
     # copy new files
     print('copy template files from ' + template)
     #copy_tree(src, dest)
@@ -111,8 +121,8 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
         print('copying: ' + src + ' to ' + dest)
         shutil.copy(src, dest)
         
-        # also copy to root folder
-        shutil.copy(src, os.getcwd())
+        # also copy to merge folder
+        shutil.copy(src, merged_path)
 
     # create zip file
     print('zip files...')
@@ -120,7 +130,6 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
     shutil.make_archive(out_filename, 'zip', directory)    
 
     # generate merged binary
-    merged_filename = '%s_merged.bin' % out_filename
 
     print('Generating merged firmware %s' % merged_filename)
 
@@ -147,7 +156,7 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
             data[offset:offset + len(bin_data)] = bin_data
             print('Merged %s at 0x%s (%d bytes)' % (os.path.basename(filepath), offset_str[2:].upper(), len(bin_data)))
 
-        with open(merged_filename, 'wb') as out:
+        with open(os.path.join(merged_path, merged_filename), 'wb') as out:
             out.write(data)
         print('Successfully created merged bin: %s (%d bytes total)' % (merged_filename, len(data)))
         
@@ -155,7 +164,7 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
         print('Failed to create merged bin: %s' % e)
     
     # generate manifest file for web tool
-    generate_manifest(merged_filename, "ESP32-S3", out_filename, skins_path is not None)
+    generate_manifest(merged_path, merged_filename, "ESP32-S3", out_filename, skins_path is not None)
         
     print('Build complete\n\n')
     
