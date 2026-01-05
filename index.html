@@ -132,6 +132,18 @@
         <li>
           <label><input type="radio" name="type" value="Waveshare_Zero" /> Waveshare Zero</label>
         </li>
+        <li>
+          <label><input type="radio" name="type" value="PirateMidi_PolarMax" /> Pirate Midi Polar Max</label>
+        </li>
+        <li>
+          <label><input type="radio" name="type" value="PirateMidi_PolarMini" /> Pirate Midi Polar Mini</label>
+        </li>
+        <li>
+          <label><input type="radio" name="type" value="PirateMidi_PolarPlus" /> Pirate Midi Polar Plus</label>
+        </li>
+        <li>
+          <label><input type="radio" name="type" value="PirateMidi_PolarPico" /> Pirate Midi Polar Pico</label>
+        </li>
       </ul>         
 
       <p class="button-row" align="center">
@@ -156,7 +168,7 @@
             var release_folder = version_joined[0];
             var filename_part = version_joined[1];
             
-            const manifestPath = `${base_path}/${release_folder}/merged/TonexController_${filename_part}_${type}/manifest_TonexController_${filename_part}_${type}.json`;
+            const manifestPath = `${base_path}/${release_folder}/merged/TonexController_${filename_part}_${type}/manifest.json`;
             
             console.log(manifestPath);
             

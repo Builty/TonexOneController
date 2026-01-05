@@ -14,7 +14,7 @@ version = '2.0.2.2_beta_5'
 
 def generate_manifest(merged_path, merged_filename, chip_family, build_name, use_skins):
     manifest = {
-        "name": version,
+        "name": "Controller",
         "version": version,
         "improv": False,
         "new_install_prompt_erase": True, 
@@ -23,8 +23,20 @@ def generate_manifest(merged_path, merged_filename, chip_family, build_name, use
                 "chipFamily": chip_family,
                 "parts": [
                     {
-                        "path": merged_filename,
-                        "offset": 0
+                        "path": "bootloader.bin",
+                        "offset": 0x0000
+                    },
+                    {
+                        "path": "partition-table.bin",
+                        "offset": 0x8000
+                    },
+                    {
+                        "path": "TonexController.bin",
+                        "offset": 0x10000
+                    },
+                    {
+                        "path": "ota_data_initial.bin",
+                        "offset": 0xd000
                     }
                 ]
             }
@@ -37,7 +49,7 @@ def generate_manifest(merged_path, merged_filename, chip_family, build_name, use
         "offset": 0x4F2000
     })
 
-    manifest_path = os.path.join(merged_path, 'manifest_' + build_name + '.json')
+    manifest_path = os.path.join(merged_path, 'manifest.json')
     with open(manifest_path, 'w', encoding='utf-8') as f:
         json.dump(manifest, f, indent=2)
 
@@ -90,6 +102,7 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
     dest = os.path.join(dirname, 'temp', 'bin')
     print('copying: ' + src + ' to ' + dest)
     shutil.copy(src, dest)
+    shutil.copy(src, merged_path)
 
     # copy partition table
     print('copy partition table...')
@@ -97,6 +110,7 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
     dest = os.path.join(dirname, 'temp', 'bin')
     print('copying: ' + src + ' to ' + dest)
     shutil.copy(src, dest)
+    shutil.copy(src, merged_path)
 
     if include_ota:
         # copy ota_data_initial
@@ -105,6 +119,7 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
         dest = os.path.join(dirname, 'temp', 'bin')
         print('copying: ' + src + ' to ' + dest)
         shutil.copy(src, dest)
+        shutil.copy(src, merged_path)
 
     # copy tonex bin
     print('copy tonex bin...')
@@ -112,6 +127,7 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
     dest = os.path.join(dirname, 'temp', 'bin')
     print('copying: ' + src + ' to ' + dest)
     shutil.copy(src, dest)
+    shutil.copy(src, merged_path)
 
     if skins_path is not None:
         # copy skins bin
@@ -120,48 +136,12 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
         dest = os.path.join(dirname, 'temp', 'bin')
         print('copying: ' + src + ' to ' + dest)
         shutil.copy(src, dest)
-        
-        # also copy to merge folder
         shutil.copy(src, merged_path)
 
     # create zip file
     print('zip files...')
     directory = os.path.join(dirname, 'temp')
     shutil.make_archive(out_filename, 'zip', directory)    
-
-    # generate merged binary
-
-    print('Generating merged firmware %s' % merged_filename)
-
-    # List of (offset_in_hex, file_path) - add more if needed (e.g., skins)
-    parts = [
-            ("0x0000", os.path.join(directory, 'bin', 'bootloader.bin')),
-            ("0x8000", os.path.join(directory, 'bin','partition-table.bin')),
-            ("0x10000", os.path.join(directory, 'bin','TonexController.bin')),
-    ]
-
-    if include_ota:
-        parts.append(("0xd000", os.path.join(directory, 'bin', 'ota_data_initial.bin')))
-            
-    try:
-        # Find maximum size needed
-        max_offset = max(int(offset, 16) for offset, _ in parts)
-        max_size = max(int(offset, 16) + os.path.getsize(filepath) for offset, filepath in parts)
-        data = bytearray(max_size)
-
-        for offset_str, filepath in parts:
-            offset = int(offset_str, 16)
-            with open(filepath, 'rb') as f:
-                bin_data = f.read()
-            data[offset:offset + len(bin_data)] = bin_data
-            print('Merged %s at 0x%s (%d bytes)' % (os.path.basename(filepath), offset_str[2:].upper(), len(bin_data)))
-
-        with open(os.path.join(merged_path, merged_filename), 'wb') as out:
-            out.write(data)
-        print('Successfully created merged bin: %s (%d bytes total)' % (merged_filename, len(data)))
-        
-    except Exception as e:
-        print('Failed to create merged bin: %s' % e)
     
     # generate manifest file for web tool
     generate_manifest(merged_path, merged_filename, "ESP32-S3", out_filename, skins_path is not None)
