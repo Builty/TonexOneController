@@ -150,15 +150,13 @@
             const type = document.querySelector('input[name="type"]:checked').value;
 
             const button = document.querySelector('esp-web-install-button');
-            
-            manifest_TonexController_V2.0.2.2_beta_5
-            
+                        
             // Construct manifest filename
-            const version_joined = ${version}(",");
+            const version_joined = version.split(",");
             var release_folder = version_joined[0];
             var filename_part = version_joined[1];
             
-            const manifestPath = base_path + "/" + release_folder + "/merged/TonexController_" + filename_part + ${type} + "/" + ${type} + ".json";
+            const manifestPath = `${base_path}/${release_folder}/merged/TonexController_${filename_part}_${type}/manifest_TonexController_${filename_part}_${type}.json`;
             
             console.log(manifestPath);
             
