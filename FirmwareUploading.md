@@ -1,12 +1,25 @@
-# Tonex One Controller: An open-source controller and display interface for the IK Multimedia Tonex One guitar pedal
-This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a bridge to the IK Multimedia Tonex One guitar pedal (which does not have native Midi capability.)
+# Tonex Controller: An open-source controller and display interface for the IK Multimedia Tonex One/Tonex guitar pedal and Valeton GP5
 
 # Programming a pre-built firmware release
-## Windows (using ESP Flash Tool)
+## New: Web Tool
+- Starting from version 2.0.2.2, a new web tool has been created. This is similar to the below web tool, but allows the selection of the hardware platform, and avoids the need to download and extract, as it automatically fetches it from the releases area and fills in the required settings
+- visit the programming web page here:  https://builty.github.io/TonexOneController/
+- Press and hold the "Boot" button on the board
+- Connect a USB-C cable to the board and a PC or Mac
+- After the USB connection, release the Boot button
+- Select your hardware platform, and then press the Connect button
+- If you wish to erase all settings back to default, then select the option to Erase. If you wish to keep your current settings, do not select Erase
+- Follow the on screen instructions until completed
+- Unplug the board and connect power to test it
+
+<img width="1205" height="925" alt="image" src="https://github.com/user-attachments/assets/f263bdb2-381c-4d39-a47e-81ae3c547785" />
+
+
+## Older method 1: Windows (using ESP Flash Tool)
 - Download the release zip file from the Releases folder and unzip it
 - Open the Windows "Control Centre", "Device Manager", and expand the "Ports" section
-- Press and hold the "Boot" button on the Waveshare board
-- Connect a USB-C cable to the Waveshare board and a PC
+- Press and hold the "Boot" button on the board
+- Connect a USB-C cable to the board and a PC
 - After the USB connection, release the Boot button
 - A new USB serial port should appear. Note down the "COM" number
  
@@ -29,7 +42,7 @@ This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a 
 
 ![image](https://github.com/user-attachments/assets/e2e21f46-1d3a-4eec-aee9-25de87c072c7)
 
-## All OS (using Web Browser)
+## Older Method 2: All OS (using Web Browser)
 Thanks to user DrD85 for this method.
 - Download the release zip file from the Releases folder and unzip it
 - Press and hold the "Boot" button on the board
