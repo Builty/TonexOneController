@@ -106,11 +106,11 @@ static esp_lcd_panel_handle_t lcd_panel = NULL;
 static esp_lcd_touch_handle_t tp = NULL;
 static esp_lcd_panel_io_handle_t tp_io_handle = NULL;
 static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
-static uint32_t trans_size = LCD_BUFFER_SIZE / 5;
+static uint32_t trans_size = LCD_BUFFER_SIZE / 10;
 static lv_color_t* trans_buf_1 = NULL;
 static lv_color_t* trans_buf_2 = NULL;
 static lv_color_t* trans_act = NULL;
-static SemaphoreHandle_t trans_done_sem = NULL;
+static uint8_t trans_done = 0;
 static lvgl_port_wait_cb draw_wait_cb;     /* Callback function for drawing */
 static int rotation_setting = LV_DISP_ROT_90;
 
@@ -287,12 +287,7 @@ __attribute__((unused)) lv_dir_t platform_adjust_gesture(lv_dir_t gesture)
 *****************************************************************************/
 static bool lvgl_port_flush_ready_callback(esp_lcd_panel_io_handle_t panel_io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx)
 {
-    BaseType_t taskAwake = pdFALSE;
-
-    if (trans_done_sem) 
-    {
-        xSemaphoreGiveFromISR(trans_done_sem, &taskAwake);
-    }
+    trans_done = 1;
 
     return false;
 }
@@ -447,26 +442,23 @@ static void lvgl_port_flush_callback(lv_disp_drv_t *drv, const lv_area_t *area, 
             if (draw_wait_cb) 
             {
                 draw_wait_cb(drv->user_data);
-            }
-            
-            if (xSemaphoreGive(trans_done_sem) != pdTRUE)
-            {
-                //ESP_LOGE(TAG, "Transfer sempahore give timeout");
-            }
+            }            
         }
 
-        if (xSemaphoreTake(trans_done_sem, pdMS_TO_TICKS(TRANS_DONE_TIMEOUT)) == pdTRUE)
-        { 
-            esp_err_t res = esp_lcd_panel_draw_bitmap(panel_handle, x_draw_start, y_draw_start, x_draw_end + 1, y_draw_end + 1, to); 
-            if (res != ESP_OK) 
-            {
-                ESP_LOGE(TAG, "Failed to draw bitmap %d", res);
-            }   
-        }
-        else
+        // do the transfer
+        trans_done = 0;
+        esp_err_t res = esp_lcd_panel_draw_bitmap(panel_handle, x_draw_start, y_draw_start, x_draw_end + 1, y_draw_end + 1, to); 
+        if (res != ESP_OK) 
         {
-            ESP_LOGE(TAG, "Transfer sempahore take timeout");
-            break;
+            ESP_LOGE(TAG, "Failed to draw bitmap %d", res);
+        }   
+        else 
+        {
+            // wait for transfer to complete
+            while (!trans_done)
+            {
+                vTaskDelay(1);
+            }
         }
          
         if (LV_DISP_ROT_90 == rotation_setting) 
@@ -515,6 +507,8 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         .data2_io_num = JC3248W_LCD_GPIO_QSPI_2,
         .data3_io_num = JC3248W_LCD_GPIO_QSPI_3,
         .max_transfer_sz = LCD_BUFFER_SIZE,
+        .flags = SPICOMMON_BUSFLAG_QUAD,
+        .intr_flags = 0,
     };
     
     if (spi_bus_initialize(JC3248W_LCD_SPI_NUM, &buscfg, SPI_DMA_CH_AUTO) != ESP_OK)
@@ -562,21 +556,23 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     // allocate draw buffers
     lv_color_t* buf1 = NULL;
     lv_color_t* buf2 = NULL;
-    lv_color_t* buf3 = NULL;
 
     buf1 = heap_caps_aligned_alloc(32, LCD_BUFFER_SIZE * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
+    if (buf1 == NULL)
+    {
+        ESP_LOGE(TAG, "Failed to allocate buf1");
+    }
 
-    buf2 = heap_caps_aligned_alloc(32, trans_size * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
-    assert(buf2);
+    // use DMA capable ram here, or otherwise SPI driver has to allocate it which can lead to ram exhaustion
+    buf2 = heap_caps_aligned_alloc(32, trans_size * sizeof(lv_color_t), MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL);  
+    if (buf2 == NULL)
+    {
+        ESP_LOGE(TAG, "Failed to allocate buf2");
+    }
     trans_buf_1 = buf2;
 
-    buf3 = heap_caps_aligned_alloc(32, trans_size * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
-    assert(buf3);
-    trans_buf_2 = buf3;
-
-    trans_done_sem = xSemaphoreCreateCounting(1, 0);
-    assert(trans_done_sem);
-    trans_done_sem = trans_done_sem;
+    // drawing code can run with dual transfer buffers in ping pong, but 2 buffers takes too much ram
+    trans_buf_2 = trans_buf_1;
 
     lv_disp_draw_buf_init(&disp_buf, buf1, NULL, LCD_BUFFER_SIZE);
 
