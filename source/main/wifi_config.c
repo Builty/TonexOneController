@@ -568,6 +568,20 @@ static void wifi_build_config_json(void)
     }
     json_gen_pop_array(&pWebConfig->jstr);
 
+    json_gen_push_array(&pWebConfig->jstr, "PC_MAP");
+    for (uint8_t index = 0; index < MAX_PC_MAP; index++)
+    {
+        uint8_t map_val = control_get_pc_map()[index];
+
+        if (map_val > usb_get_max_presets_for_connected_modeller())
+        {
+            // clamp it
+            map_val = usb_get_max_presets_for_connected_modeller();
+        }
+        json_gen_arr_set_int(&pWebConfig->jstr, map_val);
+    }
+    json_gen_pop_array(&pWebConfig->jstr);
+
     // add the }
     json_gen_end_object(&pWebConfig->jstr);
 
@@ -1351,7 +1365,30 @@ static esp_err_t ws_handler(httpd_req_t *req)
                                 control_save_user_data(0);
                             }
                         }
-                    }               
+                    } 
+                    else if (strcmp(str_val, "SETPCMAP") == 0)
+                    {
+                        ESP_LOGI(TAG, "PC map set");
+
+                        int map_count;
+
+                        if (json_obj_get_array(&pWebConfig->jctx, "MAP", &map_count) == OS_SUCCESS)
+                        {
+                            if (map_count != 0)
+                            {
+                                uint8_t pc_map_vals[MAX_PC_MAP];
+                                
+                                for (uint8_t i = 0; i < MAX_PC_MAP; i++) 
+                                {
+                                    int value;
+                                    json_arr_get_int(&pWebConfig->jctx, i, &value);
+                                    pc_map_vals[i] = value;
+                                }
+                                control_set_pc_map(pc_map_vals);
+                                control_save_user_data(0);
+                            }
+                        }
+                    }
                 }
 
                 json_parse_end(&pWebConfig->jctx);

@@ -834,6 +834,7 @@ const DEVICE_MENUS = {
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Config</a>
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item menu-link" data-target="Presets" href="#">Preset Map</a></li>
+                <li><a class="dropdown-item menu-link" data-target="PCMap" href="#">PC Map</a></li>
                 <li><a class="dropdown-item menu-link" data-target="Bluetooth" href="#">Bluetooth</a></li>
                 <li><a class="dropdown-item menu-link" data-target="Midi" href="#">Midi</a></li>
                 <li><a class="dropdown-item menu-link" data-target="Internal" href="#">Direct FS</a></li>
@@ -873,6 +874,7 @@ const DEVICE_MENUS = {
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Config</a>
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item menu-link" data-target="Presets" href="#">Preset Map</a></li>
+                <li><a class="dropdown-item menu-link" data-target="PCMap" href="#">PC Map</a></li>
                 <li><a class="dropdown-item menu-link" data-target="Bluetooth" href="#">Bluetooth</a></li>
                 <li><a class="dropdown-item menu-link" data-target="Midi" href="#">Midi</a></li>
                 <li><a class="dropdown-item menu-link" data-target="Internal" href="#">Direct FS</a></li>
@@ -3656,6 +3658,7 @@ function processReturnCmd(data) {
             // now we know modeller type, update footswitch stuff
             populateExternalFootswitches();
             populateInternalFootswitches();
+                     
             break;
 
         case 'GETSYNCCOMPLETE':
@@ -3670,7 +3673,7 @@ function processReturnCmd(data) {
                     // request all the stuff                            
                     sendWS({"CMD": "GETPRESETNAMES"});
                     sendWS({"CMD": "GETPARAMS"});   
-                    sendWS({"CMD": "GETPRESET"});                                   
+                    sendWS({"CMD": "GETPRESET"});   
                 }
             }
             break;
@@ -3778,6 +3781,9 @@ function processReturnCmd(data) {
             // save these for later use (after we get the preset details)
             preset_order_cfg = data['PRESET_ORDER'];
             preset_color_cfg = data['PRESET_COLORS'];
+            
+            // create Midi PC map
+            buildPCMap(data['PC_MAP']);
             break;   
         
         case 'GETPRESET':
@@ -4752,6 +4758,77 @@ function savePresetOrder() {
 
     sendWS({"CMD": "SETPRESETORDER", 
                 "PRESET_ORDER": presetOrder});
+}
+
+function buildPCMap(map) {
+    var pcmap_div = document.getElementById("pcmap-list");
+    
+    // Clear existing content to avoid duplicates
+    pcmap_div.innerHTML = "";
+
+    // Optional: Ensure the container supports rows properly
+    pcmap_div.style.display = "flex";
+    pcmap_div.style.flexDirection = "column";
+    pcmap_div.style.gap = "8px"; // nice spacing between rows
+
+    for (var pc = 0; pc <= 127; pc++) {
+        const row = document.createElement('div');
+        row.className = 'pcmap-row';
+        
+        // Create label
+        const label = document.createElement('label');
+        label.textContent = pc + ':';
+
+        // Create the <select> element
+        const select = document.createElement('select');
+        
+        for (let val = startPreset; val <= maxPresets; val++) {
+            const option = document.createElement('option');
+            option.value = val;
+            option.textContent = val;
+            select.appendChild(option);
+        }
+        
+        // set the value
+        select.value = map[pc];
+        
+        // Append label and select to the row
+        row.appendChild(label);
+        row.appendChild(select);
+        
+        // Append row to the main container
+        pcmap_div.appendChild(row);
+    }
+}
+
+function savePCMap() {
+    var pcMap = [];
+    var pcmap_div = document.getElementById("pcmap-list");
+    
+    const selects = pcmap_div.querySelectorAll('select');
+        selects.forEach((select, index) => {
+            pcMap.push(Number(select.value));
+    });
+  
+    console.log(pcMap);
+  
+    sendWS({"CMD": "SETPCMAP", "MAP": pcMap});
+}
+
+function resetPCMap() {
+    const pcmap_div = document.getElementById("pcmap-list");
+    
+    // Get all the <select> elements
+    const selects = pcmap_div.querySelectorAll("select");
+    
+    selects.forEach((select, index) => {
+        // Set the selected value to match the PC number
+        if (index > maxPresets) {
+            select.value = maxPresets;
+        } else {
+            select.value = index;
+        }
+    });
 }
 
 function onWiFiStationSelected() {

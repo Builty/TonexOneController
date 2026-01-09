@@ -299,6 +299,7 @@ typedef struct __attribute__ ((packed))
 #define SWITCH_NOT_USED                         0xFF
 #define MAX_SUPPORTED_PRESETS                   150
 #define MAX_PRESET_NAME_LENGTH                  33
+#define MAX_PC_MAP                              128 // 0 to 127, matches Midi values
 
 // thread safe public API
 void control_request_preset_up(void);
@@ -318,6 +319,8 @@ void control_set_user_text(char* text);
 void control_trigger_tap_tempo(void);
 void control_set_preset_order(uint8_t* order);
 uint8_t* control_get_preset_order(void);
+void control_set_pc_map(uint8_t* map);
+uint8_t* control_get_pc_map(void);
 void control_set_sync_complete(void);
 uint8_t control_get_sync_complete(void);
 uint32_t control_get_current_preset_index(void);

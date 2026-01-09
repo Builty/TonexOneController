@@ -55,6 +55,7 @@ limitations under the License.
 #define NVS_USERDATA_FOOTSW_CONF            "footconf"
 #define NVS_USERDATA_WIFI_CONF              "wificonf"
 #define NVS_USERDATA_PRESET_ORDER_CONF      "porderconf"
+#define NVS_USERDATA_PC_MAP_CONF            "pcmapconf"
 
 #define MAX_TEXT_LENGTH                     128
 #define MAX_BT_CUSTOM_NAME                  25                 
@@ -208,6 +209,12 @@ typedef struct __attribute__ ((packed))
 
 typedef struct __attribute__ ((packed)) 
 { 
+    // program change mapping
+    uint8_t PCMap[MAX_PC_MAP];
+} tPCMapConfig;
+
+typedef struct __attribute__ ((packed)) 
+{ 
     // selected skin indexes
     uint8_t SkinIndex[MAX_SUPPORTED_PRESETS];
 } tSkinConfig;
@@ -221,6 +228,7 @@ typedef struct
     tFootSwitchConfig FootSwitchConfig;
     tPresetOrderMappingConfig PresetOrderMappingConfig;
     tSkinConfig SkinConfig;
+    tPCMapConfig PCMapConfig;
 } tConfigData;
 
 typedef struct
@@ -1723,6 +1731,33 @@ uint8_t* control_get_preset_order(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+void control_set_pc_map(uint8_t* map)
+{
+    for (uint8_t index = 0; index < MAX_PC_MAP; index++)
+    {
+        ControlData.ConfigData.PCMapConfig.PCMap[index] = map[index];
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+uint8_t* control_get_pc_map(void)
+{
+    return ControlData.ConfigData.PCMapConfig.PCMap;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void control_set_skin_next(void)
 {
     if (ControlData.ConfigData.SkinConfig.SkinIndex[ControlData.PresetIndex] < (SKIN_MAX - 1))
@@ -2056,6 +2091,7 @@ static uint8_t SaveUserData(void)
     SaveUserConfigItem((void*)&ControlData.ConfigData.FootSwitchConfig, sizeof(ControlData.ConfigData.FootSwitchConfig), NVS_USERDATA_FOOTSW_CONF);
     SaveUserConfigItem((void*)&ControlData.ConfigData.PresetOrderMappingConfig, sizeof(ControlData.ConfigData.PresetOrderMappingConfig), NVS_USERDATA_PRESET_ORDER_CONF);
     SaveUserConfigItem((void*)&ControlData.ConfigData.SkinConfig, sizeof(ControlData.ConfigData.SkinConfig), NVS_USERDATA_SKIN_CONF);
+    SaveUserConfigItem((void*)&ControlData.ConfigData.PCMapConfig.PCMap, sizeof(ControlData.ConfigData.PCMapConfig.PCMap), NVS_USERDATA_PC_MAP_CONF);
 
     return 1;
 }
@@ -2114,7 +2150,12 @@ static uint8_t LoadUserData(void)
     {
         SaveUserConfigItem((void*)&ControlData.ConfigData.SkinConfig, sizeof(ControlData.ConfigData.SkinConfig), NVS_USERDATA_SKIN_CONF);
     }   
-    
+        
+    // PC mapping
+    if (LoadUserConfigItem((void*)&ControlData.ConfigData.PCMapConfig.PCMap, sizeof(ControlData.ConfigData.PCMapConfig.PCMap), NVS_USERDATA_PC_MAP_CONF) != ESP_OK)
+    {
+        SaveUserConfigItem((void*)&ControlData.ConfigData.PCMapConfig.PCMap, sizeof(ControlData.ConfigData.PCMapConfig.PCMap), NVS_USERDATA_PC_MAP_CONF);
+    }
 
     // perform sanity check on values
     if (ControlData.ConfigData.BTConfig.BTMode > BT_MODE_PERIPHERAL)
@@ -2420,9 +2461,15 @@ void control_set_default_config(void)
         ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[loop].Switch = SWITCH_NOT_USED;
     }
 
+    // default to 1:1 mappings
     for (uint8_t loop = 0; loop < MAX_SUPPORTED_PRESETS; loop++)
     {
         ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder[loop] = loop;
+    }
+    
+    for (uint8_t loop = 0; loop < MAX_PC_MAP; loop++)
+    {
+        ControlData.ConfigData.PCMapConfig.PCMap[loop] = loop;
     }
 }
 
