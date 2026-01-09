@@ -144,13 +144,16 @@ For more information about the firmware development and customisation, refer to 
 - https://github.com/vit3k/tonex_controller for great work on reverse engineering the Tonex One USB protocol
 
 ## Firmware Release Notes <a name="release_notes"></a>
-V2.0.2.2 beta 1
+V2.0.2.2
 - Major update. Added support for the Valeton GP5.
 - Reworked Web UI extensively. Menu system; Split into separate files; Larger effect images; Faster response with asyncronous web sockets.
 - Ported all user interfaces over to use EEZ Studio. 4.3" and 3.5" now have number values next to the sliders. No more 150 object limit from Squareline Studio. 
 - Removed left/right preset up/down arrows, and replaced with touch swipe left/right. 
 - Above change allowed larger effect icons, which are easier to see from a distance
 - New method of storing and handling Amp/Pedal skins. All skins now available in the same build.
+- Fixed display freeze issues on Waveshare 3.5B and JC3248W535
+- Added dialog box to allow typing in an exact value for params on the LCD (3.5/4.3 platforms)
+- Added flashing BPM indicator to 1.69" platforms 
 
 
 V2.0.1.2
