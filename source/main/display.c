@@ -1496,11 +1496,25 @@ static void __attribute__((unused)) ui_show_toast(char* contents)
         return;
     }
     
-    lv_obj_center(msgbox_data.mbox);
-
     // Apply styles
     lv_obj_add_style(msgbox_data.mbox, msgbox_data.style_main, LV_PART_MAIN); // Style background
     lv_obj_add_style(lv_msgbox_get_text(msgbox_data.mbox), msgbox_data.style_text, 0);  // Style message
+
+    lv_obj_center(msgbox_data.mbox);
+
+#if CONFIG_TONEX_CONTROLLER_WAVESHARE_169_LANDSCAPE    
+    // landscape mode needs rotation applied to match the UI
+    // do layout calcs so we can get width/height of the message box
+    lv_obj_update_layout(msgbox_data.mbox);
+
+    // Set pivot point to center
+    lv_obj_set_style_transform_pivot_x(msgbox_data.mbox, lv_obj_get_width(msgbox_data.mbox) / 2, 0);
+    lv_obj_set_style_transform_pivot_y(msgbox_data.mbox, lv_obj_get_height(msgbox_data.mbox) / 2, 0);
+
+    // apply rotation
+    lv_obj_set_style_transform_angle(msgbox_data.mbox, -900, 0);
+    lv_obj_center(msgbox_data.mbox);
+#endif
 
     // Create timer to close and delete message box after 3 seconds
     msgbox_data.timer = xTaskGetTickCount() + 3000; 
