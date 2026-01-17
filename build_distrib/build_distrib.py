@@ -10,7 +10,7 @@ import json
 dirname = Path.cwd()
 
 # set version
-version = '2.0.2.2'
+version = '2.0.3.2_test'
 
 def generate_manifest(merged_path, merged_filename, chip_family, build_name, use_skins):
     manifest = {
@@ -215,5 +215,9 @@ build_distribution('template_cust_partition', 'build_pirate169land', True, zip_n
 # Build Pirate Midi Polar Max (4.3B)
 zip_name = 'TonexController_V' + version + '_PirateMidi_PolarMax'
 build_distribution('template_cust_partition_16MB', 'build_pirate43B', True, zip_name, '16bit')
+
+# Build Pirate Midi Polar Pro (1.69")
+zip_name = 'TonexController_V' + version + '_PirateMidi_PolarPro'
+build_distribution('template_cust_partition', 'build_piratepro', True, zip_name)
 
 print('All done')

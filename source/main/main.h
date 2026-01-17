@@ -23,7 +23,7 @@ limitations under the License.
 extern "C" {
 #endif
 
-#define APP_VERSION		"2.0.2.2"
+#define APP_VERSION		"2.0.3.2"
 
 #define I2C_MASTER_NUM_1                0          
 #define I2C_MASTER_NUM_2                1          
@@ -544,11 +544,7 @@ extern SemaphoreHandle_t I2CMutex_2;
 
     // leds
     #define LED_OUTPUT_GPIO_NUM          GPIO_NUM_1
-
-    // charger
-    #define LBO_STATUS            GPIO_NUM_10
-    #define CHARGE_STATUS         GPIO_NUM_11
-
+    
     // LCD pins
     #define POLAR_PRO_240_280_LCD_GPIO_SCLK           (GPIO_NUM_6)
     #define POLAR_PRO_240_280_LCD_GPIO_MOSI           (GPIO_NUM_7)
