@@ -1033,9 +1033,9 @@
                       "objID": "abaea29e-ff77-488b-c410-41ef5840edf1",
                       "type": "LVGLLabelWidget",
                       "left": 1,
-                      "top": 1,
-                      "width": 245,
-                      "height": 110,
+                      "top": -4,
+                      "width": 270,
+                      "height": 135,
                       "customInputs": [],
                       "customOutputs": [],
                       "style": {
@@ -1067,7 +1067,7 @@
                         "definition": {
                           "MAIN": {
                             "DEFAULT": {
-                              "text_font": "MONTSERRAT_30",
+                              "text_font": "MONTSERRAT_40",
                               "text_align": "CENTER"
                             }
                           }
@@ -1075,7 +1075,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "Preset Name",
+                      "text": "Preset text",
                       "textType": "literal",
                       "longMode": "DOT",
                       "recolor": false

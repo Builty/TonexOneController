@@ -212,6 +212,14 @@ build_distribution('template_cust_partition', 'build_pirate169', True, zip_name)
 zip_name = 'TonexController_V' + version + '_PirateMidi_PolarPlus'
 build_distribution('template_cust_partition', 'build_pirate169land', True, zip_name)
 
+# Build Pirate Midi Polar Mini V2 (1.69")
+zip_name = 'TonexController_V' + version + '_PirateMidi_PolarMiniV2'
+build_distribution('template_cust_partition', 'build_pirateminiv2', True, zip_name)
+
+# Build Pirate Midi Polar Plus V2 (1.69")
+zip_name = 'TonexController_V' + version + '_PirateMidi_PolarPlusV2'
+build_distribution('template_cust_partition', 'build_pirateplusv2', True, zip_name)
+
 # Build Pirate Midi Polar Max (4.3B)
 zip_name = 'TonexController_V' + version + '_PirateMidi_PolarMax'
 build_distribution('template_cust_partition_16MB', 'build_pirate43B', True, zip_name, '16bit')

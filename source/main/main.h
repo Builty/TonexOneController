@@ -231,7 +231,7 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define UART_TX_PIN         GPIO_NUM_17 
 
     // leds
-    #define LED_OUTPUT_GPIO_NUM          -1
+    #define LED_OUTPUT_GPIO_NUM          GPIO_NUM_9 // for Pirate Midi Plus v2 only. Waveshare pin not exposed
 
     // LCD pins
     #define WAVESHARE_240_280_LCD_GPIO_SCLK           (GPIO_NUM_6)

@@ -363,7 +363,7 @@
       "postFlash": ""
     }
   },
-  "Pirate169": {
+  "PirateMini": {
     "build": {
       "compileArgs": [],
       "ninjaArgs": [],
@@ -389,7 +389,7 @@
       "postFlash": ""
     }
   },
-  "Pirate169land": {
+  "PiratePlus": {
     "build": {
       "compileArgs": [],
       "ninjaArgs": [],
@@ -451,6 +451,58 @@
         "sdkconfig.pirate43B"        
       ],
       "sdkconfigFilePath": "${workspaceFolder}/build_pirate43B"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "PirateMiniV2": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_pirateminiv2",
+      "sdkconfigDefaults": [
+        "sdkconfig.defaults",
+        "sdkconfig.pirateminiv2"        
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_pirateminiv2"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
+  "PiratePlusV2": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_pirateplusv2",
+      "sdkconfigDefaults": [
+        "sdkconfig.defaults",
+        "sdkconfig.pirateplusv2"        
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_pirateplusv2"
     },
     "env": {},
     "flashBaudRate": "",

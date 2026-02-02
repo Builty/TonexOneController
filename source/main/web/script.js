@@ -4177,6 +4177,19 @@ function showValue(e, send_value) {
         if (unit) {
             label.innerText += unit;
         }
+        
+        // add text for Midi CC value on ranges
+        if (e.tagName === 'INPUT') {
+            if (e.type == 'range') {
+                var value = Number(e.value);
+                var min = Number(e.min);
+                var max = Number(e.max);                
+                var cc_val = Math.round((value - min) / (max - min) * 127);
+                
+                midi_cc_text = "  [CC: " + parseFloat(cc_val) + "]";
+                label.innerText += midi_cc_text;       
+            }
+        }               
     }
 
     if (send_value) {

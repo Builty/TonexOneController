@@ -125,7 +125,9 @@ menu "Tonex Controller Configuration"
 
         config TONEX_CONTROLLER_LED_COLOUR_ORDER_GBR
             bool "GBR"
-   
+
+        config TONEX_CONTROLLER_LED_COLOUR_ORDER_GRB
+            bool "GRB"
     endchoice    
     
     config TONEX_CONTROLLER_LED_NUMBER
@@ -134,6 +136,18 @@ menu "Tonex Controller Configuration"
         default 0
         help
             Set the number of leds the platform has 
+
+    choice TONEX_CONTROLLER_LED_TYPE
+        prompt "Led Type"
+        default TONEX_CONTROLLER_LED_WS2812
+    
+        config TONEX_CONTROLLER_LED_WS2812
+            bool "WS2812, 0.3,0.9 usec timing"
+
+        config TONEX_CONTROLLER_LED_SK6812
+            bool "SK6812, 0.3,0.9 and 0.6,0.6 usec timing"
+   
+    endchoice    
             
     config EXAMPLE_DOUBLE_FB
         bool "Use double Frame Buffer"

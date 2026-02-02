@@ -267,12 +267,23 @@ esp_err_t __attribute__((unused)) rmt_new_led_strip_encoder(const led_strip_enco
             .level1 = 0,
             .duration1 = 0.9 * config->resolution / 1000000, // T0L=0.9us
         },
+#if CONFIG_TONEX_CONTROLLER_LED_WS2812        
         .bit1 = {
             .level0 = 1,
             .duration0 = 0.9 * config->resolution / 1000000, // T1H=0.9us
             .level1 = 0,
             .duration1 = 0.3 * config->resolution / 1000000, // T1L=0.3us
         },
+#endif
+
+#if CONFIG_TONEX_CONTROLLER_LED_SK6812        
+        .bit1 = {
+            .level0 = 1,
+            .duration0 = 0.6 * config->resolution / 1000000, // T1H=0.6us
+            .level1 = 0,
+            .duration1 = 0.6 * config->resolution / 1000000, // T1L=0.6us
+        },
+#endif
         .flags.msb_first = 1 // WS2812 transfer bit order: G7...G0R7...R0B7...B0
     };
     
@@ -345,6 +356,12 @@ void leds_handle(void)
             // led is RGB colour order
             LedControl.led_strip_pixels[0] = red;
             LedControl.led_strip_pixels[1] = green;
+            LedControl.led_strip_pixels[2] = blue;
+#endif
+#if CONFIG_TONEX_CONTROLLER_LED_COLOUR_ORDER_GRB
+            // led is RGB colour order
+            LedControl.led_strip_pixels[0] = green;
+            LedControl.led_strip_pixels[1] = red;
             LedControl.led_strip_pixels[2] = blue;
 #endif
 
