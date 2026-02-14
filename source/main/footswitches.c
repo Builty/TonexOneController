@@ -183,7 +183,7 @@ static esp_err_t footswitch_read_single_onboard(uint8_t number, uint8_t* switch_
     }
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
-    // display board uses onboard I2C IO expander
+    // 4.3 display board uses onboard I2C IO expander
     uint8_t value;
 
     if (CH422G_read_input((uint8_t)button_index, &value) == ESP_OK)
@@ -214,7 +214,7 @@ static esp_err_t footswitch_read_multiple_onboard(uint16_t* switch_state)
     *switch_state = 0;
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
-    // display board uses onboard I2C IO expander
+    // 4.3 display board uses onboard I2C IO expander
     uint16_t values;
 
     if (CH422G_read_all_input(&values) == ESP_OK)
@@ -639,7 +639,7 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
                             if (param != TONEX_UNKNOWN)
                             {
                                 // get the current value of the parameter
-                                if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
+                                if (control_get_connected_modeller_params_locked_access(&param_ptr) == ESP_OK)
                                 {
                                     // is the parameter a boolean type?
                                     if (param_ptr[param].Type == MODELLER_PARAM_TYPE_SWITCH)
@@ -654,7 +654,7 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
                                             new_value = 0;
                                         }
 
-                                        tonex_params_release_locked_access();
+                                        control_release_connected_modeller_params_locked_access();
                                         usb_modify_parameter(param, new_value);
                                     }
                                     else if (param_ptr[param].Type == MODELLER_PARAM_TYPE_SELECT)
@@ -664,7 +664,7 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
                                         uint8_t current_select_val = (uint8_t)param_ptr[param].Value;
 
                                         // release access now as midi helper needs the mutex
-                                        tonex_params_release_locked_access();
+                                        control_release_connected_modeller_params_locked_access();
 
                                         if (current_select_val == fx_handler[loop].config.Value_1)
                                         {
@@ -683,7 +683,7 @@ static void footswitch_handle_effects(tFootswitchHandler* handler, tFootswitchEf
                                         float current_param_value = param_ptr[param].Value;
 
                                         // release access now as midi helper needs the mutex
-                                        tonex_params_release_locked_access();
+                                        control_release_connected_modeller_params_locked_access();
 
                                         // flip between value 1 and value 2
                                         // get value 1 (Midi 0..127) scaled back to a float to it can be compared with the current param value (a float)
@@ -960,7 +960,7 @@ void footswitches_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2C
     // save handles
     I2CMutexHandle = I2CMutex;
 
-#if CONFIG_TONEX_CONTROLLER_GPIO_FOOTSWITCHES
+#if CONFIG_TONEX_CONTROLLER_GPIO_FOOTSWITCHES    
     // init GPIO
     gpio_config_t gpio_config_struct;
 
@@ -969,6 +969,9 @@ void footswitches_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2C
     if (FOOTSWITCH_2 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_2);
     if (FOOTSWITCH_3 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_3);
     if (FOOTSWITCH_4 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_4);
+
+    ESP_LOGI(TAG, "Init GPIO footswitches %d %d %d %d", FOOTSWITCH_1, FOOTSWITCH_2, FOOTSWITCH_3, FOOTSWITCH_4);
+
     gpio_config_struct.pin_bit_mask = pin_bit_mask;
     gpio_config_struct.mode = GPIO_MODE_INPUT;
     gpio_config_struct.pull_up_en = GPIO_PULLUP_ENABLE;

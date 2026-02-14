@@ -559,7 +559,10 @@ void action_save_skin_edit(lv_event_t * e)
     lv_obj_clear_flag(objects.ui_bpm_value_label, LV_OBJ_FLAG_HIDDEN);
 
 #if (CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR)
-    lv_obj_clear_flag(objects.ui_bpm_indicator, LV_OBJ_FLAG_HIDDEN);
+    if (control_get_config_item_int(CONFIG_ITEM_DISABLE_BPM_FLASHER) == 0)
+    {
+        lv_obj_clear_flag(objects.ui_bpm_indicator, LV_OBJ_FLAG_HIDDEN);
+    }
 #endif    
 }
 
@@ -1395,6 +1398,12 @@ void ui_BPMAnimate(lv_obj_t *target_obj, uint32_t duration)
     // Delete any existing animations on the target object to avoid conflicts
     lv_anim_del(target_obj, (lv_anim_exec_xcb_t)ui_anim_opacity_cb);
 
+    if (control_get_config_item_int(CONFIG_ITEM_DISABLE_BPM_FLASHER) == 1)
+    {
+        // disabled, do nothing
+        return;
+    }
+    
     // Allocate user data for the animation
     void *user_data = lv_mem_alloc(sizeof(uint8_t));
     if (!user_data) 
@@ -1646,6 +1655,13 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
     // register log handler for lvgl
     lv_log_register_print_cb(lv_log_cb);
 #endif  //CONFIG_LV_USE_LOG
+
+#if CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR
+    if (control_get_config_item_int(CONFIG_ITEM_DISABLE_BPM_FLASHER) == 1)
+    {
+        lv_obj_add_flag(objects.ui_bpm_indicator, LV_OBJ_FLAG_HIDDEN);
+    }
+#endif
 
     // create display task
     xTaskCreatePinnedToCore(display_task, "Dsp", DISPLAY_TASK_STACK_SIZE, NULL, DISPLAY_TASK_PRIORITY, NULL, 1);

@@ -44,6 +44,8 @@ limitations under the License.
 #include "task_priorities.h"
 #include "tonex_params.h"
 #include "valeton_params.h"
+#include "midi_helper.h"
+#include "leds.h"
 
 #define CTRL_TASK_STACK_SIZE                (3 * 1024)
 
@@ -61,6 +63,8 @@ limitations under the License.
 #define MAX_PRESET_USER_TEXT_LENGTH         32
 #define LEGACY_CONFIG_USER_COUNT            20
 
+#define MAX_CONFIG_SAVE_RETRIES             10
+
 enum CommandEvents
 {
     EVENT_PRESET_DOWN,
@@ -77,7 +81,8 @@ enum CommandEvents
     EVENT_SET_USER_TEXT,
     EVENT_SET_CONFIG_ITEM_INT,
     EVENT_SET_CONFIG_ITEM_STRING,
-    EVENT_TRIGGER_TAP_TEMPO
+    EVENT_TRIGGER_TAP_TEMPO,
+    EVENT_UPDATE_FOOTSWITCH_LEDS
 };
 
 typedef struct
@@ -174,7 +179,8 @@ typedef struct __attribute__ ((packed))
     uint16_t GeneralLoopAround: 1;
     uint16_t GeneralSavePresetToSlot: 2;
     uint16_t GeneralEnableTouchHigherSensitivity: 1;
-    uint16_t GeneralSpare: 9;
+    uint16_t GeneralHideBPM: 1;
+    uint16_t GeneralSpare: 8;
 } tGeneralConfig;
 
 typedef struct __attribute__ ((packed)) 
@@ -254,6 +260,7 @@ static uint8_t SavePresetUserText(uint16_t preset_index, char* text);
 static uint8_t LoadPresetUserText(uint16_t preset_index, char* text);
 static void DumpUserConfig(void);
 static uint8_t MigrateUserData(void);
+static void UpdateFootswitchLeds(void);
 
 /****************************************************************************
 * NAME:        
@@ -522,6 +529,12 @@ static uint8_t process_control_command(tControlMessage* message)
                 {
                     ESP_LOGI(TAG, "Config set higher touch sense %d", (int)message->Value);
                     ControlData.ConfigData.GeneralConfig.GeneralEnableTouchHigherSensitivity = (uint8_t)message->Value & 0x01;
+                } break;
+                
+                case CONFIG_ITEM_DISABLE_BPM_FLASHER:
+                {
+                    ESP_LOGI(TAG, "Config set bpm display touch sense %d", (int)message->Value);
+                    ControlData.ConfigData.GeneralConfig.GeneralHideBPM = (uint8_t)message->Value & 0x01;
                 } break;
 
                 case CONFIG_ITEM_WIFI_TX_POWER:
@@ -912,6 +925,11 @@ static uint8_t process_control_command(tControlMessage* message)
                 ControlData.TapTempo.LastTime = current_time;
             }
         } break;
+
+        case EVENT_UPDATE_FOOTSWITCH_LEDS:
+        {
+            UpdateFootswitchLeds();
+        } break;
     }
 
     return 1;
@@ -1228,6 +1246,28 @@ void control_trigger_tap_tempo(void)
 * NAME:        
 * DESCRIPTION: 
 * PARAMETERS:  
+* RETURN:      none
+* NOTES:       none
+****************************************************************************/
+void control_update_footswitch_leds(void)
+{
+    tControlMessage message;
+
+    ESP_LOGI(TAG, "control_update_footswitch_leds");
+
+    message.Event = EVENT_UPDATE_FOOTSWITCH_LEDS;
+
+    // send to queue
+    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    {
+        ESP_LOGE(TAG, "control_update_footswitch_leds queue send failed!");            
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
@@ -1266,11 +1306,19 @@ void control_set_config_item_int(uint32_t item, uint32_t status)
     message.Value = status;
     message.Item = item;
 
-    // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    for (uint32_t retries = 0; retries < MAX_CONFIG_SAVE_RETRIES; retries++)
     {
-        ESP_LOGE(TAG, "control_set_config_item_int queue send failed!");            
+        // send to queue
+        if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(100)) == pdPASS)
+        {
+            // all good
+            return;
+        }
+
+        ESP_LOGW(TAG, "control_set_config_item_int queue send retry");            
     }
+
+    ESP_LOGE(TAG, "control_set_config_item_int queue send failed!");            
 }
 
 /****************************************************************************
@@ -1293,11 +1341,19 @@ void control_set_config_item_string(uint32_t item, char* name)
     strncpy(message.Text, name, MAX_TEXT_LENGTH - 1);
     message.Item = item;
 
-    // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    for (uint32_t retries = 0; retries < MAX_CONFIG_SAVE_RETRIES; retries++)
     {
-        ESP_LOGE(TAG, "control_set_config_item_string queue send failed!");            
+        // send to queue
+        if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(100)) == pdPASS)
+        {
+            // all good
+            return;
+        }
+
+        ESP_LOGW(TAG, "control_set_config_item_string queue send retry");            
     }
+
+    ESP_LOGE(TAG, "control_set_config_item_string queue send failed!");  
 }
 
 /****************************************************************************
@@ -1383,6 +1439,11 @@ uint32_t control_get_config_item_int(uint32_t item)
             value = ControlData.ConfigData.GeneralConfig.GeneralEnableTouchHigherSensitivity;
         } break;
 
+        case CONFIG_ITEM_DISABLE_BPM_FLASHER:
+        {
+            value = ControlData.ConfigData.GeneralConfig.GeneralHideBPM;
+        } break;
+        
         case CONFIG_ITEM_WIFI_TX_POWER:
         {
             value = ControlData.ConfigData.WiFiConfig.WifiTxPower;
@@ -1980,7 +2041,8 @@ static uint8_t MigrateUserData(void)
                 ControlData.ConfigData.GeneralConfig.GeneralLoopAround = LegacyConfigData->GeneralLoopAround;
                 ControlData.ConfigData.GeneralConfig.GeneralSavePresetToSlot = LegacyConfigData->GeneralSavePresetToSlot;
                 ControlData.ConfigData.GeneralConfig.GeneralEnableTouchHigherSensitivity = 0;
-
+                ControlData.ConfigData.GeneralConfig.GeneralHideBPM = 0;
+                
                 // WiFi
                 ControlData.ConfigData.WiFiConfig.WiFiMode = LegacyConfigData->WiFiMode;
                 ControlData.ConfigData.WiFiConfig.WifiTxPower = LegacyConfigData->WifiTxPower;
@@ -2220,6 +2282,7 @@ static void DumpUserConfig(void)
     ESP_LOGI(TAG, "Config Save preset to slot: %d", (int)ControlData.ConfigData.GeneralConfig.GeneralSavePresetToSlot);
     ESP_LOGI(TAG, "Config Ext Footsw Prst Layout: %d", (int)ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchPresetLayout);
     ESP_LOGI(TAG, "Config Higher Touch Sense: %d", (int)ControlData.ConfigData.GeneralConfig.GeneralEnableTouchHigherSensitivity);
+    ESP_LOGI(TAG, "Config Hide BPM flasher: %d", (int)ControlData.ConfigData.GeneralConfig.GeneralHideBPM);
     
     for (uint8_t loop = 0; loop < MAX_EXTERNAL_EFFECT_FOOTSWITCHES; loop++)
     {
@@ -2362,6 +2425,264 @@ static uint8_t __attribute__((unused)) LoadPresetUserText(uint16_t preset_index,
 
     return result;
 }
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void UpdateFootswitchLeds(void)
+{
+    //todo
+#if CONFIG_TONEX_CONTROLLER_GPIO_FOOTSWITCHES
+#if !CONFIG_TONEX_CONTROLLER_LED_CONTROL_DISABLED    
+    tModellerParameter* param_ptr;
+    uint32_t preset_color;
+    tLedColour colour;
+    tLedColour colour_black = {0, 0, 0};
+    uint8_t preset_switch_num = 0;
+
+    // first see if the footswitches are being used for preset switching
+    switch (ControlData.ConfigData.FootSwitchConfig.FootswitchMode)
+    {
+        case FOOTSWITCH_LAYOUT_1X2:
+        {
+            // next/previous, no point in setting leds
+            preset_switch_num = 0;
+        } break;
+
+        case FOOTSWITCH_LAYOUT_1X3: 
+        {
+            preset_switch_num = 3;
+        } break;
+
+        case FOOTSWITCH_LAYOUT_1X4:
+        {
+            preset_switch_num = 4;
+        } break;
+
+        case FOOTSWITCH_LAYOUT_1X4_BINARY:      // fallthrough
+        case FOOTSWITCH_LAYOUT_DISABLED:        // fallthrough
+        default:
+        {
+            // no leds used by preset footswitches
+        } break;
+    }
+
+    // start with all off
+    leds_set_colour(0xFFFF, &colour_black);
+
+    if (preset_switch_num > 0)
+    {  
+        // default to using green for preset led
+        colour.Red = 0;
+        colour.Green = 255;
+        colour.Blue = 0;
+
+        switch (usb_get_connected_modeller_type())
+        {
+            case AMP_MODELLER_TONEX_ONE:
+            {
+                // tonex one has colour per preset
+                if (tonex_params_colors_get_color(ControlData.PresetIndex, &preset_color) == ESP_OK)
+                {
+                    // convert 24 bit colour to struct
+                    colour.Red = (preset_color >> 16) & 0xFF;
+                    colour.Green = (preset_color >> 8) & 0xFF;
+                    colour.Blue = preset_color & 0xFF;
+                }
+            } break;
+
+            default:
+            {
+                // will use green
+            } break;
+        }
+      
+        // switch on led above preset switch
+        uint8_t led_index = (ControlData.PresetIndex - usb_get_first_preset_index_for_connected_modeller()) % preset_switch_num;
+        
+        leds_set_colour(1 << led_index, &colour);
+        ESP_LOGI(TAG, "Preset Led %d", (ControlData.PresetIndex % preset_switch_num));
+    }
+
+    // handle effect footswitches
+    for (uint8_t loop = 0; loop < MAX_INTERNAL_EFFECT_FOOTSWITCHES; loop++)
+    {
+        // safety check the number of leds configured
+        if (loop < CONFIG_TONEX_CONTROLLER_LED_NUMBER)
+        {
+            // is the footswitch set to control an effect?
+            if (ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[loop].Switch != SWITCH_NOT_USED)
+            {
+                // get the config for this effect switch
+                tExternalFootswitchEffectConfig* fx_config = &ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[loop];
+
+                // get the parameter for it
+                uint16_t param = midi_helper_get_param_for_change_num(fx_config->CC, fx_config->Value_1, fx_config->Value_2);
+
+                if (param != TONEX_UNKNOWN)
+                {
+                    if (control_get_connected_modeller_params_locked_access(&param_ptr) == ESP_OK)
+                    {
+                        // is the parameter a boolean type?
+                        if (param_ptr[param].Type == MODELLER_PARAM_TYPE_SWITCH)
+                        {
+                            if (param_ptr[param].Value != 0)
+                            {                                
+                                // set default colour
+                                colour.Red = 0;
+                                colour.Green = 255;
+                                colour.Blue = 0;
+
+                                // find the colour to use to match the effect type
+                                switch (usb_get_connected_modeller_type())
+                                {
+                                    case AMP_MODELLER_TONEX_ONE:        // fallthrough
+                                    case AMP_MODELLER_TONEX:            // fallthrough
+                                    default:
+                                    {
+                                        switch (param)
+                                        {
+                                            case TONEX_PARAM_NOISE_GATE_ENABLE:
+                                            {
+                                                colour.Red = 0;
+                                                colour.Green = 255;
+                                                colour.Blue = 255;
+                                            } break;
+
+                                            case TONEX_PARAM_COMP_ENABLE:
+                                            {
+                                                colour.Red = 255;
+                                                colour.Green = 0;
+                                                colour.Blue = 255;
+                                            } break;
+                                         
+                                            case TONEX_PARAM_MODEL_AMP_ENABLE:
+                                            {
+                                                colour.Red = 255;
+                                                colour.Green = 255;
+                                                colour.Blue = 0;
+                                            } break;
+
+                                            case TONEX_PARAM_REVERB_ENABLE:
+                                            {
+                                                colour.Red = 255;
+                                                colour.Green = 140;
+                                                colour.Blue = 0;
+                                            } break;
+
+                                            case TONEX_PARAM_MODULATION_ENABLE:
+                                            {
+                                                colour.Red = 50;
+                                                colour.Green = 205;
+                                                colour.Blue = 50;
+                                            } break;
+
+                                            case TONEX_PARAM_DELAY_ENABLE:
+                                            default:
+                                            {
+                                                colour.Red = 140;
+                                                colour.Green = 0;
+                                                colour.Blue = 255;
+                                            } break;
+                                        }                                    
+                                    } break;
+
+                                    case AMP_MODELLER_VALETON_GP5:
+                                    {
+                                        switch (param)
+                                        {
+                                            case VALETON_PARAM_NR_ENABLE:
+                                            {
+                                                colour.Red = 0;
+                                                colour.Green = 255;
+                                                colour.Blue = 255;
+                                            } break;
+
+                                            case VALETON_PARAM_PRE_ENABLE:
+                                            {
+                                                colour.Red = 0;
+                                                colour.Green = 180;
+                                                colour.Blue = 140;
+                                            } break;
+
+                                            case VALETON_PARAM_DIST_ENABLE:
+                                            {
+                                                colour.Red = 255;
+                                                colour.Green = 105;
+                                                colour.Blue = 180;
+                                            } break;
+
+                                            case VALETON_PARAM_AMP_ENABLE:
+                                            {
+                                                colour.Red = 255;
+                                                colour.Green = 255;
+                                                colour.Blue = 0;
+                                            } break;
+                                            
+                                            case VALETON_PARAM_CAB_ENABLE:
+                                            {
+                                                colour.Red = 0;
+                                                colour.Green = 255;
+                                                colour.Blue = 100;
+                                            } break;
+
+                                            case VALETON_PARAM_EQ_ENABLE:
+                                            {
+                                                colour.Red = 255;
+                                                colour.Green = 215;
+                                                colour.Blue = 0;
+                                            } break;
+
+                                            case VALETON_PARAM_MOD_ENABLE:
+                                            {
+                                                colour.Red = 50;
+                                                colour.Green = 205;
+                                                colour.Blue = 50;
+                                            } break;
+
+                                            case VALETON_PARAM_DLY_ENABLE:
+                                            {
+                                                colour.Red = 140;
+                                                colour.Green = 0;
+                                                colour.Blue = 255;
+                                            } break;
+
+                                            case VALETON_PARAM_RVB_ENABLE:
+                                            {
+                                                colour.Red = 255;
+                                                colour.Green = 140;
+                                                colour.Blue = 0;
+                                            } break;
+
+                                            case VALETON_PARAM_NS_ENABLE:       // fallthrough
+                                            default:
+                                            {
+                                                colour.Red = 255;
+                                                colour.Green = 127;
+                                                colour.Blue = 80;
+                                            } break;
+                                        }
+                                    } break;
+                                }
+                            
+                                leds_set_colour(1 << fx_config->Switch, &colour);
+                                ESP_LOGI(TAG, "Effect Led %d", fx_config->Switch);
+                            }
+                        }
+
+                        control_release_connected_modeller_params_locked_access();
+                    }                    
+                }
+            }
+        }
+    }
+
+#endif   //!CONFIG_TONEX_CONTROLLER_LED_CONTROL_DISABLED  
+#endif   //CONFIG_TONEX_CONTROLLER_GPIO_FOOTSWITCHES
+}
 
 /****************************************************************************
 * NAME:        
@@ -2404,6 +2725,7 @@ void control_set_default_config(void)
 
     ControlData.ConfigData.GeneralConfig.GeneralSavePresetToSlot = SAVE_PRESET_SLOT_C;
     ControlData.ConfigData.GeneralConfig.GeneralEnableTouchHigherSensitivity = 0;
+    ControlData.ConfigData.GeneralConfig.GeneralHideBPM = 0;
     ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchPresetLayout = FOOTSWITCH_LAYOUT_1X4;
     memset((void*)ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig, 0, sizeof(ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig));
     memset((void*)ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig, 0, sizeof(ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig));
@@ -2423,6 +2745,56 @@ void control_set_default_config(void)
     for (uint8_t loop = 0; loop < MAX_SUPPORTED_PRESETS; loop++)
     {
         ControlData.ConfigData.PresetOrderMappingConfig.PresetOrder[loop] = loop;
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+esp_err_t control_get_connected_modeller_params_locked_access(tModellerParameter** param_ptr)
+{
+    switch (usb_get_connected_modeller_type())
+    {
+        case AMP_MODELLER_TONEX_ONE:        // fallthrough
+        case AMP_MODELLER_TONEX:            // fallthrough
+        default:
+        {
+            return tonex_params_get_locked_access(param_ptr);
+        } break;
+
+        case AMP_MODELLER_VALETON_GP5:
+        {
+            return valeton_params_get_locked_access(param_ptr);
+        } break;
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+esp_err_t control_release_connected_modeller_params_locked_access(void)
+{
+    switch (usb_get_connected_modeller_type())
+    {
+        case AMP_MODELLER_TONEX_ONE:        // fallthrough
+        case AMP_MODELLER_TONEX:            // fallthrough
+        default:
+        {
+            return tonex_params_release_locked_access();
+        } break;
+
+        case AMP_MODELLER_VALETON_GP5:
+        {
+            return valeton_params_release_locked_access();
+        } break;
     }
 }
 

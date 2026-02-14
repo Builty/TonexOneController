@@ -149,6 +149,7 @@ enum ConfigItems
     CONFIG_ITEM_INT_FOOTSW_EFFECT4_VAL1,
     CONFIG_ITEM_INT_FOOTSW_EFFECT4_VAL2,
     CONFIG_ITEM_ENABLE_HIGHER_TOUCH_SENS,
+    CONFIG_ITEM_DISABLE_BPM_FLASHER
 };
 
 enum BluetoothModes
@@ -292,6 +293,13 @@ typedef struct __attribute__ ((packed))
     uint8_t Value_2;
 } tExternalFootswitchEffectConfig;
 
+typedef struct __attribute__ ((packed)) 
+{
+    uint8_t Red;
+    uint8_t Blue;
+    uint8_t Green;
+} tLedColour;
+
 #define MAX_WIFI_SSID_PW                        65   
 #define MAX_MDNS_NAME                           32
 #define MAX_EXTERNAL_EFFECT_FOOTSWITCHES        8
@@ -322,6 +330,9 @@ void control_set_sync_complete(void);
 uint8_t control_get_sync_complete(void);
 uint32_t control_get_current_preset_index(void);
 void control_get_current_preset_name(char* dest);
+void control_update_footswitch_leds(void);
+esp_err_t control_get_connected_modeller_params_locked_access(tModellerParameter** param_ptr);
+esp_err_t control_release_connected_modeller_params_locked_access(void);
 
 // config API
 void control_set_default_config(void);

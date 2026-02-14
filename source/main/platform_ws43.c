@@ -78,7 +78,7 @@ limitations under the License.
 static const char *TAG = "platform_ws43";
 
 // LCD panel config
-#define DISPLAY_LCD_PIXEL_CLOCK_HZ     (13100000)      // 13 Mhz gets offset, 14 Mhz gets DMA underruns when amp skin changed
+#define DISPLAY_LCD_PIXEL_CLOCK_HZ     (16000000)
 #define DISPLAY_LCD_BK_LIGHT_ON_LEVEL  1
 #define DISPLAY_LCD_BK_LIGHT_OFF_LEVEL !DISPLAY_LCD_BK_LIGHT_ON_LEVEL
 
@@ -86,11 +86,9 @@ static const char *TAG = "platform_ws43";
 #define DISPLAY_LCD_H_RES              800
 #define DISPLAY_LCD_V_RES              480
 
-#if CONFIG_DISPLAY_DOUBLE_FB
-#define DISPLAY_LCD_NUM_FB             2
-#else
-#define DISPLAY_LCD_NUM_FB             1
-#endif // CONFIG_DISPLAY_DOUBLE_FB
+#define DISPLAY_LCD_NUM_FB              2    //1
+
+#define DRAW_BUFFER_SIZE                6
 
 #define BUF_SIZE                        (1024)
 #define I2C_MASTER_TIMEOUT_MS           1000
@@ -182,7 +180,7 @@ __attribute__((unused)) void platform_adjust_touch_coords(lv_coord_t* x, lv_coor
 *****************************************************************************/
 __attribute__((unused)) void platform_adjust_display_flush_area(lv_area_t *area)
 {
-    // nothing needed}
+    // nothing needed
 }
 
 /****************************************************************************
@@ -305,11 +303,10 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     esp_lcd_panel_handle_t panel_handle = NULL;
     esp_lcd_rgb_panel_config_t panel_config = {
         .data_width = 16, // RGB565 in parallel mode, thus 16bit in width
+        .bits_per_pixel = 16,
         .psram_trans_align = 64,
         .num_fbs = DISPLAY_LCD_NUM_FB,
-#if CONFIG_DISPLAY_USE_BOUNCE_BUFFER
         .bounce_buffer_size_px = 10 * DISPLAY_LCD_H_RES,
-#endif
         .clk_src = LCD_CLK_SRC_DEFAULT,
         .disp_gpio_num = DISPLAY_PIN_NUM_DISP_EN,
         .pclk_gpio_num = DISPLAY_PIN_NUM_PCLK,
@@ -334,19 +331,25 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
             DISPLAY_PIN_NUM_DATA14,
             DISPLAY_PIN_NUM_DATA15,
         },
+
         .timings = {
-            .pclk_hz = DISPLAY_LCD_PIXEL_CLOCK_HZ,
-            .h_res = DISPLAY_LCD_H_RES,
-            .v_res = DISPLAY_LCD_V_RES,
-            // The following parameters should refer to LCD spec
-            .hsync_back_porch = 8,
-            .hsync_front_porch = 8,
+            .pclk_hz          = DISPLAY_LCD_PIXEL_CLOCK_HZ,
+            .h_res            = DISPLAY_LCD_H_RES,
+            .v_res            = DISPLAY_LCD_V_RES,
             .hsync_pulse_width = 4,
-            .vsync_back_porch = 16,
-            .vsync_front_porch = 16,
+            .hsync_back_porch  = 8,
+            .hsync_front_porch = 8,
             .vsync_pulse_width = 4,
-            .flags.pclk_active_neg = true,
+            .vsync_back_porch  = 28,
+            .vsync_front_porch = 28,
+            .flags = {
+                .hsync_idle_low   = 0,
+                .vsync_idle_low   = 0,
+                .de_idle_high     = 0,
+                .pclk_active_neg  = 1,
+            }
         },
+
         .flags.fb_in_psram = true, // allocate frame buffer in PSRAM
     };
       
@@ -506,19 +509,15 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     
     void *buf1 = NULL;
     void *buf2 = NULL;
-#if CONFIG_DISPLAY_DOUBLE_FB
-    ESP_LOGI(TAG, "Use frame buffers as LVGL draw buffers");
-    ESP_ERROR_CHECK(esp_lcd_rgb_panel_get_frame_buffer(panel_handle, 2, &buf1, &buf2));
-    // initialize LVGL draw buffers
-    lv_disp_draw_buf_init(&disp_buf, buf1, buf2, DISPLAY_LCD_H_RES * DISPLAY_LCD_V_RES);
-#else
-    ESP_LOGI(TAG, "Allocate separate LVGL draw buffers from PSRAM");
-    buf1 = heap_caps_malloc(DISPLAY_LCD_H_RES * 100 * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
+    ESP_LOGI(TAG, "Allocate separate LVGL draw buffers from DMA capable ram");
+    buf1 = heap_caps_malloc(DISPLAY_LCD_H_RES * DRAW_BUFFER_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA | MALLOC_CAP_32BIT);
     assert(buf1);
 
+    buf2 = heap_caps_malloc(DISPLAY_LCD_H_RES * DRAW_BUFFER_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA | MALLOC_CAP_32BIT);
+    assert(buf2);
+
     // initialize LVGL draw buffers
-    lv_disp_draw_buf_init(&disp_buf, buf1, buf2, DISPLAY_LCD_H_RES * 100);
-#endif // CONFIG_DISPLAY_DOUBLE_FB
+    lv_disp_draw_buf_init(&disp_buf, buf1, buf2, DISPLAY_LCD_H_RES * DRAW_BUFFER_SIZE);
 
     ESP_LOGI(TAG, "Register display driver to LVGL");
     lv_disp_drv_init(disp_drv);
@@ -527,9 +526,8 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     disp_drv->flush_cb = display_lvgl_flush_cb;
     disp_drv->draw_buf = &disp_buf;
     disp_drv->user_data = panel_handle;
-#if CONFIG_DISPLAY_DOUBLE_FB
-    disp_drv->full_refresh = true; // the full_refresh mode can maintain the synchronization between the two frame buffers
-#endif
+    disp_drv->full_refresh = true;
+
     lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(disp_drv);
 
     ESP_LOGI(TAG, "Install LVGL tick timer");

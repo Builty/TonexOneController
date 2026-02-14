@@ -652,6 +652,9 @@ static TonexStatus usb_tonex_parse_param_changed(uint8_t* unframed, uint16_t len
 
                 // update web UI
                 wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+                                         
+                // refresh the footswitch leds
+                control_update_footswitch_leds();
             }
         }
         else
@@ -840,6 +843,9 @@ static TonexStatus usb_tonex_parse_global_config(uint8_t* unframed, uint16_t len
 
             // update web UI
             wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+                                     
+            // refresh the footswitch leds
+            control_update_footswitch_leds();
         }
         else
         {
@@ -1056,6 +1062,9 @@ static esp_err_t usb_tonex_process_single_message(uint8_t* data, uint16_t length
 
                             // update web UI
                             wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+                                                     
+                            // refresh the footswitch leds
+                            control_update_footswitch_leds();
                         }
                     }
                 } break;
@@ -1124,6 +1133,9 @@ static esp_err_t usb_tonex_process_single_message(uint8_t* data, uint16_t length
 
                             // update web UI
                             wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+                                                     
+                            // refresh the footswitch leds
+                            control_update_footswitch_leds();
                         }
 
                         if (boot_global_request)

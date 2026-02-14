@@ -68,6 +68,13 @@ typedef struct
     rmt_symbol_word_t reset_code;
 } rmt_led_strip_encoder_t;
 
+typedef struct __attribute__ ((packed)) 
+{
+    uint8_t Byte_1;
+    uint8_t Byte_2;
+    uint8_t Byte_3;
+} tLedColourRaw;
+
 typedef struct 
 {
     uint8_t state; 
@@ -75,15 +82,22 @@ typedef struct
     uint32_t timer;
     uint32_t counter;
 
-    uint8_t led_strip_pixels[CONFIG_TONEX_CONTROLLER_LED_NUMBER * 3];
+    tLedColourRaw led_strip_pixels[CONFIG_TONEX_CONTROLLER_LED_NUMBER];
     rmt_channel_handle_t led_chan;
     rmt_encoder_handle_t led_encoder;
     rmt_transmit_config_t tx_config;
 } tLedControl;
 
+typedef struct __attribute__ ((packed))  
+{
+    uint16_t led_flags;
+    tLedColour colour;
+} tLedMessage;
+
 static const char *TAG = "app_leds";
 
 static tLedControl LedControl;
+static QueueHandle_t led_input_queue;
 
 /****************************************************************************
 * NAME:        
@@ -326,6 +340,43 @@ err:
 
     return ret;
 }
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void leds_set_raw_data_from_colour(uint8_t led, tLedColour* colour)
+{
+    if (led >= CONFIG_TONEX_CONTROLLER_LED_NUMBER)
+    {
+        ESP_LOGE(TAG, "Invalid Led %d", led);
+        return;
+    }
+
+#if CONFIG_TONEX_CONTROLLER_LED_COLOUR_ORDER_GBR
+    // led is GBR colour order
+    LedControl.led_strip_pixels[led].Byte_1 = colour->Green;
+    LedControl.led_strip_pixels[led].Byte_2 = colour->Blue;
+    LedControl.led_strip_pixels[led].Byte_3 = colour->Red;
+#endif        
+#if CONFIG_TONEX_CONTROLLER_LED_COLOUR_ORDER_RGB
+    // led is RGB colour order
+    LedControl.led_strip_pixels[led].Byte_1 = colour->Red;
+    LedControl.led_strip_pixels[led].Byte_2 = colour->Green;
+    LedControl.led_strip_pixels[led].Byte_3 = colour->Blue;
+#endif
+#if CONFIG_TONEX_CONTROLLER_LED_COLOUR_ORDER_GRB
+    // led is RGB colour order
+    LedControl.led_strip_pixels[led].Byte_1 = colour->Green;
+    LedControl.led_strip_pixels[led].Byte_2 = colour->Red;
+    LedControl.led_strip_pixels[led].Byte_3 = colour->Blue;
+#endif
+
+    ESP_LOGI(TAG, "Led %d set R:%d G:%d, B:%d", led, colour->Red, colour->Green, colour->Blue);
+}
 #endif //CONFIG_TONEX_CONTROLLER_LED_CONTROL_DISABLED
 
 /****************************************************************************
@@ -338,32 +389,18 @@ err:
 void leds_handle(void)
 {    
 #if !CONFIG_TONEX_CONTROLLER_LED_CONTROL_DISABLED    
-    uint32_t red = 0;
-    uint32_t green = 0;
-    uint32_t blue = 10;
-   
+    tLedMessage message;
+    uint8_t loop;
+    tLedColour boot_colour = {0, 0, 128};
+
     switch (LedControl.state)
     {
         case LED_STATE_BOOT_FLASH_ON:
         {
-#if CONFIG_TONEX_CONTROLLER_LED_COLOUR_ORDER_GBR
-            // led is GBR colour order
-            LedControl.led_strip_pixels[0] = green;
-            LedControl.led_strip_pixels[1] = blue;
-            LedControl.led_strip_pixels[2] = red;
-#endif        
-#if CONFIG_TONEX_CONTROLLER_LED_COLOUR_ORDER_RGB
-            // led is RGB colour order
-            LedControl.led_strip_pixels[0] = red;
-            LedControl.led_strip_pixels[1] = green;
-            LedControl.led_strip_pixels[2] = blue;
-#endif
-#if CONFIG_TONEX_CONTROLLER_LED_COLOUR_ORDER_GRB
-            // led is RGB colour order
-            LedControl.led_strip_pixels[0] = green;
-            LedControl.led_strip_pixels[1] = red;
-            LedControl.led_strip_pixels[2] = blue;
-#endif
+            for (loop = 0; loop < CONFIG_TONEX_CONTROLLER_LED_NUMBER; loop++)
+            {
+                leds_set_raw_data_from_colour(loop, &boot_colour);
+            }
 
             ESP_ERROR_CHECK(rmt_transmit(LedControl.led_chan, LedControl.led_encoder, LedControl.led_strip_pixels, sizeof(LedControl.led_strip_pixels), &LedControl.tx_config));
 
@@ -410,10 +447,51 @@ void leds_handle(void)
 
         case LED_STATE_IDLE:
         {
-            // nothing to do
+            // check for any messages to process
+            if (xQueueReceive(led_input_queue, (void*)&message, 0) == pdPASS)
+            {
+                // process it
+                for (loop = 0; loop < CONFIG_TONEX_CONTROLLER_LED_NUMBER; loop++)
+                {
+                    if ((message.led_flags & (1 << loop)) != 0)
+                    {
+                        leds_set_raw_data_from_colour(loop, &message.colour);
+                    }
+                }
+
+                // are there more led messages queued? if so, don't send yet
+                if (xQueuePeek(led_input_queue, (void*)&message, 0) != pdPASS)
+                {
+                    // update leds
+                    rmt_transmit(LedControl.led_chan, LedControl.led_encoder, LedControl.led_strip_pixels, sizeof(LedControl.led_strip_pixels), &LedControl.tx_config);
+                }
+            }
+
         } break;
     }
 #endif //CONFIG_TONEX_CONTROLLER_LED_CONTROL_DISABLED    
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void leds_set_colour(uint16_t led_flags, tLedColour* colour)
+{
+#if !CONFIG_TONEX_CONTROLLER_LED_CONTROL_DISABLED        
+    tLedMessage message;
+
+    message.led_flags = led_flags;
+    memcpy((void*)&message.colour, (void*)colour, sizeof(tLedColour));
+
+    if (xQueueSend(led_input_queue, (void*)&message, 50) != pdPASS)
+    {
+        ESP_LOGE(TAG, "leds_set_state queue send failed!");            
+    }
+#endif    
 }
 
 /****************************************************************************
@@ -427,6 +505,13 @@ void leds_init(void)
 {
 #if !CONFIG_TONEX_CONTROLLER_LED_CONTROL_DISABLED
     ESP_LOGI(TAG, "Leds Init start");
+
+    // create queue
+    led_input_queue = xQueueCreate(5, sizeof(tLedMessage));
+    if (led_input_queue == NULL)
+    {
+        ESP_LOGE(TAG, "Failed to create Led input queue!");
+    }
 
     // init memory
     memset((void*)&LedControl, 0, sizeof(LedControl));

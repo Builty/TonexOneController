@@ -926,6 +926,9 @@ static void usb_valeton_gp5_request_ui_update(void)
 
         // update web UI
         wifi_request_sync(WIFI_SYNC_TYPE_PARAMS, NULL, NULL);
+                                 
+        // refresh the footswitch leds
+        control_update_footswitch_leds();
     }
 }
 

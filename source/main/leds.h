@@ -25,6 +25,9 @@ extern "C" {
 void leds_init(void);
 void leds_handle(void);
 
+// threadsafe public API
+void leds_set_colour(uint16_t led_flags, tLedColour* colour);
+
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

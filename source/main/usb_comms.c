@@ -144,6 +144,8 @@ void class_driver_task(void *arg)
         ESP_LOGI(TAG, "usb_host_client_register() failed!");   
     }
 
+    driver_obj.actions = CLASS_DRIVER_ACTION_NONE;
+
     while (!exit) 
     {
         if (driver_obj.actions == CLASS_DRIVER_ACTION_NONE)
@@ -163,6 +165,8 @@ void class_driver_task(void *arg)
             // next read the device descriptor
             driver_obj.actions &= ~CLASS_DRIVER_ACTION_OPEN_DEV;
             driver_obj.actions |= CLASS_DRIVER_ACTION_READ_DEV;
+
+            vTaskDelay(pdMS_TO_TICKS(5));
         }
 
         if (driver_obj.actions & CLASS_DRIVER_ACTION_READ_DEV)
@@ -226,7 +230,7 @@ void class_driver_task(void *arg)
 
             driver_obj.actions &= ~CLASS_DRIVER_ACTION_READ_DEV;
         }
-        
+
         if (driver_obj.actions & CLASS_DRIVER_ACTION_CLOSE_DEV) 
         {
             ESP_LOGI(TAG, "USB close device");
@@ -299,6 +303,8 @@ void class_driver_task(void *arg)
                 // nothing needed
             } break;
         }
+
+        vTaskDelay(pdMS_TO_TICKS(1));
     }
 
     usb_host_client_deregister(driver_obj.client_hdl);
@@ -398,6 +404,8 @@ static void host_lib_daemon_task(void *arg)
                 //has_devices = false;
             }
         }
+
+        vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
 

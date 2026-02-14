@@ -3683,7 +3683,7 @@ function processReturnCmd(data) {
             configureParamSwitch("mvavechoc", data['BT_CHOC_EN']);
             configureParamSwitch("xvivemd1", data['BT_MD1_EN']);
             configureParamSwitch("custombte", data['BT_CUST_EN']);
-            setParamLabel("custombt", data['BT_CUST_NAME']);
+            setParamValue("custombt", data['BT_CUST_NAME']);
             configureParamSwitch("togglebypass", data['TOGGLE_BYPASS']);
             configureParamSwitch("looparound", data['LOOP_AROUND']);
             configureParamSwitch("midienabled", data['S_MIDI_EN']);
@@ -3698,7 +3698,8 @@ function processReturnCmd(data) {
             configureParamSelect("screenrot", data['SCREEN_ROT']);
             configureParamSelect("presetslot", data['PRESET_SLOT']);                
             configureParamSwitch("hitchsense", data['HIGH_TCH_SNS']);
-
+            configureParamSwitch("disablebpm", data['DISABLE_BPM']);
+            
             configureParamSelect("extfslay", data['EXTFS_PS_LAYOUT']);
                                 
             configureParamSelect("extfx1sw", data['EXTFS_ES1_SW']);
@@ -3973,6 +3974,9 @@ function saveSettings() {
         var hitchsensechk = document.getElementById("hitchsense").checked;         
         var hitchsense = hitchsensechk ? 1 : 0;
 
+        var disablebpmchk = document.getElementById("disablebpm").checked;         
+        var disablebpm = disablebpmchk ? 1 : 0;
+
         var extfslay = document.getElementById("extfslay").value;  
 
         var extfx1sw = document.getElementById("extfx1sw").value;  
@@ -4051,6 +4055,7 @@ function saveSettings() {
                 "SCREEN_ROT": parseInt(screenrot),
                 "PRESET_SLOT": parseInt(presetslot),
                 "HIGH_TCH_SNS": parseInt(hitchsense),
+                "DISABLE_BPM": parseInt(disablebpm),                
                 "EXTFS_PS_LAYOUT": parseInt(extfslay),                        
                 "EXTFS_ES1_SW": parseInt(extfx1sw),
                 "EXTFS_ES1_CC": parseInt(extfx1cc),

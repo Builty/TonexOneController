@@ -94,7 +94,7 @@ menu "Tonex Controller Configuration"
             Sets if the screen defaults to 180 degree rotation
         
     config TONEX_CONTROLLER_SHOW_BPM_INDICATOR
-        bool "Show BPM flashing indicator on LCD (requires TONEX_CONTROLLER_DISPLAY_FULL_UI also)"
+        bool "Show BPM flashing indicator on LCD"
         default "n"
         help
             Enable this option to show BPM indicator

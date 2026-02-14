@@ -476,6 +476,7 @@ static void wifi_build_config_json(void)
     json_gen_obj_set_int(&pWebConfig->jstr, "LOOP_AROUND", control_get_config_item_int(CONFIG_ITEM_LOOP_AROUND));
     json_gen_obj_set_int(&pWebConfig->jstr, "PRESET_SLOT", control_get_config_item_int(CONFIG_ITEM_SAVE_PRESET_TO_SLOT));
     json_gen_obj_set_int(&pWebConfig->jstr, "HIGH_TCH_SNS", control_get_config_item_int(CONFIG_ITEM_ENABLE_HIGHER_TOUCH_SENS));
+    json_gen_obj_set_int(&pWebConfig->jstr, "DISABLE_BPM", control_get_config_item_int(CONFIG_ITEM_DISABLE_BPM_FLASHER));
 
     control_get_config_item_string(CONFIG_ITEM_WIFI_SSID, str_val);
     json_gen_obj_set_string(&pWebConfig->jstr, "WIFI_SSID", str_val);
@@ -923,9 +924,6 @@ static esp_err_t ws_handler(httpd_req_t *req)
                             control_set_config_item_int(CONFIG_ITEM_XV_MD1_ENABLE, int_val);
                         }
 
-                        // pause a little to allow control task a chance to process    
-                        vTaskDelay(pdMS_TO_TICKS(250));    
-
                         if (json_obj_get_int(&pWebConfig->jctx, "BT_CUST_EN", &int_val) == OS_SUCCESS)
                         {
                             control_set_config_item_int(CONFIG_ITEM_CUSTOM_BT_ENABLE, int_val);
@@ -961,6 +959,11 @@ static esp_err_t ws_handler(httpd_req_t *req)
                             control_set_config_item_int(CONFIG_ITEM_ENABLE_HIGHER_TOUCH_SENS, int_val);
                         }
 
+                        if (json_obj_get_int(&pWebConfig->jctx, "DISABLE_BPM", &int_val) == OS_SUCCESS)
+                        {
+                            control_set_config_item_int(CONFIG_ITEM_DISABLE_BPM_FLASHER, int_val);
+                        }
+
                         if (json_obj_get_int(&pWebConfig->jctx, "EXTFS_PS_LAYOUT", &int_val) == OS_SUCCESS)
                         {
                             control_set_config_item_int(CONFIG_ITEM_EXT_FOOTSW_PRESET_LAYOUT, int_val);
@@ -980,9 +983,6 @@ static esp_err_t ws_handler(httpd_req_t *req)
                         {
                             control_set_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT1_VAL1, int_val);
                         }
-
-                        // pause a little to allow control task a chance to process    
-                        vTaskDelay(pdMS_TO_TICKS(250));    
 
                         if (json_obj_get_int(&pWebConfig->jctx, "EXTFS_ES1_V2", &int_val) == OS_SUCCESS) 
                         {
@@ -1028,9 +1028,6 @@ static esp_err_t ws_handler(httpd_req_t *req)
                         {
                             control_set_config_item_int(CONFIG_ITEM_EXT_FOOTSW_EFFECT3_VAL2, int_val);
                         }
-
-                        // pause a little to allow control task a chance to process    
-                        vTaskDelay(pdMS_TO_TICKS(250));    
 
                         if (json_obj_get_int(&pWebConfig->jctx, "EXTFS_ES4_SW", &int_val) == OS_SUCCESS) 
                         {
@@ -1151,9 +1148,6 @@ static esp_err_t ws_handler(httpd_req_t *req)
                         {
                             control_set_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT1_VAL2, int_val);
                         }
-
-                        // pause a little to allow control task a chance to process    
-                        vTaskDelay(pdMS_TO_TICKS(250));   
 
                         if (json_obj_get_int(&pWebConfig->jctx, "INTFS_ES2_SW", &int_val) == OS_SUCCESS) 
                         {
