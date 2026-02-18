@@ -64,6 +64,7 @@ limitations under the License.
 #define LEGACY_CONFIG_USER_COUNT            20
 
 #define MAX_CONFIG_SAVE_RETRIES             10
+#define CONTROL_QUEUE_WRITE_TIMEOUT         1000    // msec
 
 enum CommandEvents
 {
@@ -951,7 +952,7 @@ void control_request_preset_down(void)
     message.Event = EVENT_PRESET_DOWN;
 
     // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_request_preset_down queue send failed!");            
     }
@@ -973,7 +974,7 @@ void control_request_preset_up(void)
     message.Event = EVENT_PRESET_UP;
 
     // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_request_preset_up queue send failed!");            
     }
@@ -996,7 +997,7 @@ void control_request_preset_index(uint8_t index)
     message.Value = index;
 
     // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_request_preset_index queue send failed!");            
     }
@@ -1019,7 +1020,7 @@ void control_request_bank_index(uint8_t index)
     message.Value = index;
 
     // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_request_bank_index queue send failed!");            
     }
@@ -1046,7 +1047,7 @@ void control_sync_preset_name(uint16_t index, char* name)
     strncpy(message.Text, name, MAX_TEXT_LENGTH - 1);
 
     // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_sync_preset_name queue send failed!");            
     }
@@ -1073,7 +1074,7 @@ void control_sync_preset_details(uint16_t index, char* name)
     strncpy(message.Text, name, MAX_TEXT_LENGTH - 1);
 
     // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_sync_preset_details queue send failed!");            
     }
@@ -1099,7 +1100,7 @@ void control_set_user_text(char* text)
     strncat(message.Text, text, MAX_TEXT_LENGTH - 1);
 
     // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_set_user_text queue send failed!");            
     }
@@ -1122,7 +1123,7 @@ void control_set_usb_status(uint32_t status)
     message.Value = status;
 
     // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_set_usb_status queue send failed!");            
     }
@@ -1145,7 +1146,7 @@ void control_set_bt_status(uint32_t status)
     message.Value = status;
 
     // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_set_usb_status queue send failed!");            
     }
@@ -1168,7 +1169,7 @@ void control_set_wifi_status(uint32_t status)
     message.Value = status;
 
     // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_set_wifi_status queue send failed!");            
     }
@@ -1191,7 +1192,7 @@ void control_save_user_data(uint8_t reboot)
     message.Value = reboot;
 
     // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_save_user_data queue send failed!");            
     }
@@ -1214,7 +1215,7 @@ void control_set_amp_skin_index(uint32_t status)
     message.Value = status;
 
     // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_set_amp_skin_index queue send failed!");            
     }
@@ -1236,7 +1237,7 @@ void control_trigger_tap_tempo(void)
     message.Event = EVENT_TRIGGER_TAP_TEMPO;
 
     // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_trigger_tap_tempo queue send failed!");            
     }
@@ -1258,7 +1259,7 @@ void control_update_footswitch_leds(void)
     message.Event = EVENT_UPDATE_FOOTSWITCH_LEDS;
 
     // send to queue
-    if (xQueueSend(control_input_queue, (void*)&message, 0) != pdPASS)
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_update_footswitch_leds queue send failed!");            
     }

@@ -69,6 +69,7 @@ limitations under the License.
 #define MAX_LOCATER_PACKET      200
 #define LOCATER_PORT            12106
 #define LOCATER_TIMER_MSEC      3000        // ticks
+#define WIFI_QUEUE_WRITE_TIMEOUT 1000       // msec   
 
 #ifndef CONFIG_HTTPD_MAX_CLIENTS
 #define CONFIG_HTTPD_MAX_CLIENTS 16
@@ -311,7 +312,7 @@ void wifi_request_sync(uint8_t type, void* arg1, void* arg2)
     }
 
     // send to queue
-    if (xQueueSend(wifi_input_queue, (void*)&message, 50) != pdPASS)
+    if (xQueueSend(wifi_input_queue, (void*)&message, pdMS_TO_TICKS(WIFI_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "wifi_request_sync queue send failed!");            
     }
