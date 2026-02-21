@@ -85,3 +85,6 @@ https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_JC3248W5
 <br>
 https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_Lilygo_TDisplay_S3.md
 
+## Waveshare 7" and 4.3" (not B)
+<br>
+https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_Waveshare7_4.3.md
