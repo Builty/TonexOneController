@@ -69,7 +69,7 @@ def delete_files_in_folder(directory):
     except:
         pass        
         
-def build_distribution(template, target_folder, include_ota, out_filename, skins_path=None):     
+def build_distribution(template, target_folder, include_ota, out_filename, skins_path=None, skins_name='skins.bin'):     
     print('BuildDistrib working in folder: ', target_folder)
 
     # copy default flash updater
@@ -132,8 +132,8 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
     if skins_path is not None:
         # copy skins bin
         print('copy skins bin...')
-        src = os.path.join(dirname, '..', 'source', 'skin_images', skins_path, 'skins.bin')
-        dest = os.path.join(dirname, 'temp', 'bin')
+        src = os.path.join(dirname, '..', 'source', 'skin_images', skins_path, skins_name)
+        dest = os.path.join(dirname, 'temp', 'bin', 'skins.bin')
         print('copying: ' + src + ' to ' + dest)
         shutil.copy(src, dest)
         shutil.copy(src, merged_path)
@@ -167,6 +167,10 @@ build_distribution('template_cust_partition', 'build_ws169tland', True, zip_name
 # Build Waveshare 4.3B
 zip_name = 'TonexController_V' + version + '_Waveshare_4_3B'
 build_distribution('template_cust_partition_16MB', 'build_ws43b', True, zip_name, '16bit')
+
+# Build Waveshare 7/4.3 non-B
+zip_name = 'TonexController_V' + version + '_Waveshare_7_43'
+build_distribution('template_cust_partition_8MB', 'build_ws7_43', True, zip_name, '16bit', 'skins_minimal.bin')
 
 # Build Waveshare Zero
 zip_name = 'TonexController_V' + version + '_Waveshare_Zero'

@@ -337,16 +337,16 @@
       "postFlash": ""
     }
   },
-  "WS43DEVONLY": {
+  "WS7_43": {
     "build": {
       "compileArgs": [],
       "ninjaArgs": [],
-      "buildDirectoryPath": "${workspaceFolder}/build_ws43devonly",
+      "buildDirectoryPath": "${workspaceFolder}/build_ws7_43",
       "sdkconfigDefaults": [
         "sdkconfig.defaults",
         "sdkconfig.ws43devonly"        
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_ws43devonly"
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws7_43"
     },
     "env": {},
     "flashBaudRate": "",
