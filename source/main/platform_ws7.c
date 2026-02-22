@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2024  Greg Smith
+ Copyright (C) 2026  Greg Smith
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -73,12 +73,13 @@ limitations under the License.
 #include "LP5562.h"
 #include "tonex_params.h"
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B
+// this platform file for Waveshare 7" and 4.3" (not B)
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
 
-static const char *TAG = "platform_ws43b";
+static const char *TAG = "platform_ws7_43";
 
 // LCD panel config
-#define DISPLAY_LCD_PIXEL_CLOCK_HZ     (16000000)
+#define DISPLAY_LCD_PIXEL_CLOCK_HZ     (14000000)
 #define DISPLAY_LCD_BK_LIGHT_ON_LEVEL  1
 #define DISPLAY_LCD_BK_LIGHT_OFF_LEVEL !DISPLAY_LCD_BK_LIGHT_ON_LEVEL
 
@@ -353,14 +354,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         .flags.fb_in_psram = true, // allocate frame buffer in PSRAM
     };
       
-    // hack here: if the panel is created normally, it results in massive jitter.
-    // allocating some PSRAM here before calling the esp_lcd_new_rgb_panel() function
-    // somehow fixes it, and simulates the way that older versions of the project
-    // did it (a lot of PSRAM was allocated for skin images.)
-    // If anybody figures out the root cause here I'd love to hear it.
-    void* psram_workaround_ptr = heap_caps_malloc(80000, MALLOC_CAP_SPIRAM);
     ESP_ERROR_CHECK(esp_lcd_new_rgb_panel(&panel_config, &panel_handle));
-    free(psram_workaround_ptr);   
 
     ESP_LOGI(TAG, "Register event callbacks");
     esp_lcd_rgb_panel_event_callbacks_t cbs = {
@@ -552,4 +546,4 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     }
 }
 
-#endif //CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B
+#endif // CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
