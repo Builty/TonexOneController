@@ -14,6 +14,7 @@ This hardware platform uses this Waveshare 7" or 4.3" (not B) LCD board.
 Feature Limitations:
 - Wired footswitched not supported
 - Limited number of Amp skins due to 8 MB flash (4.3B has 16 MB flash)
+- Wired Midi is input only, not support for Midi output/thru
 <br>
 https://www.waveshare.com/esp32-s3-touch-lcd-7.htm?sku=27078
 <br>
