@@ -437,3 +437,50 @@ canvas {
     .px-3 { padding-left: 1rem !important; padding-right: 1rem !important; }
     #set_preset { max-width: none !important; }   /* full width but with padding */
 }
+
+/* Force the entire PC Map section to use full available width */
+#PCMAP.content-section {
+    width: 100% !important;
+    max-width: none !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
+
+/* Remove any column restrictions inside it */
+#PCMAP #pcmap-list {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+}
+
+/* Now apply the 3-column grid properly */
+#pcmap-list {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr;   /* 3 equal columns */
+    gap: 10px 12px;                       /* comfortable but tight spacing */
+    align-items: center;
+}
+
+/* Row styling - keep label tight, select wide */
+.pcmap-row {                              /* or .row if you use that */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pcmap-row label {
+    width: 42px;
+    min-width: 42px;
+    flex-shrink: 0;
+    text-align: right;
+    color: #ffaa00;
+    font-family: monospace;
+}
+
+.pcmap-row select {
+    flex: 1;
+    min-width: 0;
+    color:white; 
+    background: #1f1f1f;
+}
