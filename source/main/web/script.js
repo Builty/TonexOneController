@@ -3684,6 +3684,7 @@ function processReturnCmd(data) {
             configureParamSwitch("xvivemd1", data['BT_MD1_EN']);
             configureParamSwitch("custombte", data['BT_CUST_EN']);
             setParamValue("custombt", data['BT_CUST_NAME']);
+            setParamValue("btperiph", data['BT_PERIPH_NAME']);
             configureParamSwitch("togglebypass", data['TOGGLE_BYPASS']);
             configureParamSwitch("looparound", data['LOOP_AROUND']);
             configureParamSwitch("midienabled", data['S_MIDI_EN']);
@@ -3950,8 +3951,10 @@ function saveSettings() {
 
         var custombte = document.getElementById("custombte").checked;
         var custombteen = custombte ? 1 : 0;
-
+        
         var custombt = document.getElementById("custombt").value;
+
+        var btperiph = document.getElementById("btperiph").value;
 
         var togglebypass = document.getElementById("togglebypass").checked;
         var togglebypassen = togglebypass ? 1 : 0;
@@ -4046,6 +4049,7 @@ function saveSettings() {
                 "BT_MD1_EN": xvivemd1en,
                 "BT_CUST_EN": custombteen,
                 "BT_CUST_NAME": custombt,
+                "BT_PERIPH_NAME": btperiph,
                 "TOGGLE_BYPASS": togglebypassen,
                 "LOOP_AROUND": looparounden,
                 "S_MIDI_EN": midienableden,

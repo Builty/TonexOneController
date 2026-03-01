@@ -134,7 +134,7 @@ static struct gattc_profile_inst gl_profile_tab =
 // Server stuff
 #define GATTS_NUM_HANDLE_TEST_A     4
 
-static char test_device_name[] = "TnxBT";
+static char periph_device_name[] = "TnxBT";
 
 #define GATTS_DEMO_CHAR_VAL_LEN_MAX 20
 #define PREPARE_BUF_MAX_SIZE        1024
@@ -536,7 +536,7 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
         gls_profile_tab[PROFILE_A_APP_ID].service_id.id.uuid.len = ESP_UUID_LEN_128;
         memcpy((void*)gls_profile_tab[PROFILE_A_APP_ID].service_id.id.uuid.uuid.uuid128, (void*)adv_service_uuid128, ESP_UUID_LEN_128);
 
-        esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name(test_device_name);
+        esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name(periph_device_name);
         if (set_dev_name_ret)
         {
             ESP_LOGE(GATTS_TAG, "set device name failed, error code = %x", set_dev_name_ret);
@@ -1485,7 +1485,10 @@ static void init_BLE(void)
         midi_serial_channel--;
     }
 
-        
+    // get the peripheral device name from config
+    control_get_config_item_string(CONFIG_ITEM_BT_PERIPHERAL_NAME, periph_device_name);
+    ESP_LOGI(TAG, "Config Peripheral name: %s", periph_device_name);
+
     ESP_ERROR_CHECK(esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT));
 
     esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();

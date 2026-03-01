@@ -1366,9 +1366,20 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void ui_anim_opacity_cb(void *obj, int32_t value) 
+static void ui_anim_hidden_cb(void *obj, int32_t value)
 {
-    lv_obj_set_style_opa((lv_obj_t*)obj, value, 0);
+    lv_obj_t *target = (lv_obj_t *)obj;
+
+    // Simple threshold: value ≥ 128 → visible, else hidden
+    // → gives ~50% duty cycle flash
+    if (value >= 128) 
+    {
+        lv_obj_clear_flag(target, LV_OBJ_FLAG_HIDDEN);
+    } 
+    else 
+    {
+        lv_obj_add_flag(target, LV_OBJ_FLAG_HIDDEN);
+    }
 }
 
 /****************************************************************************
@@ -1396,7 +1407,7 @@ static void ui_anim_deleted_cb(lv_anim_t *anim)
 void ui_BPMAnimate(lv_obj_t *target_obj, uint32_t duration)
 {    
     // Delete any existing animations on the target object to avoid conflicts
-    lv_anim_del(target_obj, (lv_anim_exec_xcb_t)ui_anim_opacity_cb);
+    lv_anim_del(target_obj, (lv_anim_exec_xcb_t)ui_anim_hidden_cb);
 
     if (control_get_config_item_int(CONFIG_ITEM_DISABLE_BPM_FLASHER) == 1)
     {
@@ -1404,22 +1415,17 @@ void ui_BPMAnimate(lv_obj_t *target_obj, uint32_t duration)
         return;
     }
     
-    // Allocate user data for the animation
-    void *user_data = lv_mem_alloc(sizeof(uint8_t));
-    if (!user_data) 
-    {
-        return;
-    }
+    lv_obj_clear_flag(target_obj, LV_OBJ_FLAG_HIDDEN);
 
     lv_anim_t anim;
 
     lv_anim_init(&anim);
     lv_anim_set_var(&anim, target_obj);
     lv_anim_set_time(&anim, duration);
-    lv_anim_set_user_data(&anim, user_data);
-    lv_anim_set_exec_cb(&anim, ui_anim_opacity_cb);
-    lv_anim_set_values(&anim, 255, 0); // Fade from opaque to transparent
-    lv_anim_set_path_cb(&anim, lv_anim_path_ease_in_out);
+    lv_anim_set_user_data(&anim, NULL);
+    lv_anim_set_exec_cb(&anim, ui_anim_hidden_cb);
+    lv_anim_set_values(&anim, 255, 0); 
+    lv_anim_set_path_cb(&anim, lv_anim_path_linear);
     lv_anim_set_delay(&anim, 0);
     lv_anim_set_deleted_cb(&anim, ui_anim_deleted_cb);
     lv_anim_set_repeat_count(&anim, LV_ANIM_REPEAT_INFINITE);

@@ -466,6 +466,9 @@ static void wifi_build_config_json(void)
     control_get_config_item_string(CONFIG_ITEM_BT_CUSTOM_NAME, str_val);
     json_gen_obj_set_string(&pWebConfig->jstr, "BT_CUST_NAME", str_val);
 
+    control_get_config_item_string(CONFIG_ITEM_BT_PERIPHERAL_NAME, str_val);
+    json_gen_obj_set_string(&pWebConfig->jstr, "BT_PERIPH_NAME", str_val);
+
     json_gen_obj_set_int(&pWebConfig->jstr, "TOGGLE_BYPASS", control_get_config_item_int(CONFIG_ITEM_TOGGLE_BYPASS));
     json_gen_obj_set_int(&pWebConfig->jstr, "S_MIDI_EN", control_get_config_item_int(CONFIG_ITEM_MIDI_ENABLE));
     json_gen_obj_set_int(&pWebConfig->jstr, "S_MIDI_CH", control_get_config_item_int(CONFIG_ITEM_MIDI_CHANNEL));
@@ -933,6 +936,11 @@ static esp_err_t ws_handler(httpd_req_t *req)
                         if (json_obj_get_string(&pWebConfig->jctx, "BT_CUST_NAME", str_val, sizeof(str_val)) == OS_SUCCESS)
                         {
                             control_set_config_item_string(CONFIG_ITEM_BT_CUSTOM_NAME, str_val);
+                        }
+
+                        if (json_obj_get_string(&pWebConfig->jctx, "BT_PERIPH_NAME", str_val, sizeof(str_val)) == OS_SUCCESS)
+                        {
+                            control_set_config_item_string(CONFIG_ITEM_BT_PERIPHERAL_NAME, str_val);
                         }
 
                         if (json_obj_get_int(&pWebConfig->jctx, "BT_MIDI_CC", &int_val) == OS_SUCCESS)

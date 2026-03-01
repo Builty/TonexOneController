@@ -59,7 +59,8 @@ limitations under the License.
 #define NVS_USERDATA_PRESET_ORDER_CONF      "porderconf"
 
 #define MAX_TEXT_LENGTH                     128
-#define MAX_BT_CUSTOM_NAME                  25                 
+#define MAX_BT_CUSTOM_NAME                  25    
+#define MAX_BT_PERIPHERAL_NAME              25    
 #define MAX_PRESET_USER_TEXT_LENGTH         32
 #define LEGACY_CONFIG_USER_COUNT            20
 
@@ -161,6 +162,7 @@ typedef struct __attribute__ ((packed))
     uint16_t BTClientSpares: 13;
 
     char BTClientCustomName[MAX_BT_CUSTOM_NAME];
+    char BTPeripheralName[MAX_BT_PERIPHERAL_NAME];
 } tBluetoothConfig;
 
 typedef struct __attribute__ ((packed)) 
@@ -870,6 +872,13 @@ static uint8_t process_control_command(tControlMessage* message)
                     ESP_LOGI(TAG, "Config set MDNS name %s", message->Text);
                     strncpy(ControlData.ConfigData.WiFiConfig.MDNSName, message->Text, MAX_MDNS_NAME - 1);
                     ControlData.ConfigData.WiFiConfig.MDNSName[MAX_MDNS_NAME - 1] = 0;
+                } break;
+
+                case CONFIG_ITEM_BT_PERIPHERAL_NAME:
+                {
+                    ESP_LOGI(TAG, "Config set BT perhiperal name %s", message->Text);
+                    strncpy(ControlData.ConfigData.BTConfig.BTPeripheralName, message->Text, MAX_BT_PERIPHERAL_NAME - 1);
+                    ControlData.ConfigData.BTConfig.BTPeripheralName[MAX_BT_PERIPHERAL_NAME - 1] = 0;
                 } break;
             }
         } break;
@@ -1739,6 +1748,12 @@ void control_get_config_item_string(uint32_t item, char* name)
             name[MAX_MDNS_NAME - 1] = 0;            
         } break;
 
+        case CONFIG_ITEM_BT_PERIPHERAL_NAME:
+        {
+            strncpy(name, ControlData.ConfigData.BTConfig.BTPeripheralName, MAX_BT_PERIPHERAL_NAME - 1);
+            name[MAX_BT_PERIPHERAL_NAME - 1] = 0;
+        } break;
+
         default:
         {
             ESP_LOGE(TAG, "Unknown/Invalid string parameter item %d", (int)item);            
@@ -2030,7 +2045,7 @@ static uint8_t MigrateUserData(void)
                 ControlData.ConfigData.BTConfig.BTClientXviveMD1Enable = LegacyConfigData->BTClientXviveMD1Enable;
                 ControlData.ConfigData.BTConfig.BTClientCustomEnable = LegacyConfigData->BTClientCustomEnable;
                 memcpy((void*)ControlData.ConfigData.BTConfig.BTClientCustomName, LegacyConfigData->BTClientCustomName, MAX_BT_CUSTOM_NAME);
-
+                
                 // midi
                 ControlData.ConfigData.MidiConfig.MidiSerialEnable = LegacyConfigData->MidiSerialEnable;
                 ControlData.ConfigData.MidiConfig.EnableBTmidiCC = LegacyConfigData->EnableBTmidiCC;
@@ -2268,6 +2283,7 @@ static void DumpUserConfig(void)
     ESP_LOGI(TAG, "Config BT Xvive MD1: %d", (int)ControlData.ConfigData.BTConfig.BTClientMvaveChocolateEnable);
     ESP_LOGI(TAG, "Config BT Custom Client Enable: %d", (int)ControlData.ConfigData.BTConfig.BTClientCustomEnable);
     ESP_LOGI(TAG, "Config BT Custom Client Name: %s", ControlData.ConfigData.BTConfig.BTClientCustomName);
+    ESP_LOGI(TAG, "Config BT Peripheral Name: %s", ControlData.ConfigData.BTConfig.BTPeripheralName);
     ESP_LOGI(TAG, "Config Midi enable: %d", (int)ControlData.ConfigData.MidiConfig.MidiSerialEnable);
     ESP_LOGI(TAG, "Config Midi channel: %d", (int)ControlData.ConfigData.MidiConfig.MidiChannel);
     ESP_LOGI(TAG, "Config Toggle bypass: %d", (int)ControlData.ConfigData.GeneralConfig.GeneralDoublePressToggleBypass);
@@ -2712,6 +2728,7 @@ void control_set_default_config(void)
     ControlData.ConfigData.FootSwitchConfig.FootswitchMode = FOOTSWITCH_LAYOUT_1X2;
     ControlData.ConfigData.MidiConfig.EnableBTmidiCC = 0;
     memset((void*)ControlData.ConfigData.BTConfig.BTClientCustomName, 0, sizeof(ControlData.ConfigData.BTConfig.BTClientCustomName));
+    strcpy(ControlData.ConfigData.BTConfig.BTPeripheralName, "TnxBT");   
     ControlData.ConfigData.WiFiConfig.WiFiMode = WIFI_MODE_ACCESS_POINT_TIMED;
     strcpy(ControlData.ConfigData.WiFiConfig.WifiSSID, "TonexConfig");
     strcpy(ControlData.ConfigData.WiFiConfig.WifiPassword, "12345678");   
