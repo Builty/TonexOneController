@@ -136,7 +136,10 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
         dest = os.path.join(dirname, 'temp', 'bin', 'skins.bin')
         print('copying: ' + src + ' to ' + dest)
         shutil.copy(src, dest)
-        shutil.copy(src, merged_path)
+        
+        # copy for web updater
+        dest_merged = os.path.join(merged_path, 'skins.bin')
+        shutil.copy(src, dest_merged)
 
     # create zip file
     print('zip files...')

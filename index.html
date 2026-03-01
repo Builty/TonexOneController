@@ -11,23 +11,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
+
     <style>
       :root {
-        --bg: #ffffff;
-        --text: #1f2937;
-        --card-bg: #f8fafc;
-        --border: #e2e8f0;
-        --accent: #0ea5e9;
-        --accent-hover: #0284c7;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #111827;
-          --text: #f3f4f6;
-          --card-bg: #1f2937;
-          --border: #374151;
-        }
+        --bg: #1F1F1F;
+        --card-bg: #2A2A2A;
+        --text: #C0C0C0;
+        --text-secondary: #A0A0A0;
+        --border: #444444;
+        --accent: #FB9230;
+        --accent-hover: #E07B1A;
+        --accent-muted: rgba(251, 146, 48, 0.15);
+        --shadow: 0 4px 16px rgba(0,0,0,0.5);
       }
 
       body {
@@ -36,7 +31,7 @@
         color: var(--text);
         margin: 0;
         padding: 0;
-        line-height: 1.5;
+        line-height: 1.6;
       }
 
       .content {
@@ -54,11 +49,17 @@
         font-size: 2.5rem;
         font-weight: 700;
         margin: 0 0 8px;
+        color: var(--accent);
       }
 
       .repo-link {
         color: var(--accent);
         font-size: 1.1rem;
+      }
+
+      .repo-link:hover {
+        color: var(--accent-hover);
+        text-decoration: underline;
       }
 
       .section {
@@ -67,20 +68,20 @@
         border-radius: 12px;
         padding: 24px;
         margin-bottom: 32px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        box-shadow: var(--shadow);
       }
 
       h2 {
         font-size: 1.5rem;
         margin: 0 0 20px;
         font-weight: 600;
+        color: var(--accent);
       }
 
-      /* Group title inside platform section */
       .group-title {
         font-size: 1.1rem;
         font-weight: 600;
-        margin: 24px 0 12px;
+        margin: 28px 0 14px;
         color: var(--accent);
         border-bottom: 2px solid var(--accent);
         padding-bottom: 6px;
@@ -90,7 +91,6 @@
         margin-top: 0;
       }
 
-      /* Custom radio cards */
       .radios {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -107,51 +107,59 @@
 
       .radios label {
         display: block;
-        padding: 16px;
+        padding: 16px 20px;
         background: var(--bg);
         border: 2px solid var(--border);
         border-radius: 10px;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.18s ease;
         font-weight: 500;
+        color: var(--text);
       }
 
       .radios label:hover {
         border-color: var(--accent);
-        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+        background: rgba(251, 146, 48, 0.08);
+        box-shadow: 0 4px 14px var(--accent-muted);
       }
 
       .radios input[type="radio"]:checked + label {
         border-color: var(--accent);
-        background: rgba(14, 165, 233, 0.08);
-        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+        background: rgba(251, 146, 48, 0.12);
+        box-shadow: 0 4px 14px var(--accent-muted);
         font-weight: 600;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        .radios input[type="radio"]:checked + label {
-          background: rgba(14, 165, 233, 0.15);
-        }
+        color: var(--accent);
       }
 
       .button-row {
         text-align: center;
-        margin: 40px 0;
+        margin: 44px 0 32px;
       }
 
       esp-web-install-button {
         width: 100%;
         max-width: 400px;
         height: 60px;
-        font-size: 1.2rem !important;
+        font-size: 1.25rem !important;
         font-weight: 600 !important;
+        --esp-install-button-color: var(--accent);
+        --esp-install-button-hover: var(--accent-hover);
+        background: var(--card-bg) !important;
+        border: 2px solid var(--accent) !important;
+        color: var(--accent) !important;
+        border-radius: 10px;
+      }
+
+      esp-web-install-button:hover {
+        background: #513D2B !important;
+        border-color: var(--accent-hover) !important;
       }
 
       .footer {
         text-align: center;
         padding-top: 32px;
         border-top: 1px solid var(--border);
-        color: #6b7280;
+        color: var(--text-secondary);
         font-size: 0.9rem;
       }
 
@@ -160,9 +168,53 @@
         text-decoration: none;
       }
 
-      a:hover {
+      a:hover,
+      a:focus {
+        color: var(--accent-hover);
         text-decoration: underline;
       }
+
+      /* Note text */
+      div:not(.section, .button-row, .footer, .content, header) {
+        margin: 16px 0;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+      }
+      
+      esp-web-install-button {
+      width: 100%;
+      max-width: 200px;
+      height: 60px;
+      font-size: 1.25rem !important;
+      font-weight: 600 !important;
+    }
+
+    /* Use the exposed CSS variables to theme the internal button */
+    esp-web-install-button {
+      --esp-tools-button-color: #FB9230;              /* main accent color (orange) */
+      --esp-tools-button-text-color: #1F1F1F;         /* dark text on orange bg for contrast */
+      --esp-tools-button-border-radius: 10px;         /* match your rounded style */
+    }
+
+    /* Optional: hover/focus/active states (these target the host, but may need !important if Shadow DOM blocks) */
+    esp-web-install-button:hover,
+    esp-web-install-button:focus {
+      --esp-tools-button-color: #E07B1A;              /* darker orange hover */
+      filter: brightness(1.1);                        /* subtle lift */
+    }
+
+    /* If the button still looks "weird" (e.g. wrong size, padding, or default blue leaking), force more */
+    esp-web-install-button::part(button) {            /* if ::part is supported (newer versions might expose) */
+      background: #FB9230 !important;
+      color: #1F1F1F !important;
+      border: none !important;
+      box-shadow: 0 4px 12px rgba(251, 146, 48, 0.3) !important;
+    }
+
+    esp-web-install-button::part(button):hover {
+      background: #513D2B !important;                 /* your warm hover shade */
+      color: #FB9230 !important;
+    }
     </style>
 
     <script type="module" src="https://unpkg.com/esp-web-tools@latest/dist/web/install-button.js?module"></script>
