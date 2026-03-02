@@ -144,6 +144,20 @@ For more information about the firmware development and customisation, refer to 
 - https://github.com/vit3k/tonex_controller for great work on reverse engineering the Tonex One USB protocol
 
 ## Firmware Release Notes <a name="release_notes"></a>
+V2.0.3.2 beta 1
+- Minor update for bug fixes and some small features
+- Fixed issue where the "toast" message for WiFi connection was not rotated on the 1.69" landscape version 
+- Support for Pirate Midi Polar Mini V2 and Plus V2
+- Increased font size for 1.69" preset name text 
+- Added calculated Midi CC values next to params in web UI 
+- Fixed occasional issues with config not saving
+- Fixed incorrect effect footswitch handling on the GP5 
+- Fixed web UI not showing the current setting for the custom bluetooth device name 
+- Changes to 4.3B platforms to increase the LCD pixel clock, due to some tolerance issues with the LCD 
+- Fixed issue where sometimes the GP5 pedal preset names could be missing, due to the input queue filling up 
+- Official support for the Waveshare 7" and Waveshare 4.3" (not B.) Not some hardware limitations, and resistor removal required
+- Added the ability to map Midi Program Change values to any preset index. Default is 1:1 mapping. Change in web UI 
+
 V2.0.2.2
 - Major update. Added support for the Valeton GP5.
 - Reworked Web UI extensively. Menu system; Split into separate files; Larger effect images; Faster response with asyncronous web sockets.

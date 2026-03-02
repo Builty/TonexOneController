@@ -78,7 +78,7 @@ limitations under the License.
 static const char *TAG = "platform_ws43b";
 
 // LCD panel config
-#define DISPLAY_LCD_PIXEL_CLOCK_HZ     (16000000)
+#define DISPLAY_LCD_PIXEL_CLOCK_HZ     (15000000)
 #define DISPLAY_LCD_BK_LIGHT_ON_LEVEL  1
 #define DISPLAY_LCD_BK_LIGHT_OFF_LEVEL !DISPLAY_LCD_BK_LIGHT_ON_LEVEL
 
