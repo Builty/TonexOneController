@@ -61,7 +61,6 @@ limitations under the License.
 
 #define MAX_TEXT_LENGTH                     128
 #define MAX_BT_CUSTOM_NAME                  25    
-#define MAX_BT_PERIPHERAL_NAME              25    
 #define MAX_PRESET_USER_TEXT_LENGTH         32
 #define LEGACY_CONFIG_USER_COUNT            20
 

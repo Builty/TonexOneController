@@ -134,7 +134,7 @@ static struct gattc_profile_inst gl_profile_tab =
 // Server stuff
 #define GATTS_NUM_HANDLE_TEST_A     4
 
-static char periph_device_name[] = "TnxBT";
+static char periph_device_name[MAX_BT_PERIPHERAL_NAME + 1];
 
 #define GATTS_DEMO_CHAR_VAL_LEN_MAX 20
 #define PREPARE_BUF_MAX_SIZE        1024

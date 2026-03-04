@@ -309,6 +309,7 @@ typedef struct __attribute__ ((packed))
 #define MAX_SUPPORTED_PRESETS                   150
 #define MAX_PRESET_NAME_LENGTH                  33
 #define MAX_PC_MAP                              128 // 0 to 127, matches Midi values
+#define MAX_BT_PERIPHERAL_NAME                  25    
 
 // thread safe public API
 void control_request_preset_up(void);
