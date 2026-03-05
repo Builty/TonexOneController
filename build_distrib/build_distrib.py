@@ -141,13 +141,20 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
         dest_merged = os.path.join(merged_path, 'skins.bin')
         shutil.copy(src, dest_merged)
 
+    # generate manifest file for web tool
+    generate_manifest(merged_path, merged_filename, "ESP32-S3", out_filename, skins_path is not None)
+    
+    # copy manifest to zip bin folder 
+    src = os.path.join(merged_path, 'manifest.json')
+    dest = os.path.join(dirname, 'temp', 'bin', 'manifest.json')
+    print('Manifest source path:' + src)
+    print('Manifest dest path:' + dest)
+    shutil.copy(src, dest)
+    
     # create zip file
     print('zip files...')
     directory = os.path.join(dirname, 'temp')
     shutil.make_archive(out_filename, 'zip', directory)    
-    
-    # generate manifest file for web tool
-    generate_manifest(merged_path, merged_filename, "ESP32-S3", out_filename, skins_path is not None)
         
     print('Build complete\n\n')
     
