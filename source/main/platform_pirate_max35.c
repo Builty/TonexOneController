@@ -67,11 +67,9 @@ limitations under the License.
 #include "usb_tonex_one.h"
 #include "usb_tonex.h"
 #include "display.h"
-#include "CH422G.h"
 #include "control.h"
 #include "task_priorities.h" 
 #include "midi_control.h"
-#include "LP5562.h"
 #include "tonex_params.h"
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_PIRATE_MIDI_POLAR_MAX_V2
@@ -85,7 +83,7 @@ static const char *TAG = "platform_piratemax35";
 
 /* LCD settings */
 #define POLAR_MAX_35_LCD_SPI_NUM             (SPI2_HOST)
-#define POLAR_MAX_35_LCD_PIXEL_CLK_HZ        (80 * 1000 * 1000)
+#define POLAR_MAX_35_LCD_PIXEL_CLK_HZ        (48 * 1000 * 1000)
 #define POLAR_MAX_35_LCD_CMD_BITS            (8)
 #define POLAR_MAX_35_LCD_PARAM_BITS          (8)
 #define POLAR_MAX_35_LCD_COLOR_SPACE         (LCD_RGB_ELEMENT_ORDER_RGB)
@@ -94,8 +92,8 @@ static const char *TAG = "platform_piratemax35";
 #define POLAR_MAX_35_LCD_DRAW_BUFF_HEIGHT    (50)
 #define POLAR_MAX_35_LCD_BL_ON_LEVEL         (0)
 
-#define BUF_SIZE                        (1024)
-#define I2C_MASTER_TIMEOUT_MS           1000
+#define BUF_SIZE                             (1024)
+#define I2C_MASTER_TIMEOUT_MS                1000
 
 static SemaphoreHandle_t I2CMutexHandle;
 static lv_disp_draw_buf_t disp_buf; // contains internal graphic buffer(s) called draw buffer(s)
@@ -105,33 +103,29 @@ static esp_lcd_panel_handle_t lcd_panel = NULL;
 static esp_lcd_touch_handle_t tp = NULL;
 static esp_lcd_panel_io_handle_t tp_io_handle = NULL;
 static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
-static esp_io_expander_handle_t expander_handle = NULL;
 
 // below from Waveshare sample
 static const st7796_lcd_init_cmd_t lcd_init_cmds[] = 
 {
-//  {cmd, { data }, data_size, delay_ms}
-    /* Power contorl B, power control = 0, DC_ENA = 1 */
-    {0x11, (uint8_t []){ 0x00 }, 0, 120},
+    // Init sequence from Waveshare Arduino sample
 
-    // {0x36, (uint8_t []){ 0x08 }, 1, 0},
-
-    {0x3A, (uint8_t []){ 0x05 }, 1, 0},
-    {0xF0, (uint8_t []){ 0xC3 }, 1, 0},
-    {0xF0, (uint8_t []){ 0x96 }, 1, 0},
-    {0xB4, (uint8_t []){ 0x01 }, 1, 0},
-    {0xB7, (uint8_t []){ 0xC6 }, 1, 0},
-    {0xC0, (uint8_t []){ 0x80, 0x45 }, 2, 0},
-    {0xC1, (uint8_t []){ 0x13 }, 1, 0},
-    {0xC2, (uint8_t []){ 0xA7 }, 1, 0},
-    {0xC5, (uint8_t []){ 0x0A }, 1, 0},
-    {0xE8, (uint8_t []){ 0x40, 0x8A, 0x00, 0x00, 0x29, 0x19, 0xA5, 0x33}, 8, 0},
-    {0xE0, (uint8_t []){ 0xD0, 0x08, 0x0F, 0x06, 0x06, 0x33, 0x30, 0x33, 0x47, 0x17, 0x13, 0x13, 0x2B, 0x31}, 14, 0},
-    {0xE1, (uint8_t []){ 0xD0, 0x0A, 0x11, 0x0B, 0x09, 0x07, 0x2F, 0x33, 0x47, 0x38, 0x15, 0x16, 0x2C, 0x32},14, 0},
-    {0xF0, (uint8_t []){ 0x3C }, 1, 0},
-    {0xF0, (uint8_t []){ 0x69 }, 1, 120},
-    {0x21, (uint8_t []){ 0x00 }, 0, 0},
-    {0x29, (uint8_t []){ 0x00 }, 0, 0},
+    //  {cmd, { data }, data_size, delay_ms}
+    { 0x3A, (uint8_t []){0x55}, 1, 0}, 
+    { 0xF0, (uint8_t []){0xC3}, 1, 0},
+    { 0xF0, (uint8_t []){0x96}, 1, 0},
+    { 0xB4, (uint8_t []){0x01}, 1, 0},
+    { 0xB6, (uint8_t []){0x80, 0x22, 0x3B}, 3, 0},
+    { 0xE8, (uint8_t []){0x40, 0x8A, 0x00, 0x00, 0x29, 0x19, 0xA5, 0x33}, 8, 0},
+    { 0xC1, (uint8_t []){0x06}, 1, 0}, 
+    { 0xC2, (uint8_t []){0xA7}, 1, 0},
+    { 0xC5, (uint8_t []){0x18}, 1, 0},
+    { 0xE0, (uint8_t []){0xF0, 0x09, 0x0B, 0x06, 0x04, 0x15, 0x2F, 0x54, 0x42, 0x3C, 0x17, 0x14, 0x18, 0x1B}, 14, 0},        
+    { 0xE1, (uint8_t []){0xE0, 0x09, 0x0B, 0x06, 0x04, 0x03, 0x2B, 0x43, 0x42, 0x3B, 0x16, 0x14, 0x17, 0x1B}, 14, 0},
+    { 0xF0, (uint8_t []){0x3C}, 1, 0},
+    { 0xF0, (uint8_t []){0x69}, 1, 0},
+    { 0x11, (uint8_t []){0x00}, 0, 120},
+    { 0x38, (uint8_t []){0x00}, 0, 0},
+    { 0x29, (uint8_t []){0x00}, 0, 120}
 };
 
 /****************************************************************************
@@ -305,9 +299,12 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     }
 
     esp_lcd_panel_invert_color(lcd_panel, true);
+    
+    // 90 degree rotation
+    esp_lcd_panel_swap_xy(lcd_panel, true);
+    esp_lcd_panel_mirror(lcd_panel, false, true);
+
     esp_lcd_panel_disp_on_off(lcd_panel, true);
-    //esp_lcd_panel_swap_xy(lcd_panel, true);
-    //esp_lcd_panel_mirror(lcd_panel, false, true);
 
     ESP_LOGI(TAG, "Initialize LVGL library");
     lv_init();
@@ -328,7 +325,6 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     disp_drv->flush_cb = display_lvgl_flush_cb;
     disp_drv->draw_buf = &disp_buf;
     disp_drv->user_data = lcd_panel;
-    //?? disp_drv->sw_rotate = 1;
 
     lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(disp_drv);
 
@@ -354,7 +350,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     ledc_channel_config(&ledc_channel);
 
     // set brightness
-    uint8_t brightness = 70;
+    uint8_t brightness = 100;
     uint32_t duty = (brightness * (POLAR_MAX_35_LCD_BL_LEDC_DUTY - 1)) / 100;
     ledc_set_duty(POLAR_MAX_35_LCD_BL_LEDC_MODE, POLAR_MAX_35_LCD_BL_LEDC_CHANNEL, duty);
     ledc_update_duty(POLAR_MAX_35_LCD_BL_LEDC_MODE, POLAR_MAX_35_LCD_BL_LEDC_CHANNEL);
@@ -391,9 +387,9 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
             .rst_gpio_num = -1,
             .int_gpio_num = -1,
             .flags = {
-                .swap_xy = 0,
+                .swap_xy = 1,
                 .mirror_x = 0,
-                .mirror_y = 0,
+                .mirror_y = 1,
             },
         };
     

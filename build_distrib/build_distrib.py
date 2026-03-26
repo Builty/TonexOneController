@@ -54,6 +54,46 @@ def generate_manifest(merged_path, merged_filename, chip_family, build_name, use
         json.dump(manifest, f, indent=2)
 
     print('Generated manifest.json for %s (chip: %s)' % (build_name, chip_family))
+
+def generate_polar_manifest(output_path, product_name, use_skins):
+    manifest = {
+        "name": version,
+        "version": "Controller",
+        "improv": False,
+        "new_install_prompt_erase": True, 
+        "bootloader": {
+            "address": "0x0000",
+            "fileName": "bootloader_" + product_name + "_" + version + ".bin"
+        },
+        "partitions": {
+            "address": "0x8000",
+            "fileName": "partitions_" + product_name + "_" + version + ".bin"
+            
+        },
+        "ota": {
+            "address": "0xd000",
+            "fileName": "ota_" + product_name + "_" + version + ".bin"           
+        },
+        "application": {
+            "address": "0x10000",
+            "fileName": product_name + "_" + version + ".bin"
+            
+        },
+    }
+
+    if use_skins:
+        manifest["skins"] = {
+            "address": "0x4F2000",
+            "fileName": "skins_" + product_name + "_" + version + ".bin"  
+        }
+    
+    filename = 'flashmap_' + product_name + "_" + version + '.json'
+    manifest_path = os.path.join(output_path, filename)
+    with open(manifest_path, 'w', encoding='utf-8') as f:
+        json.dump(manifest, f, indent=2)
+
+    print('Generated manifest_polar.json for %s' % (product_name))
+    
     
 def delete_files_in_folder(directory):
     try:
@@ -157,7 +197,57 @@ def build_distribution(template, target_folder, include_ota, out_filename, skins
     shutil.make_archive(out_filename, 'zip', directory)    
         
     print('Build complete\n\n')
-    
+
+def build_polar(product_name, build_location, add_skins=False):     
+    print('BuildPolar for: ', product_name)
+       
+    polar_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'polar')   
+              
+    # copy bootloader
+    print('copy bootloader...')
+    src = os.path.join(build_location, 'bootloader.bin')
+    dest = os.path.join(polar_folder, 'bootloader_' + product_name + '_' + version + '.bin')
+    print('copying: ' + src + ' to ' + dest)
+    shutil.copy(src, dest)
+
+    # copy partition table
+    print('copy partition table...')
+    src = os.path.join(build_location, 'partition-table.bin')
+    dest = os.path.join(polar_folder, 'partitions_' + product_name  + '_' + version + '.bin')
+    print('copying: ' + src + ' to ' + dest)
+    shutil.copy(src, dest)
+
+    # copy ota_data_initial
+    print('copy ota_data_initial...')
+    src = os.path.join(build_location, 'ota_data_initial.bin')
+    dest = os.path.join(polar_folder, 'ota_' + product_name + '_' + version + '.bin')
+    print('copying: ' + src + ' to ' + dest)
+    shutil.copy(src, dest)
+
+    # copy tonex bin
+    print('copy tonex bin...')
+    src = os.path.join(build_location, 'TonexController.bin')
+    dest = os.path.join(polar_folder, product_name + '_' + version  + '.bin')
+    print('copying: ' + src + ' to ' + dest)
+    shutil.copy(src, dest)
+
+    if add_skins:
+        # copy skins bin
+        print('copy skins bin...')
+        src = os.path.join(build_location, 'skins.bin')
+        dest = os.path.join(polar_folder, 'skins_' + product_name + '_' + version + '.bin')
+        print('copying: ' + src + ' to ' + dest)
+        shutil.copy(src, dest)
+        
+    # generate manifest
+    generate_polar_manifest(polar_folder, product_name, add_skins)
+                
+    print('Polar Build complete\n\n')
+
+print('Prepare Polar folder')
+polar_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'polar')
+delete_files_in_folder(polar_folder)
+ 
 # Build Waveshare 1.69" 
 zip_name = 'TonexController_V' + version + '_Waveshare_1_69'
 build_distribution('template_cust_partition', 'build_ws169', True, zip_name)
@@ -217,29 +307,41 @@ build_distribution('template_cust_partition', 'build_ws19t', True, zip_name)
 # Build Pirate Midi Polar Pico (Zero)
 zip_name = 'TonexController_V' + version + '_PirateMidi_PolarPico'
 build_distribution('template_cust_partition', 'build_piratezero', True, zip_name)
+build_polar('polar-pico', zip_name)     
 
 # Build Pirate Midi Polar Mini (1.69")
 zip_name = 'TonexController_V' + version + '_PirateMidi_PolarMini'
 build_distribution('template_cust_partition', 'build_pirate169', True, zip_name)
+build_polar('polar-mini', zip_name)     
 
 # Build Pirate Midi Polar Plus (1.69" landscape)
 zip_name = 'TonexController_V' + version + '_PirateMidi_PolarPlus'
 build_distribution('template_cust_partition', 'build_pirate169land', True, zip_name)
+build_polar('polar-plus', zip_name)     
 
 # Build Pirate Midi Polar Mini V2 (1.69")
 zip_name = 'TonexController_V' + version + '_PirateMidi_PolarMiniV2'
 build_distribution('template_cust_partition', 'build_pirateminiv2', True, zip_name)
+build_polar('polar-mini-v2', zip_name)     
 
 # Build Pirate Midi Polar Plus V2 (1.69")
 zip_name = 'TonexController_V' + version + '_PirateMidi_PolarPlusV2'
 build_distribution('template_cust_partition', 'build_pirateplusv2', True, zip_name)
+build_polar('polar-plus-v2', zip_name)     
 
 # Build Pirate Midi Polar Max (4.3B)
 zip_name = 'TonexController_V' + version + '_PirateMidi_PolarMax'
 build_distribution('template_cust_partition_16MB', 'build_pirate43B', True, zip_name, '16bit')
+build_polar('polar-max', zip_name, True)     
+
+# Build Pirate Midi Polar Max V2 (3.5)
+zip_name = 'TonexController_V' + version + '_PirateMidi_PolarMax35'
+build_distribution('template_cust_partition_16MB', 'build_piratemax35', True, zip_name, '16bitswapped')
+build_polar('polar-max-v2', zip_name, True)     
 
 # Build Pirate Midi Polar Pro (1.69")
 zip_name = 'TonexController_V' + version + '_PirateMidi_PolarPro'
 build_distribution('template_cust_partition', 'build_piratepro', True, zip_name)
+build_polar('polar-pro', zip_name)     
 
 print('All done')
