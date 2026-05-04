@@ -350,32 +350,35 @@ err:
 *****************************************************************************/
 static void leds_set_raw_data_from_colour(uint8_t led, tLedColour* colour)
 {
-    if (led >= CONFIG_TONEX_CONTROLLER_LED_NUMBER)
+    // perform mapping 
+    uint8_t physical_led = leds_get_physical_index_for_virtual_index(led); 
+
+    if (physical_led >= CONFIG_TONEX_CONTROLLER_LED_NUMBER)
     {
-        ESP_LOGE(TAG, "Invalid Led %d", led);
+        ESP_LOGE(TAG, "Invalid Led %d", physical_led);
         return;
     }
 
 #if CONFIG_TONEX_CONTROLLER_LED_COLOUR_ORDER_GBR
     // led is GBR colour order
-    LedControl.led_strip_pixels[led].Byte_1 = colour->Green;
-    LedControl.led_strip_pixels[led].Byte_2 = colour->Blue;
-    LedControl.led_strip_pixels[led].Byte_3 = colour->Red;
+    LedControl.led_strip_pixels[physical_led].Byte_1 = colour->Green;
+    LedControl.led_strip_pixels[physical_led].Byte_2 = colour->Blue;
+    LedControl.led_strip_pixels[physical_led].Byte_3 = colour->Red;
 #endif        
 #if CONFIG_TONEX_CONTROLLER_LED_COLOUR_ORDER_RGB
     // led is RGB colour order
-    LedControl.led_strip_pixels[led].Byte_1 = colour->Red;
-    LedControl.led_strip_pixels[led].Byte_2 = colour->Green;
-    LedControl.led_strip_pixels[led].Byte_3 = colour->Blue;
+    LedControl.led_strip_pixels[physical_led].Byte_1 = colour->Red;
+    LedControl.led_strip_pixels[physical_led].Byte_2 = colour->Green;
+    LedControl.led_strip_pixels[physical_led].Byte_3 = colour->Blue;
 #endif
 #if CONFIG_TONEX_CONTROLLER_LED_COLOUR_ORDER_GRB
     // led is RGB colour order
-    LedControl.led_strip_pixels[led].Byte_1 = colour->Green;
-    LedControl.led_strip_pixels[led].Byte_2 = colour->Red;
-    LedControl.led_strip_pixels[led].Byte_3 = colour->Blue;
+    LedControl.led_strip_pixels[physical_led].Byte_1 = colour->Green;
+    LedControl.led_strip_pixels[physical_led].Byte_2 = colour->Red;
+    LedControl.led_strip_pixels[physical_led].Byte_3 = colour->Blue;
 #endif
 
-    ESP_LOGI(TAG, "Led %d set R:%d G:%d, B:%d", led, colour->Red, colour->Green, colour->Blue);
+    ESP_LOGI(TAG, "Led %d set R:%d G:%d, B:%d", physical_led, colour->Red, colour->Green, colour->Blue);
 }
 #endif //CONFIG_TONEX_CONTROLLER_LED_CONTROL_DISABLED
 
@@ -492,6 +495,20 @@ void leds_set_colour(uint16_t led_flags, tLedColour* colour)
         ESP_LOGE(TAG, "leds_set_state queue send failed!");            
     }
 #endif    
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+__attribute__((weak)) uint8_t leds_get_physical_index_for_virtual_index(uint8_t virtual_index) 
+{
+    // default 1:1 mapping.
+    // functon is weak, platform can replace
+    return virtual_index;    
 }
 
 /****************************************************************************

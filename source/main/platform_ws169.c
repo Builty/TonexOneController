@@ -191,6 +191,28 @@ __attribute__((unused)) lv_dir_t platform_adjust_gesture(lv_dir_t gesture)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_SUBVARIANT_PM_PLUSV2
+uint8_t leds_get_physical_index_for_virtual_index(uint8_t virtual_index) 
+{ 
+    // invert left/right
+    if (virtual_index == 0)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+#endif 
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex, lv_disp_drv_t* pdisp_drv)
 {    
     __attribute__((unused)) esp_err_t ret = ESP_OK;

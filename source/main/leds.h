@@ -28,6 +28,9 @@ void leds_handle(void);
 // threadsafe public API
 void leds_set_colour(uint16_t led_flags, tLedColour* colour);
 
+// weak function can be overwriiten in platform file
+uint8_t leds_get_physical_index_for_virtual_index(uint8_t virtual_index);
+
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

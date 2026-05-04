@@ -45,6 +45,17 @@ menu "Tonex Controller Configuration"
             
     endchoice
     
+    choice TONEX_CONTROLLER_HARDWARE_SUBVARIANT
+        prompt "Tonex Controller Hardware Subvariant"
+        default TONEX_CONTROLLER_HARDWARE_SUBVARIANT_NONE
+    
+        config TONEX_CONTROLLER_HARDWARE_SUBVARIANT_NONE
+            bool "None"
+        
+        config TONEX_CONTROLLER_HARDWARE_SUBVARIANT_PM_PLUSV2
+            bool "Pirate Midi Plus V2"                    
+    endchoice
+
     config TONEX_CONTROLLER_HAS_DISPLAY
        bool "LCD display is used"
         default "n"
