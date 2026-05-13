@@ -460,7 +460,7 @@ void create_screen_screen1() {
                             lv_obj_set_pos(obj, 335, -12);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_tc_off);
-                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_PRESSING, (void *)0);
+                            lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_LONG_PRESSED, (void *)0);
                             lv_obj_add_event_cb(obj, action_effect_icon_clicked, LV_EVENT_SHORT_CLICKED, (void *)0);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                         }
