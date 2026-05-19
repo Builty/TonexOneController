@@ -2808,6 +2808,7 @@ void control_set_default_config(void)
     
     for (uint8_t loop = 0; loop < MAX_PC_MAP; loop++)
     {
+        // issue here, really need to use (loop + usb_get_first_preset_index_for_connected_modeller()) but modeller may not yet be connected
         ControlData.ConfigData.PCMapConfig.PCMap[loop] = loop;
     }
 }

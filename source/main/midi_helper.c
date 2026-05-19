@@ -198,11 +198,13 @@ uint8_t midi_helper_process_incoming_data(uint8_t* data, uint8_t length, uint8_t
                 // Program change Should be 0xC0 XX (XX = preset index, 0-based)
                 if (channel == midi_channel)
                 {
+                    //ESP_LOGW(TAG, "Midi PC val %d", (int)*ptr);
+
                     // load the mapped value for this program change value
                     uint8_t map_val = control_get_pc_map()[*ptr];
 
                     // set preset
-                    control_request_preset_index(map_val);
+                    control_request_preset_index(map_val); 
                 }
 
                 ptr++;

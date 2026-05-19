@@ -4804,7 +4804,7 @@ function buildPCMap(map) {
         // Create the <select> element
         const select = document.createElement('select');
         
-        for (let val = startPreset; val <= maxPresets; val++) {
+        for (let val = 0; val < maxPresets; val++) {
             const option = document.createElement('option');
             option.value = val;
             option.textContent = val;
@@ -4845,8 +4845,9 @@ function resetPCMap() {
     
     selects.forEach((select, index) => {
         // Set the selected value to match the PC number
-        if (index > maxPresets) {
-            select.value = maxPresets;
+        // note 0-based index here. 20 max presets is values 0 to 19
+        if (index >= maxPresets) {
+            select.value = maxPresets - 1;
         } else {
             select.value = index;
         }

@@ -578,10 +578,10 @@ static void wifi_build_config_json(void)
     {
         uint8_t map_val = control_get_pc_map()[index];
 
-        if (map_val > usb_get_max_presets_for_connected_modeller())
+        if (map_val > (usb_get_max_presets_for_connected_modeller() - usb_get_first_preset_index_for_connected_modeller()))
         {
             // clamp it
-            map_val = usb_get_max_presets_for_connected_modeller();
+            map_val = usb_get_max_presets_for_connected_modeller() - usb_get_first_preset_index_for_connected_modeller();
         }
         json_gen_arr_set_int(&pWebConfig->jstr, map_val);
     }
