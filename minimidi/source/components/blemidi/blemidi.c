@@ -261,6 +261,8 @@ static int32_t blemidi_outbuffer_push(uint8_t blemidi_port, uint8_t *stream, siz
     // but just in case of future extensions, we prepare dynamic memory allocation for "big packets"
     blemidi_outbuffer_flush(blemidi_port);
     {
+      if( len > SIZE_MAX - max_header_size )
+        return -1; // integer overflow guard
       size_t packet_len = max_header_size + len;
       uint8_t *packet = malloc(packet_len);
       if( packet == NULL ) {
@@ -551,7 +553,7 @@ static void blemidi_prepare_write_event_env(esp_gatt_if_t gatts_if, prepare_type
     ESP_LOGI(BLEMIDI_TAG, "prepare write, handle = %d, value len = %d", param->write.handle, param->write.len);
     esp_gatt_status_t status = ESP_GATT_OK;
     if (prepare_write_env->prepare_buf == NULL) {
-        prepare_write_env->prepare_buf = (uint8_t *)malloc(PREPARE_BUF_MAX_SIZE * sizeof(uint8_t));
+        prepare_write_env->prepare_buf = (uint8_t *)malloc(PREPARE_BUF_MAX_SIZE);
         prepare_write_env->prepare_len = 0;
         if (prepare_write_env->prepare_buf == NULL) {
             ESP_LOGE(BLEMIDI_TAG, "%s, Gatt_server prep no mem", __func__);
