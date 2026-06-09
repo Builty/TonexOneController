@@ -958,8 +958,21 @@ esp_err_t midi_helper_tonex_adjust_param_via_midi(uint8_t change_num, uint8_t mi
             value = midi_helper_scale_midi_to_float(param, midi_value);
         } break;
         
-        // 89: bank down
-        // 90: bank up    
+        case 89:
+        {
+            // A/B slot bank down
+            control_request_ab_bank_down();
+
+            return ESP_OK;
+        } break;
+        
+        case 90:
+        {
+            // A/B slot bank up
+            control_request_ab_bank_up();
+
+            return ESP_OK;
+        } break;
 
         case 91:
         {

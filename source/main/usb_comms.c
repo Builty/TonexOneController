@@ -525,6 +525,34 @@ void usb_load_preset_to_slot_b(uint32_t preset)
 }
 
 /****************************************************************************
+* NAME:
+* DESCRIPTION:
+* PARAMETERS:
+* RETURN:
+* NOTES:
+*****************************************************************************/  
+void usb_set_ab_slots(uint32_t preset_a, uint32_t preset_b)
+{
+    tUSBMessage message;
+
+    if (usb_input_queue == NULL)
+    {
+        ESP_LOGE(TAG, "usb_set_ab_slots queue null");
+    }
+    else
+    {
+        message.Command = USB_COMMAND_SET_AB_SLOTS;
+        message.Payload = ((preset_a & 0xFF) << 8) | (preset_b & 0xFF);
+
+        // send to queue
+        if (xQueueSend(usb_input_queue, (void*)&message, 0) != pdPASS)
+        {
+            ESP_LOGE(TAG, "usb_set_ab_slots queue send failed!");
+        }
+    }
+}
+
+/****************************************************************************
 * NAME:        
 * DESCRIPTION: 
 * PARAMETERS:  

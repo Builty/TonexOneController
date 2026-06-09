@@ -73,6 +73,8 @@ enum CommandEvents
     EVENT_PRESET_UP,
     EVENT_PRESET_INDEX,
     EVENT_BANK_INDEX,
+    EVENT_AB_BANK_DOWN,
+    EVENT_AB_BANK_UP,
     EVENT_SET_PRESET_NAME,
     EVENT_SET_PRESET_DETAILS,
     EVENT_SET_USB_STATUS,
@@ -248,6 +250,7 @@ typedef struct
 typedef struct 
 {
     uint32_t PresetIndex;                        // 0-based index
+    uint8_t ABSlotBank;                          // 0-based AB slot bank (Slot A = bank*2, Slot B = bank*2+1)
     char PresetNames[MAX_SUPPORTED_PRESETS][MAX_PRESET_NAME_LENGTH];
     uint32_t USBStatus;
     uint32_t BTStatus;
@@ -349,6 +352,46 @@ static uint8_t process_control_command(tControlMessage* message)
 #endif
         } break;
 
+        case EVENT_AB_BANK_DOWN:
+        {
+            if (ControlData.USBStatus != 0)
+            {
+                uint8_t max_bank = (usb_get_max_presets_for_connected_modeller() / 2) - 1;
+
+                if (ControlData.ABSlotBank > 0)
+                {
+                    ControlData.ABSlotBank--;
+                }
+                else if (control_get_config_item_int(CONFIG_ITEM_LOOP_AROUND))
+                {
+                    ControlData.ABSlotBank = max_bank;
+                }
+
+                // load both slots, force A/B (Double) mode, activate Slot A and refresh display
+                usb_set_ab_slots(ControlData.ABSlotBank * 2, ControlData.ABSlotBank * 2 + 1);
+            }
+        } break;
+
+        case EVENT_AB_BANK_UP:
+        {
+            if (ControlData.USBStatus != 0)
+            {
+                uint8_t max_bank = (usb_get_max_presets_for_connected_modeller() / 2) - 1;
+
+                if (ControlData.ABSlotBank < max_bank)
+                {
+                    ControlData.ABSlotBank++;
+                }
+                else if (control_get_config_item_int(CONFIG_ITEM_LOOP_AROUND))
+                {
+                    ControlData.ABSlotBank = 0;
+                }
+
+                // load both slots, force A/B (Double) mode, activate Slot A and refresh display
+                usb_set_ab_slots(ControlData.ABSlotBank * 2, ControlData.ABSlotBank * 2 + 1);
+            }
+        } break;
+        
         case EVENT_SET_PRESET_NAME:
         {
             memcpy((void*)ControlData.PresetNames[message->Value], (void*)message->Text, MAX_PRESET_NAME_LENGTH);
@@ -1039,6 +1082,51 @@ void control_request_bank_index(uint8_t index)
     if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_request_bank_index queue send failed!");            
+    }
+}
+
+
+/****************************************************************************
+* NAME:
+* DESCRIPTION:
+* PARAMETERS:
+* RETURN:
+* NOTES:
+*****************************************************************************/
+void control_request_ab_bank_down(void)
+{
+    tControlMessage message;
+
+    ESP_LOGI(TAG, "control_request_ab_bank_down");
+
+    message.Event = EVENT_AB_BANK_DOWN;
+
+    // send to queue
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
+    {
+        ESP_LOGE(TAG, "control_request_ab_bank_down queue send failed!");
+    }
+}
+
+/****************************************************************************
+* NAME:
+* DESCRIPTION:
+* PARAMETERS:
+* RETURN:
+* NOTES:
+*****************************************************************************/
+void control_request_ab_bank_up(void)
+{
+    tControlMessage message;
+
+    ESP_LOGI(TAG, "control_request_ab_bank_up");
+
+    message.Event = EVENT_AB_BANK_UP;
+
+    // send to queue
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
+    {
+        ESP_LOGE(TAG, "control_request_ab_bank_up queue send failed!");
     }
 }
 

@@ -184,6 +184,7 @@ static volatile tInputBufferEntry* InputBuffers;
 static TonexStatus usb_tonex_one_parse(uint8_t* message, uint16_t inlength);
 static esp_err_t usb_tonex_one_set_active_slot(Slot newSlot);
 static esp_err_t usb_tonex_one_set_preset_in_slot(uint16_t preset, Slot newSlot, uint8_t selectSlot);
+static esp_err_t usb_tonex_one_set_ab_slots(uint16_t preset_a, uint16_t preset_b);
 static uint16_t usb_tonex_one_get_current_active_preset(void);
 
 
@@ -544,6 +545,62 @@ static esp_err_t usb_tonex_one_set_preset_in_slot(uint16_t preset, Slot newSlot,
 
     // send it
     return tonex_common_transmit(cdc_dev, FramedBuffer, framed_length, TONEX_USB_TX_BUFFER_SIZE);
+}
+
+/****************************************************************************
+* NAME:
+* DESCRIPTION:
+* PARAMETERS:
+* RETURN:
+* NOTES:
+*****************************************************************************/
+static esp_err_t usb_tonex_one_set_ab_slots(uint16_t preset_a, uint16_t preset_b)
+{
+    uint16_t framed_length;
+    uint16_t len = TonexData->Message.PedalData.StateDataLength;
+
+    ESP_LOGI(TAG, "Setting AB slots. A: %d B: %d (Double mode, Slot A active)", (int)preset_a, (int)preset_b);
+
+    // Build message, length to 0 for now                    len LSB  len MSB
+    uint8_t message[] = {0xb9, 0x03, 0x81, 0x06, 0x03, 0x82, 0,       0,       0x80, 0x0b, 0x03};
+
+    // set length
+    message[6] = len & 0xFF;
+    message[7] = (len >> 8) & 0xFF;
+
+    // force A/B (Double) mode (0 = A/B mode, 1 = stomp mode)
+    TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_STOMP_MODE] = 0;
+
+    // make sure direct monitoring is on so sound not muted from USB connection
+    TonexData->Message.PedalData.StateData[len - TONEX_STATE_OFFSET_END_DIRECT_MONITOR] = 1;
+
+    // set both slot presets
+    TonexData->Message.PedalData.StateData[len - TONEX_STATE_OFFSET_END_SLOT_A_PRESET] = preset_a;
+    TonexData->Message.PedalData.StateData[len - TONEX_STATE_OFFSET_END_SLOT_B_PRESET] = preset_b;
+
+    // make Slot A the active slot
+    TonexData->Message.PedalData.StateData[len - TONEX_STATE_OFFSET_END_CURRENT_SLOT] = (uint8_t)A;
+    TonexData->Message.CurrentSlot = A;
+
+    // update cached slot presets so the active preset reports correctly
+    TonexData->Message.SlotAPreset = preset_a;
+    TonexData->Message.SlotBPreset = preset_b;
+
+    // build total message
+    memcpy((void*)TxBuffer, (void*)message, sizeof(message));
+    memcpy((void*)&TxBuffer[sizeof(message)], (void*)TonexData->Message.PedalData.StateData, len);
+
+    // do framing
+    framed_length = tonex_common_add_framing(TxBuffer, sizeof(message) + len, FramedBuffer);
+
+    // send it
+    if (tonex_common_transmit(cdc_dev, FramedBuffer, framed_length, TONEX_USB_TX_BUFFER_SIZE) != ESP_OK)
+    {
+        return ESP_FAIL;
+    }
+
+    // refresh the display to show Slot A's preset as active
+    return usb_tonex_one_request_preset_details(preset_a, 0);
 }
 
 /****************************************************************************
@@ -1362,6 +1419,25 @@ void usb_tonex_one_handle(class_driver_t* driver_obj)
                             ESP_LOGW(TAG, "Invalid preset index %d for Slot B (max %d)", (int)message.Payload, MAX_PRESETS_TONEX_ONE - 1);
                         }
                     } break;   
+                    
+                    case USB_COMMAND_SET_AB_SLOTS:
+                    {
+                        uint16_t preset_a = (message.Payload >> 8) & 0xFF;
+                        uint16_t preset_b = message.Payload & 0xFF;
+
+                        if ((preset_a < MAX_PRESETS_TONEX_ONE) && (preset_b < MAX_PRESETS_TONEX_ONE))
+                        {
+                            ESP_LOGI(TAG, "Set AB slots via MIDI. A: %d B: %d", (int)preset_a, (int)preset_b);
+                            if (usb_tonex_one_set_ab_slots(preset_a, preset_b) != ESP_OK)
+                            {
+                                ESP_LOGE(TAG, "Failed to set AB slots A:%d B:%d", (int)preset_a, (int)preset_b);
+                            }
+                        }
+                        else
+                        {
+                            ESP_LOGW(TAG, "Invalid AB slot presets A:%d B:%d (max %d)", (int)preset_a, (int)preset_b, MAX_PRESETS_TONEX_ONE - 1);
+                        }
+                    } break;
                     
                     case USB_COMMAND_MODIFY_PARAMETER:
                     {
