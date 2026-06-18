@@ -1,0 +1,22 @@
+{
+  "name": "2.0.4.2_beta5",
+  "version": "Controller",
+  "improv": false,
+  "new_install_prompt_erase": true,
+  "bootloader": {
+    "address": "0x0000",
+    "fileName": "bootloader_polar-mini-v2_2.0.4.2_beta5.bin"
+  },
+  "partitions": {
+    "address": "0x8000",
+    "fileName": "partitions_polar-mini-v2_2.0.4.2_beta5.bin"
+  },
+  "ota": {
+    "address": "0xd000",
+    "fileName": "ota_polar-mini-v2_2.0.4.2_beta5.bin"
+  },
+  "application": {
+    "address": "0x10000",
+    "fileName": "polar-mini-v2_2.0.4.2_beta5.bin"
+  }
+}

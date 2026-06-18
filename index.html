@@ -229,13 +229,17 @@
       <div class="section">
         <h2>Select Version</h2>
         <ul class="radios">      
+          <!-- arguments in value are release_folder, filename_part -->
           <li>
-            <input type="radio" name="version" value="V2.0.3.2,V2.0.3.2" id="ver-2023"/>
+            <input type="radio" name="version" value="beta,V2.0.4.2_beta_5" id="ver-2042"/>
+            <label for="ver-2042">V2.0.4.2 beta 5</label>
+          </li>
+          <li>          
+            <input type="radio" name="version" value="V2.0.3.2,V2.0.3.2" id="ver-2023" checked />
             <label for="ver-2023">V2.0.3.2</label>
           </li>
-          <li>
-            <!-- arguments in value are release_folder, filename_part -->
-            <input type="radio" name="version" value="V2.0.2.2,V2.0.2.2" id="ver-2022" checked />
+          <li>           
+            <input type="radio" name="version" value="V2.0.2.2,V2.0.2.2" id="ver-2022"/>
             <label for="ver-2022">V2.0.2.2</label>
           </li>         
         </ul>
