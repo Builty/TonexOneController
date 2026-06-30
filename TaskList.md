@@ -10,3 +10,8 @@ Allow at least two simultaneous BT devices to be connected.
 
 ## Midi Output support
 Add support for Midi output, sending Midi PC and CC messages to indicate to receivers the current state.
+Similar for Bluetooth Peripheral mode.
+
+## More footswitch inputs
+For platforms that have the available IO, add extra footswitches.
+
