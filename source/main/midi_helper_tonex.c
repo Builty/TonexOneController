@@ -1967,7 +1967,7 @@ uint16_t midi_helper_tonex_get_param_for_change_num(uint8_t change_num, uint8_t 
 
             if (new_preset >= (usb_get_max_presets_for_connected_modeller())) 
             {
-                ESP_LOGW(TAG, "Unsupported Midi CC 127 value %d", new_preset);
+                ESP_LOGW(TAG, "Unsupported Midi CC 127 value %" PRIu32, new_preset);
             } 
             else 
             {

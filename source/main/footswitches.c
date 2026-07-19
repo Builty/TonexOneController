@@ -967,8 +967,14 @@ void footswitches_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2C
     uint64_t pin_bit_mask = 0;
     if (FOOTSWITCH_1 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_1);
     if (FOOTSWITCH_2 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_2);
-    if (FOOTSWITCH_3 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_3);
-    if (FOOTSWITCH_4 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_4);
+   
+    #if FOOTSWITCH_3 >= 0
+    pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_3);
+    #endif
+
+    #if FOOTSWITCH_4 >= 0
+        pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_4);
+    #endif
 
     ESP_LOGI(TAG, "Init GPIO footswitches %d %d %d %d", FOOTSWITCH_1, FOOTSWITCH_2, FOOTSWITCH_3, FOOTSWITCH_4);
 

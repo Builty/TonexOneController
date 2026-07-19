@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
  
 */
-
+#include <inttypes.h>
 #include <stdio.h>
 #include "sdkconfig.h"
 #include <math.h>
@@ -1039,7 +1039,10 @@ static uint32_t ui_get_skin_image(uint16_t index)
     }
     else
     {
-        ESP_LOGI(TAG, "Skin partition data mapped to %X length %d", (int)skin_data_map_ptr, SkinTOC[index].length);
+       ESP_LOGI(TAG,
+         "Skin partition data mapped to %X length %" PRIu32,
+         (int)skin_data_map_ptr,
+         SkinTOC[index].length);
     }
 
     // debug code

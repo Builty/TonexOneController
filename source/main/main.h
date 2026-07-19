@@ -52,7 +52,7 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define FOOTSWITCH_2		IO_EXPANDER_PIN_6
 
     // these 2 unsupported
-    #define FOOTSWITCH_3		-1
+    #define FOOTSWITCH_3        IO_EXPANDER_PIN_7
     #define FOOTSWITCH_4		-1
 
     // Micro pins
