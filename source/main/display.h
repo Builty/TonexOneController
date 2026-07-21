@@ -54,8 +54,11 @@ void UI_SetPresetDescription(char* text);
 void UI_RefreshParameterValues(void);
 void UI_ShowToast(char* text);
 
+void display_adjust_current_parameter(float delta);
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif
 
 #endif
+
+uint8_t display_get_current_config_tab(void);

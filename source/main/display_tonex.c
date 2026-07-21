@@ -78,6 +78,7 @@ limitations under the License.
 #include "tonex_params.h"
 #include "platform_common.h"
 
+static uint8_t current_config_tab = CONFIG_TAB_AMPLIFIER;
 static const char __attribute__((unused)) *TAG = "app_display_tonex";
 
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI          
@@ -96,39 +97,48 @@ void tonex_show_settings_tab(lv_event_t * e)
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI          
 	lv_obj_t* target = lv_event_get_current_target(e);
 
-    if (target == objects.ui_icon_eq)
+   if (target == objects.ui_icon_eq)
     {
-        // show EQ settings
-        lv_tabview_set_act(objects.ui_settings_tab_view, CONFIG_TAB_EQ, LV_ANIM_OFF);
+        current_config_tab = CONFIG_TAB_EQ;
+
+        lv_tabview_set_act(objects.ui_settings_tab_view,
+                        CONFIG_TAB_EQ,
+                        LV_ANIM_OFF);
     }
     else if (target == objects.ui_icon_gate)
     {
         // show gate settings
+        current_config_tab = CONFIG_TAB_GATE;
         lv_tabview_set_act(objects.ui_settings_tab_view, CONFIG_TAB_GATE, LV_ANIM_OFF);
     }
     else if ((target == objects.ui_icon_amp) || (target == objects.ui_icon_cab))
     {
         // show amp settings
+        current_config_tab = CONFIG_TAB_AMPLIFIER;
         lv_tabview_set_act(objects.ui_settings_tab_view, CONFIG_TAB_AMPLIFIER, LV_ANIM_OFF);
     }
     else if (target == objects.ui_icon_comp)
     {
         // show comnpressor settings
+        current_config_tab = CONFIG_TAB_COMPRESSOR;
         lv_tabview_set_act(objects.ui_settings_tab_view, CONFIG_TAB_COMPRESSOR, LV_ANIM_OFF);
     }
     else if (target == objects.ui_icon_mod)
     {
         // show modulation settings
+        current_config_tab = CONFIG_TAB_MODULATION;
         lv_tabview_set_act(objects.ui_settings_tab_view, CONFIG_TAB_MODULATION, LV_ANIM_OFF);
     }
     else if (target == objects.ui_icon_delay)
     {
         // show delay settings
+        current_config_tab = CONFIG_TAB_DELAY;
         lv_tabview_set_act(objects.ui_settings_tab_view, CONFIG_TAB_DELAY, LV_ANIM_OFF);
     }
     else if (target == objects.ui_icon_reverb)
     {
         // show reverb settings
+        current_config_tab = CONFIG_TAB_REVERB;
         lv_tabview_set_act(objects.ui_settings_tab_view, CONFIG_TAB_REVERB, LV_ANIM_OFF);
     }
 #endif //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI          
@@ -2801,3 +2811,60 @@ void tonex_value_changed(lv_event_t* e)
     lv_obj_add_flag(objects.ui_settings_dialog, LV_OBJ_FLAG_HIDDEN);
 #endif    //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
 }
+
+uint8_t display_get_current_config_tab(void)
+{
+    return current_config_tab;
+}
+
+void display_adjust_current_parameter(float delta)
+{
+    lv_obj_t *slider = NULL;
+
+    switch(current_config_tab)
+    {
+        case CONFIG_TAB_AMPLIFIER:
+            slider = objects.ui_amplifier_gain_slider;
+            break;
+
+        case CONFIG_TAB_GATE:
+            slider = objects.ui_noise_gate_threshold_slider;
+            break;
+
+        case CONFIG_TAB_COMPRESSOR:
+            slider = objects.ui_compressor_threshold_slider;
+            break;
+
+        case CONFIG_TAB_EQ:
+            slider = objects.ui_eq_bass_slider;
+            break;
+
+        case CONFIG_TAB_MODULATION:
+            slider = objects.ui_modulation_param1_slider;
+            break;
+
+        case CONFIG_TAB_DELAY:
+            slider = objects.ui_delay_ts_slider;
+            break;
+
+        case CONFIG_TAB_REVERB:
+            slider = objects.ui_reverb_mix_slider;
+            break;
+
+        default:
+            return;
+    }
+
+    if(slider == NULL)
+        return;
+        int value = lv_slider_get_value(slider);
+
+    value += (int)delta;
+
+    if(value < lv_slider_get_min_value(slider))
+        value = lv_slider_get_min_value(slider);
+
+    if(value > lv_slider_get_max_value(slider))
+        value = lv_slider_get_max_value(slider);
+
+    lv_slider_set_value(slider, value, LV_ANIM_OFF);

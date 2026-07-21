@@ -1,6 +1,9 @@
-#pragma once
+#ifndef ENCODER_H
+#define ENCODER_H
 
-#include "esp_err.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
-esp_err_t encoder_init(void);
-void encoder_task(void);
+void encoder_init(void);
+
+#endif

@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
  
 */
-
 #include <stdio.h>
 #include <string.h>
 #include <sys/unistd.h>
@@ -59,6 +58,7 @@ limitations under the License.
 #include "usb_tonex_one.h"
 #include "display.h"
 #include "footswitches.h"
+#include "encoder.h"
 #include "control.h"
 #include "midi_control.h"
 #include "CH422G.h"
@@ -308,6 +308,10 @@ void app_main(void)
     {    
         ESP_LOGI(TAG, "Serial MIDI disabled");
     }
+  
+    // init Encoders
+    ESP_LOGI(TAG,"Init Encoders");
+    encoder_init();
 
     // init USB
     ESP_LOGI(TAG, "Init USB");
@@ -315,4 +319,5 @@ void app_main(void)
 
     // init WiFi config
     wifi_config_init();
+    
 }
