@@ -4,7 +4,11 @@
 
 #ifndef _SX1509_H
 #define _SX1509_H
-
+#include "esp_err.h"
+#include "driver/i2c_master.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
+#include <stdint.h>
 enum Expander_PinModes
 {    
     EXPANDER_INPUT,

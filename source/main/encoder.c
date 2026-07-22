@@ -4,14 +4,10 @@
 #include <stdbool.h>
 
 #include "SX1509.h"
-#include "usb_comms.h"
 #include "tonex_params.h"
 
 #include "esp_log.h"
 
-#include "display.h"
-#include "screens.h"
-#include "lvgl.h"
 #include "screens.h"
 #define ENC1_A 3
 #define ENC1_B 4
@@ -84,146 +80,18 @@ static void encoder1CCW(void)
     ESP_LOGI("ENCODER","Master %.1f",enc1.value);
 }
 
-static uint16_t getCurrentTonexParameter(void)
-{
-    uint32_t tab =
-        lv_tabview_get_tab_act(objects.ui_settings_tab_view);
 
-    switch(tab)
-    {
-        case CONFIG_TAB_GATE:
-            return TONEX_PARAM_NOISE_GATE_THRESHOLD;
-
-        case CONFIG_TAB_COMPRESSOR:
-            return TONEX_PARAM_COMP_THRESHOLD;
-
-        case CONFIG_TAB_AMPLIFIER:
-            return TONEX_PARAM_MODEL_GAIN;
-
-        case CONFIG_TAB_EQ:
-            return TONEX_PARAM_EQ_BASS;
-
-        case CONFIG_TAB_MODULATION:
-            return TONEX_PARAM_MODEX_PARAM1;
-
-        case CONFIG_TAB_DELAY:
-            return TONEX_PARAM_DELAY_FEEDBACK;
-
-        case CONFIG_TAB_REVERB:
-            return TONEX_PARAM_REVERB_MIX;
-    }
-
-    return 0xFFFF;
-}
 static void encoder2CW(void)
 {
-    uint32_t tab = lv_tabview_get_tab_act(objects.ui_settings_tab_view);
-
-    uint16_t parameter = 0;
-
-    switch(tab)
-    {
-        case CONFIG_TAB_GATE:
-            parameter = TONEX_PARAM_NOISE_GATE_THRESHOLD;
-            break;
-
-        case CONFIG_TAB_COMPRESSOR:
-            parameter = TONEX_PARAM_COMP_THRESHOLD;
-            break;
-
-        case CONFIG_TAB_AMPLIFIER:
-            parameter = TONEX_PARAM_MODEL_GAIN;
-            break;
-
-        case CONFIG_TAB_EQ:
-            parameter = TONEX_PARAM_EQ_BASS;
-            break;
-
-        case CONFIG_TAB_MODULATION:
-            parameter = TONEX_PARAM_MOD_RATE;
-            break;
-
-        case CONFIG_TAB_DELAY:
-            parameter = TONEX_PARAM_DELAY_TIME;
-            break;
-
-        case CONFIG_TAB_REVERB:
-            parameter = TONEX_PARAM_REVERB_MIX;
-            break;
-
-        default:
-            return;
-    }
-
-    parameter_entry_t *p = &param_ptr[parameter];
-
-    float value = p->Value + 1.0f;
-
-    if(value > p->Max)
-        value = p->Max;
-
-    usb_modify_parameter(parameter, value);
-
-    ESP_LOGI("ENCODER",
-        "%s = %.2f",
-        p->Name,
-        value);
+    ESP_LOGI("ENCODER","Encoder2 CW");
 }
 
 static void encoder2CCW(void)
 {
-    uint32_t tab = lv_tabview_get_tab_act(objects.ui_settings_tab_view);
-
-    uint16_t parameter = 0;
-
-    switch(tab)
-    {
-        case CONFIG_TAB_GATE:
-            parameter = TONEX_PARAM_NOISE_GATE_THRESHOLD;
-            break;
-
-        case CONFIG_TAB_COMPRESSOR:
-            parameter = TONEX_PARAM_COMP_THRESHOLD;
-            break;
-
-        case CONFIG_TAB_AMPLIFIER:
-            parameter = TONEX_PARAM_MODEL_GAIN;
-            break;
-
-        case CONFIG_TAB_EQ:
-            parameter = TONEX_PARAM_EQ_BASS;
-            break;
-
-        case CONFIG_TAB_MODULATION:
-            parameter = TONEX_PARAM_MOD_RATE;
-            break;
-
-        case CONFIG_TAB_DELAY:
-            parameter = TONEX_PARAM_DELAY_TIME;
-            break;
-
-        case CONFIG_TAB_REVERB:
-            parameter = TONEX_PARAM_REVERB_MIX;
-            break;
-
-        default:
-            return;
-    }
-
-    parameter_entry_t *p = &param_ptr[parameter];
-
-    float value = p->Value - 1.0f;
-
-    if(value < p->Min)
-        value = p->Min;
-
-    usb_modify_parameter(parameter, value);
-
-    ESP_LOGI("ENCODER",
-        "%s = %.2f",
-        p->Name,
-        value);
+    ESP_LOGI("ENCODER","Encoder2 CCW");
 }
+
+
 static void processEncoder1(void)
 {
     uint8_t current = readEncoder(ENC1_A, ENC1_B);
@@ -310,7 +178,7 @@ void encoder_init(void)
     /*
         현재 마스터 볼륨 값으로 시작
     */
-    enc1.value = param_ptr[TONEX_GLOBAL_MASTER_VOLUME].Value;
+    enc1.value = -10.0f;
 
     xTaskCreatePinnedToCore(
         encoderTask,
@@ -323,3 +191,5 @@ void encoder_init(void)
 
     ESP_LOGI("ENCODER", "Encoder task started");
 }
+
+void usb_modify_parameter(uint16_t index, float value);

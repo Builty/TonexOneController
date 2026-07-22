@@ -20,6 +20,7 @@ limitations under the License.
 #define _USB_COMMS_H
 
 #ifdef __cplusplus
+#include "usb/usb_host.h"
 extern "C" {
 #endif
 

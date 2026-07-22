@@ -15,7 +15,7 @@ limitations under the License.
  
 */
 
-
+#include "control.h"
 #ifndef _TONEX_PARAMS_H
 #define _TONEX_PARAMS_H
 
