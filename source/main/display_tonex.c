@@ -2816,55 +2816,466 @@ uint8_t display_get_current_config_tab(void)
 {
     return current_config_tab;
 }
+static uint8_t current_parameter = 0;
 
 void display_adjust_current_parameter(float delta)
 {
     lv_obj_t *slider = NULL;
 
+
     switch(current_config_tab)
     {
+
         case CONFIG_TAB_AMPLIFIER:
-            slider = objects.ui_amplifier_gain_slider;
+
+            switch(current_parameter)
+            {
+                case 0:
+                    slider = objects.ui_amplifier_gain_slider;
+                    break;
+
+                case 1:
+                    slider = objects.ui_amplifier_volume_slider;
+                    break;
+
+                case 2:
+                    slider = objects.ui_amplifier_presense_slider;
+                    break;
+
+                case 3:
+                    slider = objects.ui_amplifier_depth_slider;
+                    break;
+            }
+
             break;
+
 
         case CONFIG_TAB_GATE:
             slider = objects.ui_noise_gate_threshold_slider;
             break;
 
+
         case CONFIG_TAB_COMPRESSOR:
             slider = objects.ui_compressor_threshold_slider;
             break;
+
 
         case CONFIG_TAB_EQ:
             slider = objects.ui_eq_bass_slider;
             break;
 
+
         case CONFIG_TAB_MODULATION:
-            slider = objects.ui_modulation_param1_slider;
+
+            switch(current_parameter)
+            {
+                case 0:
+                    slider = objects.ui_modulation_param1_slider;
+                    break;
+
+                case 1:
+                    slider = objects.ui_modulation_param2_slider;
+                    break;
+
+                case 2:
+                    slider = objects.ui_modulation_param3_slider;
+                    break;
+
+                case 3:
+                    slider = objects.ui_modulation_param4_slider;
+                    break;
+            }
+
+            break;
+
+
+        case CONFIG_TAB_DELAY:
+
+            switch(current_parameter)
+            {
+                case 0:
+                    slider = objects.ui_delay_ts_slider;
+                    break;
+
+                case 1:
+                    slider = objects.ui_delay_feedback_slider;
+                    break;
+
+                case 2:
+                    slider = objects.ui_delay_mix_slider;
+                    break;
+            }
+
+            break;
+
+
+        case CONFIG_TAB_REVERB:
+
+            switch(current_parameter)
+            {
+                case 0:
+                    slider = objects.ui_reverb_mix_slider;
+                    break;
+
+                case 1:
+                    slider = objects.ui_reverb_predelay_slider;
+                    break;
+            }
+
+            break;
+
+
+        default:
+            return;
+    }
+
+
+    if(slider == NULL)
+        return;
+
+
+    int value = lv_slider_get_value(slider);
+
+    value += (int)delta;
+
+
+    if(value < lv_slider_get_min_value(slider))
+        value = lv_slider_get_min_value(slider);
+
+
+    if(value > lv_slider_get_max_value(slider))
+        value = lv_slider_get_max_value(slider);
+
+
+    lv_slider_set_value(
+        slider,
+        value,
+        LV_ANIM_OFF
+    );
+
+
+    /* 실제 Tonex 파라미터 변경 이벤트 발생 */
+    lv_event_send(
+        slider,
+        LV_EVENT_VALUE_CHANGED,
+        NULL
+    );
+    char msg[32];
+
+    snprintf(msg,
+            sizeof(msg),
+            "VALUE %d",
+            value);
+
+    UI_ShowToast(msg);
+}
+
+/*     파라미터 선택         */
+float display_get_current_parameter_value(void)
+{
+    tModellerParameter *param_ptr;
+
+    if(control_get_connected_modeller_params_locked_access(&param_ptr) != ESP_OK)
+        return 0;
+
+    float value = 0;
+
+    switch(current_config_tab)
+    {
+        case CONFIG_TAB_AMPLIFIER:
+            value = param_ptr[TONEX_PARAM_MODEL_GAIN].Value;
+            break;
+
+        case CONFIG_TAB_GATE:
+            value = param_ptr[TONEX_PARAM_NOISE_GATE_THRESHOLD].Value;
+            break;
+
+        case CONFIG_TAB_COMPRESSOR:
+            value = param_ptr[TONEX_PARAM_COMP_THRESHOLD].Value;
+            break;
+
+        case CONFIG_TAB_EQ:
+            value = param_ptr[TONEX_PARAM_EQ_BASS].Value;
+            break;
+
+        case CONFIG_TAB_MODULATION:
+            value = param_ptr[TONEX_PARAM_MODULATION_CHORUS_RATE].Value;
             break;
 
         case CONFIG_TAB_DELAY:
-            slider = objects.ui_delay_ts_slider;
+            value = param_ptr[TONEX_PARAM_DELAY_DIGITAL_TIME].Value;
             break;
 
         case CONFIG_TAB_REVERB:
-            slider = objects.ui_reverb_mix_slider;
+            value = param_ptr[TONEX_PARAM_REVERB_ROOM_MIX].Value;
+            break;
+
+        default:
+            break;
+    }
+
+    control_release_connected_modeller_params_locked_access();
+
+    return value;
+}
+
+
+void display_next_parameter(void)
+{
+    uint8_t max_parameter = 0;
+
+    switch(current_config_tab)
+    {
+        case CONFIG_TAB_AMPLIFIER:
+            max_parameter = 3;
+            break;
+
+        case CONFIG_TAB_MODULATION:
+            max_parameter = 3;
+            break;
+
+        case CONFIG_TAB_DELAY:
+            max_parameter = 2;
+            break;
+
+        case CONFIG_TAB_REVERB:
+            max_parameter = 2;
+            break;
+
+        case CONFIG_TAB_GATE:
+        case CONFIG_TAB_COMPRESSOR:
+            max_parameter = 0;
+            break;
+
+        default:
+            max_parameter = 0;
+            break;
+    }
+
+
+    current_parameter++;
+
+    if(current_parameter > max_parameter)
+        current_parameter = 0;
+
+
+    display_update_parameter_selection();
+
+    /* 추가 함수*/
+        char msg[32];
+
+    switch(current_config_tab)
+    {
+        case CONFIG_TAB_AMPLIFIER:
+            switch(current_parameter)
+            {
+                case 0:
+                    snprintf(msg, sizeof(msg), "GAIN");
+                    break;
+
+                case 1:
+                    snprintf(msg, sizeof(msg), "VOLUME");
+                    break;
+
+                case 2:
+                    snprintf(msg, sizeof(msg), "PRESENCE");
+                    break;
+
+                case 3:
+                    snprintf(msg, sizeof(msg), "DEPTH");
+                    break;
+            }
+            break;
+
+
+        case CONFIG_TAB_MODULATION:
+            snprintf(msg, sizeof(msg), "MOD PARAM %d",
+                     current_parameter + 1);
+            break;
+
+
+        case CONFIG_TAB_DELAY:
+            snprintf(msg, sizeof(msg), "DELAY PARAM %d",
+                     current_parameter + 1);
+            break;
+
+
+        case CONFIG_TAB_REVERB:
+            snprintf(msg, sizeof(msg), "REVERB PARAM %d",
+                     current_parameter + 1);
+            break;
+
+
+        default:
+            snprintf(msg, sizeof(msg), "PARAM %d",
+                     current_parameter + 1);
+            break;
+    }
+
+
+    UI_ShowToast(msg);
+}
+
+void display_update_parameter_selection(void)
+{
+    lv_obj_t *slider = NULL;
+
+
+    switch(current_config_tab)
+    {
+
+        case CONFIG_TAB_AMPLIFIER:
+
+            switch(current_parameter)
+            {
+                case 0:
+                    slider = objects.ui_amplifier_gain_slider;
+                    break;
+
+                case 1:
+                    slider = objects.ui_amplifier_volume_slider;
+                    break;
+
+                case 2:
+                    slider = objects.ui_amplifier_presense_slider;
+                    break;
+
+                case 3:
+                    slider = objects.ui_amplifier_depth_slider;
+                    break;
+            }
+
+            break;
+
+
+        case CONFIG_TAB_MODULATION:
+
+            switch(current_parameter)
+            {
+                case 0:
+                    slider = objects.ui_modulation_param1_slider;
+                    break;
+
+                case 1:
+                    slider = objects.ui_modulation_param2_slider;
+                    break;
+
+                case 2:
+                    slider = objects.ui_modulation_param3_slider;
+                    break;
+
+                case 3:
+                    slider = objects.ui_modulation_param4_slider;
+                    break;
+            }
+
+            break;
+
+
+        case CONFIG_TAB_DELAY:
+
+            switch(current_parameter)
+            {
+                case 0:
+                    slider = objects.ui_delay_ts_slider;
+                    break;
+
+                case 1:
+                    slider = objects.ui_delay_feedback_slider;
+                    break;
+
+                case 2:
+                    slider = objects.ui_delay_mix_slider;
+                    break;
+            }
+
+            break;
+
+
+       case CONFIG_TAB_REVERB:
+
+            switch(current_parameter)
+            {
+                case 0:
+                    slider = objects.ui_reverb_mix_slider;
+                    break;
+
+                case 1:
+                    slider = objects.ui_reverb_predelay_slider;
+                    break;
+
+                default:
+                    slider = objects.ui_reverb_mix_slider;
+                    break;
+            }
+
             break;
 
         default:
             return;
     }
 
+
     if(slider == NULL)
         return;
-        int value = lv_slider_get_value(slider);
 
-    value += (int)delta;
 
-    if(value < lv_slider_get_min_value(slider))
-        value = lv_slider_get_min_value(slider);
+    lv_obj_set_style_border_width(
+        slider,
+        3,
+        LV_PART_MAIN
+    );
 
-    if(value > lv_slider_get_max_value(slider))
-        value = lv_slider_get_max_value(slider);
+    lv_obj_set_style_border_color(
+        slider,
+        lv_palette_main(LV_PALETTE_YELLOW),
+        LV_PART_MAIN
+    );
+}
 
-    lv_slider_set_value(slider, value, LV_ANIM_OFF);
+void display_toggle_current_effect(void)
+{
+    tModellerParameter *param_ptr;
+
+    if(control_get_connected_modeller_params_locked_access(&param_ptr) != ESP_OK)
+        return;
+
+    uint16_t param;
+
+    switch(current_config_tab)
+    {
+        case CONFIG_TAB_AMPLIFIER:
+            param = TONEX_PARAM_MODEL_AMP_ENABLE;
+            break;
+
+        case CONFIG_TAB_GATE:
+            param = TONEX_PARAM_NOISE_GATE_ENABLE;
+            break;
+
+        case CONFIG_TAB_COMPRESSOR:
+            param = TONEX_PARAM_COMP_ENABLE;
+            break;
+
+        case CONFIG_TAB_MODULATION:
+            param = TONEX_PARAM_MODULATION_ENABLE;
+            break;
+
+        case CONFIG_TAB_DELAY:
+            param = TONEX_PARAM_DELAY_ENABLE;
+            break;
+
+        case CONFIG_TAB_REVERB:
+            param = TONEX_PARAM_REVERB_ENABLE;
+            break;
+
+        default:
+            control_release_connected_modeller_params_locked_access();
+            return;
+    }
+
+    float newValue = (param_ptr[param].Value != 0.0f) ? 0.0f : 1.0f;
+
+    control_release_connected_modeller_params_locked_access();
+
+    usb_modify_parameter(param, newValue);
+}

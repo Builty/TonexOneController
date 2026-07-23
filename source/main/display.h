@@ -34,6 +34,13 @@ extern "C" {
 #include "esp_lcd_sh8601.h"
 #include "esp_intr_alloc.h"
 
+uint8_t display_get_current_config_tab(void);
+void display_adjust_current_parameter(float delta);
+void display_next_parameter(void);
+void display_update_parameter_selection(void);
+void display_toggle_current_effect(void);
+float display_get_current_parameter_value(void);
+
 
 void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex, lv_disp_drv_t* pdisp_drv);
 void touch_data_ready(esp_lcd_touch_t *handle);
@@ -54,11 +61,9 @@ void UI_SetPresetDescription(char* text);
 void UI_RefreshParameterValues(void);
 void UI_ShowToast(char* text);
 
-void display_adjust_current_parameter(float delta);
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif
 
 #endif
 
-uint8_t display_get_current_config_tab(void);
