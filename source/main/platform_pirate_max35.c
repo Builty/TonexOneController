@@ -165,6 +165,7 @@ __attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max
     {
         case AMP_MODELLER_TONEX_ONE:    // fallthrough
         case AMP_MODELLER_TONEX:        // fallthrough    
+        case AMP_MODELLER_TONEX_ONE_PLUS:   // fallthrough
         default:
         {
             // Tonex

@@ -2,6 +2,7 @@ const AMP_MODELLER_NONE = 0;
 const AMP_MODELLER_TONEX_ONE = 1;
 const AMP_MODELLER_TONEX = 2;
 const AMP_MODELLER_VALETON_GP5 = 3;
+const AMP_MODELLER_TONEX_ONE_PLUS = 4;
 
 var gateway = `ws://${window.location.hostname}/ws`;
 var websocket;
@@ -956,6 +957,7 @@ function setEffectIcons() {
     {
         case AMP_MODELLER_TONEX_ONE:
         case AMP_MODELLER_TONEX:
+        case AMP_MODELLER_TONEX_ONE_PLUS:
         default:
         {    
             // noise gate
@@ -1595,6 +1597,7 @@ function processReturnCmd(data) {
             {
                 case AMP_MODELLER_TONEX_ONE:
                 case AMP_MODELLER_TONEX:
+                case AMP_MODELLER_TONEX_ONE_PLUS:
                 default:
                 {    
                     for (var key in data['PARAMS']) {
@@ -3623,6 +3626,7 @@ function processReturnCmd(data) {
             switch (modellerType) {
                 case AMP_MODELLER_TONEX_ONE:
                 case AMP_MODELLER_TONEX:
+                case AMP_MODELLER_TONEX_ONE_PLUS:
                 default:
                     console.log("Setting Tonex menu");
                     menuContainer.innerHTML = DEVICE_MENUS['tonex'];
@@ -4330,6 +4334,7 @@ function globalTempoTap() {
     {
         case AMP_MODELLER_TONEX_ONE:
         case AMP_MODELLER_TONEX:
+        case AMP_MODELLER_TONEX_ONE_PLUS:
         default:
         {    
             let input = document.getElementById("gb_bpm");
@@ -4432,6 +4437,7 @@ function populateExternalFootswitches() {
     {
         case AMP_MODELLER_TONEX_ONE:
         case AMP_MODELLER_TONEX:
+        case AMP_MODELLER_TONEX_ONE_PLUS:
         default:
         {    
             midi_map = tonexMidiControlChangeAssociations;
@@ -4475,6 +4481,7 @@ function extFSChanged(fx) {
     {
         case AMP_MODELLER_TONEX_ONE:
         case AMP_MODELLER_TONEX:
+        case AMP_MODELLER_TONEX_ONE_PLUS:
         default:
         {    
             midi_map = tonexMidiControlChangeAssociations;
@@ -4557,6 +4564,7 @@ function getExtFSValue(fs, value) {
     {
         case AMP_MODELLER_TONEX_ONE:
         case AMP_MODELLER_TONEX:
+        case AMP_MODELLER_TONEX_ONE_PLUS:
         default:
         {    
             midi_map = tonexMidiControlChangeAssociations;
@@ -4594,6 +4602,7 @@ function populateInternalFootswitches() {
     {
         case AMP_MODELLER_TONEX_ONE:
         case AMP_MODELLER_TONEX:
+        case AMP_MODELLER_TONEX_ONE_PLUS:
         default:
         {    
             midi_map = tonexMidiControlChangeAssociations;
@@ -4637,6 +4646,7 @@ function getIntFSValue(fs, value) {
     {
         case AMP_MODELLER_TONEX_ONE:
         case AMP_MODELLER_TONEX:
+        case AMP_MODELLER_TONEX_ONE_PLUS:
         default:
         {    
             midi_map = tonexMidiControlChangeAssociations;
@@ -4874,6 +4884,7 @@ function updateEffectsChainIcons() {
     {
         case AMP_MODELLER_TONEX_ONE:
         case AMP_MODELLER_TONEX:
+        case AMP_MODELLER_TONEX_ONE_PLUS:
         default:
         {    
             const icons = [

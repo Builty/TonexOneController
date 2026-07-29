@@ -373,6 +373,7 @@ static void wifi_build_params_json(void)
     {
         case AMP_MODELLER_TONEX_ONE:    // fallthrough
         case AMP_MODELLER_TONEX:        // fallthrough
+        case AMP_MODELLER_TONEX_ONE_PLUS:   // fallthrough
         default:
         {
             // send Tonex params

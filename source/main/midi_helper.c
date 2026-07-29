@@ -94,6 +94,7 @@ esp_err_t midi_helper_adjust_param_via_midi(uint8_t change_num, uint8_t midi_val
     {
         case AMP_MODELLER_TONEX_ONE:        // fallthrough
         case AMP_MODELLER_TONEX:            // fallthrough
+        case AMP_MODELLER_TONEX_ONE_PLUS:   // fallthrough
         default:
         {
             return midi_helper_tonex_adjust_param_via_midi(change_num, midi_value);
@@ -119,6 +120,7 @@ uint16_t midi_helper_get_param_for_change_num(uint8_t change_num, uint8_t midi_v
     {
         case AMP_MODELLER_TONEX_ONE:        // fallthrough
         case AMP_MODELLER_TONEX:            // fallthrough
+        case AMP_MODELLER_TONEX_ONE_PLUS:   // fallthrough
         default:
         {
             return midi_helper_tonex_get_param_for_change_num(change_num, midi_value_1, midi_value_2);

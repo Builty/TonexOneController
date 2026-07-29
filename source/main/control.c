@@ -970,6 +970,7 @@ static uint8_t process_control_command(tControlMessage* message)
                 {
                     case AMP_MODELLER_TONEX_ONE:        // fallthrough
                     case AMP_MODELLER_TONEX:            // fallthrough
+                    case AMP_MODELLER_TONEX_ONE_PLUS:
                     default:
                     {
                         usb_modify_parameter(TONEX_GLOBAL_BPM, ControlData.TapTempo.BPM);
@@ -2627,7 +2628,8 @@ static void UpdateFootswitchLeds(void)
 
         switch (usb_get_connected_modeller_type())
         {
-            case AMP_MODELLER_TONEX_ONE:
+            case AMP_MODELLER_TONEX_ONE:    // fallthrough
+            case AMP_MODELLER_TONEX_ONE_PLUS:
             {
                 // tonex one has colour per preset
                 if (tonex_params_colors_get_color(ControlData.PresetIndex, &preset_color) == ESP_OK)
@@ -2686,6 +2688,7 @@ static void UpdateFootswitchLeds(void)
                                 {
                                     case AMP_MODELLER_TONEX_ONE:        // fallthrough
                                     case AMP_MODELLER_TONEX:            // fallthrough
+                                    case AMP_MODELLER_TONEX_ONE_PLUS:
                                     default:
                                     {
                                         switch (param)
@@ -2914,6 +2917,7 @@ esp_err_t control_get_connected_modeller_params_locked_access(tModellerParameter
     {
         case AMP_MODELLER_TONEX_ONE:        // fallthrough
         case AMP_MODELLER_TONEX:            // fallthrough
+        case AMP_MODELLER_TONEX_ONE_PLUS:
         default:
         {
             return tonex_params_get_locked_access(param_ptr);
@@ -2939,6 +2943,7 @@ esp_err_t control_release_connected_modeller_params_locked_access(void)
     {
         case AMP_MODELLER_TONEX_ONE:        // fallthrough
         case AMP_MODELLER_TONEX:            // fallthrough
+        case AMP_MODELLER_TONEX_ONE_PLUS:
         default:
         {
             return tonex_params_release_locked_access();
