@@ -110,6 +110,7 @@ enum UIElements
     UI_ELEMENT_PRESET_DESCRIPTION,
     UI_ELEMENT_PARAMETERS,
     UI_ELEMENT_TOAST,
+    UI_ELEMENT_TUNER_FREQ
 };
 
 enum UIAction
@@ -165,6 +166,11 @@ static const void* skin_data_map_ptr;
 static esp_partition_mmap_handle_t skin_data_map_handle = 0;
 static const esp_partition_t* skin_partition;
 static lv_img_dsc_t skin_img_dsc;
+
+#ifndef clampf
+    #define clampf(x, lo, hi)  ((x) < (lo) ? (lo) : ((x) > (hi) ? (hi) : (x)))
+#endif
+
 #endif    
 
 /****************************************************************************
@@ -353,6 +359,38 @@ void action_next_clicked(lv_event_t * e)
     ESP_LOGI(TAG, "UI Next Click");    
 
     control_request_preset_up();        
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void __attribute__((unused)) action_tuner_pressed(lv_event_t * e)
+{
+    ESP_LOGI(TAG, "UI tuner pressed");      
+    control_request_tuner(1);
+    
+    // show tuner screen
+    lv_scr_load_anim(objects.tuner, LV_SCR_LOAD_ANIM_FADE_IN, 0, 0, false);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void __attribute__((unused)) action_tuner_close(lv_event_t * e)
+{
+    ESP_LOGI(TAG, "UI tuner close");      
+    control_request_tuner(0);
+
+    // show main screen
+    lv_scr_load_anim(objects.screen1, LV_SCR_LOAD_ANIM_FADE_IN, 0, 0, false);
 }
 
 #else   //CONFIG_TONEX_CONTROLLER_HAS_TOUCH
@@ -845,6 +883,42 @@ void UI_SetPresetLabel(uint16_t index, char* name)
     }
 }
 
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void UI_SetTunerFrequencies(float freq, float reference)
+{
+    tUIUpdate ui_update;
+
+    // Tuner spams out a huge amount of traffic. Avoid flooding the queue
+    uint32_t elements_in_queue = uxQueueMessagesWaiting(ui_update_queue); 
+
+    if (elements_in_queue < 3)
+    {
+        // build command
+        ui_update.ElementID = UI_ELEMENT_TUNER_FREQ;
+        ui_update.Action = UI_ACTION_NONE;
+        ui_update.Value = (uint32_t)reference;
+
+        // put tuner freq into string as we don't have floats in the tUIUpdate and adding would waste ram for queue size (yeah OK could use a union I guess...)
+        sprintf(ui_update.Text, "%3.2f", freq);
+
+        // send to queue
+        if (xQueueSend(ui_update_queue, (void*)&ui_update, 0) != pdPASS)
+        {
+            ESP_LOGE(TAG, "UI_SetTunerFrequencies queue send failed!");            
+        }
+    }
+    else
+    {
+        // skip this one and get the next once queue has emptied some more
+    }
+}
+
 
 /****************************************************************************
 * NAME:        
@@ -1206,6 +1280,43 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
         case UI_ELEMENT_TOAST:
         {
             ui_show_toast(update->Text);
+        } break;
+
+        case UI_ELEMENT_TUNER_FREQ:
+        {
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI     
+            int32_t arc_value;
+            lv_color_t col;
+            char buf[32];
+            float tuner_error_cents = (float)atof(update->Text);
+
+            arc_value = (int32_t)clampf(tuner_error_cents, -50.0f, 50.0f);
+
+            // update LCD
+            lv_arc_set_value(objects.ui_tuner_arc, arc_value);
+
+            if (fabsf(tuner_error_cents) < 5.0f)
+            {
+                // green – in tune
+                col = lv_color_hex(0x00FF88);      
+            }
+            else if (fabsf(tuner_error_cents) < 15.0f)
+            {
+                // orange
+                col = lv_color_hex(0xFFAA00);      
+            }
+            else
+            {
+                // red
+                col = lv_color_hex(0xFF4444);      
+            }
+
+            lv_obj_set_style_bg_color(objects.ui_tuner_arc, col, LV_PART_KNOB);
+
+            // show reference freq
+            sprintf(buf, "%d Hz", (int)round(update->Value));
+            lv_label_set_text(objects.ui_tuner_reference_label, buf);
+#endif            
         } break;
 
         default:

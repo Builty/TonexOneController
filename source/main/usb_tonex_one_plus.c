@@ -88,7 +88,8 @@ typedef enum Type
     TYPE_STATE_PRESET_DETAILS,
     TYPE_STATE_PRESET_DETAILS_FULL,
     TYPE_PARAM_CHANGED,
-    TYPE_CURRENT_PRESET
+    TYPE_CURRENT_PRESET,
+    TYPE_TUNER_FREQ
 } Type;
 
 typedef enum Slot
@@ -359,6 +360,30 @@ static esp_err_t usb_tonex_one_plus_request_master_volume(void)
 
     // send it
     return tonex_common_transmit(cdc_dev, FramedBuffer, framed_length, TONEX_USB_TX_BUFFER_SIZE);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static esp_err_t usb_tonex_one_plus_request_tuner(uint8_t state)
+{
+    uint16_t outlength;
+
+    //                                                                                                 ! state
+    uint8_t request[] = {0xb9, 0x03, 0x81, 0x0F, 0x03, 0x82, 0x03, 0x00, 0x80, 0x19, 0x03, 0xB9, 0x01, 0x00};
+    request[13] = state;
+
+    ESP_LOGI(TAG, "Requesting Tuner");
+
+    // add framing
+    outlength = tonex_common_add_framing(request, sizeof(request), FramedBuffer);
+
+    // send it
+    return tonex_common_transmit(cdc_dev, FramedBuffer, outlength, TONEX_USB_TX_BUFFER_SIZE);
 }
 
 /****************************************************************************
@@ -831,6 +856,34 @@ static TonexStatus usb_tonex_one_plus_parse_current_preset(uint8_t* unframed, ui
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+static TonexStatus usb_tonex_one_plus_parse_tuner_freq(uint8_t* unframed, uint16_t length, uint16_t index)
+{
+    tModellerParameter* param_ptr;
+    float tuner_freq;
+    float reference_ref;
+
+    TonexData->Message.Header.type = TYPE_TUNER_FREQ;
+
+    memcpy((void*)&reference_ref, (void*)&unframed[10], sizeof(float));
+    memcpy((void*)&tuner_freq, (void*)&unframed[15], sizeof(float));
+    
+    // pass to UI
+    UI_SetTunerFrequencies(tuner_freq, reference_ref);
+
+    // debug
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, unframed, length, ESP_LOG_INFO);
+    //ESP_LOGI(TAG, "Tuner freq: %3.2f %3.2f", tuner_freq, reference_ref);
+
+    return STATUS_OK;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 static TonexStatus usb_tonex_one_plus_parse_preset_details(uint8_t* unframed, uint16_t length, uint16_t index)
 {
     TonexData->Message.Header.type = TYPE_STATE_PRESET_DETAILS;
@@ -1048,7 +1101,7 @@ static TonexStatus usb_tonex_one_plus_parse(uint8_t* message, uint16_t inlength)
     uint16_t type = tonex_common_parse_value(FramedBuffer, &index);
 
     // debug
-    ESP_LOGW(TAG, "Header 0x%04X", type);
+    //ESP_LOGW(TAG, "Header 0x%04X", type);
              
     switch (type)
     {
@@ -1096,6 +1149,11 @@ static TonexStatus usb_tonex_one_plus_parse(uint8_t* message, uint16_t inlength)
             //ESP_LOG_BUFFER_HEXDUMP(TAG, FramedBuffer, out_len, ESP_LOG_INFO);
             // unknown meesage, arrives after preset changed via state data. typically b9 03 06 06 16 b9 02 81 04 03 00 
             header.type = TYPE_UNKNOWN;
+        } break;
+
+        case 0x0310:
+        {
+            header.type = TYPE_TUNER_FREQ;
         } break;
 
         default:
@@ -1153,6 +1211,11 @@ static TonexStatus usb_tonex_one_plus_parse(uint8_t* message, uint16_t inlength)
         case TYPE_CURRENT_PRESET:
         {
             return usb_tonex_one_plus_parse_current_preset(FramedBuffer, out_len, index);
+        } break;
+
+        case TYPE_TUNER_FREQ:
+        {
+            return usb_tonex_one_plus_parse_tuner_freq(FramedBuffer, out_len, index);
         } break;
 
         default:
@@ -1425,7 +1488,7 @@ void usb_tonex_one_plus_handle(class_driver_t* driver_obj)
                             //todo?? usb_tonex_one_plus_set_active_slot(usb_tonex_one_plus_slot_for_saving_preset());
                         }
                     } break;
-                    
+
                     case USB_COMMAND_LOAD_PRESET_TO_SLOT_A:
                     {
                         if (message.Payload < MAX_PRESETS_TONEX_ONE_PLUS)
@@ -1511,6 +1574,11 @@ void usb_tonex_one_plus_handle(class_driver_t* driver_obj)
                     case USB_COMMAND_SAVE_PRESET:
                     {
                         // Tonex OnePlus uses auto save, nothing needed
+                    } break;
+
+                    case USB_COMMAND_REQUEST_TUNER:
+                    {
+                        usb_tonex_one_plus_request_tuner((uint8_t)message.Payload);
                     } break;
                 }
             }

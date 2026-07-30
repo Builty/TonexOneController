@@ -1319,6 +1319,11 @@ void usb_tonex_handle(class_driver_t* driver_obj)
                     {
                         // todo - need to send back the entire 32kb+ preset details 
                     } break;
+
+                    case USB_COMMAND_REQUEST_TUNER:
+                    {
+                        // not supported
+                    } break;
                 }
             }
         } break;

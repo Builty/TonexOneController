@@ -2202,6 +2202,11 @@ void usb_valeton_gp5_handle(class_driver_t* driver_obj)
 
                         usb_valeton_gp5_save_preset(control_get_current_preset_index(), preset_name);
                     } break;
+
+                    case USB_COMMAND_REQUEST_TUNER:
+                    {
+                        // not supported
+                    } break;
                 }
             }
         } break;

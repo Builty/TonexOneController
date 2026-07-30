@@ -7,10 +7,22 @@
 extern "C" {
 #endif
 
+// Screens
+
+enum ScreensEnum {
+    _SCREEN_ID_FIRST = 1,
+    SCREEN_ID_SCREEN1 = 1,
+    SCREEN_ID_SETTINGS = 2,
+    SCREEN_ID_VAL_SETTINGS = 3,
+    SCREEN_ID_TUNER = 4,
+    _SCREEN_ID_LAST = 4
+};
+
 typedef struct _objects_t {
     lv_obj_t *screen1;
     lv_obj_t *settings;
     lv_obj_t *val_settings;
+    lv_obj_t *tuner;
     lv_obj_t *ui_touch_gesture_container;
     lv_obj_t *ui_top_panel;
     lv_obj_t *ui_usb_status_fail;
@@ -28,6 +40,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_bank_container;
     lv_obj_t *ui_bank_title_label;
     lv_obj_t *ui_bank_value_label;
+    lv_obj_t *ui_tuner_button;
     lv_obj_t *ui_bpm_container;
     lv_obj_t *ui_bpm_title_label;
     lv_obj_t *ui_bpm_value_label;
@@ -427,15 +440,18 @@ typedef struct _objects_t {
     lv_obj_t *ui_val_settings_dialog;
     lv_obj_t *ui_val_settings_text_entry;
     lv_obj_t *ui_val_settings_keyboard;
+    lv_obj_t *ui_tuner_touch_gesture_container;
+    lv_obj_t *ui_tuner_top_panel;
+    lv_obj_t *ui_tuner_heading_label;
+    lv_obj_t *ui_tuner_logo;
+    lv_obj_t *ui_tuner_heading;
+    lv_obj_t *ui_tuner_arc;
+    lv_obj_t *ui_tuner_reference_heading_label;
+    lv_obj_t *ui_tuner_reference_label;
+    lv_obj_t *ui_tuner_ok_tick;
 } objects_t;
 
 extern objects_t objects;
-
-enum ScreensEnum {
-    SCREEN_ID_SCREEN1 = 1,
-    SCREEN_ID_SETTINGS = 2,
-    SCREEN_ID_VAL_SETTINGS = 3,
-};
 
 void create_screen_screen1();
 void tick_screen_screen1();
@@ -446,11 +462,13 @@ void tick_screen_settings();
 void create_screen_val_settings();
 void tick_screen_val_settings();
 
+void create_screen_tuner();
+void tick_screen_tuner();
+
 void tick_screen_by_id(enum ScreensEnum screenId);
 void tick_screen(int screen_index);
 
 void create_screens();
-
 
 #ifdef __cplusplus
 }

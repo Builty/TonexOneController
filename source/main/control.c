@@ -86,7 +86,8 @@ enum CommandEvents
     EVENT_SET_CONFIG_ITEM_INT,
     EVENT_SET_CONFIG_ITEM_STRING,
     EVENT_TRIGGER_TAP_TEMPO,
-    EVENT_UPDATE_FOOTSWITCH_LEDS
+    EVENT_UPDATE_FOOTSWITCH_LEDS,
+    EVENT_TUNER_REQUEST
 };
 
 typedef struct
@@ -330,6 +331,15 @@ static uint8_t process_control_command(tControlMessage* message)
                     // send message to USB
                     usb_set_preset(preset);
                 }
+            }
+        } break;
+
+        case EVENT_TUNER_REQUEST:
+        {
+            if (ControlData.USBStatus != 0)
+            {
+                // send message to USB
+                usb_request_tuner(message->Value);
             }
         } break;
 
@@ -1037,6 +1047,29 @@ void control_request_preset_up(void)
     if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_request_preset_up queue send failed!");            
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void control_request_tuner(uint8_t state)
+{
+    tControlMessage message;
+
+    ESP_LOGI(TAG, "control_request_tuner");
+
+    message.Event = EVENT_TUNER_REQUEST;
+    message.Value = state;
+
+    // send to queue
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
+    {
+        ESP_LOGE(TAG, "control_request_tuner queue send failed!");            
     }
 }
 
@@ -2954,6 +2987,36 @@ esp_err_t control_release_connected_modeller_params_locked_access(void)
             return valeton_params_release_locked_access();
         } break;
     }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+float control_get_note_freq(float a4_ref, int midi_note)
+{
+    // MIDI note 69 = A4
+    return a4_ref * powf(2.0f, (midi_note - 69) / 12.0f);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+float control_get_cents(float measured, float target)
+{
+    if (target <= 0.0f || measured <= 0.0f)
+    {
+        return 0.0f;
+    }
+
+    return 1200.0f * log2f(measured / target);
 }
 
 /****************************************************************************

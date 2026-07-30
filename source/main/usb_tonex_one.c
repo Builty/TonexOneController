@@ -1471,6 +1471,11 @@ void usb_tonex_one_handle(class_driver_t* driver_obj)
                     {
                         // Tonex One uses auto save, nothing needed
                     } break;
+
+                    case USB_COMMAND_REQUEST_TUNER:
+                    {
+                        // not supported
+                    } break;
                 }
             }
         } break;

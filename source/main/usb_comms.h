@@ -49,7 +49,8 @@ enum USB_Commands
     USB_COMMAND_LOAD_PRESET_TO_SLOT_A,
     USB_COMMAND_LOAD_PRESET_TO_SLOT_B,
     USB_COMMAND_SAVE_PRESET,
-    USB_COMMAND_SET_AB_SLOTS
+    USB_COMMAND_SET_AB_SLOTS,
+    USB_COMMAND_REQUEST_TUNER
 };
 
 typedef struct 
@@ -79,6 +80,7 @@ void usb_save_preset(void);
 uint8_t usb_get_max_presets_for_connected_modeller(void);
 uint8_t usb_get_first_preset_index_for_connected_modeller(void);
 uint8_t usb_get_connected_modeller_type(void);
+void usb_request_tuner(uint8_t state);
 
 #ifdef __cplusplus
 } /*extern "C"*/
