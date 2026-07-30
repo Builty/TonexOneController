@@ -79,7 +79,7 @@ if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35B OR CONFIG_TONEX_CONTR
                            "ui_generated_480x320land/ui_image_effect_icon_reverb_on_s2.c" "ui_generated_480x320land/ui_image_effect_icon_reverb_on_s3.c" 
                            "ui_generated_480x320land/ui_image_effect_icon_reverb_on_s4.c" "ui_generated_480x320land/ui_image_effect_icon_reverb_on_p.c" 
                            "ui_generated_480x320land/ui_image_effect_icon_delay_on_d.c" "ui_generated_480x320land/ui_image_effect_icon_delay_on_t.c" 
-                           "ui_generated_480x320land/ui_image_effect_icon_eq.c"                           
+                           "ui_generated_480x320land/ui_image_effect_icon_eq.c" "ui_generated_800x480land/ui_image_tuner.c"                          
                            "ui_generated_480x320land/ui_image_arrow_left.c" "ui_generated_480x320land/ui_image_arrow_right.c" "ui_generated_480x320land/ui_image_tick.c"
                            "ui_generated_480x320land/ui_image_bt_conn.c" "ui_generated_480x320land/ui_image_bt_disconn.c"
                            "ui_generated_480x320land/ui_image_eq_off.c" "ui_generated_480x320land/ui_image_eq_on.c"

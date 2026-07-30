@@ -366,6 +366,32 @@ static esp_err_t usb_tonex_one_request_master_volume(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+static esp_err_t usb_tonex_one_request_tuner(uint8_t state)
+{
+    uint16_t outlength;
+
+    // WARNING: doesn't work on the One, only on One Plus :(
+
+    //                                                                                                 ! state
+    uint8_t request[] = {0xb9, 0x03, 0x81, 0x0F, 0x03, 0x82, 0x03, 0x00, 0x80, 0x19, 0x03, 0xB9, 0x01, 0x00};
+    request[13] = state;
+
+    ESP_LOGI(TAG, "Requesting Tuner");
+
+    // add framing
+    outlength = tonex_common_add_framing(request, sizeof(request), FramedBuffer);
+
+    // send it
+    return tonex_common_transmit(cdc_dev, FramedBuffer, outlength, TONEX_USB_TX_BUFFER_SIZE);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 static void __attribute__((unused)) usb_tonex_one_dump_state(void)
 {
     float InputTrim;
@@ -1474,7 +1500,7 @@ void usb_tonex_one_handle(class_driver_t* driver_obj)
 
                     case USB_COMMAND_REQUEST_TUNER:
                     {
-                        // not supported
+                        usb_tonex_one_request_tuner((uint8_t)message.Payload);
                     } break;
                 }
             }
