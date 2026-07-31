@@ -858,21 +858,23 @@ static TonexStatus usb_tonex_one_plus_parse_current_preset(uint8_t* unframed, ui
 *****************************************************************************/
 static TonexStatus usb_tonex_one_plus_parse_tuner_freq(uint8_t* unframed, uint16_t length, uint16_t index)
 {
-    tModellerParameter* param_ptr;
-    float tuner_freq;
-    float reference_ref;
+    float tuner_cents;
+    float ref_freq;
+    uint8_t midi_note;
 
     TonexData->Message.Header.type = TYPE_TUNER_FREQ;
 
-    memcpy((void*)&reference_ref, (void*)&unframed[10], sizeof(float));
-    memcpy((void*)&tuner_freq, (void*)&unframed[15], sizeof(float));
+    // tuner cents here is signed float error from pedal's chosen note
+    memcpy((void*)&ref_freq, (void*)&unframed[10], sizeof(float));
+    memcpy((void*)&tuner_cents, (void*)&unframed[15], sizeof(float));
+    midi_note = unframed[19];
     
     // pass to UI
-    UI_SetTunerFrequencies(tuner_freq, reference_ref);
+    UI_SetTunerFrequencies(tuner_cents, ref_freq, midi_note);
 
     // debug
     //ESP_LOG_BUFFER_HEXDUMP(TAG, unframed, length, ESP_LOG_INFO);
-    //ESP_LOGI(TAG, "Tuner freq: %3.2f %3.2f", tuner_freq, reference_ref);
+    ESP_LOGI(TAG, "Tuner freq: %3.2f %3.2f", tuner_cents, ref_freq);
 
     return STATUS_OK;
 }
@@ -913,6 +915,7 @@ static TonexStatus usb_tonex_one_plus_parse_param_changed(uint8_t* unframed, uin
     float scaled_value;
     tModellerParameter* param_ptr = NULL;
     uint8_t param_start_marker[] = { 0xB9, 0x04, 0x03 };
+    //?? uint8_t param_start_marker[] = { 0xB9, 0x04, 0x02 };
     
     // try to locate the start of the parameter index
     uint8_t* temp_ptr = memmem((void*)&unframed[index], length, (void*)param_start_marker, sizeof(param_start_marker));
@@ -1062,6 +1065,7 @@ static void usb_tonex_one_plus_parse_preset_parameters(uint8_t* raw_data, uint16
     else
     {
         ESP_LOGW(TAG, "Parsing Preset parameters failed to find start marker");
+        //ESP_LOG_BUFFER_HEXDUMP(TAG, raw_data, length, ESP_LOG_INFO);
     }
 }
 
@@ -1101,7 +1105,7 @@ static TonexStatus usb_tonex_one_plus_parse(uint8_t* message, uint16_t inlength)
     uint16_t type = tonex_common_parse_value(FramedBuffer, &index);
 
     // debug
-    //ESP_LOGW(TAG, "Header 0x%04X", type);
+    ESP_LOGW(TAG, "Header 0x%04X", type);
              
     switch (type)
     {
@@ -1136,6 +1140,7 @@ static TonexStatus usb_tonex_one_plus_parse(uint8_t* message, uint16_t inlength)
 
         case 0x0309:
         {           
+            // is this correct??? 0306 is param changed
             header.type = TYPE_PARAM_CHANGED;
         } break;
 

@@ -446,6 +446,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_tuner_logo;
     lv_obj_t *ui_tuner_heading;
     lv_obj_t *ui_tuner_arc;
+    lv_obj_t *ui_tuner_note_label;
     lv_obj_t *ui_tuner_reference_heading_label;
     lv_obj_t *ui_tuner_reference_label;
     lv_obj_t *ui_tuner_ok_tick;

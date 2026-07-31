@@ -3026,6 +3026,83 @@ float control_get_cents(float measured, float target)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+int control_frequency_to_note(float freq, float ref_freq, char *note_name, size_t buflen)
+{
+    static const char* const note_names[] = 
+    {
+        "C", "C#", "D", "D#", "E", "F",
+        "F#", "G", "G#", "A", "A#", "B"
+    };
+
+    if ((freq <= 0.0) || (note_name == NULL) || (buflen < 8))
+    {
+        return -1;
+    }
+
+    // MIDI note number (floating point)
+    float midi = 69.0f + 12.0f * log2(freq / ref_freq);
+
+    // Round to nearest integer note
+    int n = (int)round(midi);
+
+    // Clamp to a reasonable range (MIDI 0–127)
+    if (n < 0) 
+    {
+        n = 0;
+    }
+    
+    if (n > 127) 
+    {
+        n = 127;
+    }
+
+    int octave = (n / 12) - 1;
+    int note_index = n % 12;
+
+    snprintf(note_name, buflen, "%s%d", note_names[note_index], octave);
+    return 0;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+int control_get_midi_note_name(uint8_t note, float ref_freq, char *note_name, size_t buflen)
+{
+    static const char* const note_names[] = 
+    {
+        "C", "C#", "D", "D#", "E", "F",
+        "F#", "G", "G#", "A", "A#", "B"
+    };
+
+    if ((note_name == NULL) || (buflen < 8))
+    {
+        return -1;
+    }
+
+    // Clamp to a reasonable range (MIDI 0–127)
+    if (note > 127) 
+    {
+        note = 127;
+    }
+
+    int octave = (note / 12) - 1;
+    int note_index = note % 12;
+
+    snprintf(note_name, buflen, "%s%d", note_names[note_index], octave);
+    return 0;
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void control_task(void *arg)
 {
     tControlMessage message;

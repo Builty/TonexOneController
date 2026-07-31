@@ -209,7 +209,21 @@ esp_err_t midi_helper_tonex_adjust_param_via_midi(uint8_t change_num, uint8_t mi
             value = tonex_params_clamp_value(param, value);
         } break;
 
-        // 9 tuner
+        case 9:
+        {
+            // tuner (not supported on all platforms!)
+            if (midi_value == 127)
+            {
+                control_request_tuner(1);
+            }
+            else
+            {
+                control_request_tuner(0);
+            }
+
+            // no param change needed
+            return ESP_OK;
+        } break;
         
         case 10: 
         {

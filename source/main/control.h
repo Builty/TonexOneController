@@ -343,6 +343,8 @@ esp_err_t control_release_connected_modeller_params_locked_access(void);
 void control_request_tuner(uint8_t state);
 float control_get_note_freq(float a4_ref, int midi_note);
 float control_get_cents(float measured, float target);
+int control_frequency_to_note(float freq, float ref_freq, char *note_name, size_t buflen);
+int control_get_midi_note_name(uint8_t note, float ref_freq, char *note_name, size_t buflen);
 
 // config API
 void control_set_default_config(void);

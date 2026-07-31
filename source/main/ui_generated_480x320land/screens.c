@@ -272,6 +272,7 @@ void create_screen_screen1() {
                     lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                     lv_img_set_src(obj, &img_tuner);
                     lv_obj_add_event_cb(obj, action_tuner_pressed, LV_EVENT_CLICKED, (void *)0);
+                    lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 }
                 {
                     // ui_BottomPanelTonex
@@ -5608,6 +5609,16 @@ void create_screen_tuner() {
                     lv_obj_set_style_bg_color(obj, lv_color_hex(0x0cef1c), LV_PART_KNOB | LV_STATE_DEFAULT);
                     lv_obj_set_style_arc_color(obj, lv_color_hex(0x513d2b), LV_PART_INDICATOR | LV_STATE_DEFAULT);
                     lv_obj_set_style_arc_width(obj, 18, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+                }
+                {
+                    // ui_TunerNoteLabel
+                    lv_obj_t *obj = lv_label_create(parent_obj);
+                    objects.ui_tuner_note_label = obj;
+                    lv_obj_set_pos(obj, 190, 170);
+                    lv_obj_set_size(obj, 100, LV_SIZE_CONTENT);
+                    lv_obj_set_style_text_font(obj, &lv_font_montserrat_32, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_label_set_text_static(obj, "A");
                 }
                 {
                     // ui_TunerReferenceHeadingLabel

@@ -23,7 +23,7 @@ limitations under the License.
 extern "C" {
 #endif
 
-#define MAX_PRESETS_TONEX_ONE_PLUS           30
+#define MAX_PRESETS_TONEX_ONE_PLUS           20
 
 void usb_tonex_one_plus_handle(class_driver_t* driver_obj);
 void usb_tonex_one_plus_init(class_driver_t* driver_obj, QueueHandle_t comms_queue);

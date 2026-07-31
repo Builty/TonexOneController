@@ -166,7 +166,7 @@ static const void* skin_data_map_ptr;
 static esp_partition_mmap_handle_t skin_data_map_handle = 0;
 static const esp_partition_t* skin_partition;
 static lv_img_dsc_t skin_img_dsc;
-
+static float current_tuner_ref_freq = 440.0f;
 #ifndef clampf
     #define clampf(x, lo, hi)  ((x) < (lo) ? (lo) : ((x) > (hi) ? (hi) : (x)))
 #endif
@@ -370,11 +370,26 @@ void action_next_clicked(lv_event_t * e)
 *****************************************************************************/
 void __attribute__((unused)) action_tuner_pressed(lv_event_t * e)
 {
+    char buf[20];
+    tModellerParameter* param_ptr;
+    
     ESP_LOGI(TAG, "UI tuner pressed");      
     control_request_tuner(1);
     
     // show tuner screen
-    lv_scr_load_anim(objects.tuner, LV_SCR_LOAD_ANIM_FADE_IN, 0, 0, false);
+    lv_scr_load_anim(objects.tuner, LV_SCR_LOAD_ANIM_FADE_IN, 0, 0, false);   
+
+    // grab current tuner ref freq and save it
+    if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
+    {
+        current_tuner_ref_freq = param_ptr[TONEX_GLOBAL_TUNING_REFERENCE].Value;
+
+        tonex_params_release_locked_access();
+    }
+
+    // show reference freq on UI
+    sprintf(buf, "%d Hz", (int)round(current_tuner_ref_freq));
+    lv_label_set_text(objects.ui_tuner_reference_label, buf);
 }
 
 /****************************************************************************
@@ -890,7 +905,7 @@ void UI_SetPresetLabel(uint16_t index, char* name)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void UI_SetTunerFrequencies(float freq, float reference)
+void UI_SetTunerFrequencies(float error, float ref_freq, uint8_t midi_note)
 {
     tUIUpdate ui_update;
 
@@ -902,10 +917,10 @@ void UI_SetTunerFrequencies(float freq, float reference)
         // build command
         ui_update.ElementID = UI_ELEMENT_TUNER_FREQ;
         ui_update.Action = UI_ACTION_NONE;
-        ui_update.Value = (uint32_t)reference;
+        ui_update.Value = (uint32_t)midi_note;
 
-        // put tuner freq into string as we don't have floats in the tUIUpdate and adding would waste ram for queue size (yeah OK could use a union I guess...)
-        sprintf(ui_update.Text, "%3.2f", freq);
+        // put tuner error into string as we don't have floats in the tUIUpdate and adding would waste ram for queue size (yeah OK could use a union I guess...)
+        sprintf(ui_update.Text, "%3.2f", error);
 
         // send to queue
         if (xQueueSend(ui_update_queue, (void*)&ui_update, 0) != pdPASS)
@@ -1192,6 +1207,12 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
                         lv_obj_clear_flag(objects.ui_bottom_panel_tonex, LV_OBJ_FLAG_HIDDEN);
                         lv_obj_add_flag(objects.ui_bottom_panel_valeton, LV_OBJ_FLAG_HIDDEN);
 
+                        if (usb_get_connected_modeller_type() == AMP_MODELLER_TONEX_ONE_PLUS)
+                        {
+                            // unhide Tuner icon
+                            lv_obj_clear_flag(objects.ui_tuner_button, LV_OBJ_FLAG_HIDDEN);
+                        }
+
                         lv_label_set_text(objects.ui_project_heading_label, "Tonex Controller"); 
 #else                    
                         // set effect letter to "C" (Compressor)
@@ -1313,9 +1334,25 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
 
             lv_obj_set_style_bg_color(objects.ui_tuner_arc, col, LV_PART_KNOB);
 
-            // show reference freq
-            sprintf(buf, "%d Hz", (int)round(update->Value));
-            lv_label_set_text(objects.ui_tuner_reference_label, buf);
+            // show Note
+            if ((tuner_error_cents == 0.0f) && (update->Value == 0x80))
+            {
+                // no note detected
+                sprintf(buf, "--");
+            }
+            else
+            {
+                control_get_midi_note_name(update->Value, current_tuner_ref_freq, buf, sizeof(buf) - 1);
+            }
+                            
+            const char* current = lv_label_get_text(objects.ui_tuner_note_label);
+
+            // check if note changed
+            if (strcmp(current, buf) != 0)
+            {
+                // update label
+                lv_label_set_text(objects.ui_tuner_note_label, buf);
+            }
 #endif            
         } break;
 
