@@ -3620,6 +3620,8 @@ function processReturnCmd(data) {
             // set modeller type
             modellerType = data['MODELLER_TYPE'];
 
+            console.log("Modeller Data: max:", maxPresets, "start:", startPreset, "type:", modellerType);
+
             // enable the relevant menu
             const menuContainer = document.getElementById('nav-items-list');
 

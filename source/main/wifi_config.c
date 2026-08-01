@@ -244,6 +244,9 @@ static uint8_t process_wifi_command(tWiFiMessage* message)
         {
             // save preset details
             memcpy((void*)pWebConfig->PresetNames[message->Value], (void*)message->Text, MAX_PRESET_NAME_LENGTH - 1);
+
+            // debug
+            //ESP_LOGE(TAG, "Preset sync index %d name, %s", message->Value,  pWebConfig->PresetNames[message->Value]);
         } break;
 
         case EVENT_SYNC_PRESET:

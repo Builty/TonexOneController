@@ -5618,7 +5618,7 @@ void create_screen_tuner() {
                     lv_obj_set_size(obj, 100, LV_SIZE_CONTENT);
                     lv_obj_set_style_text_font(obj, &lv_font_montserrat_32, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-                    lv_label_set_text_static(obj, "A");
+                    lv_label_set_text_static(obj, "--");
                 }
                 {
                     // ui_TunerReferenceHeadingLabel
