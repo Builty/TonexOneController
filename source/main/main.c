@@ -106,8 +106,7 @@ esp_err_t i2c_master_reset(void)
     // nuke it
     //i2c_reset_tx_fifo(I2C_MASTER_NUM_1);
     //i2c_reset_rx_fifo(I2C_MASTER_NUM_1);
-    periph_module_disable(PERIPH_I2C0_MODULE);
-    periph_module_enable(PERIPH_I2C0_MODULE);
+    i2c_master_bus_reset(ic2_bus_handle_1);
     i2c_del_master_bus(ic2_bus_handle_1);
 
     // manually clock the bus if SDA is stuck
