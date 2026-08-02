@@ -380,6 +380,7 @@ void action_next_clicked(lv_event_t * e)
 *****************************************************************************/
 void __attribute__((unused)) action_tuner_pressed(lv_event_t * e)
 {
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI    
     char buf[20];
     tModellerParameter* param_ptr;
     
@@ -400,6 +401,7 @@ void __attribute__((unused)) action_tuner_pressed(lv_event_t * e)
     // show reference freq on UI
     sprintf(buf, "%d Hz", (int)round(current_tuner_ref_freq));
     lv_label_set_text(objects.ui_tuner_reference_label, buf);
+#endif  //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI   
 }
 
 /****************************************************************************

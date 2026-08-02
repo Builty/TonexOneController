@@ -302,9 +302,14 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     ESP_LOGI(TAG, "Install RGB LCD panel driver");
     esp_lcd_panel_handle_t panel_handle = NULL;
     esp_lcd_rgb_panel_config_t panel_config = {
-        .data_width = 16, // RGB565 in parallel mode, thus 16bit in width
+        .data_width = 16, // RGB565 in parallel mode, thus 16bit in width        
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(6, 0, 0)
+        .in_color_format = LCD_COLOR_FMT_RGB565, 
+        .dma_burst_size = 64,
+#else
         .bits_per_pixel = 16,
         .psram_trans_align = 64,
+#endif       
         .num_fbs = DISPLAY_LCD_NUM_FB,
         .bounce_buffer_size_px = 10 * DISPLAY_LCD_H_RES,
         .clk_src = LCD_CLK_SRC_DEFAULT,

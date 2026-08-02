@@ -244,8 +244,12 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         },
         .bus_width = 8,
         .max_transfer_bytes = LILYGO_TDISPLAY_S3_LCD_V_RES * 100 * sizeof(uint16_t),
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(6, 0, 0)
+        .dma_burst_size = 64,
+#else        
         .psram_trans_align = 64,
         .sram_trans_align = 4
+#endif        
     };
     esp_lcd_new_i80_bus(&bus_config, &i80_bus);
 
@@ -268,7 +272,11 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 
     esp_lcd_panel_dev_config_t panel_config = {
         .reset_gpio_num = LG_TDISP_S3_TFT_RST,
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(6, 0, 0)
+        .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_RGB,
+#else
         .color_space = ESP_LCD_COLOR_SPACE_RGB,
+#endif        
         .bits_per_pixel = 16,
         .vendor_config = NULL
     };

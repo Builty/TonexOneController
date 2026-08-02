@@ -84,7 +84,13 @@ static const char *TAG = "platform Waveshare 1.69";
 #define WAVESHARE_240_280_LCD_PIXEL_CLK_HZ        (40 * 1000 * 1000)
 #define WAVESHARE_240_280_LCD_CMD_BITS            (8)
 #define WAVESHARE_240_280_LCD_PARAM_BITS          (8)
-#define WAVESHARE_240_280_LCD_COLOR_SPACE         (ESP_LCD_COLOR_SPACE_RGB)
+
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(6, 0, 0)
+    #define WAVESHARE_240_280_LCD_COLOR_SPACE   LCD_RGB_ELEMENT_ORDER_RGB
+#else
+    #define WAVESHARE_240_280_LCD_COLOR_SPACE   ESP_LCD_COLOR_SPACE_RGB
+#endif
+
 #define WAVESHARE_240_280_LCD_BITS_PER_PIXEL      (16)
 #define WAVESHARE_240_280_LCD_DRAW_BUFF_DOUBLE    (1)
 #define WAVESHARE_240_280_LCD_DRAW_BUFF_HEIGHT    (50)
@@ -269,7 +275,11 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     ESP_LOGD(TAG, "Install LCD driver");
     const esp_lcd_panel_dev_config_t panel_config = {
         .reset_gpio_num = WAVESHARE_240_280_LCD_GPIO_RST,
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(6, 0, 0)
+        .rgb_ele_order = WAVESHARE_240_280_LCD_COLOR_SPACE,
+#else
         .color_space = WAVESHARE_240_280_LCD_COLOR_SPACE,
+#endif
         .bits_per_pixel = WAVESHARE_240_280_LCD_BITS_PER_PIXEL,
     };
     esp_lcd_new_panel_st7789(lcd_io, &panel_config, &lcd_panel);
