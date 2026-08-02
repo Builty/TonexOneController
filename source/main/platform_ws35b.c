@@ -49,7 +49,6 @@ limitations under the License.
 #include "esp_mac.h"
 #include "esp_crc.h"
 #include "esp_now.h"
-#include "driver/i2c.h"
 #include "soc/lldesc.h"
 #include "esp_lcd_touch_ft6336.h"
 #include "esp_lcd_touch_cst816s.h"

@@ -38,7 +38,6 @@ limitations under the License.
 #include "esp_crc.h"
 #include "esp_intr_alloc.h"
 #include "usb/usb_host.h"
-#include "driver/i2c.h"
 #include "esp_task_wdt.h"
 #include "usb_comms.h"
 #include "usb/cdc_acm_host.h"

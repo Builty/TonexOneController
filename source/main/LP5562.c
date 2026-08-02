@@ -19,6 +19,7 @@ limitations under the License.
 #include <string.h>
 #include <stdlib.h>
 
+#include "freertos/FreeRTOS.h"
 #include "driver/i2c_master.h"
 #include "esp_bit_defs.h"
 #include "esp_check.h"

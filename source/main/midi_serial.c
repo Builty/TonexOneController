@@ -32,7 +32,6 @@ limitations under the License.
 #include "nvs_flash.h"
 #include "sys/param.h"
 #include "esp_log.h"
-#include "driver/i2c.h"
 #include "main.h"
 #include "midi_serial.h"
 #include "control.h"

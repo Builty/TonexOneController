@@ -31,7 +31,6 @@ limitations under the License.
 #include "nvs_flash.h"
 #include "sys/param.h"
 #include "esp_log.h"
-#include "driver/i2c.h"
 #include "esp_bt.h"
 #include "esp_gap_ble_api.h"
 #include "esp_gattc_api.h"

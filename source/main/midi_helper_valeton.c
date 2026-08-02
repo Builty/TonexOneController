@@ -26,7 +26,6 @@ limitations under the License.
 #include "esp_check.h"
 #include "esp_log.h"
 #include "usb/usb_host.h"
-#include "driver/i2c.h"
 #include "nvs_flash.h"
 #include "esp_vfs.h"
 #include "esp_vfs_fat.h"

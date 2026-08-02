@@ -19,7 +19,6 @@ limitations under the License.
 
 #include <stdint.h>
 
-#include "driver/i2c.h"
 #include "esp_err.h"
 
 /*

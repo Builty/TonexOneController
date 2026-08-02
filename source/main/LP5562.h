@@ -19,7 +19,6 @@ limitations under the License.
 
 #include <stdint.h>
 
-#include "driver/i2c.h"
 #include "esp_err.h"
 
 esp_err_t LP5562_set_color(uint8_t red, uint8_t blue, uint8_t green, uint8_t white);

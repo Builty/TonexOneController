@@ -48,7 +48,6 @@ limitations under the License.
 #include "esp_mac.h"
 #include "esp_crc.h"
 #include "esp_now.h"
-#include "driver/i2c.h"
 #include "soc/lldesc.h"
 #include "esp_lcd_touch_gt911.h"
 #include "esp_lcd_touch_cst816s.h"
@@ -242,8 +241,7 @@ void __attribute__((unused)) touch_data_ready(esp_lcd_touch_t *handle)
 *****************************************************************************/
 void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
 {
-    uint16_t touchpad_x[1] = {0};
-    uint16_t touchpad_y[1] = {0};
+    esp_lcd_touch_point_data_t points[1] = {0};
     uint8_t touchpad_cnt = 0;
     bool touchpad_pressed = false;
 
@@ -257,8 +255,14 @@ void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
             esp_lcd_touch_read_data(drv->user_data);
 
             // Get coordinates 
-            touchpad_pressed = esp_lcd_touch_get_coordinates(drv->user_data, touchpad_x, touchpad_y, NULL, &touchpad_cnt, 1);
-
+            if (esp_lcd_touch_get_data(drv->user_data, points, &touchpad_cnt, 1) == ESP_OK)
+            {
+                if (touchpad_cnt > 0)
+                {
+                    touchpad_pressed = 1;
+                }
+            }
+            
             // reset flag
             touch_data_ready_to_read = 0;
 
@@ -271,11 +275,17 @@ void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
     // poll the driver chip
     if (xSemaphoreTake(I2CMutexHandle, (TickType_t)10) == pdTRUE)
     {
-        /* Read touch controller data */
+        // Read touch controller data 
         esp_lcd_touch_read_data(drv->user_data);
 
-        /* Get coordinates */
-        touchpad_pressed = esp_lcd_touch_get_coordinates(drv->user_data, touchpad_x, touchpad_y, NULL, &touchpad_cnt, 1);
+        // Get coordinates
+        if (esp_lcd_touch_get_data(drv->user_data, points, &touchpad_cnt, 1) == ESP_OK)
+        {
+            if (touchpad_cnt > 0)
+            {
+                touchpad_pressed = 1;
+            }
+        }
 
         xSemaphoreGive(I2CMutexHandle);
     }
@@ -287,8 +297,8 @@ void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
 
     if (touchpad_pressed && touchpad_cnt > 0) 
     {
-        data->point.x = touchpad_x[0];
-        data->point.y = touchpad_y[0];
+        data->point.x = points[0].x;
+        data->point.y = points[0].y;
 
         // allow platform to adjust if needed
         platform_adjust_touch_coords(&data->point.x, &data->point.y);
