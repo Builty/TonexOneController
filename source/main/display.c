@@ -1617,6 +1617,7 @@ static void __attribute__((unused)) ui_toast_close(void)
 
     // Close and delete the message box
     lv_msgbox_close(msgbox_data.mbox);
+    msgbox_data.mbox = NULL;
 }
 
 /****************************************************************************
