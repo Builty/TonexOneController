@@ -44,6 +44,10 @@ For the Waveshare 3.5B, a maximum of 4 footswitches are supported.<br>
 ## Wired Footswitches (external) <a name="footswitches_ext"></a>
 Starting from firmware version 1.0.8.2, with the use of an additional PCB, up to 16 footswitches can be connected.<br> 
 The footswitch must be a "momentary" type that is only has its contacts closed when it is pressed.
+<br>**Caution:** the touch controller chip used on this board experiences issues when used in conjunction with the SX1509. 
+It can tend to report that a finger has been lifted when it hasn't, affecting long-pressing and dragging of sliders.
+<br>
+At the time of writing (August 2026) no solution has been found. If you want the SX1509, consider using a different platform. Sorry.
 <br><br>
 The additional PCB must use the "SX1509" chip. The recommeded one is the Sparkfun SX1509 breakout board:
 https://www.sparkfun.com/sparkfun-16-output-i-o-expander-breakout-sx1509.html
