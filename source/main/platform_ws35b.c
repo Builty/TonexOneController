@@ -168,11 +168,23 @@ static void InitIOExpander(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t
             ESP_LOGE(TAG, "Onboard IO Expander init 1 failed");
         }
         
+        // LCD reset to output
         if (esp_io_expander_set_dir(expander_handle,  LCD_RESET, IO_EXPANDER_OUTPUT) != ESP_OK)
         {
             ESP_LOGE(TAG, "Onboard IO Expander init 2 failed");
         }
-    
+
+        // touch interrupt to input
+        if (esp_io_expander_set_dir(expander_handle,  TOUCH_INT, IO_EXPANDER_INPUT) != ESP_OK)
+        {
+            ESP_LOGE(TAG, "Onboard IO Expander init 3 failed");
+        }
+
+        if (esp_io_expander_set_pullupdown(expander_handle, TOUCH_INT, IO_EXPANDER_PULL_UP) != ESP_OK)
+        {
+            ESP_LOGE(TAG, "Onboard IO Expander init 4 failed");
+        }
+
         // reset LCD
         esp_io_expander_set_level(expander_handle, LCD_RESET, 0);
         xSemaphoreGive(I2CMutexHandle);
@@ -658,7 +670,6 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     ledc_channel.speed_mode = WAVESHARE_35_LCD_BL_LEDC_MODE;
     ledc_channel.channel = WAVESHARE_35_LCD_BL_LEDC_CHANNEL;
     ledc_channel.timer_sel = WAVESHARE_35_LCD_BL_LEDC_TIMER;
-    ledc_channel.intr_type = LEDC_INTR_DISABLE;
     ledc_channel.gpio_num = WAVESHARE_35_LCD_GPIO_BL;
     ledc_channel.duty = 0, // Set duty to 0%
     ledc_channel.hpoint = 0;

@@ -239,32 +239,33 @@ void __attribute__((unused)) touch_data_ready(esp_lcd_touch_t *handle)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
+void __attribute__((unused, weak)) display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
 {
     esp_lcd_touch_point_data_t points[1] = {0};
     uint8_t touchpad_cnt = 0;
     bool touchpad_pressed = false;
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
-    // CST816 driver has to set interrupt before data is valid to read
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_LILYGO_TDISPLAY_S3 || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169TOUCH  || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_19TOUCH
+    // CST816 driver has to set interrupt before data is valid to read.
     if (touch_data_ready_to_read)
     {
         if (xSemaphoreTake(I2CMutexHandle, (TickType_t)10) == pdTRUE)
         {
             // Read touch controller data
-            esp_lcd_touch_read_data(drv->user_data);
-
-            // Get coordinates 
-            if (esp_lcd_touch_get_data(drv->user_data, points, &touchpad_cnt, 1) == ESP_OK)
+            if (esp_lcd_touch_read_data(drv->user_data) == ESP_OK)
             {
-                if (touchpad_cnt > 0)
+                // Get coordinates 
+                if (esp_lcd_touch_get_data(drv->user_data, points, &touchpad_cnt, 1) == ESP_OK)
                 {
-                    touchpad_pressed = 1;
+                    if (touchpad_cnt > 0)
+                    {
+                        touchpad_pressed = 1;
+                    }
                 }
-            }
             
-            // reset flag
-            touch_data_ready_to_read = 0;
+                // reset flag
+                touch_data_ready_to_read = 0;
+            }
 
             xSemaphoreGive(I2CMutexHandle);
         }
@@ -276,14 +277,17 @@ void display_lvgl_touch_cb(lv_indev_drv_t * drv, lv_indev_data_t * data)
     if (xSemaphoreTake(I2CMutexHandle, (TickType_t)10) == pdTRUE)
     {
         // Read touch controller data 
-        esp_lcd_touch_read_data(drv->user_data);
-
-        // Get coordinates
-        if (esp_lcd_touch_get_data(drv->user_data, points, &touchpad_cnt, 1) == ESP_OK)
+        if (esp_lcd_touch_read_data(drv->user_data) == ESP_OK)
         {
-            if (touchpad_cnt > 0)
+            touchpad_cnt = 0;
+
+            // Get coordinates
+            if (esp_lcd_touch_get_data(drv->user_data, points, &touchpad_cnt, 1) == ESP_OK)
             {
-                touchpad_pressed = 1;
+                if (touchpad_cnt > 0)
+                {
+                    touchpad_pressed = 1;
+                }
             }
         }
 

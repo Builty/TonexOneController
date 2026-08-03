@@ -737,7 +737,7 @@ static esp_err_t usb_tonex_one_plus_modify_global(uint16_t global_val, float val
             usb_tonex_one_plus_send_master_volume(scaled_value);
 
             // wait a little
-            vTaskDelay(20);
+            vTaskDelay(pdMS_TO_TICKS(20));
 
             // read value back to update the UI
             usb_tonex_one_plus_request_master_volume();
@@ -1881,7 +1881,7 @@ void usb_tonex_one_plus_deinit(void)
 {
     // close USB
     cdc_acm_host_close(cdc_dev);
-    vTaskDelay(200);
+    vTaskDelay(pdMS_TO_TICKS(200));
     cdc_dev = NULL;
     cdc_acm_host_uninstall();
 
