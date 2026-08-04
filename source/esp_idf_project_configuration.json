@@ -8,7 +8,7 @@
         "sdkconfig.defaults",
         "sdkconfig.ws169"
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_ws169"
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws169/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -34,7 +34,7 @@
         "sdkconfig.defaults",
         "sdkconfig.ws169land"        
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_ws169land"
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws169land/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -60,7 +60,7 @@
         "sdkconfig.defaults",
         "sdkconfig.ws169t"
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_ws169t"
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws169t/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -86,7 +86,7 @@
         "sdkconfig.defaults",
         "sdkconfig.ws169tland"
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_ws169tland"
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws169tland/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -112,7 +112,7 @@
         "sdkconfig.defaults",
         "sdkconfig.ws43B"
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_ws43b"
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws43b/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -138,7 +138,7 @@
         "sdkconfig.defaults",
         "sdkconfig.ws35b"
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_ws35b"
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws35b/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -164,7 +164,7 @@
         "sdkconfig.defaults",
         "sdkconfig.jc3248w"        
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_jc3248w"
+      "sdkconfigFilePath": "${workspaceFolder}/build_jc3248w/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -190,7 +190,7 @@
         "sdkconfig.defaults",
         "sdkconfig.wszero"
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_wszero"
+      "sdkconfigFilePath": "${workspaceFolder}/build_wszero/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -216,7 +216,7 @@
         "sdkconfig.defaults",
         "sdkconfig.devkitc_N8R2"
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_devkitc_N8R2"
+      "sdkconfigFilePath": "${workspaceFolder}/build_devkitc_N8R2/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -242,7 +242,7 @@
         "sdkconfig.defaults",
         "sdkconfig.devkitc_N16R8"
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_devkitc_N16R8"
+      "sdkconfigFilePath": "${workspaceFolder}/build_devkitc_N16R8/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -268,7 +268,7 @@
         "sdkconfig.defaults",
         "sdkconfig.m5atoms3r"
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_m5atoms3r"
+      "sdkconfigFilePath": "${workspaceFolder}/build_m5atoms3r/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -294,7 +294,7 @@
         "sdkconfig.defaults",
         "sdkconfig.lgtdisps3"
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_lgtdisps3"
+      "sdkconfigFilePath": "${workspaceFolder}/build_lgtdisps3/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -320,7 +320,7 @@
         "sdkconfig.defaults",
         "sdkconfig.ws19t"        
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_ws19t"
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws19t/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -346,7 +346,7 @@
         "sdkconfig.defaults",
         "sdkconfig.ws43devonly"        
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_ws7_43"
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws7_43/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -372,7 +372,7 @@
         "sdkconfig.defaults",
         "sdkconfig.pirate169"        
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_pirate169"
+      "sdkconfigFilePath": "${workspaceFolder}/build_pirate169/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -398,7 +398,7 @@
         "sdkconfig.defaults",
         "sdkconfig.pirate169land"        
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_pirate169land"
+      "sdkconfigFilePath": "${workspaceFolder}/build_pirate169land/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -424,7 +424,7 @@
         "sdkconfig.defaults",
         "sdkconfig.piratezero"        
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_piratezero"
+      "sdkconfigFilePath": "${workspaceFolder}/build_piratezero/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -450,7 +450,7 @@
         "sdkconfig.defaults",
         "sdkconfig.pirate43B"        
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_pirate43B"
+      "sdkconfigFilePath": "${workspaceFolder}/build_pirate43B/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -476,7 +476,7 @@
         "sdkconfig.defaults",
         "sdkconfig.pirateminiv2"        
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_pirateminiv2"
+      "sdkconfigFilePath": "${workspaceFolder}/build_pirateminiv2/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -502,7 +502,7 @@
         "sdkconfig.defaults",
         "sdkconfig.pirateplusv2"        
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_pirateplusv2"
+      "sdkconfigFilePath": "${workspaceFolder}/build_pirateplusv2/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -528,7 +528,7 @@
         "sdkconfig.defaults",
         "sdkconfig.piratepro"        
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_piratepro"
+      "sdkconfigFilePath": "${workspaceFolder}/build_piratepro/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",
@@ -554,7 +554,7 @@
         "sdkconfig.defaults",
         "sdkconfig.piratemax35"        
       ],
-      "sdkconfigFilePath": "${workspaceFolder}/build_piratemax35"
+      "sdkconfigFilePath": "${workspaceFolder}/build_piratemax35/sdkconfig"
     },
     "env": {},
     "flashBaudRate": "",

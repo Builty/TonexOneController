@@ -14,4 +14,4 @@ Similar for Bluetooth Peripheral mode.
 
 ## More footswitch inputs
 For platforms that have the available IO, add extra footswitches.
-
+Also change MAX_EXTERNAL_EFFECT_FOOTSWITCHES to be more than 8. 12 or even 16? 
