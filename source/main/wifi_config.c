@@ -2063,6 +2063,7 @@ static void wifi_init_sta(void)
             // However these modes are deprecated and not advisable to be used. Incase your Access point
             // doesn't support WPA2, these mode can be enabled by commenting below line
             .threshold.authmode = WIFI_AUTH_WPA2_PSK,
+            .scan_method = WIFI_ALL_CHANNEL_SCAN        // thanks to user "ft972" for reporting this
         },
     };
 
