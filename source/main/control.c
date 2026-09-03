@@ -2853,7 +2853,21 @@ static void UpdateFootswitchLeds(void)
                                 }
                             
                                 leds_set_colour(1 << fx_config->Switch, &colour);
-                                ESP_LOGI(TAG, "Effect Led %d", fx_config->Switch);
+                                ESP_LOGI(TAG, "Effect Led Switch %d", fx_config->Switch);
+                            }
+                        }
+                        else if (param_ptr[param].Type == MODELLER_PARAM_TYPE_RANGE)
+                        {
+                            // range type, set on if value 2 so toggling is visible
+                            if (param_ptr[param].Value == fx_config->Value_2)
+                            {                                
+                                // led on    
+                                colour.Red = 0;
+                                colour.Green = 255;
+                                colour.Blue = 0;    
+                            
+                                leds_set_colour(1 << fx_config->Switch, &colour);
+                                ESP_LOGI(TAG, "Effect Led Range %d", fx_config->Switch);
                             }
                         }
 
