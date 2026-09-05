@@ -31,7 +31,12 @@ limitations under the License.
 #include "nvs_flash.h"
 #include "sys/param.h"
 #include "esp_log.h"
-#include "esp_bt.h"
+#if CONFIG_IDF_TARGET_ESP32P4
+    #include "esp_hosted.h"
+    #include "esp_hosted_bt_host_stack.h"
+#else
+    #include "esp_bt.h"
+#endif
 #include "esp_gap_ble_api.h"
 #include "esp_gattc_api.h"
 #include "esp_gatt_defs.h"
@@ -1488,6 +1493,7 @@ static void init_BLE(void)
     control_get_config_item_string(CONFIG_ITEM_BT_PERIPHERAL_NAME, periph_device_name);
     ESP_LOGI(TAG, "Config Peripheral name: %s", periph_device_name);
 
+#if !CONFIG_IDF_TARGET_ESP32P4
     ESP_ERROR_CHECK(esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT));
 
     esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
@@ -1504,6 +1510,17 @@ static void init_BLE(void)
         ESP_LOGE(GATTC_TAG, "%s enable controller failed: %s\n", __func__, esp_err_to_name(ret));
         return;
     }
+#else
+    // hosted
+    esp_hosted_bt_host_stack_cfg_t bt_cfg = ESP_HOSTED_BT_HOST_STACK_CONFIG_DEFAULT();
+    ret = esp_hosted_bt_host_stack_setup(&bt_cfg);
+
+    if (ret) 
+    {
+        ESP_LOGE(GATTC_TAG, "%s initialize controller failed: %s\n", __func__, esp_err_to_name(ret));
+        return;
+    }
+#endif
 
     ret = esp_bluedroid_init();
     if (ret) 

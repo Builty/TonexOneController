@@ -11,7 +11,8 @@
       "binaryDir": "build_ws169",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.ws169",
-        "SDKCONFIG": "build_ws169/sdkconfig"
+        "SDKCONFIG": "build_ws169/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -32,7 +33,8 @@
       "binaryDir": "build_ws169land",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.ws169land",
-        "SDKCONFIG": "build_ws169land/sdkconfig"
+        "SDKCONFIG": "build_ws169land/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -53,7 +55,8 @@
       "binaryDir": "build_ws169t",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.ws169t",
-        "SDKCONFIG": "build_ws169t/sdkconfig"
+        "SDKCONFIG": "build_ws169t/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -74,7 +77,8 @@
       "binaryDir": "build_ws169tland",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.ws169tland",
-        "SDKCONFIG": "build_ws169tland/sdkconfig"
+        "SDKCONFIG": "build_ws169tland/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -95,7 +99,8 @@
       "binaryDir": "build_ws43b",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.ws43B",
-        "SDKCONFIG": "build_ws43b/sdkconfig"
+        "SDKCONFIG": "build_ws43b/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -116,7 +121,8 @@
       "binaryDir": "build_ws35b",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.ws35b",
-        "SDKCONFIG": "build_ws35b/sdkconfig"
+        "SDKCONFIG": "build_ws35b/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -137,7 +143,30 @@
       "binaryDir": "build_jc3248w",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.jc3248w",
-        "SDKCONFIG": "build_jc3248w/sdkconfig"
+        "SDKCONFIG": "build_jc3248w/sdkconfig",
+        "IDF_TARGET": "esp32s3"
+      },
+      "vendor": {
+        "espressif/vscode-esp-idf": {
+          "schemaVersion": 1,
+          "settings": [
+            {
+              "type": "openOCD",
+              "value": {
+                "debugLevel": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "JC4880P4",
+      "binaryDir": "build_jc4880p4",
+      "cacheVariables": {
+        "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.jc4880p4",
+        "SDKCONFIG": "build_jc4880p4/sdkconfig",
+        "IDF_TARGET": "esp32p4"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -158,7 +187,8 @@
       "binaryDir": "build_wszero",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.wszero",
-        "SDKCONFIG": "build_wszero/sdkconfig"
+        "SDKCONFIG": "build_wszero/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -179,7 +209,8 @@
       "binaryDir": "build_devkitc_N8R2",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.devkitc_N8R2",
-        "SDKCONFIG": "build_devkitc_N8R2/sdkconfig"
+        "SDKCONFIG": "build_devkitc_N8R2/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -200,7 +231,8 @@
       "binaryDir": "build_devkitc_N16R8",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.devkitc_N16R8",
-        "SDKCONFIG": "build_devkitc_N16R8/sdkconfig"
+        "SDKCONFIG": "build_devkitc_N16R8/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -221,7 +253,8 @@
       "binaryDir": "build_m5atoms3r",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.m5atoms3r",
-        "SDKCONFIG": "build_m5atoms3r/sdkconfig"
+        "SDKCONFIG": "build_m5atoms3r/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -242,7 +275,8 @@
       "binaryDir": "build_lgtdisps3",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.lgtdisps3",
-        "SDKCONFIG": "build_lgtdisps3/sdkconfig"
+        "SDKCONFIG": "build_lgtdisps3/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -263,7 +297,8 @@
       "binaryDir": "build_ws19t",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.ws19t",
-        "SDKCONFIG": "build_ws19t/sdkconfig"
+        "SDKCONFIG": "build_ws19t/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -284,7 +319,8 @@
       "binaryDir": "build_ws7_43",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.ws43devonly",
-        "SDKCONFIG": "build_ws7_43/sdkconfig"
+        "SDKCONFIG": "build_ws7_43/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -305,7 +341,8 @@
       "binaryDir": "build_pirate169",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.pirate169",
-        "SDKCONFIG": "build_pirate169/sdkconfig"
+        "SDKCONFIG": "build_pirate169/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -326,7 +363,8 @@
       "binaryDir": "build_pirate169land",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.pirate169land",
-        "SDKCONFIG": "build_pirate169land/sdkconfig"
+        "SDKCONFIG": "build_pirate169land/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -347,7 +385,8 @@
       "binaryDir": "build_piratezero",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.piratezero",
-        "SDKCONFIG": "build_piratezero/sdkconfig"
+        "SDKCONFIG": "build_piratezero/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -368,7 +407,8 @@
       "binaryDir": "build_pirate43B",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.pirate43B",
-        "SDKCONFIG": "build_pirate43B/sdkconfig"
+        "SDKCONFIG": "build_pirate43B/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -389,7 +429,8 @@
       "binaryDir": "build_pirateminiv2",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.pirateminiv2",
-        "SDKCONFIG": "build_pirateminiv2/sdkconfig"
+        "SDKCONFIG": "build_pirateminiv2/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -410,7 +451,8 @@
       "binaryDir": "build_pirateplusv2",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.pirateplusv2",
-        "SDKCONFIG": "build_pirateplusv2/sdkconfig"
+        "SDKCONFIG": "build_pirateplusv2/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -431,7 +473,8 @@
       "binaryDir": "build_piratepro",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.piratepro",
-        "SDKCONFIG": "build_piratepro/sdkconfig"
+        "SDKCONFIG": "build_piratepro/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {
@@ -452,7 +495,8 @@
       "binaryDir": "build_piratemax35",
       "cacheVariables": {
         "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.piratemax35",
-        "SDKCONFIG": "build_piratemax35/sdkconfig"
+        "SDKCONFIG": "build_piratemax35/sdkconfig",
+        "IDF_TARGET": "esp32s3"
       },
       "vendor": {
         "espressif/vscode-esp-idf": {

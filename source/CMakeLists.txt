@@ -12,7 +12,7 @@ if(CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI)
     set(partition skins)
     idf_build_get_property(project_dir PROJECT_DIR)
 
-    if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B)
+    if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC4880P4)
         set(image_file ${project_dir}/skin_images/16bit/skins.bin)
     endif()
 

@@ -23,7 +23,7 @@ limitations under the License.
 extern "C" {
 #endif
 
-#define APP_VERSION		"2.1.0.2"
+#define APP_VERSION		"2.1.1.1"
 
 #define I2C_MASTER_NUM_1                0          
 #define I2C_MASTER_NUM_2                1          
@@ -595,6 +595,38 @@ extern SemaphoreHandle_t I2CMutex_2;
 
     // Touch
     #define TOUCH_INT                            GPIO_NUM_42
+
+#elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC4880P4
+    // JC4880P443 ESP320P4 dev board
+    // I2C bus 1
+    #define I2C_MASTER_1_SCL_IO  GPIO_NUM_8       
+    #define I2C_MASTER_1_SDA_IO  GPIO_NUM_7       
+
+    // I2C bus 2
+    #define I2C_MASTER_2_SCL_IO  GPIO_NUM_28
+    #define I2C_MASTER_2_SDA_IO  GPIO_NUM_32
+    
+    #define EXTERNAL_IO_EXPANDER_BUS       I2C_MASTER_NUM_2
+    #define EXTERNAL_IO_EXPANDER_MUTEX     I2CMutex_2 
+
+    #define FOOTSWITCH_1		GPIO_NUM_29
+    #define FOOTSWITCH_2		GPIO_NUM_30
+    #define FOOTSWITCH_3		GPIO_NUM_31
+    #define FOOTSWITCH_4		GPIO_NUM_33
+
+    // Midi: 
+    #define UART_RX_PIN         GPIO_NUM_34
+    #define UART_TX_PIN         GPIO_NUM_35
+
+    #define LCD_RST          GPIO_NUM_5
+    #define LCD_BL           GPIO_NUM_23
+    #define TOUCH_RST        GPIO_NUM_3
+    #define TOUCH_INT        GPIO_NUM_NC
+    #define DSI_LDO_CHAN     3
+    #define DSI_LDO_MV       2500
+    #define DSI_LANES        2
+    #define DSI_MBPS         500
+    #define DPI_MHZ          34
 
 #else
     #error "Unknown hardware platform!"

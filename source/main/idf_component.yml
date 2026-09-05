@@ -12,3 +12,7 @@ dependencies:
   espressif/esp_lcd_st7796: ^1.4.0
   espressif/esp_lcd_axs15231b: ^2.1.0
   espressif/usb: ^1.4.0
+
+  espressif/esp_lcd_st7701: ^2.0.2~2
+  espressif/esp_hosted: ^3.0.6
+  espressif/esp_wifi_remote: ^1.6.4

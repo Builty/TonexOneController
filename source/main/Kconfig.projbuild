@@ -13,6 +13,9 @@ menu "Tonex Controller Configuration"
         config TONEX_CONTROLLER_HARDWARE_PLATFORM_JC3248W535
             bool "JC3248W535 3.5"
 
+        config TONEX_CONTROLLER_HARDWARE_PLATFORM_JC4880P4
+            bool "JC4880P4 4.3"
+
         config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169
             bool "Waveshare 1.69"
 

@@ -33,6 +33,9 @@ limitations under the License.
 #include "esp_ota_ops.h"
 #include "sys/param.h"
 #include "esp_mac.h"
+#if CONFIG_IDF_TARGET_ESP32P4
+    #include "esp_hosted.h"
+#endif
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "lwip/err.h"
@@ -2036,6 +2039,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t e
 *****************************************************************************/
 static void wifi_init_sta(void)
 {
+#if CONFIG_IDF_TARGET_ESP32S3    
     esp_netif_t* sta_netif;
     char host_name[MAX_MDNS_NAME];
 
@@ -2112,6 +2116,7 @@ static void wifi_init_sta(void)
     {
         ESP_LOGE(TAG, "UNEXPECTED EVENT");
     }
+#endif    
 }
 
 /****************************************************************************
@@ -2123,6 +2128,7 @@ static void wifi_init_sta(void)
 *****************************************************************************/
 static void wifi_init_softap(void)
 {
+#if CONFIG_IDF_TARGET_ESP32S3    
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
     esp_netif_create_default_wifi_ap();
@@ -2166,6 +2172,7 @@ static void wifi_init_softap(void)
     ESP_ERROR_CHECK(esp_wifi_start());
 
     ESP_LOGI(TAG, "wifi_init_softap finished. SSID:%s channel:%d", wifi_config.sta.ssid, ESP_WIFI_CHANNEL);
+#endif    
 }
 
 /****************************************************************************
@@ -2218,7 +2225,10 @@ static void wifi_kill_all(void)
     ESP_LOGI(TAG, "Wifi config stopping");
     stop_webserver();
     vTaskDelay(pdMS_TO_TICKS(5000));
+
+#if CONFIG_IDF_TARGET_ESP32S3
     esp_wifi_stop();
+#endif    
 }
 
 /****************************************************************************
@@ -2368,6 +2378,7 @@ static void wifi_config_task(void *arg)
         } break;
     }
 
+#if CONFIG_IDF_TARGET_ESP32S3    
     // set the WiFi TX power. Some platforms seem to have stability issues on max power
     switch (control_get_config_item_int(CONFIG_ITEM_WIFI_TX_POWER))
     {
@@ -2396,6 +2407,7 @@ static void wifi_config_task(void *arg)
     int8_t power;
     esp_wifi_get_max_tx_power(&power);
     ESP_LOGI(TAG, "WiFi Tx power: %d dbm", (int)(power * 0.25f));
+#endif 
 
     start_mdns_service();
 
