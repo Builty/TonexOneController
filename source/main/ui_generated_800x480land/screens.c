@@ -164,7 +164,7 @@ void create_screen_screen1() {
                     objects.ui_preset_heading_label = obj;
                     lv_obj_set_pos(obj, 6, 60);
                     lv_obj_set_size(obj, 789, 60);
-                    lv_label_set_long_mode(obj, LV_LABEL_LONG_DOT);
+                    lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                     lv_obj_add_event_cb(obj, action_enable_skin_edit, LV_EVENT_LONG_PRESSED, (void *)0);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                     lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_SCROLLED);
@@ -5690,7 +5690,7 @@ void create_screen_tuner() {
                     objects.ui_tuner_heading = obj;
                     lv_obj_set_pos(obj, 6, 60);
                     lv_obj_set_size(obj, 789, 60);
-                    lv_label_set_long_mode(obj, LV_LABEL_LONG_DOT);
+                    lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                     lv_obj_add_event_cb(obj, action_enable_skin_edit, LV_EVENT_LONG_PRESSED, (void *)0);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                     lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_SCROLLED);

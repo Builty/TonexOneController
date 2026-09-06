@@ -79,13 +79,15 @@ limitations under the License.
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC4880P4
 #include "esp_hosted.h"
-
+#include "esp_cache.h"
 static const char *TAG = "platform_jc4880p4";
 
 #define BUF_SIZE                            (1024)
 #define I2C_MASTER_TIMEOUT_MS               1000
-#define BOARD_LCD_H_RES                     800
-#define BOARD_LCD_V_RES                     480
+#define PANEL_W                             480
+#define PANEL_H                             800
+#define LV_HOR                              800
+#define LV_VER                              480
 
 static SemaphoreHandle_t I2CMutexHandle;
 static lv_disp_draw_buf_t disp_buf; // contains internal graphic buffer(s) called draw buffer(s)
@@ -272,12 +274,15 @@ static void platform_display_lvgl_flush_cb(lv_disp_drv_t *drv, const lv_area_t *
         for (int x = area->x1; x <= area->x2; x++) 
         {
             int dx = y;
-            int dy = (BOARD_LCD_H_RES - 1 - x);
-            s_fb[dy * BOARD_LCD_V_RES + dx] = color_map->full;
+            int dy = (LV_HOR - 1 - x);
+            s_fb[dy * PANEL_W + dx] = color_map->full;
             color_map++;
         }
     }
     
+    size_t fb_bytes = PANEL_W * PANEL_H * sizeof(uint16_t);
+    esp_cache_msync(s_fb, fb_bytes, ESP_CACHE_MSYNC_FLAG_DIR_C2M);
+
     lv_disp_flush_ready(drv);
 }
 
@@ -353,8 +358,8 @@ esp_err_t ret = ESP_OK;
         .out_color_format = LCD_COLOR_FMT_RGB565,
         .num_fbs = 2,
         .video_timing = {
-            .h_size = BOARD_LCD_H_RES,
-            .v_size = BOARD_LCD_V_RES,
+            .h_size = PANEL_W,
+            .v_size = PANEL_H,
             .hsync_pulse_width = 12,
             .hsync_back_porch = 42,
             .hsync_front_porch = 42,
@@ -397,7 +402,7 @@ esp_err_t ret = ESP_OK;
     ESP_ERROR_CHECK(esp_lcd_dpi_panel_get_frame_buffer(lcd_panel, 2, &fb0, &fb1));
     s_fb = (uint16_t *)fb0;
 
-    const size_t partial = BOARD_LCD_H_RES * 40;
+    const size_t partial = LV_HOR * 40;
     s_lv_buf = heap_caps_malloc(partial * sizeof(lv_color_t),  MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL);
     if (!s_lv_buf) 
     {
@@ -409,8 +414,8 @@ esp_err_t ret = ESP_OK;
 
     ESP_LOGI(TAG, "Register display driver to LVGL");
     lv_disp_drv_init(pdisp_drv);
-    pdisp_drv->hor_res  = BOARD_LCD_H_RES;
-    pdisp_drv->ver_res  = BOARD_LCD_V_RES;
+    pdisp_drv->hor_res  = LV_HOR;
+    pdisp_drv->ver_res  = LV_VER;
     pdisp_drv->flush_cb = platform_display_lvgl_flush_cb;
     pdisp_drv->draw_buf = &disp_buf;
     pdisp_drv->full_refresh = 0;
@@ -421,6 +426,8 @@ esp_err_t ret = ESP_OK;
     {
         ESP_LOGE(TAG, "lv_disp_drv_register failed");
     }
+
+    ESP_LOGI(TAG, "LVGL %dx%d  FB %p", lv_disp_get_hor_res(NULL), lv_disp_get_ver_res(NULL), s_fb);
 
     // reset touch screen
     gpio_config_t touch_rst_io = {
@@ -457,8 +464,8 @@ esp_err_t ret = ESP_OK;
         if (ret == ESP_OK) 
         {
             const esp_lcd_touch_config_t tp_cfg = {
-                .x_max = BOARD_LCD_H_RES,
-                .y_max = BOARD_LCD_V_RES,
+                .x_max = LV_HOR,
+                .y_max = LV_VER,
                 .rst_gpio_num = GPIO_NUM_NC,
                 .int_gpio_num = TOUCH_INT,
                 .levels = { .reset = 0, .interrupt = 0 },
