@@ -2708,10 +2708,17 @@ static void UpdateFootswitchLeds(void)
                 {
                     if (control_get_connected_modeller_params_locked_access(&param_ptr) == ESP_OK)
                     {
+                        tModellerParameter this_param;
+
+                        // make a copy so we can release the mutex
+                        memcpy((void*)&this_param, (void*)&param_ptr[param], sizeof(tModellerParameter));
+
+                        control_release_connected_modeller_params_locked_access();
+
                         // is the parameter a boolean type?
-                        if (param_ptr[param].Type == MODELLER_PARAM_TYPE_SWITCH)
+                        if (this_param.Type == MODELLER_PARAM_TYPE_SWITCH)
                         {
-                            if (param_ptr[param].Value != 0)
+                            if (this_param.Value != 0)
                             {                                
                                 // set default colour
                                 colour.Red = 0;
@@ -2856,12 +2863,20 @@ static void UpdateFootswitchLeds(void)
                                 ESP_LOGI(TAG, "Effect Led Switch %d", fx_config->Switch);
                             }
                         }
-                        else if (param_ptr[param].Type == MODELLER_PARAM_TYPE_RANGE)
+                        else if (this_param.Type == MODELLER_PARAM_TYPE_RANGE)
                         {
                             // range type, set on if value 2 so toggling is visible
-                            if (param_ptr[param].Value == fx_config->Value_2)
+                            // careful here: Value_x are Midi value, but param value is a converted float
+
+                            float value_1 = midi_helper_scale_midi_to_float(param, fx_config->Value_1);
+
+                            // note here: scaling Midi to float may result in rounding errors. This check is to make sure
+                            // we can find the current value without missing it due to slight difference
+                            float param_diff = fabs(this_param.Value - value_1);
+
+                            if (param_diff > 0.1f)
                             {                                
-                                // led on    
+                                // value 2, set led on    
                                 colour.Red = 0;
                                 colour.Green = 255;
                                 colour.Blue = 0;    
@@ -2869,9 +2884,7 @@ static void UpdateFootswitchLeds(void)
                                 leds_set_colour(1 << fx_config->Switch, &colour);
                                 ESP_LOGI(TAG, "Effect Led Range %d", fx_config->Switch);
                             }
-                        }
-
-                        control_release_connected_modeller_params_locked_access();
+                        }                    
                     }                    
                 }
             }
