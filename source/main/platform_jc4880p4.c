@@ -80,6 +80,8 @@ limitations under the License.
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC4880P4
 #include "esp_hosted.h"
 #include "esp_cache.h"
+#include "driver/ppa.h"
+
 static const char *TAG = "platform_jc4880p4";
 
 #define BUF_SIZE                            (1024)
@@ -94,6 +96,10 @@ static lv_disp_drv_t* disp_drv;      // contains callback functions
 static esp_lcd_panel_handle_t disp_panel = NULL;
 static esp_lcd_touch_handle_t tp = NULL;
 static lv_indev_drv_t indev_drv;    // Input device driver (Touch)
+static ppa_client_handle_t s_ppa;
+static void *s_fb;                  // 480*800 RGB565 from DPI
+static size_t s_fb_bytes;
+static uint32_t rotation_angle = 90;
 
 #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(6, 0, 0)
 #define ST7701_480_360_PANEL_60HZ_DPI_CONFIG(color_fmt) \
@@ -224,14 +230,14 @@ __attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max
             // Tonex
             if (max_entries <= 8)
             {
-                dest[0] = -12;
-                dest[1] = 44;
-                dest[2] = 96;
-                dest[3] = 148;
-                dest[4] = 200;
-                dest[5] = 252;
-                dest[6] = 304;
-                dest[7] = 356;
+                dest[0] = -4;
+                dest[1] = 85;
+                dest[2] = 170;
+                dest[3] = 255;
+                dest[4] = 340;
+                dest[5] = 425;
+                dest[6] = 505;
+                dest[7] = 590;
             }
         } break;
 
@@ -240,16 +246,16 @@ __attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max
             // Valeton
             if (max_entries <= 10)
             {
-                dest[0] = -19;
-                dest[1] = 24;
-                dest[2] = 67;
-                dest[3] = 110;
-                dest[4] = 153;
-                dest[5] = 196;
-                dest[6] = 239;
-                dest[7] = 282;
-                dest[8] = 325;
-                dest[9] = 368;
+                dest[0] = -15;
+                dest[1] = 55;
+                dest[2] = 125;
+                dest[3] = 195;
+                dest[4] = 265;
+                dest[5] = 335;
+                dest[6] = 405;
+                dest[7] = 475;
+                dest[8] = 545;
+                dest[9] = 615;
             }
         } break;
     }
@@ -299,32 +305,82 @@ __attribute__((unused)) lv_dir_t platform_adjust_gesture(lv_dir_t gesture)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void platform_display_lvgl_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map)
+static void platform_display_lvgl_flush_cb(lv_disp_drv_t *drv,
+                                           const lv_area_t *area,
+                                           lv_color_t *color_map)
 {
-    const int x_start = area->x1;
-    const int x_end = area->x2;
-    const int y_start = area->y1;
-    const int y_end = area->y2;
+    int dest_x;
+    int dest_y;
+    int ppa_rot;
 
-    assert(drv != NULL);
-    esp_lcd_panel_handle_t panel_handle = (esp_lcd_panel_handle_t)drv->user_data;
+    if (!drv || !area || !color_map || !s_ppa || !s_fb) 
+    {
+        if (drv) 
+        {
+            lv_disp_flush_ready(drv);
+        }
+        return;
+    }
 
-    esp_lcd_panel_draw_bitmap(panel_handle, x_start, y_start, x_end + 1, y_end + 1, color_map);
-}
+    const int w = area->x2 - area->x1 + 1;
+    const int h = area->y2 - area->y1 + 1;
+    
+    if (w <= 0 || h <= 0) 
+    {
+        lv_disp_flush_ready(drv);
+        return;
+    }
 
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-static bool platform_flush_dpi_panel_ready_callback(esp_lcd_panel_handle_t panel_io,  esp_lcd_dpi_panel_event_data_t *edata, void *user_ctx)
-{
-    lv_disp_drv_t* drv = (lv_disp_drv_t*)user_ctx;    
+    if (rotation_angle == 90)
+    {
+        dest_x = area->y1;
+        dest_y = PANEL_H - (area->x2 + 1);
+        ppa_rot = PPA_SRM_ROTATION_ANGLE_90;
+    }
+    else
+    {
+        // 270° CCW: dest_x mirrored in Y, dest_y = x1 
+        dest_x = PANEL_W - (area->y2 + 1);
+        dest_y = area->x1;
+        ppa_rot = PPA_SRM_ROTATION_ANGLE_270;
+    }
+
+    if ((dest_x < 0) || (dest_y < 0) || ((dest_x + h) > PANEL_W) || ((dest_y + w) > PANEL_H)) 
+    {
+        ESP_LOGE(TAG, "PPA dest OOB dest=%d,%d wh=%d,%d", dest_x, dest_y, w, h);
+        lv_disp_flush_ready(drv);
+        return;
+    }
+
+    const size_t src_bytes = (size_t)w * (size_t)h * sizeof(lv_color_t);
+    esp_cache_msync(color_map, src_bytes, ESP_CACHE_MSYNC_FLAG_DIR_C2M | ESP_CACHE_MSYNC_FLAG_UNALIGNED);
+
+    ppa_srm_oper_config_t op = {
+        .in.buffer          = color_map,
+        .in.pic_w           = (uint32_t)w,
+        .in.pic_h           = (uint32_t)h,
+        .in.block_w         = (uint32_t)w,
+        .in.block_h         = (uint32_t)h,
+        .in.block_offset_x  = 0,
+        .in.block_offset_y  = 0,
+        .in.srm_cm          = PPA_SRM_COLOR_MODE_RGB565,
+
+        .out.buffer         = s_fb,
+        .out.buffer_size    = s_fb_bytes,
+        .out.pic_w          = PANEL_W,
+        .out.pic_h          = PANEL_H,
+        .out.block_offset_x = (uint32_t)dest_x,
+        .out.block_offset_y = (uint32_t)dest_y,
+        .out.srm_cm         = PPA_SRM_COLOR_MODE_RGB565,
+
+        .rotation_angle     = ppa_rot,
+        .scale_x            = 1.0f,
+        .scale_y            = 1.0f,
+        .mode               = PPA_TRANS_MODE_BLOCKING,
+    };
+
+    ppa_do_scale_rotate_mirror(s_ppa, &op);
     lv_disp_flush_ready(drv);
-
-    return false;
 }
 
 /****************************************************************************
@@ -446,6 +502,17 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     ESP_ERROR_CHECK(esp_lcd_panel_reset(disp_panel));
     ESP_ERROR_CHECK(esp_lcd_panel_init(disp_panel));
 
+    esp_lcd_dpi_panel_get_frame_buffer(disp_panel, 1, &s_fb);
+
+    // clear frame buffer
+    memset((void*)s_fb, 0, PANEL_W * PANEL_H * 2);
+    esp_cache_msync(s_fb, PANEL_W * PANEL_H * 2, ESP_CACHE_MSYNC_FLAG_DIR_C2M | ESP_CACHE_MSYNC_FLAG_UNALIGNED);
+
+    s_fb_bytes = PANEL_W * PANEL_H * 2;
+    ppa_client_config_t ppa_cfg = { .oper_type = PPA_OPERATION_SRM };
+    ppa_register_client(&ppa_cfg, &s_ppa);
+
+
     ESP_LOGI(TAG, "Initialize LVGL library");
     lv_init();
 
@@ -467,8 +534,8 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 
     ESP_LOGI(TAG, "Register display driver to LVGL");
     lv_disp_drv_init(disp_drv);
-    disp_drv->hor_res = 800;    //480;
-    disp_drv->ver_res = 480;    //800;
+    disp_drv->hor_res = LV_HOR;
+    disp_drv->ver_res = LV_VER;
     disp_drv->flush_cb = platform_display_lvgl_flush_cb;
     disp_drv->draw_buf = disp_buf;
     disp_drv->user_data = disp_panel;
@@ -481,19 +548,13 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     }
     else
     {
-        ESP_LOGI(TAG, "Set panel callbacks");
-        esp_lcd_dpi_panel_event_callbacks_t cbs = {0};
-        cbs.on_color_trans_done = platform_flush_dpi_panel_ready_callback;        
-
-        // Register done callback 
-        esp_lcd_dpi_panel_register_event_callbacks(disp_panel, &cbs, disp_drv);
-
-        // todo
         if (control_get_config_item_int(CONFIG_ITEM_SCREEN_ROTATION) == SCREEN_ROTATION_180)
         {
-            // apply rotation
-            //esp_lcd_panel_swap_xy(disp_panel, 0);
-            //esp_lcd_panel_mirror(disp_panel, 0, 0);
+            rotation_angle = 270;
+        }
+        else
+        {
+            rotation_angle = 90;
         }
     }
 
@@ -516,7 +577,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         
         if (ret == ESP_OK) 
         {
-            const esp_lcd_touch_config_t tp_cfg = {
+            esp_lcd_touch_config_t tp_cfg = {
                 .x_max = LV_VER,
                 .y_max = LV_HOR,
                 .rst_gpio_num = GPIO_NUM_NC,
@@ -524,6 +585,20 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
                 .levels = { .reset = 0, .interrupt = 0 },
                 .flags = { .swap_xy = 1, .mirror_x = 1, .mirror_y = 0 },
             };
+
+            if (rotation_angle == 90)
+            {
+                tp_cfg.flags.swap_xy = 1;
+                tp_cfg.flags.mirror_x = 0;
+                tp_cfg.flags.mirror_y = 1;
+            }
+            else if (rotation_angle == 270)
+            {
+                tp_cfg.flags.swap_xy = 1;
+                tp_cfg.flags.mirror_x = 1;
+                tp_cfg.flags.mirror_y = 0;
+            }
+            
             ret = esp_lcd_touch_new_i2c_gt911(tp_io, &tp_cfg, &tp);
         }
         xSemaphoreGive(I2CMutex);
