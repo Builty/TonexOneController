@@ -446,25 +446,6 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     ESP_ERROR_CHECK(esp_lcd_panel_reset(disp_panel));
     ESP_ERROR_CHECK(esp_lcd_panel_init(disp_panel));
 
-
-
-
-/*
-     // perform reset
-    gpio_config_t touch_rst_io = {
-        .pin_bit_mask = 1ULL << TOUCH_RST,
-        .mode = GPIO_MODE_OUTPUT,
-    };
-    gpio_config(&touch_rst_io);
-    gpio_set_level(TOUCH_RST, 0);
-    vTaskDelay(pdMS_TO_TICKS(10));
-    gpio_set_level(TOUCH_RST, 1);
-    vTaskDelay(pdMS_TO_TICKS(50));
-*/
-
-
-
-
     ESP_LOGI(TAG, "Initialize LVGL library");
     lv_init();
 
@@ -526,16 +507,6 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     if (xSemaphoreTake(I2CMutex, pdMS_TO_TICKS(10000)) == pdTRUE) 
     {
         uint8_t addr = ESP_LCD_TOUCH_IO_I2C_GT911_ADDRESS;
-
-        // debug
-        //ESP_LOGI(TAG, "probe 0x5D %s", esp_err_to_name(i2c_master_probe(bus_handle, 0x5D, 100)));
-        //ESP_LOGI(TAG, "probe 0x14 %s", esp_err_to_name(i2c_master_probe(bus_handle, 0x14, 100)));
-
-        //if (i2c_master_probe(bus_handle, addr, 100) != ESP_OK) 
-        //{
-        //    ESP_LOGI(TAG, "GT911 alternate addr");
-        //    addr = ESP_LCD_TOUCH_IO_I2C_GT911_ADDRESS_BACKUP;
-        //}
 
         esp_lcd_panel_io_handle_t tp_io = NULL;
         esp_lcd_panel_io_i2c_config_t io_cfg = ESP_LCD_TOUCH_IO_I2C_GT911_CONFIG();
