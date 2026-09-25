@@ -58,6 +58,7 @@ limitations under the License.
 #include "esp_ldo_regulator.h"
 #include "esp_lcd_mipi_dsi.h"
 #include "esp_lcd_panel_ops.h"
+#include "esp_task_wdt.h"
 
 #include "main.h"
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
@@ -79,6 +80,7 @@ limitations under the License.
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC4880P4
 #include "esp_hosted.h"
+#include "esp_hosted_ota.h"
 #include "esp_cache.h"
 #include "driver/ppa.h"
 
@@ -185,6 +187,82 @@ static const st7701_lcd_init_cmd_t s_st7701_init_cmds[] = {
     {0x11, (uint8_t []){0x00}, 1, 120},   // sleep out, 120 ms delay
     {0x29, (uint8_t []){0x00}, 1, 20},    // display on, 20 ms delay
 };
+
+// embedded C6 slave firmware
+extern const uint8_t network_adapter_esp32c6_bin_start[] asm("_binary_network_adapter_esp32c6_bin_start");
+extern const uint8_t network_adapter_esp32c6_bin_end[]   asm("_binary_network_adapter_esp32c6_bin_end");
+#define C6_OTA_CHUNK       1024
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static void c6_reset(void)
+{
+    gpio_config_t io = {
+        .pin_bit_mask = 1ULL << GPIO_NUM_54,
+        .mode = GPIO_MODE_OUTPUT,
+    };
+
+    // reset the C6 co-processor
+    gpio_config(&io);
+    gpio_set_level(GPIO_NUM_54, 0);
+    vTaskDelay(pdMS_TO_TICKS(20));
+    gpio_set_level(GPIO_NUM_54, 1);
+    vTaskDelay(pdMS_TO_TICKS(1500));
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+static esp_err_t c6_ota_push(void)
+{
+    const uint8_t *p   = network_adapter_esp32c6_bin_start;
+    const size_t   total = (size_t)(network_adapter_esp32c6_bin_end - p);
+    size_t sent = 0;
+
+    ESP_LOGI(TAG, "C6 OTA begin, %u bytes", (unsigned)total);
+    ESP_RETURN_ON_ERROR(esp_hosted_slave_ota_begin(), TAG, "ota_begin");
+
+    while (sent < total) 
+    {
+        size_t n = total - sent;
+        if (n > C6_OTA_CHUNK) 
+        {
+            n = C6_OTA_CHUNK;
+        }
+        
+        ESP_RETURN_ON_ERROR(esp_hosted_slave_ota_write((void *)(p + sent), n), TAG, "ota_write @ %u", (unsigned)sent);
+        sent += n;
+        
+        if ((sent & 0x7FFF) == 0) 
+        {
+            ESP_LOGI(TAG, "C6 OTA %u / %u", (unsigned)sent, (unsigned)total);
+        }
+        //esp_task_wdt_reset();
+        vTaskDelay(1);
+    }
+
+    ESP_RETURN_ON_ERROR(esp_hosted_slave_ota_end(), TAG, "ota_end");
+
+    /* Required on C6 >= 2.6; 2.3.2 often returns an error — ignore */
+    esp_err_t act = esp_hosted_slave_ota_activate();
+    if (act != ESP_OK) 
+    {
+        ESP_LOGW(TAG, "ota_activate: %s (ok on 2.3.2)", esp_err_to_name(act));
+    }
+
+    ESP_LOGI(TAG, "C6 OTA done, resetting C6");
+    c6_reset();
+    return ESP_OK;
+}
 
 /****************************************************************************
 * NAME:        
@@ -439,7 +517,29 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     {
         ESP_LOGE(TAG, "CP not responding");
     }
-    
+    else
+    {
+        // check if upate is needed for the Hosted co-processor
+        // 3 here is host major version. No define exists from hosted component
+        if (fw.major1 < 3) 
+        {
+            // update the slave f/w
+            ESP_LOGW(TAG, "Updating Slave firmware");
+
+            if (c6_ota_push() != ESP_OK)
+            {
+                ESP_LOGE(TAG, "Slave firmware update failed!");
+            }
+
+            // get firmware again
+            memset((void*)&fw, 0, sizeof(fw));
+            if (esp_hosted_get_coprocessor_fwversion(&fw) == ESP_OK) 
+            {
+                ESP_LOGI(TAG, "C6 now %u.%u.%u", fw.major1, fw.minor1, fw.patch1);
+            }
+        }
+    }
+
     // display init
     esp_ldo_channel_handle_t ldo = NULL;
     esp_ldo_channel_config_t ldo_cfg = {

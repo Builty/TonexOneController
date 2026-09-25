@@ -71,7 +71,7 @@ limitations under the License.
 #define MAX_LOCATER_PACKET      200
 #define LOCATER_PORT            12106
 #define LOCATER_TIMER_MSEC      3000        // ticks
-#define WIFI_QUEUE_WRITE_TIMEOUT 1000       // msec   
+#define WIFI_QUEUE_WRITE_TIMEOUT 8000       // msec   
 
 #ifndef CONFIG_HTTPD_MAX_CLIENTS
 #define CONFIG_HTTPD_MAX_CLIENTS 16

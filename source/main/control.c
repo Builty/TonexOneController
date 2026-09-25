@@ -65,7 +65,7 @@ limitations under the License.
 #define LEGACY_CONFIG_USER_COUNT            20
 
 #define MAX_CONFIG_SAVE_RETRIES             10
-#define CONTROL_QUEUE_WRITE_TIMEOUT         1000    // msec
+#define CONTROL_QUEUE_WRITE_TIMEOUT         5000    // msec
 
 enum CommandEvents
 {

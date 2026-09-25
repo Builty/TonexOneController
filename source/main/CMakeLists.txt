@@ -16,7 +16,11 @@ idf_component_register(SRCS "platform_ws35.c" "usb_tonex_plug.c" "usb_tonex_one_
                                 "web/rvb_off.png" "web/rvb_on.png" "web/tc_off.png" "web/tc_on.png"
                                 "web/favicon.ico" "web/bootstrap.js" "web/jquery.js" "web/index.css" "web/bootstrap.css" "web/script.js"
 )                           
-                             
+
+if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC4880P4)
+   target_add_binary_data(${COMPONENT_LIB} "${CMAKE_CURRENT_LIST_DIR}/C6_firmware/network_adapter_esp32c6.bin" BINARY)
+endif()
+
 if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC4880P4)
     target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated_800x480land")
 
