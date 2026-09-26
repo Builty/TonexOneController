@@ -173,6 +173,26 @@ static esp_err_t footswitch_read_single_onboard(uint8_t number, uint8_t* switch_
         {
             button_index = FOOTSWITCH_4;
         } break;
+
+        case 4:
+        {
+            button_index = FOOTSWITCH_5;
+        } break;
+
+        case 5:
+        {
+            button_index = FOOTSWITCH_6;
+        } break;
+
+        case 6:
+        {
+            button_index = FOOTSWITCH_7;
+        } break;
+
+        case 7:
+        {
+            button_index = FOOTSWITCH_8;
+        } break;
     }
 
     if (button_index == -1)
@@ -244,6 +264,26 @@ static esp_err_t footswitch_read_multiple_onboard(uint16_t* switch_state)
         *switch_state |= ((gpio_get_level(FOOTSWITCH_4) == 0) << 3);
     }
 
+    if (FOOTSWITCH_5 != -1)
+    {
+        *switch_state |= ((gpio_get_level(FOOTSWITCH_5) == 0) << 4);
+    }
+
+    if (FOOTSWITCH_6 != -1)
+    {
+        *switch_state |= ((gpio_get_level(FOOTSWITCH_6) == 0) << 5);
+    }
+
+    if (FOOTSWITCH_7 != -1)
+    {
+        *switch_state |= ((gpio_get_level(FOOTSWITCH_7) == 0) << 6);
+    }
+
+    if (FOOTSWITCH_8 != -1)
+    {
+        *switch_state |= ((gpio_get_level(FOOTSWITCH_8) == 0) << 7);
+    }
+    
     result = ESP_OK;
 #endif
 
@@ -835,6 +875,13 @@ void footswitch_task(void *arg)
 
             case FOOTSWITCH_LAYOUT_1X3: // fallthrough
             case FOOTSWITCH_LAYOUT_1X4:
+            case FOOTSWITCH_LAYOUT_1X5B:  // fallthrough
+            case FOOTSWITCH_LAYOUT_1X6A:  // fallthrough
+            case FOOTSWITCH_LAYOUT_1X6B:  // fallthrough
+            case FOOTSWITCH_LAYOUT_1X7A:  // fallthrough
+            case FOOTSWITCH_LAYOUT_1X7B:  // fallthrough
+            case FOOTSWITCH_LAYOUT_2X3:   // fallthrough
+            case FOOTSWITCH_LAYOUT_2X4:   // fallthrough
             {
                 // run bankedswitches
                 footswitch_handle_banked(&FootswitchControl.Handlers[FOOTSWITCH_HANDLER_ONBOARD_PRESETS], (tFootswitchLayoutEntry*)&FootswitchLayouts[FootswitchControl.onboard_switch_mode]);
@@ -969,8 +1016,12 @@ void footswitches_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2C
     if (FOOTSWITCH_2 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_2);
     if (FOOTSWITCH_3 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_3);
     if (FOOTSWITCH_4 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_4);
+    if (FOOTSWITCH_5 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_5);
+    if (FOOTSWITCH_6 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_6);
+    if (FOOTSWITCH_7 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_7);
+    if (FOOTSWITCH_8 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_8);
 
-    ESP_LOGI(TAG, "Init GPIO footswitches %d %d %d %d", FOOTSWITCH_1, FOOTSWITCH_2, FOOTSWITCH_3, FOOTSWITCH_4);
+    ESP_LOGI(TAG, "Init GPIO footswitches %d %d %d %d %d %d %d %d", FOOTSWITCH_1, FOOTSWITCH_2, FOOTSWITCH_3, FOOTSWITCH_4, FOOTSWITCH_5, FOOTSWITCH_6, FOOTSWITCH_7, FOOTSWITCH_8);
 
     gpio_config_struct.pin_bit_mask = pin_bit_mask;
     gpio_config_struct.mode = GPIO_MODE_INPUT;

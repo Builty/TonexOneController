@@ -1079,7 +1079,7 @@ static uint8_t usb_valeton_gp5_process_single_sysex(const uint8_t* buffer, uint3
                 control_sync_preset_name(preset_index, name_string);
 
                 // don't smash the control input queue too hard
-                vTaskDelay(10);
+                vTaskDelay(120);
             }  
             
             BootFlags.GotPresetData = 1;
