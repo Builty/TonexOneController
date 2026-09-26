@@ -56,8 +56,6 @@ limitations under the License.
 #include "esp_lcd_st7701.h"
 #include "esp_intr_alloc.h"
 #include "esp_ldo_regulator.h"
-#include "esp_lcd_mipi_dsi.h"
-#include "esp_lcd_panel_ops.h"
 #include "esp_task_wdt.h"
 
 #include "main.h"
@@ -79,6 +77,8 @@ limitations under the License.
 #include "tonex_params.h"
 
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC4880P4
+#include "esp_lcd_mipi_dsi.h"
+#include "esp_lcd_panel_ops.h"
 #include "esp_hosted.h"
 #include "esp_hosted_ota.h"
 #include "esp_cache.h"

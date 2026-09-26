@@ -1000,6 +1000,21 @@ void footswitch_task(void *arg)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+static void footswitch_add_pin(uint64_t* mask, int pin)
+{
+    if (pin >= 0) 
+    {
+        *mask |= (1ULL << (unsigned)pin);
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void footswitches_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex)
 {	
     memset((void*)&FootswitchControl, 0, sizeof(FootswitchControl));
@@ -1012,14 +1027,13 @@ void footswitches_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2C
     gpio_config_t gpio_config_struct;
 
     uint64_t pin_bit_mask = 0;
-    if (FOOTSWITCH_1 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_1);
-    if (FOOTSWITCH_2 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_2);
-    if (FOOTSWITCH_3 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_3);
-    if (FOOTSWITCH_4 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_4);
-    if (FOOTSWITCH_5 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_5);
-    if (FOOTSWITCH_6 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_6);
-    if (FOOTSWITCH_7 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_7);
-    if (FOOTSWITCH_8 >= 0) pin_bit_mask |= ((uint64_t)1 << FOOTSWITCH_8);
+    footswitch_add_pin(&pin_bit_mask, FOOTSWITCH_1);
+    footswitch_add_pin(&pin_bit_mask, FOOTSWITCH_2);
+    footswitch_add_pin(&pin_bit_mask, FOOTSWITCH_3);
+    footswitch_add_pin(&pin_bit_mask, FOOTSWITCH_4);
+    footswitch_add_pin(&pin_bit_mask, FOOTSWITCH_5);
+    footswitch_add_pin(&pin_bit_mask, FOOTSWITCH_6);
+    footswitch_add_pin(&pin_bit_mask, FOOTSWITCH_8);
 
     ESP_LOGI(TAG, "Init GPIO footswitches %d %d %d %d %d %d %d %d", FOOTSWITCH_1, FOOTSWITCH_2, FOOTSWITCH_3, FOOTSWITCH_4, FOOTSWITCH_5, FOOTSWITCH_6, FOOTSWITCH_7, FOOTSWITCH_8);
 

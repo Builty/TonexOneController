@@ -197,7 +197,11 @@
             {
               "type": "openOCD",
               "value": {
-                "debugLevel": 0
+                "debugLevel": 2,
+                "configs": [
+                  "board/esp32s3-builtin.cfg"
+                ],
+                "args": []
               }
             }
           ]
