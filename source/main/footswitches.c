@@ -1000,7 +1000,7 @@ void footswitch_task(void *arg)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void footswitch_add_pin(uint64_t* mask, int pin)
+static void __attribute__((unused)) footswitch_add_pin(uint64_t* mask, int pin)
 {
     if (pin >= 0) 
     {

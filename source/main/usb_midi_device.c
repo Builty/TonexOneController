@@ -146,7 +146,7 @@ static bool usb_midi_device_handle_rx(const uint8_t* data, size_t data_len, void
 
     // debug
     ESP_LOGI(TAG, "CDC Data received %d", (int)data_len);
-    ESP_LOG_BUFFER_HEXDUMP(TAG, data, data_len, ESP_LOG_INFO);
+    //debug ESP_LOG_BUFFER_HEXDUMP(TAG, data, data_len, ESP_LOG_INFO);
 
     // adapt the USB format into the same format used in serial/bluetooth
     midi_len = usb_midi_to_ble_midi(data, data_len, 0, midi_buffer, sizeof(midi_buffer));

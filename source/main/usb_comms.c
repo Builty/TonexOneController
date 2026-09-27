@@ -58,7 +58,7 @@ limitations under the License.
 #define USB_AUDIO_SUBCLASS_CONTROL         0x01
 #define USB_AUDIO_SUBCLASS_MIDISTREAMING   0x03
 
-#define CLIENT_NUM_EVENT_MSG            5
+#define CLIENT_NUM_EVENT_MSG            16
 #define CLASS_DRIVER_ACTION_NONE        0
 
 // action bits
@@ -83,25 +83,6 @@ static QueueHandle_t usb_input_queue;
 static usb_slot_t slots[USB_MAX_SLOTS] = {0};
 static uint8_t addr_q[USB_ADDR_Q_LEN] = {0};
 static uint8_t addr_q_n = 0;
-
-/****************************************************************************
-* NAME:        
-* DESCRIPTION: 
-* PARAMETERS:  
-* RETURN:      
-* NOTES:       
-*****************************************************************************/
-static usb_slot_t* slot_by_hdl(usb_device_handle_t h)
-{
-    for (int i = 0; i < USB_MAX_SLOTS; i++) 
-    {
-        if (slots[i].drv.dev_hdl == h) 
-        {
-            return &slots[i];
-        }
-    }
-    return NULL;
-}
 
 /****************************************************************************
 * NAME:        
@@ -157,7 +138,7 @@ static void client_event_cb(const usb_host_client_event_msg_t *event_msg, void *
 
         default:
             //Should never occur
-            abort();
+            break;
     }
 }
 
@@ -297,8 +278,6 @@ void class_driver_task(void *arg)
                 continue;
             }
 
-            usb_host_device_close(driver_obj.client_hdl, s->drv.dev_hdl);
-            
             // check for IK Multimedia Vendor and Product ID 
             if ((dd->idVendor == IK_MULTIMEDIA_USB_VENDOR) && (dd->idProduct == TONEX_ONE_PRODUCT_ID))
             {
@@ -442,27 +421,27 @@ void class_driver_task(void *arg)
             {
                 case AMP_MODELLER_TONEX_ONE:
                 {
-                    usb_tonex_one_handle(&driver_obj);
+                    usb_tonex_one_handle(&s->drv);
                 } break;
 
                 case AMP_MODELLER_TONEX:
                 {
-                    usb_tonex_handle(&driver_obj);
+                    usb_tonex_handle(&s->drv);
                 } break;
 
                 case AMP_MODELLER_VALETON_GP5:
                 {
-                    usb_valeton_gp5_handle(&driver_obj);
+                    usb_valeton_gp5_handle(&s->drv);
                 } break;
                 
                 case AMP_MODELLER_TONEX_PLUG:
                 {
-                    usb_tonex_plug_handle(&driver_obj);
+                    usb_tonex_plug_handle(&s->drv);
                 } break;
 
                 case AMP_MODELLER_TONEX_ONE_PLUS:
                 {
-                    usb_tonex_one_plus_handle(&driver_obj);    
+                    usb_tonex_one_plus_handle(&s->drv);    
                 } break;
 
                 default:

@@ -2,7 +2,6 @@ dependencies:
   espressif/json_generator: "^1.2.0"
   espressif/json_parser: "^1.0.3"
   espressif/mdns: "^1.11.3"
-  espressif/usb_host_cdc_acm: "^2.4.0"
   idf: ">=5.5"
   lvgl/lvgl: "~8.3.0"
   espressif/esp_lcd_touch_gt911: "^1.2.0~3"
