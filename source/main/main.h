@@ -528,8 +528,8 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define FOOTSWITCH_4		GPIO_NUM_15
     #define FOOTSWITCH_5		GPIO_NUM_9
     #define FOOTSWITCH_6		GPIO_NUM_14
-    #define FOOTSWITCH_7		-1
-    #define FOOTSWITCH_8		-1
+    #define FOOTSWITCH_7		GPIO_NUM_44     // note: shared with log uart
+    #define FOOTSWITCH_8		GPIO_NUM_43     // note: shared with log uart
 
     // Midi: 
     #define UART_RX_PIN         GPIO_NUM_16

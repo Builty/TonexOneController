@@ -497,6 +497,12 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     I2CMutexHandle = I2CMutex;
     disp_drv = pdisp_drv;
 
+    // footswitch 7/8 use log uart pins, so reset them. Remove this during debug.
+    // also watch CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG is set here to put logs on USB only and leave serial alone
+    gpio_reset_pin(FOOTSWITCH_7);
+    gpio_reset_pin(FOOTSWITCH_8	);
+
+
     ESP_LOGI(TAG, "Platform Init");
 
     /* LCD initialization */
