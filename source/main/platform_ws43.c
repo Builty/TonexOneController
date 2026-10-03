@@ -77,7 +77,7 @@ limitations under the License.
 static const char *TAG = "platform_ws43b";
 
 // LCD panel config
-#define DISPLAY_LCD_PIXEL_CLOCK_HZ     (14000000)
+#define DISPLAY_LCD_PIXEL_CLOCK_HZ     (15000000)
 #define DISPLAY_LCD_BK_LIGHT_ON_LEVEL  1
 #define DISPLAY_LCD_BK_LIGHT_OFF_LEVEL !DISPLAY_LCD_BK_LIGHT_ON_LEVEL
 
@@ -86,7 +86,6 @@ static const char *TAG = "platform_ws43b";
 #define DISPLAY_LCD_V_RES              480
 
 #define DISPLAY_LCD_NUM_FB              2
-
 #define DRAW_BUFFER_SIZE                6
 
 #define BUF_SIZE                        (1024)
@@ -306,7 +305,7 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         .data_width = 16, // RGB565 in parallel mode, thus 16bit in width        
 #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(6, 0, 0)
         .in_color_format = LCD_COLOR_FMT_RGB565, 
-        .dma_burst_size = 64,
+        .dma_burst_size = 32,
 #else
         .bits_per_pixel = 16,
         .psram_trans_align = 64,
@@ -346,8 +345,8 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
             .hsync_back_porch  = 8,
             .hsync_front_porch = 8,
             .vsync_pulse_width = 4,
-            .vsync_back_porch  = 45,   // these 2 values critical. Too small gets ghosting/flicker at higher pixel clock values
-            .vsync_front_porch = 45,       
+            .vsync_back_porch  = 8,
+            .vsync_front_porch = 8,
             .flags = {
                 .hsync_idle_low   = 0,
                 .vsync_idle_low   = 0,
