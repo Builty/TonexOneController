@@ -1170,7 +1170,7 @@ void UI_RefreshParameterValues(void)
     // send to queue
     if (xQueueSend(ui_update_queue, (void*)&ui_update, 0) != pdPASS)
     {
-        ESP_LOGE(TAG, "UI Update parameters send failed!");            
+        ESP_LOGE(TAG, "UI Update parameters send failed!. Queued: %d", uxQueueMessagesWaiting(ui_update_queue));            
     }
 #endif    
 }

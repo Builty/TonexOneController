@@ -287,6 +287,8 @@ static esp_err_t footswitch_read_multiple_onboard(uint16_t* switch_state)
     result = ESP_OK;
 #endif
 
+    // debug
+    //ESP_LOGI(TAG, "Footswitch states %d", *switch_state);
     return result;
 }
 
@@ -1033,6 +1035,7 @@ void footswitches_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2C
     footswitch_add_pin(&pin_bit_mask, FOOTSWITCH_4);
     footswitch_add_pin(&pin_bit_mask, FOOTSWITCH_5);
     footswitch_add_pin(&pin_bit_mask, FOOTSWITCH_6);
+    footswitch_add_pin(&pin_bit_mask, FOOTSWITCH_7);
     footswitch_add_pin(&pin_bit_mask, FOOTSWITCH_8);
 
     ESP_LOGI(TAG, "Init GPIO footswitches %d %d %d %d %d %d %d %d", FOOTSWITCH_1, FOOTSWITCH_2, FOOTSWITCH_3, FOOTSWITCH_4, FOOTSWITCH_5, FOOTSWITCH_6, FOOTSWITCH_7, FOOTSWITCH_8);
@@ -1043,6 +1046,13 @@ void footswitches_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2C
     gpio_config_struct.pull_down_en = GPIO_PULLDOWN_DISABLE;
     gpio_config_struct.intr_type = GPIO_INTR_DISABLE;
     gpio_config(&gpio_config_struct);
+    //debug gpio_dump_io_configuration(stdout, pin_bit_mask);
+
+    //ESP_LOGI(TAG, "29=%d 30=%d 31=%d 33=%d 49=%d 50=%d 51=%d 52=%d",
+    //    gpio_get_level(FOOTSWITCH_1), gpio_get_level(FOOTSWITCH_2),
+    //    gpio_get_level(FOOTSWITCH_3), gpio_get_level(FOOTSWITCH_4),
+    //    gpio_get_level(FOOTSWITCH_5), gpio_get_level(FOOTSWITCH_6),
+    //    gpio_get_level(FOOTSWITCH_7), gpio_get_level(FOOTSWITCH_8));
 #endif
 
     // try to init I2C IO expander

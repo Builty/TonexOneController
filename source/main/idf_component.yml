@@ -1,7 +1,7 @@
 dependencies:
   espressif/json_generator: "^1.2.0"
   espressif/json_parser: "^1.0.3"
-  espressif/mdns: "^1.11.3"
+  espressif/mdns: "^1.13.1"
   idf: ">=5.5"
   lvgl/lvgl: "~8.3.0"
   espressif/esp_lcd_touch_gt911: "^1.2.0~3"
@@ -9,7 +9,7 @@ dependencies:
   espressif/esp_lcd_sh8601: "^2.0.1~1"
   espressif/esp_io_expander_tca9554: "^2.0.3"
   espressif/esp_lcd_st7796: "^1.4.0"
-  espressif/esp_lcd_axs15231b: "^2.1.0"
+  espressif/esp_lcd_axs15231b: "^2.1.1"
   espressif/usb: "^1.5.0"
   espressif/esp_lcd_st7701: "^2.0.2~2"
   espressif/esp_hosted:
