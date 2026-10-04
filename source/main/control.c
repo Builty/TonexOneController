@@ -2614,7 +2614,6 @@ static uint8_t __attribute__((unused)) LoadPresetUserText(uint16_t preset_index,
 *****************************************************************************/
 static void UpdateFootswitchLeds(void)
 {
-    //todo
 #if CONFIG_TONEX_CONTROLLER_GPIO_FOOTSWITCHES
 #if !CONFIG_TONEX_CONTROLLER_LED_CONTROL_DISABLED    
     tModellerParameter* param_ptr;
@@ -2650,9 +2649,6 @@ static void UpdateFootswitchLeds(void)
         } break;
     }
 
-    // start with all off
-    leds_set_colour(0xFFFF, &colour_black);
-
     if (preset_switch_num > 0)
     {  
         // default to using green for preset led
@@ -2687,6 +2683,9 @@ static void UpdateFootswitchLeds(void)
         
         leds_set_colour(1 << led_index, &colour);
         ESP_LOGI(TAG, "Preset Led %d", (ControlData.PresetIndex % preset_switch_num));
+
+        // set other leds off
+        leds_set_colour(~(1 << led_index), &colour_black);
     }
 
     // handle effect footswitches
@@ -2706,15 +2705,17 @@ static void UpdateFootswitchLeds(void)
 
                 if (param != TONEX_UNKNOWN)
                 {
+                    // get FX switch value 1 scaled from its native midi value to a float to match the param
+                    float value_1 = midi_helper_scale_midi_to_float(param, fx_config->Value_1);
+
                     if (control_get_connected_modeller_params_locked_access(&param_ptr) == ESP_OK)
                     {
                         tModellerParameter this_param;
 
                         // make a copy so we can release the mutex
                         memcpy((void*)&this_param, (void*)&param_ptr[param], sizeof(tModellerParameter));
-
                         control_release_connected_modeller_params_locked_access();
-
+                       
                         // is the parameter a boolean type?
                         if (this_param.Type == MODELLER_PARAM_TYPE_SWITCH)
                         {
@@ -2862,14 +2863,17 @@ static void UpdateFootswitchLeds(void)
                                 leds_set_colour(1 << fx_config->Switch, &colour);
                                 ESP_LOGI(TAG, "Effect Led Switch %d", fx_config->Switch);
                             }
+                            else
+                            {
+                                // set off
+                                leds_set_colour(1 << fx_config->Switch, &colour_black);
+                            }
                         }
                         else if (this_param.Type == MODELLER_PARAM_TYPE_RANGE)
                         {
                             // range type, set on if value 2 so toggling is visible
                             // careful here: Value_x are Midi value, but param value is a converted float
-
-                            float value_1 = midi_helper_scale_midi_to_float(param, fx_config->Value_1);
-
+                            
                             // note here: scaling Midi to float may result in rounding errors. This check is to make sure
                             // we can find the current value without missing it due to slight difference
                             float param_diff = fabs(this_param.Value - value_1);
@@ -2883,6 +2887,11 @@ static void UpdateFootswitchLeds(void)
                             
                                 leds_set_colour(1 << fx_config->Switch, &colour);
                                 ESP_LOGI(TAG, "Effect Led Range %d", fx_config->Switch);
+                            }
+                            else
+                            {
+                                // set off
+                                leds_set_colour(1 << fx_config->Switch, &colour_black);
                             }
                         }                    
                     }                    
