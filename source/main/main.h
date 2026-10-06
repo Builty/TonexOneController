@@ -23,7 +23,7 @@ limitations under the License.
 extern "C" {
 #endif
 
-#define APP_VERSION		"2.1.0.2"
+#define APP_VERSION		"3.0.0.2"
 
 #define I2C_MASTER_NUM_1                0          
 #define I2C_MASTER_NUM_2                1          
@@ -51,9 +51,13 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define SD_CS       		IO_EXPANDER_PIN_5
     #define FOOTSWITCH_2		IO_EXPANDER_PIN_6
 
-    // these 2 unsupported
+    // these unsupported
     #define FOOTSWITCH_3		-1
     #define FOOTSWITCH_4		-1
+    #define FOOTSWITCH_5		-1
+    #define FOOTSWITCH_6		-1
+    #define FOOTSWITCH_7		-1
+    #define FOOTSWITCH_8		-1
 
     // Micro pins
     #define TOUCH_INT           GPIO_NUM_4    // touch panel interrupt
@@ -125,9 +129,13 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define SD_CS       		IO_EXPANDER_PIN_4
     #define FOOTSWITCH_2		-1
 
-    // these 2 unsupported
+    // these unsupported
     #define FOOTSWITCH_3		-1
     #define FOOTSWITCH_4		-1
+    #define FOOTSWITCH_5		-1
+    #define FOOTSWITCH_6		-1
+    #define FOOTSWITCH_7		-1
+    #define FOOTSWITCH_8		-1
 
     // Micro pins
     #define TOUCH_INT           GPIO_NUM_4    // touch panel interrupt
@@ -186,6 +194,10 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define FOOTSWITCH_2		GPIO_NUM_2
     #define FOOTSWITCH_3		GPIO_NUM_44     // same as UART RX
     #define FOOTSWITCH_4		GPIO_NUM_44     // not enough IO, dummy value
+    #define FOOTSWITCH_5		-1
+    #define FOOTSWITCH_6		-1
+    #define FOOTSWITCH_7		-1
+    #define FOOTSWITCH_8		-1
 
     // Midi
     #define UART_RX_PIN         GPIO_NUM_18 
@@ -225,6 +237,10 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define FOOTSWITCH_2		GPIO_NUM_3
     #define FOOTSWITCH_3		GPIO_NUM_2
     #define FOOTSWITCH_4		GPIO_NUM_44     // same as UART RX
+    #define FOOTSWITCH_5		-1
+    #define FOOTSWITCH_6		-1
+    #define FOOTSWITCH_7		-1
+    #define FOOTSWITCH_8		-1
 
     // Midi
     #define UART_RX_PIN         GPIO_NUM_18 
@@ -262,6 +278,10 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define FOOTSWITCH_2		GPIO_NUM_6
     #define FOOTSWITCH_3		GPIO_NUM_2
     #define FOOTSWITCH_4		GPIO_NUM_1 
+    #define FOOTSWITCH_5		GPIO_NUM_8
+    #define FOOTSWITCH_6		GPIO_NUM_9
+    #define FOOTSWITCH_7		GPIO_NUM_12
+    #define FOOTSWITCH_8		GPIO_NUM_13
 
     // Midi
     #define UART_RX_PIN         GPIO_NUM_5
@@ -287,6 +307,10 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define FOOTSWITCH_2		GPIO_NUM_6
     #define FOOTSWITCH_3		GPIO_NUM_2
     #define FOOTSWITCH_4		GPIO_NUM_1 
+    #define FOOTSWITCH_5		GPIO_NUM_42
+    #define FOOTSWITCH_6		GPIO_NUM_41
+    #define FOOTSWITCH_7		GPIO_NUM_40
+    #define FOOTSWITCH_8		GPIO_NUM_39
 
     // Midi
     #define UART_RX_PIN         GPIO_NUM_5
@@ -312,6 +336,10 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define FOOTSWITCH_2		GPIO_NUM_6
     #define FOOTSWITCH_3		GPIO_NUM_7
     #define FOOTSWITCH_4		GPIO_NUM_8
+    #define FOOTSWITCH_5		-1
+    #define FOOTSWITCH_6		-1
+    #define FOOTSWITCH_7		-1
+    #define FOOTSWITCH_8		-1
 
     // Midi
     #define UART_RX_PIN         GPIO_NUM_38 
@@ -345,6 +373,10 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define FOOTSWITCH_2		GPIO_NUM_2
     #define FOOTSWITCH_3		GPIO_NUM_3
     #define FOOTSWITCH_4		GPIO_NUM_10
+    #define FOOTSWITCH_5		GPIO_NUM_11
+    #define FOOTSWITCH_6		GPIO_NUM_12
+    #define FOOTSWITCH_7		GPIO_NUM_13
+    #define FOOTSWITCH_8		-1
 
     // Midi
     #define UART_RX_PIN         GPIO_NUM_11 
@@ -396,6 +428,10 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define FOOTSWITCH_2		GPIO_NUM_2
     #define FOOTSWITCH_3		GPIO_NUM_3
     #define FOOTSWITCH_4		GPIO_NUM_4
+    #define FOOTSWITCH_5		GPIO_NUM_5
+    #define FOOTSWITCH_6		GPIO_NUM_6
+    #define FOOTSWITCH_7		GPIO_NUM_15
+    #define FOOTSWITCH_8		GPIO_NUM_16
 
     // Midi
     #define UART_RX_PIN         GPIO_NUM_5 
@@ -438,6 +474,10 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define FOOTSWITCH_2		GPIO_NUM_39
     #define FOOTSWITCH_3		GPIO_NUM_40
     #define FOOTSWITCH_4		GPIO_NUM_41
+    #define FOOTSWITCH_5		GPIO_NUM_42
+    #define FOOTSWITCH_6		GPIO_NUM_45
+    #define FOOTSWITCH_7		GPIO_NUM_46
+    #define FOOTSWITCH_8		GPIO_NUM_47
 
     // Midi: 
     #define UART_RX_PIN         GPIO_NUM_17
@@ -486,6 +526,10 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define FOOTSWITCH_2		GPIO_NUM_6
     #define FOOTSWITCH_3		GPIO_NUM_7
     #define FOOTSWITCH_4		GPIO_NUM_15
+    #define FOOTSWITCH_5		GPIO_NUM_9
+    #define FOOTSWITCH_6		GPIO_NUM_14
+    #define FOOTSWITCH_7		GPIO_NUM_44     // note: shared with log uart
+    #define FOOTSWITCH_8		GPIO_NUM_43     // note: shared with log uart
 
     // Midi: 
     #define UART_RX_PIN         GPIO_NUM_16
@@ -537,6 +581,10 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define FOOTSWITCH_2		GPIO_NUM_3
     #define FOOTSWITCH_3		GPIO_NUM_2
     #define FOOTSWITCH_4		GPIO_NUM_44     // same as UART RX
+    #define FOOTSWITCH_5		-1
+    #define FOOTSWITCH_6		-1
+    #define FOOTSWITCH_7		-1
+    #define FOOTSWITCH_8		-1
 
     // Midi
     #define UART_RX_PIN         GPIO_NUM_18 
@@ -569,6 +617,10 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define FOOTSWITCH_2		GPIO_NUM_4
     #define FOOTSWITCH_3		GPIO_NUM_5
     #define FOOTSWITCH_4		GPIO_NUM_6
+    #define FOOTSWITCH_5		-1
+    #define FOOTSWITCH_6		-1
+    #define FOOTSWITCH_7		-1
+    #define FOOTSWITCH_8		-1
 
     // Midi: 
     #define UART_RX_PIN         GPIO_NUM_10
@@ -595,6 +647,45 @@ extern SemaphoreHandle_t I2CMutex_2;
 
     // Touch
     #define TOUCH_INT                            GPIO_NUM_42
+
+#elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC4880P4
+    // JC4880P443 ESP320P4 dev board
+    // I2C bus 1
+    #define I2C_MASTER_1_SCL_IO  GPIO_NUM_8       
+    #define I2C_MASTER_1_SDA_IO  GPIO_NUM_7       
+
+    // I2C bus 2
+    #define I2C_MASTER_2_SCL_IO  GPIO_NUM_28
+    #define I2C_MASTER_2_SDA_IO  GPIO_NUM_32
+    
+    #define EXTERNAL_IO_EXPANDER_BUS       I2C_MASTER_NUM_2
+    #define EXTERNAL_IO_EXPANDER_MUTEX     I2CMutex_2 
+
+    #define FOOTSWITCH_1		GPIO_NUM_29
+    #define FOOTSWITCH_2		GPIO_NUM_30
+    #define FOOTSWITCH_3		GPIO_NUM_31
+    #define FOOTSWITCH_4		GPIO_NUM_33
+    #define FOOTSWITCH_5		GPIO_NUM_49
+    #define FOOTSWITCH_6		GPIO_NUM_50
+    #define FOOTSWITCH_7		GPIO_NUM_51
+    #define FOOTSWITCH_8		GPIO_NUM_52
+
+    // Midi: 
+    #define UART_RX_PIN         GPIO_NUM_34
+    #define UART_TX_PIN         GPIO_NUM_35
+
+    // leds
+    #define LED_OUTPUT_GPIO_NUM          GPIO_NUM_9     // dev usage only, used by audio codec
+
+    #define LCD_RST          GPIO_NUM_5
+    #define LCD_BL           GPIO_NUM_23
+    #define TOUCH_RST        GPIO_NUM_3
+    #define TOUCH_INT        GPIO_NUM_NC
+    #define DSI_LDO_CHAN     3
+    #define DSI_LDO_MV       2500
+    #define DSI_LANES        2
+    #define DSI_MBPS         500
+    #define DPI_MHZ          34
 
 #else
     #error "Unknown hardware platform!"

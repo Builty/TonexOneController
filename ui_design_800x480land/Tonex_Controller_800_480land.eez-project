@@ -934,7 +934,7 @@
                   "groupIndex": 0,
                   "text": "Preset Name",
                   "textType": "literal",
-                  "longMode": "DOT",
+                  "longMode": "CLIP",
                   "recolor": false
                 },
                 {
@@ -27303,7 +27303,7 @@
                   "groupIndex": 0,
                   "text": "Tuner",
                   "textType": "literal",
-                  "longMode": "DOT",
+                  "longMode": "CLIP",
                   "recolor": false
                 },
                 {

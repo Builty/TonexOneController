@@ -33,6 +33,9 @@ limitations under the License.
 #include "esp_ota_ops.h"
 #include "sys/param.h"
 #include "esp_mac.h"
+#if CONFIG_IDF_TARGET_ESP32P4
+    #include "esp_hosted.h"
+#endif
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "lwip/err.h"
@@ -68,7 +71,7 @@ limitations under the License.
 #define MAX_LOCATER_PACKET      200
 #define LOCATER_PORT            12106
 #define LOCATER_TIMER_MSEC      3000        // ticks
-#define WIFI_QUEUE_WRITE_TIMEOUT 1000       // msec   
+#define WIFI_QUEUE_WRITE_TIMEOUT 8000       // msec   
 
 #ifndef CONFIG_HTTPD_MAX_CLIENTS
 #define CONFIG_HTTPD_MAX_CLIENTS 16
@@ -2036,30 +2039,37 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t e
 *****************************************************************************/
 static void wifi_init_sta(void)
 {
-    esp_netif_t* sta_netif;
+    esp_netif_t *sta_netif;
     char host_name[MAX_MDNS_NAME];
+    esp_err_t err;
 
-    ESP_ERROR_CHECK(esp_netif_init());
+    err = esp_netif_init();
+    if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) 
+    {
+        ESP_ERROR_CHECK(err);
+    }
 
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-    sta_netif = esp_netif_create_default_wifi_sta();
+    err = esp_event_loop_create_default();
+    if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) 
+    {
+        ESP_ERROR_CHECK(err);
+    }
+
+    sta_netif = esp_netif_get_handle_from_ifkey("WIFI_STA_DEF");
+    if (sta_netif == NULL) 
+    {
+        sta_netif = esp_netif_create_default_wifi_sta();
+    }
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+    err = esp_wifi_init(&cfg);
+    if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) 
+    {
+        ESP_ERROR_CHECK(err);
+    }
 
-    esp_event_handler_instance_t instance_any_id;
-    esp_event_handler_instance_t instance_got_ip;
-    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
-                                                        ESP_EVENT_ANY_ID,
-                                                        &wifi_event_handler,
-                                                        NULL,
-                                                        &instance_any_id));
-
-    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
-                                                        IP_EVENT_STA_GOT_IP,
-                                                        &wifi_event_handler,
-                                                        NULL,
-                                                        &instance_got_ip));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL, NULL));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &wifi_event_handler, NULL, NULL));
 
     wifi_config_t wifi_config = {
         .sta = {
@@ -2123,18 +2133,33 @@ static void wifi_init_sta(void)
 *****************************************************************************/
 static void wifi_init_softap(void)
 {
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-    esp_netif_create_default_wifi_ap();
+    esp_err_t err;
+
+    err = esp_netif_init();
+    if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) 
+    {
+        ESP_ERROR_CHECK(err);
+    }
+
+    err = esp_event_loop_create_default();
+    if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) 
+    {
+        ESP_ERROR_CHECK(err);
+    }
+
+    if (esp_netif_get_handle_from_ifkey("WIFI_AP_DEF") == NULL) 
+    {
+        esp_netif_create_default_wifi_ap();
+    }
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+    err = esp_wifi_init(&cfg);
+    if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) 
+    {
+        ESP_ERROR_CHECK(err);
+    }
 
-    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
-                                                        ESP_EVENT_ANY_ID,
-                                                        &wifi_event_handler,
-                                                        NULL,
-                                                        NULL));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL, NULL));
 
     wifi_config_t wifi_config = {
         .ap = {
@@ -2218,6 +2243,7 @@ static void wifi_kill_all(void)
     ESP_LOGI(TAG, "Wifi config stopping");
     stop_webserver();
     vTaskDelay(pdMS_TO_TICKS(5000));
+
     esp_wifi_stop();
 }
 
