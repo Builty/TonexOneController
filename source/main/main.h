@@ -23,7 +23,7 @@ limitations under the License.
 extern "C" {
 #endif
 
-#define APP_VERSION		"2.1.1.1"
+#define APP_VERSION		"3.0.0.2"
 
 #define I2C_MASTER_NUM_1                0          
 #define I2C_MASTER_NUM_2                1          
@@ -673,6 +673,9 @@ extern SemaphoreHandle_t I2CMutex_2;
     // Midi: 
     #define UART_RX_PIN         GPIO_NUM_34
     #define UART_TX_PIN         GPIO_NUM_35
+
+    // leds
+    #define LED_OUTPUT_GPIO_NUM          GPIO_NUM_9     // dev usage only, used by audio codec
 
     #define LCD_RST          GPIO_NUM_5
     #define LCD_BL           GPIO_NUM_23
