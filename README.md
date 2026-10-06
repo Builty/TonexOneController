@@ -144,7 +144,7 @@ For more information about the firmware development and customisation, refer to 
 - https://github.com/vit3k/tonex_controller for great work on reverse engineering the Tonex One USB protocol
 
 ## Firmware Release Notes <a name="release_notes"></a>
-V2.5.0.2 beta 1
+V2.5.0.2
 - Update to ESP-IDF 6.0.2 framework
 - Update to latest Managed Components
 - Added support for Tonex One Plus, including LCD tuner interface for large screen devices 
@@ -155,6 +155,7 @@ V2.5.0.2 beta 1
 - Migrated to CmakePresets for project management
 - Some initial code for the Tonex Plug, but incomplete and untested
 - Improvements to client WiFi scanning for cases where multiple access points are present
+- Added support for Pirate Midi Max v2/Plus v2 effect leds
 
 
 V2.0.4.2
