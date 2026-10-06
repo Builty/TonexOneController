@@ -22,8 +22,8 @@ jobs:
       - name: Extract preset names
         id: extract
         run: |
-          platforms=$(jq -c '[.configurePresets[].name]' source/CMakePresets.json)
-          echo "platforms=$platforms" | tee -a $GITHUB_OUTPUT
+          platforms=$(jq -c '[.configurePresets[] | {platform: .name, target: (if .name == "JC4880P4" then "esp32p4" else "esp32s3" end)}]' source/CMakePresets.json)
+          echo "platforms=$platforms" | tee -a "$GITHUB_OUTPUT"
 
   build:
     name: Build ${{ matrix.platform }}
@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: ${{ fromJson(needs.extract-config.outputs.platforms) }}
+        include: ${{ fromJson(needs.extract-config.outputs.platforms) }}
 
     steps:
       - uses: actions/checkout@v4
@@ -52,7 +52,7 @@ jobs:
         with:
           path: 'source'
           esp_idf_version: v6.0.2
-          target: esp32s3
+          target: ${{ matrix.target }}
           extra_docker_args: >-
             -v ./.ccache:/root/.ccache
             -e CCACHE_DIR=/root/.ccache
