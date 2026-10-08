@@ -58,6 +58,7 @@ limitations under the License.
 #define NVS_USERDATA_WIFI_CONF              "wificonf"
 #define NVS_USERDATA_PRESET_ORDER_CONF      "porderconf"
 #define NVS_USERDATA_PC_MAP_CONF            "pcmapconf"
+#define NVS_USERDATA_LCD_PANEL_CONF         "lcdpanel"
 
 #define MAX_TEXT_LENGTH                     128
 #define MAX_BT_CUSTOM_NAME                  25    
@@ -230,6 +231,12 @@ typedef struct __attribute__ ((packed))
     uint8_t SkinIndex[MAX_SUPPORTED_PRESETS];
 } tSkinConfig;
 
+typedef struct __attribute__ ((packed)) 
+{ 
+    uint16_t PixelClock;        // units of 100 kHz. E.g. 1320 = 13.2 MHz
+    uint16_t Porch;
+} tLCDPanelConfig;
+
 typedef struct 
 {
     tBluetoothConfig BTConfig;
@@ -240,6 +247,7 @@ typedef struct
     tPresetOrderMappingConfig PresetOrderMappingConfig;
     tSkinConfig SkinConfig;
     tPCMapConfig PCMapConfig;
+    tLCDPanelConfig LCDPanelConfig;
 } tConfigData;
 
 typedef struct
@@ -898,6 +906,18 @@ static uint8_t process_control_command(tControlMessage* message)
                 {
                     ESP_LOGI(TAG, "Config set internal footsw effect4 Value_2 %d", (int)message->Value);
                     ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[3].Value_2 = (uint8_t)message->Value;
+                } break;
+
+                case CONFIG_ITEM_INT_LCD_PANEL_PIXEL_CLOCK:
+                {
+                    ESP_LOGI(TAG, "Config set LCD pixel clock %d", (int)message->Value);
+                    ControlData.ConfigData.LCDPanelConfig.PixelClock = (uint16_t)message->Value;
+                } break;
+
+                case CONFIG_ITEM_INT_LCD_PANEL_PORCH:
+                {
+                    ESP_LOGI(TAG, "Config set LCD porch %d", (int)message->Value);
+                    ControlData.ConfigData.LCDPanelConfig.Porch = (uint16_t)message->Value;
                 } break;
             }
         } break;
@@ -1834,6 +1854,16 @@ uint32_t control_get_config_item_int(uint32_t item)
             value = ControlData.ConfigData.FootSwitchConfig.InternalFootswitchEffectConfig[3].Value_2;
         } break;
 
+        case CONFIG_ITEM_INT_LCD_PANEL_PIXEL_CLOCK:
+        {
+            value = (uint32_t)ControlData.ConfigData.LCDPanelConfig.PixelClock;
+        } break;
+
+        case CONFIG_ITEM_INT_LCD_PANEL_PORCH:
+        {
+            value = (uint32_t)ControlData.ConfigData.LCDPanelConfig.Porch;
+        } break;
+
         default:
         {
             ESP_LOGE(TAG, "Unknown/Invalid int parameter item %d", (int)item);            
@@ -2292,7 +2322,8 @@ static uint8_t SaveUserData(void)
     SaveUserConfigItem((void*)&ControlData.ConfigData.PresetOrderMappingConfig, sizeof(ControlData.ConfigData.PresetOrderMappingConfig), NVS_USERDATA_PRESET_ORDER_CONF);
     SaveUserConfigItem((void*)&ControlData.ConfigData.SkinConfig, sizeof(ControlData.ConfigData.SkinConfig), NVS_USERDATA_SKIN_CONF);
     SaveUserConfigItem((void*)&ControlData.ConfigData.PCMapConfig.PCMap, sizeof(ControlData.ConfigData.PCMapConfig.PCMap), NVS_USERDATA_PC_MAP_CONF);
-
+    SaveUserConfigItem((void*)&ControlData.ConfigData.LCDPanelConfig, sizeof(ControlData.ConfigData.LCDPanelConfig), NVS_USERDATA_LCD_PANEL_CONF);
+    
     return 1;
 }
 
@@ -2357,6 +2388,13 @@ static uint8_t LoadUserData(void)
         SaveUserConfigItem((void*)&ControlData.ConfigData.PCMapConfig.PCMap, sizeof(ControlData.ConfigData.PCMapConfig.PCMap), NVS_USERDATA_PC_MAP_CONF);
     }
 
+    // LCD panel config
+    if (LoadUserConfigItem((void*)&ControlData.ConfigData.LCDPanelConfig, sizeof(ControlData.ConfigData.LCDPanelConfig), NVS_USERDATA_LCD_PANEL_CONF) != ESP_OK)
+    {
+        SaveUserConfigItem((void*)&ControlData.ConfigData.LCDPanelConfig, sizeof(ControlData.ConfigData.LCDPanelConfig), NVS_USERDATA_LCD_PANEL_CONF);
+    }
+
+    
     // perform sanity check on values
     if (ControlData.ConfigData.BTConfig.BTMode > BT_MODE_PERIPHERAL)
     {
@@ -2402,6 +2440,16 @@ static uint8_t LoadUserData(void)
         }
     }
     
+    if ((ControlData.ConfigData.LCDPanelConfig.PixelClock < LCD_PANEL_CONFIG_PIXEL_CLOCK_MIN) || (ControlData.ConfigData.LCDPanelConfig.PixelClock > LCD_PANEL_CONFIG_PIXEL_CLOCK_MAX))  
+    {
+        // set default
+        ESP_LOGW(TAG, "Config LCD Panel invalid");
+        ControlData.ConfigData.LCDPanelConfig.PixelClock = LCD_PANEL_CONFIG_PIXEL_CLOCK_DEFAULT;
+        ControlData.ConfigData.LCDPanelConfig.Porch = LCD_PANEL_CONFIG_PORCH_DEFAULT;
+
+        SaveUserConfigItem((void*)&ControlData.ConfigData.LCDPanelConfig, sizeof(ControlData.ConfigData.LCDPanelConfig), NVS_USERDATA_LCD_PANEL_CONF);
+    }
+
     // check the preset order
     for (loop = 0; loop < MAX_SUPPORTED_PRESETS; loop++)
     {
@@ -2463,7 +2511,9 @@ static void DumpUserConfig(void)
     ESP_LOGI(TAG, "Config Ext Footsw Prst Layout: %d", (int)ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchPresetLayout);
     ESP_LOGI(TAG, "Config Higher Touch Sense: %d", (int)ControlData.ConfigData.GeneralConfig.GeneralEnableTouchHigherSensitivity);
     ESP_LOGI(TAG, "Config Hide BPM flasher: %d", (int)ControlData.ConfigData.GeneralConfig.GeneralHideBPM);
-    
+    ESP_LOGI(TAG, "Config LCD Pixel Clock: %d", (int)ControlData.ConfigData.LCDPanelConfig.PixelClock);
+    ESP_LOGI(TAG, "Config LCD Porch: %d", (int)ControlData.ConfigData.LCDPanelConfig.Porch);
+
     for (uint8_t loop = 0; loop < MAX_EXTERNAL_EFFECT_FOOTSWITCHES; loop++)
     {
         ESP_LOGI(TAG, "Config Ext Footsw Effect %d Switch: %d", (int)loop, (int)ControlData.ConfigData.FootSwitchConfig.ExternalFootswitchEffectConfig[loop].Switch);
@@ -2974,6 +3024,9 @@ void control_set_default_config(void)
         // issue here, really need to use (loop + usb_get_first_preset_index_for_connected_modeller()) but modeller may not yet be connected
         ControlData.ConfigData.PCMapConfig.PCMap[loop] = loop;
     }
+
+    ControlData.ConfigData.LCDPanelConfig.PixelClock = LCD_PANEL_CONFIG_PIXEL_CLOCK_DEFAULT;
+    ControlData.ConfigData.LCDPanelConfig.Porch = LCD_PANEL_CONFIG_PORCH_DEFAULT;
 }
 
 /****************************************************************************

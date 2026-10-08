@@ -150,7 +150,9 @@ enum ConfigItems
     CONFIG_ITEM_INT_FOOTSW_EFFECT4_VAL2,
     CONFIG_ITEM_ENABLE_HIGHER_TOUCH_SENS,
     CONFIG_ITEM_DISABLE_BPM_FLASHER,
-    CONFIG_ITEM_BT_PERIPHERAL_NAME
+    CONFIG_ITEM_BT_PERIPHERAL_NAME,
+    CONFIG_ITEM_INT_LCD_PANEL_PIXEL_CLOCK,
+    CONFIG_ITEM_INT_LCD_PANEL_PORCH
 };
 
 enum BluetoothModes
@@ -273,6 +275,12 @@ enum ParamTypes
 
 // special cases for handling effect switches that use Midi but don't change a parameter
 #define TONEX_UNKNOWN           0xFFFF
+
+// LCD panel config for 4.3"
+#define LCD_PANEL_CONFIG_PIXEL_CLOCK_MIN        130        // units of 100000 HZ, = 13 MHz
+#define LCD_PANEL_CONFIG_PIXEL_CLOCK_MAX        180        // 18 MHz
+#define LCD_PANEL_CONFIG_PIXEL_CLOCK_DEFAULT    145        // 14.5 MHz
+#define LCD_PANEL_CONFIG_PORCH_DEFAULT          8   
 
 typedef struct
 {

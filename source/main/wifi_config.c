@@ -594,6 +594,9 @@ static void wifi_build_config_json(void)
     }
     json_gen_pop_array(&pWebConfig->jstr);
 
+    json_gen_obj_set_int(&pWebConfig->jstr, "LCDPAN_CLOCK", control_get_config_item_int(CONFIG_ITEM_INT_LCD_PANEL_PIXEL_CLOCK));
+    json_gen_obj_set_int(&pWebConfig->jstr, "LCDPAN_PORCH", control_get_config_item_int(CONFIG_ITEM_INT_LCD_PANEL_PORCH));
+
     // add the }
     json_gen_end_object(&pWebConfig->jstr);
 
@@ -1237,6 +1240,16 @@ static esp_err_t ws_handler(httpd_req_t *req)
                         if (json_obj_get_int(&pWebConfig->jctx, "INTFS_ES4_V2", &int_val) == OS_SUCCESS) 
                         {
                             control_set_config_item_int(CONFIG_ITEM_INT_FOOTSW_EFFECT4_VAL2, int_val);
+                        }
+
+                        if (json_obj_get_int(&pWebConfig->jctx, "LCDPAN_CLOCK", &int_val) == OS_SUCCESS) 
+                        {
+                            control_set_config_item_int(CONFIG_ITEM_INT_LCD_PANEL_PIXEL_CLOCK, int_val);
+                        }
+
+                        if (json_obj_get_int(&pWebConfig->jctx, "LCDPAN_PORCH", &int_val) == OS_SUCCESS) 
+                        {
+                            control_set_config_item_int(CONFIG_ITEM_INT_LCD_PANEL_PORCH, int_val);
                         }
 
                         vTaskDelay(pdMS_TO_TICKS(250));

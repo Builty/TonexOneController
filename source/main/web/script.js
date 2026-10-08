@@ -923,7 +923,13 @@ function onload(event) {
     inputs = document.getElementsByTagName('input');
     for (i = 0; i < inputs.length; i++) {
         if (inputs[i].type == "range" && inputs[i].oninput == null) {
-            inputs[i].oninput = function(e){showValue(e.target, true);};
+            // special case for config sliders, not params
+            if (inputs[i].id === "lcd_pix_clk" || inputs[i].id === "lcd_pch") {
+                inputs[i].oninput = function(e){showValueNoCCNoSend(e.target);};
+            }
+            else {
+                inputs[i].oninput = function(e){showValue(e.target, true);};
+            }
         }
     }
 
@@ -1508,6 +1514,18 @@ function configureParamRange(objname, value, min, max, step=1) {
     } else {
         //console.log("Slider value change suppressed");
     }
+}
+
+function configureConfigRange(objname, value, min, max, step=1) {
+    //console.log("configureParamRange");
+    //console.log(objname);
+    var paramrange = document.getElementById(objname);
+    paramrange.step = step;
+    paramrange.min = min;
+    paramrange.max = max;
+    paramrange.value = value;
+
+    showValueNoCCNoSend(paramrange);
 }
 
 function configureParamSwitch(objname, value) {
@@ -3802,6 +3820,10 @@ function processReturnCmd(data) {
             
             // create Midi PC map
             buildPCMap(data['PC_MAP']);
+
+            configureConfigRange("lcd_pix_clk", data['LCDPAN_CLOCK'], 130, 180, 1);
+            configureConfigRange("lcd_pch", data['LCDPAN_PORCH'], 8, 40, 1);
+
             break;   
         
         case 'GETPRESET':
@@ -4065,6 +4087,9 @@ function saveSettings() {
         var intfx4v1 = getIntFSValue("4", "1"); 
         var intfx4v2 = getIntFSValue("4", "2");
 
+        var intlcdpxclk = document.getElementById("lcd_pix_clk").value;
+        var intlcdporch = document.getElementById("lcd_pch").value;
+
         sendWS({"CMD": "SETCONFIG", 
                 "BT_MODE": parseInt(btmode),
                 "BT_CHOC_EN": mvavechocen, 
@@ -4131,6 +4156,8 @@ function saveSettings() {
                 "INTFS_ES4_CC": parseInt(intfx4cc),
                 "INTFS_ES4_V1": parseInt(intfx4v1),
                 "INTFS_ES4_V2": parseInt(intfx4v2),
+                "LCDPAN_CLOCK": parseInt(intlcdpxclk), 
+                "LCDPAN_PORCH": parseInt(intlcdporch), 
             });  
 
         setToast('Settings saved.<br>Rebooting now');
@@ -4191,6 +4218,18 @@ function onParamChange(e) {
                     "VALUE": param_value});                        
         }
     } 
+}
+
+function showValueNoCCNoSend(e, send_value) {
+    var param_index = e.getAttribute("data-indexnumber");
+    const label = document.querySelector(`label[for="${e.id}"]`);
+    if (!label) {
+        console.error(`Label for input ${e.id} not found`);
+        return;
+    }
+    
+    // Update label text
+    label.innerText = label.innerText.replace(/ :.*/, "") + " : " + parseFloat(e.value);
 }
 
 function showValue(e, send_value) {

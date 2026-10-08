@@ -77,7 +77,7 @@ limitations under the License.
 static const char *TAG = "platform_ws43b";
 
 // LCD panel config
-#define DISPLAY_LCD_PIXEL_CLOCK_HZ     (15000000)
+#define DISPLAY_LCD_PIXEL_CLOCK_HZ     (14500000)       // note here: some 4.3B models have flicker issues above this freq
 #define DISPLAY_LCD_BK_LIGHT_ON_LEVEL  1
 #define DISPLAY_LCD_BK_LIGHT_OFF_LEVEL !DISPLAY_LCD_BK_LIGHT_ON_LEVEL
 
@@ -299,6 +299,8 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     ESP_ERROR_CHECK(gpio_config(&bk_gpio_config));
 #endif
 
+  
+
     ESP_LOGI(TAG, "Install RGB LCD panel driver");
     esp_lcd_panel_handle_t panel_handle = NULL;
     esp_lcd_rgb_panel_config_t panel_config = {
@@ -358,6 +360,16 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         .flags.fb_in_psram = true, // allocate frame buffer in PSRAM
     };
       
+    // apply user config
+    uint32_t pixel_clock = control_get_config_item_int(CONFIG_ITEM_INT_LCD_PANEL_PIXEL_CLOCK) * 100000U;
+    uint32_t porch = control_get_config_item_int(CONFIG_ITEM_INT_LCD_PANEL_PORCH);
+
+    panel_config.timings.pclk_hz = pixel_clock;
+    panel_config.timings.vsync_back_porch = porch;
+    panel_config.timings.vsync_front_porch = porch;
+
+    ESP_LOGI(TAG, "LCD config: Pixel clock: %d, Porch: %d", panel_config.timings.pclk_hz, panel_config.timings.vsync_back_porch);
+
     // hack here: if the panel is created normally, it results in massive jitter.
     // allocating some PSRAM here before calling the esp_lcd_new_rgb_panel() function
     // somehow fixes it, and simulates the way that older versions of the project
