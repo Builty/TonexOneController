@@ -76,17 +76,30 @@ limitations under the License.
 
 static const char *TAG = "platform_ws7b";
 
-// PSRAM bandwidth limits this: the bounce buffer refill competes with WiFi, BT and USB host for PSRAM
-#define DISPLAY_LCD_PIXEL_CLOCK_HZ     (21000000)
+// PSRAM bandwidth limits this: the bounce buffer refill competes with WiFi, BT and USB host for PSRAM.
+// About 37 Hz refresh with the porches below; short porches at 36 MHz (49 Hz) glitched on hardware
+#define DISPLAY_LCD_PIXEL_CLOCK_HZ     (34000000)
 
 #define DISPLAY_LCD_H_RES              1024
 #define DISPLAY_LCD_V_RES              600
 
-// UI is designed for 800x480, drawn centered on the panel
+// UI is designed for 800x480; it is scaled by 5/4 (nearest neighbour) and centered on the panel
 #define UI_H_RES                       800
 #define UI_V_RES                       480
-#define UI_OFFSET_X                    ((DISPLAY_LCD_H_RES - UI_H_RES) / 2)
-#define UI_OFFSET_Y                    ((DISPLAY_LCD_V_RES - UI_V_RES) / 2)
+#define UI_SCALE_NUM                   5
+#define UI_SCALE_DEN                   4
+#define UI_SCALED_H_RES                ((UI_H_RES * UI_SCALE_NUM) / UI_SCALE_DEN)
+#define UI_SCALED_V_RES                ((UI_V_RES * UI_SCALE_NUM) / UI_SCALE_DEN)
+#define UI_OFFSET_X                    ((DISPLAY_LCD_H_RES - UI_SCALED_H_RES) / 2)
+#define UI_OFFSET_Y                    ((DISPLAY_LCD_V_RES - UI_SCALED_V_RES) / 2)
+
+// The side strips continue each row's plain fill (header, footer, background) to the panel edges. A row counts
+// as plain fill only when windows just past the theme's 2 px object border on both UI edges are one identical
+// colour, so logos, icons, text and animations at either edge are never smeared into the strips. Only areas
+// spanning both windows (full-width redraws) update the strips
+#define UI_STRIP_WINDOW_X              2
+#define UI_STRIP_WINDOW_W              6
+#define UI_STRIP_RIGHT_WINDOW_X        (UI_H_RES - UI_STRIP_WINDOW_X - UI_STRIP_WINDOW_W)
 
 #define DISPLAY_LCD_NUM_FB             1
 #define DRAW_BUFFER_SIZE               6
@@ -103,6 +116,13 @@ static lv_disp_drv_t* disp_drv;
 static esp_lcd_touch_handle_t tp = NULL;
 static esp_lcd_panel_io_handle_t tp_io_handle = NULL;
 static lv_indev_drv_t indev_drv;
+static uint16_t scale_x_map[UI_SCALED_H_RES];
+static lv_color_t* scale_line_buf = NULL;
+static lv_color_t strip_buf[UI_OFFSET_X];
+static lv_color_t strip_fill;
+static bool strip_fill_valid = false;
+static int32_t strip_last_y1 = -2;
+static int32_t strip_last_y2 = -2;
 
 static uint8_t GT911CalcChecksum(uint8_t* buf, uint16_t len)
 {
@@ -119,16 +139,13 @@ static uint8_t GT911CalcChecksum(uint8_t* buf, uint16_t len)
 
 __attribute__((unused)) void platform_adjust_touch_coords(lv_coord_t* x, lv_coord_t* y)
 {
-    *x = LV_CLAMP(0, *x - UI_OFFSET_X, UI_H_RES - 1);
-    *y = LV_CLAMP(0, *y - UI_OFFSET_Y, UI_V_RES - 1);
+    *x = LV_CLAMP(0, ((*x - UI_OFFSET_X) * UI_SCALE_DEN) / UI_SCALE_NUM, UI_H_RES - 1);
+    *y = LV_CLAMP(0, ((*y - UI_OFFSET_Y) * UI_SCALE_DEN) / UI_SCALE_NUM, UI_V_RES - 1);
 }
 
 __attribute__((unused)) void platform_adjust_display_flush_area(lv_area_t *area)
 {
-    area->x1 += UI_OFFSET_X;
-    area->x2 += UI_OFFSET_X;
-    area->y1 += UI_OFFSET_Y;
-    area->y2 += UI_OFFSET_Y;
+    // Not called on this platform: platform_display_lvgl_flush_cb does the scaling and centering
 }
 
 __attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max_entries)
@@ -186,6 +203,93 @@ __attribute__((unused)) uint16_t platform_get_toast_padding(void)
 __attribute__((unused)) lv_dir_t platform_adjust_gesture(lv_dir_t gesture)
 {
     return gesture;
+}
+
+static bool platform_strip_window_colour(const lv_color_t* window, lv_color_t* colour)
+{
+    for (int32_t i = 1; i < UI_STRIP_WINDOW_W; i++)
+    {
+        if (window[i].full != window[0].full)
+        {
+            return false;
+        }
+    }
+
+    *colour = window[0];
+    return true;
+}
+
+static void platform_update_side_strips(esp_lcd_panel_handle_t panel_handle, const lv_color_t* src_row, int32_t src_x1, int32_t y)
+{
+    lv_color_t left;
+    lv_color_t right;
+
+    if (platform_strip_window_colour(&src_row[UI_STRIP_WINDOW_X - src_x1], &left) &&
+        platform_strip_window_colour(&src_row[UI_STRIP_RIGHT_WINDOW_X - src_x1], &right) &&
+        (left.full == right.full))
+    {
+        strip_fill = left;
+        strip_fill_valid = true;
+    }
+
+    if (!strip_fill_valid)
+    {
+        return;
+    }
+
+    for (int32_t i = 0; i < UI_OFFSET_X; i++)
+    {
+        strip_buf[i] = strip_fill;
+    }
+
+    esp_lcd_panel_draw_bitmap(panel_handle, 0, y, UI_OFFSET_X, y + 1, strip_buf);
+    esp_lcd_panel_draw_bitmap(panel_handle, UI_OFFSET_X + UI_SCALED_H_RES, y, DISPLAY_LCD_H_RES, y + 1, strip_buf);
+}
+
+static void platform_display_lvgl_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map)
+{
+    esp_lcd_panel_handle_t panel_handle = (esp_lcd_panel_handle_t)drv->user_data;
+    int32_t src_w = lv_area_get_width(area);
+
+    // Only output pixels whose nearest source pixel lies inside this area, so adjacent areas never overlap
+    int32_t out_x1 = ((area->x1 * UI_SCALE_NUM) + UI_SCALE_DEN - 1) / UI_SCALE_DEN;
+    int32_t out_x2 = ((((area->x2 + 1) * UI_SCALE_NUM) + UI_SCALE_DEN - 1) / UI_SCALE_DEN) - 1;
+    int32_t out_y1 = ((area->y1 * UI_SCALE_NUM) + UI_SCALE_DEN - 1) / UI_SCALE_DEN;
+    int32_t out_y2 = ((((area->y2 + 1) * UI_SCALE_NUM) + UI_SCALE_DEN - 1) / UI_SCALE_DEN) - 1;
+    int32_t out_w = out_x2 - out_x1 + 1;
+    bool strip_area = (area->x1 <= UI_STRIP_WINDOW_X) && (area->x2 >= (UI_STRIP_RIGHT_WINDOW_X + UI_STRIP_WINDOW_W - 1));
+
+    if (strip_area)
+    {
+        // A remembered fill is only reused by the area directly above or below it (the next chunk of the same redraw)
+        if ((area->y1 != (strip_last_y2 + 1)) && ((area->y2 + 1) != strip_last_y1))
+        {
+            strip_fill_valid = false;
+        }
+
+        strip_last_y1 = area->y1;
+        strip_last_y2 = area->y2;
+    }
+
+    for (int32_t out_y = out_y1; out_y <= out_y2; out_y++)
+    {
+        const lv_color_t* src_row = color_map + ((((out_y * UI_SCALE_DEN) / UI_SCALE_NUM) - area->y1) * src_w);
+
+        for (int32_t i = 0; i < out_w; i++)
+        {
+            scale_line_buf[i] = src_row[scale_x_map[out_x1 + i] - area->x1];
+        }
+
+        // RGB panel draw_bitmap copies into the frame buffer before returning, so the buffers can be reused
+        esp_lcd_panel_draw_bitmap(panel_handle, out_x1 + UI_OFFSET_X, out_y + UI_OFFSET_Y, out_x2 + 1 + UI_OFFSET_X, out_y + 1 + UI_OFFSET_Y, scale_line_buf);
+
+        if (strip_area)
+        {
+            platform_update_side_strips(panel_handle, src_row, area->x1, out_y + UI_OFFSET_Y);
+        }
+    }
+
+    lv_disp_flush_ready(drv);
 }
 
 void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex, lv_disp_drv_t* pdisp_drv)
@@ -246,7 +350,8 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
             DISPLAY_PIN_NUM_DATA15,
         },
 
-        // Timings from Waveshare's ESP32-S3-Touch-LCD-7B reference driver
+        // Waveshare's reference porches. Shorter ones (20/70/70, 3/10/10) raise the refresh rate at the same
+        // pixel clock but made this panel flicker more on hardware
         .timings = {
             .pclk_hz           = DISPLAY_LCD_PIXEL_CLOCK_HZ,
             .h_res             = DISPLAY_LCD_H_RES,
@@ -411,11 +516,19 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 
     lv_disp_draw_buf_init(&disp_buf, buf1, buf2, UI_H_RES * DRAW_BUFFER_SIZE);
 
+    for (int i = 0; i < UI_SCALED_H_RES; i++)
+    {
+        scale_x_map[i] = (uint16_t)((i * UI_SCALE_DEN) / UI_SCALE_NUM);
+    }
+
+    scale_line_buf = heap_caps_malloc(UI_SCALED_H_RES * sizeof(lv_color_t), MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
+    assert(scale_line_buf);
+
     ESP_LOGI(TAG, "Register display driver to LVGL");
     lv_disp_drv_init(disp_drv);
     disp_drv->hor_res = UI_H_RES;
     disp_drv->ver_res = UI_V_RES;
-    disp_drv->flush_cb = display_lvgl_flush_cb;
+    disp_drv->flush_cb = platform_display_lvgl_flush_cb;
     disp_drv->draw_buf = &disp_buf;
     disp_drv->user_data = panel_handle;
 
