@@ -809,8 +809,8 @@ void footswitch_task(void *arg)
     // get the currently configured mode from web config
     FootswitchControl.onboard_switch_mode = control_get_config_item_int(CONFIG_ITEM_FOOTSWITCH_MODE);
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
-    // 4.3B doesn't have enough IO, only supports dual mode and disabled
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_7B
+    // 4.3B and 7B don't have enough IO, only support dual mode and disabled
     if ((FootswitchControl.onboard_switch_mode != FOOTSWITCH_LAYOUT_1X2) && (FootswitchControl.onboard_switch_mode != FOOTSWITCH_LAYOUT_DISABLED))
     {
         FootswitchControl.onboard_switch_mode = FOOTSWITCH_LAYOUT_1X2;

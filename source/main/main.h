@@ -187,8 +187,10 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define EXTERNAL_IO_EXPANDER_BUS       I2C_MASTER_NUM_1
     #define EXTERNAL_IO_EXPANDER_MUTEX     I2CMutex_1
 
-    #define FOOTSWITCH_1        -1
-    #define FOOTSWITCH_2        -1
+    // GP6 on the GPIO header
+    #define FOOTSWITCH_1        GPIO_NUM_6
+    // RX on the UART2 header, only connected while SW1 is set to UART2. It shares UART0 RX with the UART1 USB port
+    #define FOOTSWITCH_2        GPIO_NUM_44
     #define FOOTSWITCH_3        -1
     #define FOOTSWITCH_4        -1
     #define FOOTSWITCH_5        -1
