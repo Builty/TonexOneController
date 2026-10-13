@@ -341,6 +341,28 @@
       }
     },
     {
+      "name": "WS7B",
+      "binaryDir": "build_ws7b",
+      "cacheVariables": {
+        "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.ws7b",
+        "SDKCONFIG": "build_ws7b/sdkconfig",
+        "IDF_TARGET": "esp32s3"
+      },
+      "vendor": {
+        "espressif/vscode-esp-idf": {
+          "schemaVersion": 1,
+          "settings": [
+            {
+              "type": "openOCD",
+              "value": {
+                "debugLevel": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
       "name": "PirateMini",
       "binaryDir": "build_pirate169",
       "cacheVariables": {

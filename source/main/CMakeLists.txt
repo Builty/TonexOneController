@@ -1,7 +1,7 @@
 idf_component_register(SRCS "platform_ws35.c" "usb_tonex_plug.c" "usb_tonex_one_plus.c" "platform_pirate_pro_169.c" "platform_pirate_max35.c" "valeton_params.c" "midi_control.c" "control.c" "footswitches.c" "CH422G.c" "display.c" "main.c" "tonex_params.c" "SX1509.c" "display_tonex.c" "display_valeton.c"
                             "usb_comms.c" "usb_tonex_one.c" "usb_tonex_common.c" "usb_tonex.c" "usb_valeton_gp5.c" "usb_midi_device.c" "CH422G.c" "midi_serial.c" "wifi_config.c" "leds.c" "midi_helper.c" "midi_helper_tonex.c" "midi_helper_valeton.c" "LP5562.c"
                             "platform_devkitc.c" "platform_lgtdisps3.c" "platform_m5atoms3r.c" "platform_ws19t.c" "platform_ws43.c" "platform_wszero.c" "platform_ws169.c" 
-                            "platform_ws35b.c" "platform_jc3248w.c" "platform_ws7.c" "platform_jc4880p4.c"
+                            "platform_ws35b.c" "platform_jc3248w.c" "platform_ws7.c" "platform_jc4880p4.c" "platform_ws7b.c" "CH32V003.c"
                             INCLUDE_DIRS "." "./" 
                             EMBED_FILES
                                 "web/index.html" "web/amp_disabled.png" "web/amp_off.png" "web/amp_on.png" "web/cab_disabled.png" "web/cab_off.png" "web/cab_on.png"
@@ -21,7 +21,7 @@ if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC4880P4)
    target_add_binary_data(${COMPONENT_LIB} "${CMAKE_CURRENT_LIST_DIR}/C6_firmware/network_adapter_esp32c6.bin" BINARY)
 endif()
 
-if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC4880P4)
+if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC4880P4 OR CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_7B)
     target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated_800x480land")
 
     target_sources(${COMPONENT_LIB} PRIVATE "ui_generated_800x480land/ui.c" "ui_generated_800x480land/styles.c"

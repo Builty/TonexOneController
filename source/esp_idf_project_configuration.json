@@ -363,6 +363,32 @@
       "postFlash": ""
     }
   },
+  "WS7B": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_ws7b",
+      "sdkconfigDefaults": [
+        "sdkconfig.defaults",
+        "sdkconfig.ws7b"
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws7b/sdkconfig"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
   "PirateMini": {
     "build": {
       "compileArgs": [],
