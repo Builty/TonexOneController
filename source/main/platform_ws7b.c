@@ -292,6 +292,23 @@ static void platform_display_lvgl_flush_cb(lv_disp_drv_t *drv, const lv_area_t *
     lv_disp_flush_ready(drv);
 }
 
+typedef struct
+{
+    const esp_lcd_rgb_panel_config_t* config;
+    esp_lcd_panel_handle_t panel;
+    esp_err_t result;
+    TaskHandle_t caller;
+} tPanelCreate;
+
+static void platform_create_panel_task(void* arg)
+{
+    tPanelCreate* create = (tPanelCreate*)arg;
+
+    create->result = esp_lcd_new_rgb_panel(create->config, &create->panel);
+    xTaskNotifyGive(create->caller);
+    vTaskDelete(NULL);
+}
+
 void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex, lv_disp_drv_t* pdisp_drv)
 {
     __attribute__((unused)) esp_err_t ret = ESP_OK;
@@ -374,7 +391,20 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     };
 
     ESP_LOGI(TAG, "LCD config: Pixel clock: %d", (int)panel_config.timings.pclk_hz);
-    ESP_ERROR_CHECK(esp_lcd_new_rgb_panel(&panel_config, &panel_handle));
+
+    // The bounce buffer refill runs in interrupts allocated on the core that creates the panel, and takes a large
+    // share of it. Created from core 1 so core 0 stays free for WiFi, BT and the USB host tasks
+    tPanelCreate panel_create = {
+        .config = &panel_config,
+        .panel = NULL,
+        .result = ESP_FAIL,
+        .caller = xTaskGetCurrentTaskHandle(),
+    };
+
+    xTaskCreatePinnedToCore(platform_create_panel_task, "LcdInit", 4096, &panel_create, tskIDLE_PRIORITY + 5, NULL, 1);
+    ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+    ESP_ERROR_CHECK(panel_create.result);
+    panel_handle = panel_create.panel;
 
     ESP_LOGI(TAG, "Register event callbacks");
     esp_lcd_rgb_panel_event_callbacks_t cbs = {
