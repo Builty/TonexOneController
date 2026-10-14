@@ -88,3 +88,7 @@ https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_Lilygo_T
 ## Waveshare 7" and 4.3" (not B)
 <br>
 https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_Waveshare7_4.3.md
+
+## Waveshare 7B
+<br>
+https://github.com/Builty/TonexOneController/blob/main/HardwarePlatform_Waveshare7B.md

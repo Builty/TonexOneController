@@ -271,6 +271,8 @@ build_distribution('template_cust_partition_16MB', 'build_ws43b', True, zip_name
 # Build Waveshare 7/4.3 non-B
 zip_name = 'TonexController_V' + version + '_Waveshare_7_43'
 build_distribution('template_cust_partition_8MB', 'build_ws7_43', True, zip_name, '16bit', 'skins_minimal.bin')
+zip_name = 'TonexController_V' + version + '_Waveshare_7B'
+build_distribution('template_cust_partition_16MB', 'build_ws7b', True, zip_name, '16bit')
 
 # Build Waveshare Zero
 zip_name = 'TonexController_V' + version + '_Waveshare_Zero'

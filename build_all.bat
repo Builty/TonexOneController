@@ -35,6 +35,7 @@ $variants = @(
     @{ Name = "LGTDisplayS3";    Defaults = "sdkconfig.defaults;sdkconfig.lgtdisps3";   BuildDir = "build_lgtdisps3";    SdkConfigPath = "build_lgtdisps3" }
     @{ Name = "WS19Touch";       Defaults = "sdkconfig.defaults;sdkconfig.ws19t";       BuildDir = "build_ws19t";        SdkConfigPath = "build_ws19t" }
     @{ Name = "WS7_43";          Defaults = "sdkconfig.defaults;sdkconfig.ws43devonly"; BuildDir = "build_ws7_43";       SdkConfigPath = "build_ws7_43" }
+    @{ Name = "WS7B";            Defaults = "sdkconfig.defaults;sdkconfig.ws7b";        BuildDir = "build_ws7b";         SdkConfigPath = "build_ws7b" }
     @{ Name = "PirateMini";      Defaults = "sdkconfig.defaults;sdkconfig.pirate169";   BuildDir = "build_pirate169";    SdkConfigPath = "build_pirate169" }
     @{ Name = "PiratePlus";      Defaults = "sdkconfig.defaults;sdkconfig.pirate169land";BuildDir = "build_pirate169land"; SdkConfigPath = "build_pirate169land" }
     @{ Name = "PirateZERO";      Defaults = "sdkconfig.defaults;sdkconfig.piratezero";  BuildDir = "build_piratezero";   SdkConfigPath = "build_piratezero" }

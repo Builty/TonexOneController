@@ -87,6 +87,7 @@ This project can run on a variery of different hardware platforms, varying in si
 The code could be adapted to run on other brand ESP32-S3 boards, but to make things easy, pre-built releases are provided for the supported modules.
 <br>All platforms support Bluetooth, WiFi, wired footswitches, and wired Midi.
 - 4.3" LCD board, supporting touch screen and advanced graphics including customisable amp/pedal skins and text
+- 7" LCD board (Waveshare 7B), with the same touch screen user interface as the 4.3" board, scaled up to fill the 1024x600 screen
 - 1.69" LCD boards (with or without Touch.) Similar to an Apple Watch, this small board displays the preset name and number
 - "Zero" board with no display, is the smallest and cheapest option
 - "DevKit-C" board with no display
