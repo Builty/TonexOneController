@@ -514,16 +514,16 @@ static void host_lib_daemon_task(void *arg)
 #ifdef ENABLE_ENUM_FILTER_CALLBACK
         .enum_filter_cb = set_config_cb,
 #endif // ENABLE_ENUM_FILTER_CALLBACK
-#if USB_HOST_CONFIG_HAS_FSLS_ONLY 
-        // force high speed mode for better hub compatibility
+#if USB_DWC_HAL_INIT_HAS_CONFIG
+        // force full speed mode for better hub compatibility (P4 only)
         .fsls_only = true,        
-#endif
+#endif        
     };
 
     err = usb_host_install(&host_config);
     if (err != ESP_OK)
     {
-        ESP_LOGI(TAG, "usb_host_install() failed!");   
+        ESP_LOGE(TAG, "usb_host_install() failed!");   
     }
 
     // Signal to the class driver task that the host library is installed
@@ -541,7 +541,7 @@ static void host_lib_daemon_task(void *arg)
         if (err != ESP_OK)
         {
             // error
-            ESP_LOGI(TAG, "usb_host_lib_handle_events not OK");
+            ESP_LOGI(TAG, "usb_host_lib_handle_events not OK %d", err);
         }
         else
         {
