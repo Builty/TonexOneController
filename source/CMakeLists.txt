@@ -5,6 +5,10 @@ cmake_minimum_required(VERSION 3.16)
 set(SDKCONFIG "${CMAKE_BINARY_DIR}/sdkconfig")
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+
+# Force Ninja to use response files so command lines stay under the Windows limit
+set(CMAKE_NINJA_FORCE_RESPONSE_FILE ON CACHE INTERNAL "")
+
 project(TonexController)
 
 if(CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI)
