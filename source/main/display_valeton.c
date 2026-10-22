@@ -3462,6 +3462,7 @@ uint8_t valeton_update_ui_parameters(void)
 #else //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
     // Small UI
 
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_EFFECT_ICONS    
     // effect icons not used on Valeton small screen (too many)
     lv_obj_add_flag(objects.ui_icon_gate, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(objects.ui_icon_amp, LV_OBJ_FLAG_HIDDEN);
@@ -3470,6 +3471,7 @@ uint8_t valeton_update_ui_parameters(void)
     lv_obj_add_flag(objects.ui_icon_mod, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(objects.ui_icon_delay, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(objects.ui_icon_reverb, LV_OBJ_FLAG_HIDDEN);
+#endif 
 
     // show circle icons
     lv_obj_clear_flag(objects.ui_cstatus, LV_OBJ_FLAG_HIDDEN);
