@@ -7,6 +7,14 @@
 extern "C" {
 #endif
 
+// Screens
+
+enum ScreensEnum {
+    _SCREEN_ID_FIRST = 1,
+    SCREEN_ID_SCREEN1 = 1,
+    _SCREEN_ID_LAST = 1
+};
+
 typedef struct _objects_t {
     lv_obj_t *screen1;
     lv_obj_t *ui_touch_gesture_container;
@@ -18,6 +26,13 @@ typedef struct _objects_t {
     lv_obj_t *ui_wi_fi_status_conn;
     lv_obj_t *ui_bt_status_conn;
     lv_obj_t *ui_usb_status_ok;
+    lv_obj_t *ui_icon_gate;
+    lv_obj_t *ui_icon_amp;
+    lv_obj_t *ui_icon_cab;
+    lv_obj_t *ui_icon_comp;
+    lv_obj_t *ui_icon_mod;
+    lv_obj_t *ui_icon_delay;
+    lv_obj_t *ui_icon_reverb;
     lv_obj_t *ui_cstatus;
     lv_obj_t *ui_mstatus;
     lv_obj_t *ui_dstatus;
@@ -32,10 +47,6 @@ typedef struct _objects_t {
 
 extern objects_t objects;
 
-enum ScreensEnum {
-    SCREEN_ID_SCREEN1 = 1,
-};
-
 void create_screen_screen1();
 void tick_screen_screen1();
 
@@ -43,7 +54,6 @@ void tick_screen_by_id(enum ScreensEnum screenId);
 void tick_screen(int screen_index);
 
 void create_screens();
-
 
 #ifdef __cplusplus
 }

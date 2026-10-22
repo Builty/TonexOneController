@@ -86,6 +86,12 @@ menu "Tonex Controller Configuration"
         help
             Enable this option if the platform has a large display with full UI
     
+    config TONEX_CONTROLLER_DISPLAY_EFFECT_ICONS
+       bool "Small LCD display with Effect Icons used"
+        default "n"
+        help
+            Enable this option if the platform has a small display with effect icons
+            
     config TONEX_CONTROLLER_GPIO_FOOTSWITCHES
        bool "Footswitches are directly connected to GPIO"
         default "y"

@@ -108,7 +108,21 @@ if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 OR CONFIG_TONEX_CONTR
                                "ui_generated_280x240land/ui_image_smythbuilt.c" "ui_generated_280x240land/ui_image_usb_fail.c"
                                "ui_generated_280x240land/ui_image_usb_ok.c"
                                "ui_generated_280x240land/ui_image_wifi_conn.c" "ui_generated_280x240land/ui_image_wifi_disconn.c"
-                               "ui_generated_280x240land/ui_image_bt_conn.c" "ui_generated_280x240land/ui_image_bt_disconn.c")
+                               "ui_generated_280x240land/ui_image_bt_conn.c" "ui_generated_280x240land/ui_image_bt_disconn.c"
+                               "ui_generated_280x240land/ui_image_effect_icon_amp_off.c" "ui_generated_280x240land/ui_image_effect_icon_amp_on.c" 
+                               "ui_generated_280x240land/ui_image_effect_icon_cab_off.c" "ui_generated_280x240land/ui_image_effect_icon_cab_on.c" 
+                               "ui_generated_280x240land/ui_image_effect_icon_comp_off.c" "ui_generated_280x240land/ui_image_effect_icon_comp_on.c" 
+                               "ui_generated_280x240land/ui_image_effect_icon_delay_off.c" 
+                               "ui_generated_280x240land/ui_image_effect_icon_gate_off.c" "ui_generated_280x240land/ui_image_effect_icon_gate_on.c" 
+                               "ui_generated_280x240land/ui_image_effect_icon_mod_off.c" 
+                               "ui_generated_280x240land/ui_image_effect_icon_mod_on_chorus.c" "ui_generated_280x240land/ui_image_effect_icon_mod_on_flanger.c" 
+                               "ui_generated_280x240land/ui_image_effect_icon_mod_on_phaser.c" "ui_generated_280x240land/ui_image_effect_icon_mod_on_rotary.c" 
+                               "ui_generated_280x240land/ui_image_effect_icon_mod_on_tremolo.c" 
+                               "ui_generated_280x240land/ui_image_effect_icon_reverb_off.c" 
+                               "ui_generated_280x240land/ui_image_effect_icon_reverb_on_r.c" "ui_generated_280x240land/ui_image_effect_icon_reverb_on_s1.c" 
+                               "ui_generated_280x240land/ui_image_effect_icon_reverb_on_s2.c" "ui_generated_280x240land/ui_image_effect_icon_reverb_on_s3.c" 
+                               "ui_generated_280x240land/ui_image_effect_icon_reverb_on_s4.c" "ui_generated_280x240land/ui_image_effect_icon_reverb_on_p.c" 
+                               "ui_generated_280x240land/ui_image_effect_icon_delay_on_d.c" "ui_generated_280x240land/ui_image_effect_icon_delay_on_t.c")
 
    else()
       target_include_directories(${COMPONENT_LIB} PRIVATE include "ui_generated_240x280port")
@@ -118,7 +132,22 @@ if(CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_169 OR CONFIG_TONEX_CONTR
                                "ui_generated_240x280port/ui_image_smythbuilt.c" "ui_generated_240x280port/ui_image_usb_fail.c"
                                "ui_generated_240x280port/ui_image_usb_ok.c"
                                "ui_generated_240x280port/ui_image_wifi_conn.c" "ui_generated_240x280port/ui_image_wifi_disconn.c"
-                               "ui_generated_240x280port/ui_image_bt_conn.c" "ui_generated_240x280port/ui_image_bt_disconn.c")
+                               "ui_generated_240x280port/ui_image_bt_conn.c" "ui_generated_240x280port/ui_image_bt_disconn.c"
+                               "ui_generated_240x280port/ui_image_effect_icon_amp_off.c" "ui_generated_240x280port/ui_image_effect_icon_amp_on.c" 
+                               "ui_generated_240x280port/ui_image_effect_icon_cab_off.c" "ui_generated_240x280port/ui_image_effect_icon_cab_on.c" 
+                               "ui_generated_240x280port/ui_image_effect_icon_comp_off.c" "ui_generated_240x280port/ui_image_effect_icon_comp_on.c" 
+                               "ui_generated_240x280port/ui_image_effect_icon_delay_off.c" 
+                               "ui_generated_240x280port/ui_image_effect_icon_gate_off.c" "ui_generated_240x280port/ui_image_effect_icon_gate_on.c" 
+                               "ui_generated_240x280port/ui_image_effect_icon_mod_off.c" 
+                               "ui_generated_240x280port/ui_image_effect_icon_mod_on_chorus.c" "ui_generated_240x280port/ui_image_effect_icon_mod_on_flanger.c" 
+                               "ui_generated_240x280port/ui_image_effect_icon_mod_on_phaser.c" "ui_generated_240x280port/ui_image_effect_icon_mod_on_rotary.c" 
+                               "ui_generated_240x280port/ui_image_effect_icon_mod_on_tremolo.c" 
+                               "ui_generated_240x280port/ui_image_effect_icon_reverb_off.c" 
+                               "ui_generated_240x280port/ui_image_effect_icon_reverb_on_r.c" "ui_generated_240x280port/ui_image_effect_icon_reverb_on_s1.c" 
+                               "ui_generated_240x280port/ui_image_effect_icon_reverb_on_s2.c" "ui_generated_240x280port/ui_image_effect_icon_reverb_on_s3.c" 
+                               "ui_generated_240x280port/ui_image_effect_icon_reverb_on_s4.c" "ui_generated_240x280port/ui_image_effect_icon_reverb_on_p.c" 
+                               "ui_generated_240x280port/ui_image_effect_icon_delay_on_d.c" "ui_generated_240x280port/ui_image_effect_icon_delay_on_t.c")
+
    endif()
 endif()
 

@@ -1,6 +1,6 @@
 #include "images.h"
 
-const ext_img_desc_t images[9] = {
+const ext_img_desc_t images[33] = {
     { "arrow_left", &img_arrow_left },
     { "arrow_right", &img_arrow_right },
     { "bt_conn", &img_bt_conn },
@@ -10,4 +10,28 @@ const ext_img_desc_t images[9] = {
     { "usb_ok", &img_usb_ok },
     { "wifi_conn", &img_wifi_conn },
     { "wifi_disconn", &img_wifi_disconn },
+    { "effect_icon_cab_off", &img_effect_icon_cab_off },
+    { "effect_icon_cab_on", &img_effect_icon_cab_on },
+    { "effect_icon_delay_off", &img_effect_icon_delay_off },
+    { "effect_icon_delay_on_d", &img_effect_icon_delay_on_d },
+    { "effect_icon_delay_on_t", &img_effect_icon_delay_on_t },
+    { "effect_icon_amp_off", &img_effect_icon_amp_off },
+    { "effect_icon_amp_on", &img_effect_icon_amp_on },
+    { "effect_icon_comp_off", &img_effect_icon_comp_off },
+    { "effect_icon_comp_on", &img_effect_icon_comp_on },
+    { "effect_icon_gate_off", &img_effect_icon_gate_off },
+    { "effect_icon_gate_on", &img_effect_icon_gate_on },
+    { "effect_icon_mod_off", &img_effect_icon_mod_off },
+    { "effect_icon_mod_on_chorus", &img_effect_icon_mod_on_chorus },
+    { "effect_icon_mod_on_flanger", &img_effect_icon_mod_on_flanger },
+    { "effect_icon_mod_on_phaser", &img_effect_icon_mod_on_phaser },
+    { "effect_icon_mod_on_rotary", &img_effect_icon_mod_on_rotary },
+    { "effect_icon_mod_on_tremolo", &img_effect_icon_mod_on_tremolo },
+    { "effect_icon_reverb_off", &img_effect_icon_reverb_off },
+    { "effect_icon_reverb_on_p", &img_effect_icon_reverb_on_p },
+    { "effect_icon_reverb_on_r", &img_effect_icon_reverb_on_r },
+    { "effect_icon_reverb_on_s1", &img_effect_icon_reverb_on_s1 },
+    { "effect_icon_reverb_on_s2", &img_effect_icon_reverb_on_s2 },
+    { "effect_icon_reverb_on_s3", &img_effect_icon_reverb_on_s3 },
+    { "effect_icon_reverb_on_s4", &img_effect_icon_reverb_on_s4 },
 };

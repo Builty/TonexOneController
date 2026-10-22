@@ -2674,6 +2674,210 @@ uint8_t tonex_update_ui_parameters(void)
             tonex_params_release_locked_access();
         }               
     }
+
+#elif CONFIG_TONEX_CONTROLLER_DISPLAY_EFFECT_ICONS
+    // not full UI, but has effect icons
+    lv_obj_clear_flag(objects.ui_icon_gate, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(objects.ui_icon_amp, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(objects.ui_icon_cab, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(objects.ui_icon_comp, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(objects.ui_icon_mod, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(objects.ui_icon_delay, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(objects.ui_icon_reverb, LV_OBJ_FLAG_HIDDEN);
+
+    // hide circle icons
+    lv_obj_add_flag(objects.ui_cstatus, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_mstatus, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_dstatus, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_rstatus, LV_OBJ_FLAG_HIDDEN);
+
+    for (uint16_t param = 0; param < TONEX_GLOBAL_LAST; param++)
+    {                     
+        if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
+        {
+            tModellerParameter* param_entry = &param_ptr[param];
+
+            // debug
+            //ESP_LOGI(TAG, "Param %d: val: %02f, min: %02f, max: %02f", param, param_entry->Value, param_entry->Min, param_entry->Max);
+
+            switch (param)
+            {
+                case TONEX_GLOBAL_BPM:
+                {
+                    char buf[128];
+                    sprintf(buf, "%d", (int)round(param_entry->Value));
+                    lv_label_set_text(objects.ui_bpm, buf);  
+
+#if CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR                            
+                    ui_BPMAnimate(objects.ui_bpm_indicator, 1000 * 60 / param_entry->Value);
+#endif                            
+                } break;
+
+                case TONEX_PARAM_NOISE_GATE_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_img_set_src(objects.ui_icon_gate, (lv_obj_t*)&img_effect_icon_gate_on);
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_gate, (lv_obj_t*)&img_effect_icon_gate_off);
+                    }
+                } break;
+
+                case TONEX_PARAM_COMP_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_img_set_src(objects.ui_icon_comp, (lv_obj_t*)&img_effect_icon_comp_on);
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_comp, (lv_obj_t*)&img_effect_icon_comp_off);
+                    }
+                } break;
+
+                case TONEX_PARAM_MODEL_AMP_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        lv_img_set_src(objects.ui_icon_amp, (lv_obj_t*)&img_effect_icon_amp_on);
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_amp, (lv_obj_t*)&img_effect_icon_amp_off);
+                    }
+                } break;
+
+                case TONEX_PARAM_CABINET_TYPE:
+                {
+                    if (param_entry->Value == TONEX_CABINET_DISABLED)
+                    {
+                        lv_img_set_src(objects.ui_icon_cab, (lv_obj_t*)&img_effect_icon_cab_off);
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_cab, (lv_obj_t*)&img_effect_icon_cab_on);
+                    }
+                } break;
+
+                case TONEX_PARAM_MODULATION_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        // show enabled icon with letter to indicate the type
+                        switch ((int)param_ptr[TONEX_PARAM_MODULATION_MODEL].Value)
+                        {
+                            case TONEX_MODULATION_CHORUS:
+                            {
+                                lv_img_set_src(objects.ui_icon_mod, (lv_obj_t*)&img_effect_icon_mod_on_chorus);
+                            } break;
+
+                            case TONEX_MODULATION_TREMOLO:
+                            {
+                                lv_img_set_src(objects.ui_icon_mod, (lv_obj_t*)&img_effect_icon_mod_on_tremolo);
+                            } break;
+
+                            case TONEX_MODULATION_PHASER:
+                            {
+                                lv_img_set_src(objects.ui_icon_mod, (lv_obj_t*)&img_effect_icon_mod_on_phaser);
+                            } break;
+
+                            case TONEX_MODULATION_FLANGER:
+                            {
+                                lv_img_set_src(objects.ui_icon_mod, (lv_obj_t*)&img_effect_icon_mod_on_flanger);
+                            } break;
+
+                            case TONEX_MODULATION_ROTARY:
+                            default:
+                            {
+                                lv_img_set_src(objects.ui_icon_mod, (lv_obj_t*)&img_effect_icon_mod_on_rotary);
+                            } break;
+                        }
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_mod, (lv_obj_t*)&img_effect_icon_mod_off);
+                    }
+                } break;
+
+                case TONEX_PARAM_DELAY_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                         // show enabled icon with letter to indicate the type
+                         switch ((int)param_ptr[TONEX_PARAM_DELAY_MODEL].Value)
+                         {
+                             case TONEX_DELAY_DIGITAL:
+                             {
+                                 lv_img_set_src(objects.ui_icon_delay, (lv_obj_t*)&img_effect_icon_delay_on_d);
+                             } break;
+
+                             case TONEX_DELAY_TAPE:
+                             default:
+                             {
+                                 lv_img_set_src(objects.ui_icon_delay, (lv_obj_t*)&img_effect_icon_delay_on_t);
+                             } break;
+                         }
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_delay, (lv_obj_t*)&img_effect_icon_delay_off);
+                    }
+
+                } break;
+
+                case TONEX_PARAM_REVERB_ENABLE:
+                {
+                    if (param_entry->Value)
+                    {
+                        // show enabled icon with letter to indicate the type
+                        switch ((int)param_ptr[TONEX_PARAM_REVERB_MODEL].Value)
+                        {
+                            case TONEX_REVERB_SPRING_1:
+                            {
+                                lv_img_set_src(objects.ui_icon_reverb, (lv_obj_t*)&img_effect_icon_reverb_on_s1);
+                            } break;
+
+                            case TONEX_REVERB_SPRING_2:
+                            {
+                                lv_img_set_src(objects.ui_icon_reverb, (lv_obj_t*)&img_effect_icon_reverb_on_s2);
+                            } break;
+
+                            case TONEX_REVERB_SPRING_3:
+                            {
+                                lv_img_set_src(objects.ui_icon_reverb, (lv_obj_t*)&img_effect_icon_reverb_on_s3);
+                            } break;
+
+                            case TONEX_REVERB_SPRING_4:
+                            {
+                                lv_img_set_src(objects.ui_icon_reverb, (lv_obj_t*)&img_effect_icon_reverb_on_s4);
+                            } break;
+
+                            case TONEX_REVERB_ROOM:
+                            {
+                                lv_img_set_src(objects.ui_icon_reverb, (lv_obj_t*)&img_effect_icon_reverb_on_r);
+                            } break;
+
+                            case TONEX_REVERB_PLATE:
+                            default:
+                            {
+                                lv_img_set_src(objects.ui_icon_reverb, (lv_obj_t*)&img_effect_icon_reverb_on_p);
+                            } break;
+                        }
+                    }
+                    else
+                    {
+                        lv_img_set_src(objects.ui_icon_reverb, (lv_obj_t*)&img_effect_icon_reverb_off);
+                    }
+                } break;
+
+            }
+
+            tonex_params_release_locked_access();
+        }               
+    }
+
 #else  //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI 
 
     for (uint16_t param = 0; param < TONEX_GLOBAL_LAST; param++)

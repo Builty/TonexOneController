@@ -3461,6 +3461,22 @@ uint8_t valeton_update_ui_parameters(void)
     }
 #else //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
     // Small UI
+
+    // effect icons not used on Valeton small screen (too many)
+    lv_obj_add_flag(objects.ui_icon_gate, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_icon_amp, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_icon_cab, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_icon_comp, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_icon_mod, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_icon_delay, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(objects.ui_icon_reverb, LV_OBJ_FLAG_HIDDEN);
+
+    // show circle icons
+    lv_obj_clear_flag(objects.ui_cstatus, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(objects.ui_mstatus, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(objects.ui_dstatus, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(objects.ui_rstatus, LV_OBJ_FLAG_HIDDEN);
+
     for (uint16_t param = 0; param < VALETON_PARAM_LAST; param++)
     {                     
         if (valeton_params_get_locked_access(&param_ptr) == ESP_OK)
@@ -3484,7 +3500,7 @@ uint8_t valeton_update_ui_parameters(void)
                 } break;
 
                 case VALETON_PARAM_DIST_ENABLE:
-                {
+                {                    
                     if (param_entry->Value)
                     {
                         lv_obj_set_style_border_color(objects.ui_cstatus, lv_color_hex(0xDDDD00), LV_PART_MAIN | LV_STATE_DEFAULT);

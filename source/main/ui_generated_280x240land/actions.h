@@ -9,7 +9,6 @@ extern "C" {
 
 extern void action_gesture(lv_event_t * e);
 
-
 #ifdef __cplusplus
 }
 #endif
