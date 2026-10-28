@@ -42,6 +42,7 @@ limitations under the License.
 #include "usb_tonex_one.h"
 #include "leds.h"
 #include "SX1509.h"
+#include "ws_io_extension.h"
 #include "midi_helper.h"
 #include "tonex_params.h"
 
@@ -211,6 +212,15 @@ static esp_err_t footswitch_read_single_onboard(uint8_t number, uint8_t* switch_
         result = ESP_OK;
         *switch_state = (value == 0);
     }
+#elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43C
+    // 4.3C display board uses onboard I2C IO expander
+    uint8_t value;
+
+    if (ws_io_extension_input((uint8_t)button_index, &value) == ESP_OK)
+    {
+        result = ESP_OK;
+        *switch_state = (value == 0);
+    }
 #else
     // other boards can use direct IO pin
     *switch_state = (gpio_get_level((uint8_t)button_index) == 0);
@@ -238,6 +248,15 @@ static esp_err_t footswitch_read_multiple_onboard(uint16_t* switch_state)
     uint16_t values;
 
     if (CH422G_read_all_input(&values) == ESP_OK)
+    {
+        result = ESP_OK;
+        *switch_state = values;
+    }
+#elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43C    
+    // 4.3C display board uses onboard I2C IO expander
+    uint8_t values;
+
+    if (ws_io_extension_input_all(&values) == ESP_OK)
     {
         result = ESP_OK;
         *switch_state = values;
@@ -809,8 +828,8 @@ void footswitch_task(void *arg)
     // get the currently configured mode from web config
     FootswitchControl.onboard_switch_mode = control_get_config_item_int(CONFIG_ITEM_FOOTSWITCH_MODE);
 
-#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_7B
-    // 4.3B and 7B don't have enough IO, only support dual mode and disabled
+#if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_7B || CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43C
+    // 4.3B/C and 7B don't have enough IO, only support dual mode and disabled
     if ((FootswitchControl.onboard_switch_mode != FOOTSWITCH_LAYOUT_1X2) && (FootswitchControl.onboard_switch_mode != FOOTSWITCH_LAYOUT_DISABLED))
     {
         FootswitchControl.onboard_switch_mode = FOOTSWITCH_LAYOUT_1X2;

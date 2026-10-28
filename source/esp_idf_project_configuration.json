@@ -129,6 +129,32 @@
       "postFlash": ""
     }
   },
+  "WS43C": {
+    "build": {
+      "compileArgs": [],
+      "ninjaArgs": [],
+      "buildDirectoryPath": "${workspaceFolder}/build_ws43c",
+      "sdkconfigDefaults": [
+        "sdkconfig.defaults",
+        "sdkconfig.ws43C"
+      ],
+      "sdkconfigFilePath": "${workspaceFolder}/build_ws43c/sdkconfig"
+    },
+    "env": {},
+    "flashBaudRate": "",
+    "monitorBaudRate": "",
+    "openOCD": {
+      "debugLevel": 0,
+      "configs": [],
+      "args": []
+    },
+    "tasks": {
+      "preBuild": "",
+      "preFlash": "",
+      "postBuild": "",
+      "postFlash": ""
+    }
+  },
   "WS35B": {
     "build": {
       "compileArgs": [],

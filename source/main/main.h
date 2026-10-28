@@ -107,6 +107,74 @@ extern SemaphoreHandle_t I2CMutex_2;
     #define PIN_NUM_CLK         12
     #define PIN_NUM_CS          -1
 
+#elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43C
+    // I2C bus 1
+    #define I2C_MASTER_1_SCL_IO  GPIO_NUM_9       
+    #define I2C_MASTER_1_SDA_IO  GPIO_NUM_8       
+
+    // I2C bus 2
+    #define I2C_MASTER_2_SCL_IO  -1
+    #define I2C_MASTER_2_SDA_IO  -1
+
+    #define EXTERNAL_IO_EXPANDER_BUS       I2C_MASTER_NUM_1
+    #define EXTERNAL_IO_EXPANDER_MUTEX     I2CMutex_1 
+
+    // IO expander
+    #define FOOTSWITCH_1		IO_EXPANDER_PIN_1
+    #define TOUCH_RESET 		IO_EXPANDER_PIN_2
+    #define LCD_BACKLIGHT		IO_EXPANDER_PIN_3
+    // PA_CRTL             		IO_EXPANDER_PIN_4
+    #define SD_CS       		IO_EXPANDER_PIN_5
+    #define FOOTSWITCH_2		IO_EXPANDER_PIN_6
+
+    // these unsupported
+    #define FOOTSWITCH_3		-1
+    #define FOOTSWITCH_4		-1
+    #define FOOTSWITCH_5		-1
+    #define FOOTSWITCH_6		-1
+    #define FOOTSWITCH_7		-1
+    #define FOOTSWITCH_8		-1
+
+    // Micro pins
+    #define TOUCH_INT           GPIO_NUM_4    // touch panel interrupt
+
+    // Midi: unsupported
+    #define UART_RX_PIN         -1
+    #define UART_TX_PIN         -1
+
+    // leds
+    #define LED_OUTPUT_GPIO_NUM          -1
+
+    // LCD pins
+    #define DISPLAY_PIN_NUM_BK_LIGHT       -1
+    #define DISPLAY_PIN_NUM_HSYNC          46
+    #define DISPLAY_PIN_NUM_VSYNC          3
+    #define DISPLAY_PIN_NUM_DE             5
+    #define DISPLAY_PIN_NUM_PCLK           7
+    #define DISPLAY_PIN_NUM_DATA0          14 // B3
+    #define DISPLAY_PIN_NUM_DATA1          38 // B4
+    #define DISPLAY_PIN_NUM_DATA2          18 // B5
+    #define DISPLAY_PIN_NUM_DATA3          17 // B6
+    #define DISPLAY_PIN_NUM_DATA4          10 // B7
+    #define DISPLAY_PIN_NUM_DATA5          39 // G2
+    #define DISPLAY_PIN_NUM_DATA6          0 // G3
+    #define DISPLAY_PIN_NUM_DATA7          45 // G4
+    #define DISPLAY_PIN_NUM_DATA8          48 // G5
+    #define DISPLAY_PIN_NUM_DATA9          47 // G6
+    #define DISPLAY_PIN_NUM_DATA10         21 // G7
+    #define DISPLAY_PIN_NUM_DATA11         1  // R3
+    #define DISPLAY_PIN_NUM_DATA12         2  // R4
+    #define DISPLAY_PIN_NUM_DATA13         42 // R5
+    #define DISPLAY_PIN_NUM_DATA14         41 // R6
+    #define DISPLAY_PIN_NUM_DATA15         40 // R7
+    #define DISPLAY_PIN_NUM_DISP_EN        -1
+
+    // Pin assignments for SD Card
+    #define PIN_NUM_MISO        13
+    #define PIN_NUM_MOSI        11
+    #define PIN_NUM_CLK         12
+    #define PIN_NUM_CS          -1
+
 #elif CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43DEVONLY
     // Waveshare 4.3 (not B) dual USB port board with resistor mod.
     // Development use only, not for release.

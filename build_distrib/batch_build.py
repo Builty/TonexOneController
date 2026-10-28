@@ -14,9 +14,9 @@ from pathlib import Path
 
 def find_eim_profile() -> Path | None:
     candidates = [
-        Path(r"C:\Espressif\tools\Microsoft.v6.0.2.PowerShell_profile.ps1"),
+        Path(r"C:\Espressif\tools\Microsoft.v6.1.PowerShell_profile.ps1"),
         Path(r"C:\Espressif\tools\Microsoft.PowerShell_profile.ps1"),
-        Path.home() / "Espressif" / "tools" / "Microsoft.v6.0.2.PowerShell_profile.ps1",
+        Path.home() / "Espressif" / "tools" / "Microsoft.v6.1.PowerShell_profile.ps1",
     ]
     for p in candidates:
         if p.exists():

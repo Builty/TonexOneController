@@ -10,7 +10,7 @@ import json
 dirname = Path.cwd()
 
 # set version
-version = '3.0.0.2_alpha_1'
+version = '3.0.0.2_alpha_2'
 
 def generate_manifest(merged_path, merged_filename, chip_family, build_name, use_skins):
     manifest = {
@@ -267,6 +267,10 @@ build_distribution('template_cust_partition', 'build_ws169tland', True, zip_name
 # Build Waveshare 4.3B
 zip_name = 'TonexController_V' + version + '_Waveshare_4_3B'
 build_distribution('template_cust_partition_16MB', 'build_ws43b', True, zip_name, '16bit')
+
+# Build Waveshare 4.3C
+zip_name = 'TonexController_V' + version + '_Waveshare_4_3C'
+build_distribution('template_cust_partition_16MB', 'build_ws43c', True, zip_name, '16bit')
 
 # Build Waveshare 7/4.3 non-B
 zip_name = 'TonexController_V' + version + '_Waveshare_7_43'

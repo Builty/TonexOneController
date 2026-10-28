@@ -7,6 +7,9 @@ menu "Tonex Controller Configuration"
         config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43B
             bool "Waveshare 4.3B"
 
+        config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43C
+            bool "Waveshare 4.3C"
+
         config TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_7B
             bool "Waveshare 7B"
 
@@ -103,6 +106,12 @@ menu "Tonex Controller Configuration"
         default "n"
         help
             Sets if Midi (serial) is enabled by default
+
+    config TONEX_CONTROLLER_MIDI_NOT_SUPPORTED
+        bool "Serial Midi not supported"
+        default "n"
+        help
+            Sets if Midi (serial) is not supported
          
     config TONEX_CONTROLLER_WAVESHARE_169_LANDSCAPE
         bool "Waveshare 1.69 Landscape screen"

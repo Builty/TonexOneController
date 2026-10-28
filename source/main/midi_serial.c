@@ -76,7 +76,7 @@ static void __attribute__((unused)) midi_serial_uart_rx_purge(void)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-static void midi_serial_task(void *arg)
+static void __attribute__((unused)) midi_serial_task(void *arg)
 {
     int rx_length;
 
@@ -169,5 +169,9 @@ void midi_serial_init(void)
     //uint8_t test_data[] = {0xC0, 0x00, 0xB0, 116, 64};
     //midi_helper_process_incoming_data(test_data, sizeof(test_data), midi_serial_channel, 1);
 
+#if CONFIG_TONEX_CONTROLLER_MIDI_NOT_SUPPORTED
+    ESP_LOGI(TAG, "Midi serial not supported");
+#else
     xTaskCreatePinnedToCore(midi_serial_task, "MIDIS", MIDI_SERIAL_TASK_STACK_SIZE, NULL, MIDI_SERIAL_TASK_PRIORITY, NULL, 1);
+#endif    
 }

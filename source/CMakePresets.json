@@ -117,6 +117,28 @@
       }
     },
     {
+      "name": "WS43C",
+      "binaryDir": "build_ws43c",
+      "cacheVariables": {
+        "SDKCONFIG_DEFAULTS": "sdkconfig.defaults;sdkconfig.ws43C",
+        "SDKCONFIG": "build_ws43c/sdkconfig",
+        "IDF_TARGET": "esp32s3"
+      },
+      "vendor": {
+        "espressif/vscode-esp-idf": {
+          "schemaVersion": 1,
+          "settings": [
+            {
+              "type": "openOCD",
+              "value": {
+                "debugLevel": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
       "name": "WS35B",
       "binaryDir": "build_ws35b",
       "cacheVariables": {

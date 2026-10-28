@@ -296,7 +296,7 @@ void app_main(void)
     {
         ESP_LOGI(TAG, "MIDI BT disabled");
     }
-
+    
     if (control_get_config_item_int(CONFIG_ITEM_MIDI_ENABLE))
     {
         // init Midi serial
