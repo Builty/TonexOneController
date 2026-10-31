@@ -183,7 +183,10 @@ esp_err_t __attribute__((unused)) ws_io_extension_input(uint8_t pin, uint8_t* st
         }
         else
         {
-            *state = value & (1 << pin);
+            if ((value & (1 << pin)) != 0)
+            {
+                *state = 1;
+            }
             ret = ESP_OK;
         }
         xSemaphoreGive(I2CMutexHandle);
@@ -350,7 +353,7 @@ esp_err_t ws_io_extension_init(i2c_master_bus_handle_t bus_handle, SemaphoreHand
     };
     ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_config, &dev_handle));
 
-    // Set all pins to output mode
+    // Set IO states for pins all pins (1 = output)   
     ws_io_extension_io_mode(0xff); 
 
     // Initialize control flags for IO output enable and open-drain output mode

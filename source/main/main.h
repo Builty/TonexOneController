@@ -126,6 +126,8 @@ extern SemaphoreHandle_t I2CMutex_2;
     // PA_CRTL             		IO_EXPANDER_PIN_4
     #define SD_CS       		IO_EXPANDER_PIN_5
     #define FOOTSWITCH_2		IO_EXPANDER_PIN_6
+    #define DO0		            IO_EXPANDER_PIN_7
+    #define DO1                 IO_EXPANDER_PIN_8
 
     // these unsupported
     #define FOOTSWITCH_3		-1

@@ -271,7 +271,6 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
 {    
     __attribute__((unused)) esp_err_t ret = ESP_OK;
     uint8_t touch_ok = 0;
-    gpio_config_t gpio_config_struct;
     I2CMutexHandle = I2CMutex;
     disp_drv = pdisp_drv;
 
@@ -280,6 +279,11 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     // init onboard IO expander
     ESP_LOGI(TAG, "Init Onboard IO Expander");
     InitIOExpander(bus_handle, I2CMutex);
+
+    // Set IO states for pins all pins (1 = output)   
+    // FOOTSWITCH_1 (bit 0) , FOOTSWITCH_2 (bit 5) as inputs, rest as output
+    uint8_t io_states = ~((1 << FOOTSWITCH_1) | (1 << FOOTSWITCH_2));
+    ws_io_extension_io_mode(io_states);
 
     // LCD Backlight Off
     ws_io_extension_output(LCD_BACKLIGHT, 0);

@@ -10,7 +10,7 @@ import json
 dirname = Path.cwd()
 
 # set version
-version = '3.0.0.2_alpha_2'
+version = '3.0.0.2_alpha_3'
 
 def generate_manifest(merged_path, merged_filename, chip_family, build_name, use_skins):
     manifest = {
