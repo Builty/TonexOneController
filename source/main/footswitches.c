@@ -220,6 +220,9 @@ static esp_err_t footswitch_read_single_onboard(uint8_t number, uint8_t* switch_
     {
         result = ESP_OK;
         *switch_state = (value == 0);
+
+        // don't poll too hard or chip can lock up
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 #else
     // other boards can use direct IO pin
@@ -260,6 +263,9 @@ static esp_err_t footswitch_read_multiple_onboard(uint16_t* switch_state)
     {
         result = ESP_OK;
         *switch_state = values;
+
+        // don't poll too hard or chip can lock up
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 #else
     // direct gpio

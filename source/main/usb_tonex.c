@@ -352,6 +352,42 @@ static esp_err_t usb_tonex_send_single_parameter(uint16_t index, float value)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+static esp_err_t usb_tonex_send_preset_tempo(float value)
+{
+    uint16_t framed_length;
+
+    // Build message                                         len LSB  len MSB
+    uint8_t message[] = {0xb9, 0x03, 0x81, 0x07, 0x02, 0x82, 0x0A,     0x00, 0x80, 0x10, 0x03};
+
+    // payload           unknown                 param index             4 byte float value
+    uint8_t payload[] = {0xB9, 0x04, 0x01, 0x00, 0x01,         0x88, 0x00, 0x00, 0x00, 0x00 };
+
+    // set param value
+    memcpy((void*)&payload[6], (void*)&value, sizeof(value));
+
+    // build total message
+    memcpy((void*)TxBuffer, (void*)message, sizeof(message));
+    memcpy((void*)&TxBuffer[sizeof(message)], (void*)payload, sizeof(payload));
+
+    // add framing
+    framed_length = tonex_common_add_framing(TxBuffer, sizeof(message) + sizeof(payload), FramedBuffer);
+
+    // debug
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, FramedBuffer, framed_length, ESP_LOG_INFO);
+
+    ESP_LOGI(TAG, "usb_tonex_one_send_preset_tempo");
+
+    // send it
+    return tonex_common_transmit(cdc_dev, FramedBuffer, framed_length, TONEX_USB_TX_BUFFER_SIZE);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 static void __attribute__((unused)) usb_tonex_dump_globals(void)
 {
     float BPM;
@@ -513,8 +549,20 @@ static esp_err_t usb_tonex_modify_global(uint16_t global_val, float value)
     {
         case TONEX_GLOBAL_BPM:
         {
-            // modify the BPM value in Global Data
-            memcpy((void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_BPM * 5) + 1], (void*)&value, sizeof(float));
+            // check if tempo source is global or preset
+            float tempo_source_val;
+            memcpy((void*)&tempo_source_val, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_TEMPO_SOURCE * 5) + 1], sizeof(float));
+
+            if (tempo_source_val != 0)
+            {
+                // modify the preset value
+                usb_tonex_send_preset_tempo(value);
+            }
+            else
+            {
+                // modify the BPM value in Global Data
+                memcpy((void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_BPM * 5) + 1], (void*)&value, sizeof(float));
+            }
             res = ESP_OK;
         } break;
 
@@ -535,7 +583,7 @@ static esp_err_t usb_tonex_modify_global(uint16_t global_val, float value)
         case TONEX_GLOBAL_TEMPO_SOURCE:
         {
             // modify the tempo source value in state
-            //todo memcpy((void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_TEMPO_SOURCE * 5) + 1], (void*)&value, sizeof(float));
+            memcpy((void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_TEMPO_SOURCE * 5) + 1], (void*)&value, sizeof(float));
             res = ESP_OK;
         } break;
 
@@ -631,7 +679,7 @@ static TonexStatus usb_tonex_parse_param_changed(uint8_t* unframed, uint16_t len
     tModellerParameter* param_ptr = NULL;
 
     // try to locate the start of the parameter block 
-    uint8_t* temp_ptr = memmem((void*)unframed, length, (void*)param_start_marker, sizeof(param_start_marker));
+    uint8_t* temp_ptr = (uint8_t*)memmem((void*)unframed, length, (void*)param_start_marker, sizeof(param_start_marker));
     if (temp_ptr != NULL)
     {
         // skip the start marker
@@ -670,6 +718,46 @@ static TonexStatus usb_tonex_parse_param_changed(uint8_t* unframed, uint16_t len
         }
     }
 
+    // check for preset tempo b9 04 01 
+    param_start_marker[2] = 0x01;
+    
+    // try to locate the start of the parameter index
+    temp_ptr = (uint8_t*)memmem((void*)&unframed[index], length, (void*)param_start_marker, sizeof(param_start_marker));
+    if (temp_ptr != NULL)
+    {       
+        // debug
+        ESP_LOG_BUFFER_HEXDUMP(TAG, temp_ptr, 12, ESP_LOG_INFO);
+
+        // skip the start marker
+        temp_ptr += sizeof(param_start_marker);
+        
+        param_index = *temp_ptr++;
+
+        // next should be float start marker
+        if (*temp_ptr == 0x88)
+        {
+            // skip it
+            temp_ptr++;
+
+            // get the value
+            memcpy((void*)&temp_val, (void*)temp_ptr, sizeof(float));
+
+            if (param_index == 0x01)
+            {
+                // Preset tempo
+                if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
+                {
+                    // using virtual "Global BPM" for preset bpm
+                    param_ptr[TONEX_GLOBAL_BPM].Value = temp_val;
+
+                    tonex_params_release_locked_access();
+                }
+
+                ESP_LOGI(TAG, "Got preset tempo: %3.2f", temp_val);
+            }
+        }
+    }
+
     return STATUS_OK;
 }
 
@@ -682,13 +770,49 @@ static TonexStatus usb_tonex_parse_param_changed(uint8_t* unframed, uint16_t len
 *****************************************************************************/
 static void usb_tonex_parse_preset_parameters(uint8_t* raw_data, uint16_t length)
 {
+    uint8_t preset_tempo_start_marker[] = {0xBA, 0x02}; 
     uint8_t param_start_marker[] = {0xBA, 0x03, 0xBA, 0x6D}; 
     tModellerParameter* param_ptr = NULL;
 
     ESP_LOGI(TAG, "Parsing Preset parameters");
 
+    // try to locate the 2 floats near the start, one of which is the preset tempo
+    uint8_t* temp_ptr = memmem((void*)raw_data, length, (void*)preset_tempo_start_marker, sizeof(preset_tempo_start_marker));
+    if (temp_ptr != NULL)
+    {
+        // skip the start marker
+        temp_ptr += sizeof(preset_tempo_start_marker);
+
+        // skip the float value that follows (unknown) 0x88 and 4 bytes
+        temp_ptr += 5;
+    
+        // should be at the preset tempo, check for float marker
+        if (*temp_ptr == 0x88)
+        {
+            // skip the marker
+            temp_ptr++;
+
+            // are we running in preset tempo source mode?
+            float tempo_source_val;
+            memcpy((void*)&tempo_source_val, (void*)&TonexData->Message.PedalData.GlobalConfigData[TonexData->Message.PedalData.GlobalConfigStartOffset + (GLOBAL_CONFIG_INDEX_TEMPO_SOURCE * 5) + 1], sizeof(float));
+
+            if (tempo_source_val != 0)
+            {
+                ESP_LOGI(TAG, "Got Preset tempo value");
+
+                if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
+                {                    
+                    // get the value
+                    memcpy((void*)&param_ptr[TONEX_GLOBAL_BPM].Value, (void*)temp_ptr, sizeof(float));
+
+                    tonex_params_release_locked_access();
+                }
+            }
+        }
+    }
+
     // try to locate the start of the first parameter block 
-    uint8_t* temp_ptr = memmem((void*)raw_data, length, (void*)param_start_marker, sizeof(param_start_marker));
+    temp_ptr = memmem((void*)raw_data, length, (void*)param_start_marker, sizeof(param_start_marker));
     if (temp_ptr != NULL)
     {
         // skip the start marker
@@ -792,7 +916,11 @@ static TonexStatus usb_tonex_parse_global_config(uint8_t* unframed, uint16_t len
                         {
                             case GLOBAL_CONFIG_INDEX_BPM:
                             {
-                                param_ptr[TONEX_GLOBAL_BPM].Value = temp_val;   
+                                // only save this if in global tempo mode
+                                if (param_ptr[TONEX_GLOBAL_TEMPO_SOURCE].Value == 0)
+                                {
+                                    param_ptr[TONEX_GLOBAL_BPM].Value = temp_val;   
+                                }
                             } break;
 
                             case GLOBAL_CONFIG_INDEX_INPUT_TRIM:

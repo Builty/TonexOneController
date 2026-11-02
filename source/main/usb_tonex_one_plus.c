@@ -308,6 +308,42 @@ static esp_err_t usb_tonex_one_plus_send_single_parameter(uint16_t index, float 
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+static esp_err_t usb_tonex_one_plus_send_preset_tempo(float value)
+{
+    uint16_t framed_length;
+
+    // Build message                                         len LSB  len MSB
+    uint8_t message[] = {0xb9, 0x03, 0x81, 0x06, 0x03, 0x82, 0x0A,     0x00, 0x80, 0x15, 0x03};
+
+    // payload           unknown                 param index             4 byte float value
+    uint8_t payload[] = {0xB9, 0x04, 0x01, 0x00, 0x01,         0x88, 0x00, 0x00, 0x00, 0x00 };
+
+    // set param value
+    memcpy((void*)&payload[6], (void*)&value, sizeof(value));
+
+    // build total message
+    memcpy((void*)TxBuffer, (void*)message, sizeof(message));
+    memcpy((void*)&TxBuffer[sizeof(message)], (void*)payload, sizeof(payload));
+
+    // add framing
+    framed_length = tonex_common_add_framing(TxBuffer, sizeof(message) + sizeof(payload), FramedBuffer);
+
+    // debug
+    //ESP_LOG_BUFFER_HEXDUMP(TAG, FramedBuffer, framed_length, ESP_LOG_INFO);
+
+    ESP_LOGI(TAG, "usb_tonex_one_plus_send_preset_tempo");
+
+    // send it
+    return tonex_common_transmit(cdc_dev, FramedBuffer, framed_length, TONEX_USB_TX_BUFFER_SIZE);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 static esp_err_t usb_tonex_one_plus_send_master_volume(float value)
 {
     uint16_t framed_length;
@@ -683,8 +719,17 @@ static esp_err_t usb_tonex_one_plus_modify_global(uint16_t global_val, float val
     {
         case TONEX_GLOBAL_BPM:
         {
-            // modify the BPM value in state packet
-            memcpy((void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BPM], (void*)&value, sizeof(float));
+            // check if tempo source is global or preset
+            if (TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TEMPO_SOURCE] != 0)
+            {
+                // modify the preset value
+                usb_tonex_one_plus_send_preset_tempo(value);
+            }
+            else
+            {
+                // modify the BPM value in state packet
+                memcpy((void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BPM], (void*)&value, sizeof(float));
+            }
             res = ESP_OK;
         } break;
 
@@ -782,11 +827,16 @@ static TonexStatus usb_tonex_one_plus_parse_state(uint8_t* unframed, uint16_t le
     // update global params
     if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
     {
-        memcpy((void*)&param_ptr[TONEX_GLOBAL_BPM].Value, (void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BPM], sizeof(float));
         memcpy((void*)&param_ptr[TONEX_GLOBAL_INPUT_TRIM].Value, (void*)&TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_INPUT_TRIM], sizeof(float));
         param_ptr[TONEX_GLOBAL_CABSIM_BYPASS].Value = (float)TonexData->Message.PedalData.StateData[TONEX_STATE_OFFSET_START_CAB_BYPASS];
         param_ptr[TONEX_GLOBAL_TEMPO_SOURCE].Value = (float)TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TEMPO_SOURCE];        
         
+        if (param_ptr[TONEX_GLOBAL_TEMPO_SOURCE].Value == 0)
+        {
+            // only set this if in global preset mode
+            memcpy((void*)&param_ptr[TONEX_GLOBAL_BPM].Value, (void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_BPM], sizeof(float));
+        }
+
         uint16_t freq;
         memcpy((void*)&freq, (void*)&TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TUNING_REF], sizeof(uint16_t));
         param_ptr[TONEX_GLOBAL_TUNING_REFERENCE].Value = (float)freq;
@@ -990,6 +1040,48 @@ static TonexStatus usb_tonex_one_plus_parse_param_changed(uint8_t* unframed, uin
         ESP_LOG_BUFFER_HEXDUMP(TAG, unframed, length, ESP_LOG_INFO);
     }
 
+    // check for preset tempo b9 04 01 
+    param_start_marker_1[2] = 0x01;
+    
+    // try to locate the start of the parameter index
+    temp_ptr = memmem((void*)&unframed[index], length, (void*)param_start_marker_1, sizeof(param_start_marker_1));
+    if (temp_ptr != NULL)
+    {       
+        // skip the start marker
+        temp_ptr += sizeof(param_start_marker_1);
+        
+        // next 2 bytes are the param index
+        param_index = ((*temp_ptr) << 8) | (*(temp_ptr + 1));
+        temp_ptr += 2;
+
+        // debug
+        //ESP_LOG_BUFFER_HEXDUMP(TAG, temp_ptr, 6, ESP_LOG_INFO);
+
+        // next should be float start marker
+        if (*temp_ptr == 0x88)
+        {
+            // skip it
+            temp_ptr++;
+
+            // get the value
+            memcpy((void*)&value, (void*)temp_ptr, sizeof(float));
+
+            if (param_index == 0x01)
+            {
+                // Preset tempo
+                if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
+                {
+                    // using virtual "Global BPM" for preset bpm
+                    param_ptr[TONEX_GLOBAL_BPM].Value = value;
+
+                    tonex_params_release_locked_access();
+                }
+
+                ESP_LOGI(TAG, "Got preset tempo: %3.2f", value);
+            }
+        }
+    }
+
     return STATUS_OK;
 }
 
@@ -1050,13 +1142,46 @@ static Slot usb_tonex_one_plus_slot_for_saving_preset(void)
 *****************************************************************************/
 static void usb_tonex_one_plus_parse_preset_parameters(uint8_t* raw_data, uint16_t length)
 {
+    uint8_t preset_tempo_start_marker[] = {0xBA, 0x02}; 
     uint8_t param_start_marker[] = {0xBA, 0x03, 0xBA, 0x6D}; 
     tModellerParameter* param_ptr = NULL;
 
     ESP_LOGI(TAG, "Parsing Preset parameters");
 
+    // try to locate the 2 floats near the start, one of which is the preset tempo
+    uint8_t* temp_ptr = memmem((void*)raw_data, length, (void*)preset_tempo_start_marker, sizeof(preset_tempo_start_marker));
+    if (temp_ptr != NULL)
+    {
+        // skip the start marker
+        temp_ptr += sizeof(preset_tempo_start_marker);
+
+        // skip the float value that follows (unknown) 0x88 and 4 bytes
+        temp_ptr += 5;
+
+        // should be at the preset tempo, check for float marker
+        if (*temp_ptr == 0x88)
+        {
+            // skip the marker
+            temp_ptr++;
+
+            // are we running in preset tempo source mode?
+            if (TonexData->Message.PedalData.StateData[TonexData->Message.PedalData.StateDataLength - TONEX_STATE_OFFSET_END_TEMPO_SOURCE] != 0)
+            {
+                ESP_LOGI(TAG, "Got Preset tempo value");
+
+                if (tonex_params_get_locked_access(&param_ptr) == ESP_OK)
+                {                    
+                    // get the value
+                    memcpy((void*)&param_ptr[TONEX_GLOBAL_BPM].Value, (void*)temp_ptr, sizeof(float));
+
+                    tonex_params_release_locked_access();
+                }
+            }
+        }
+    }
+
     // try to locate the start of the first parameter block 
-    uint8_t* temp_ptr = memmem((void*)raw_data, length, (void*)param_start_marker, sizeof(param_start_marker));
+    temp_ptr = memmem((void*)raw_data, length, (void*)param_start_marker, sizeof(param_start_marker));
     if (temp_ptr != NULL)
     {
         // skip the start marker
