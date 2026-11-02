@@ -901,3 +901,8 @@ esp_err_t midi_host_midi_desc_get(midi_dev_hdl_t midi_hdl, const usb_standard_de
 
     return ret;
 }
+
+bool midi_host_is_installed(void)
+{
+    return (p_midi_obj != NULL);
+}

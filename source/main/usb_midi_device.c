@@ -183,8 +183,12 @@ void usb_midi_device_init(class_driver_t* driver_obj, uint16_t vendor_id, uint16
     // save the queue handle
     input_queue = comms_queue;
     
-    // install Midi host driver
-    ESP_ERROR_CHECK(midi_host_install(NULL));
+    if (!midi_host_is_installed()) 
+    {
+        // install Midi host driver
+        ESP_ERROR_CHECK(midi_host_install(NULL));
+    }
+
     ESP_LOGI(TAG, "Opening USB Midi device");
 
     // set the config
@@ -225,5 +229,4 @@ void usb_midi_device_deinit(void)
     midi_host_close(midi_dev);
     vTaskDelay(200);
     midi_dev = NULL;
-    midi_host_uninstall();
 }

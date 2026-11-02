@@ -143,6 +143,15 @@ void midi_host_desc_print(midi_dev_hdl_t midi_hdl);
  */
 esp_err_t midi_host_midi_desc_get(midi_dev_hdl_t midi_hdl, const usb_standard_desc_t **desc_out);
 
+/**
+ * @brief Check whether the MIDI host driver is currently installed
+ *
+ * @return
+ *   - true:  Driver is installed (p_midi_obj is valid)
+ *   - false: Driver is not installed
+ */
+bool midi_host_is_installed(void);
+
 #ifdef __cplusplus
 }
 #endif

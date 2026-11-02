@@ -2300,8 +2300,12 @@ void usb_valeton_gp5_init(class_driver_t* driver_obj, QueueHandle_t comms_queue)
     memset((void*)&BootFlags, 0, sizeof(BootFlags));
     ValetonGP5Data->State = COMMS_STATE_IDLE;
 
-    // install Midi host driver
-    ESP_ERROR_CHECK(midi_host_install(NULL));
+    if (!midi_host_is_installed()) 
+    {
+        // install Midi host driver
+        ESP_ERROR_CHECK(midi_host_install(NULL));
+    }
+    
     ESP_LOGI(TAG, "Opening Midi device 0x%04X:0x%04X", VALETON_USB_VENDOR, VALETON_GP5_PRODUCT_ID);
 
     // set the config
@@ -2342,7 +2346,6 @@ void usb_valeton_gp5_deinit(void)
     midi_host_close(midi_dev);
     vTaskDelay(200);
     midi_dev = NULL;
-    midi_host_uninstall();
 
     // free mem
     free((void*)InputBuffers);
