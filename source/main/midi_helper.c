@@ -36,6 +36,7 @@ limitations under the License.
 #include "usb/usb_host.h"
 #include "usb_tonex_one.h"
 #include "tonex_params.h"
+#include "valeton_params.h"
 #include "midi_helper.h"
 #include "midi_helper_tonex.h"
 #include "midi_helper_valeton.h"
@@ -51,14 +52,42 @@ static const char *TAG = "app_midi_helper";
 *****************************************************************************/
 float midi_helper_scale_midi_to_float(uint16_t param_index, uint8_t midi_value)
 {
-    float min;
-    float max;
+    //Alteração realizada para não usar mais a função tonex_params_get_min_max.
+    //A função agora irá retornar valores convertidos de acordo com a medida do campo.
+    //By: Wilson Baião 05/11/2026
+    
+    // float min;
+    // float max;
 
-    // get this params min/max values
-    tonex_params_get_min_max(param_index, &min, &max);
+    // // scale 0..127 midi value to param
+    // return min + (((float)midi_value / 127.0f) * (max - min));
+    float min = 0.0f;
+    float max = 0.0f;
+    esp_err_t err;
 
+    // // get this params min/max values
+    // tonex_params_get_min_max(param_index, &min, &max);
+ 
+    // Use the parameter range belonging to the connected modeller. The
+    // Valeton and TONEX parameter tables have different indices and ranges.
+    if (usb_get_connected_modeller_type() == AMP_MODELLER_VALETON_GP5)
+    {
+        err = valeton_params_get_min_max(param_index, &min, &max);
+    }
+    else
+    {
+        err = tonex_params_get_min_max(param_index, &min, &max);
+    }
+ 
+    if (err != ESP_OK)
+    {
+        ESP_LOGW(TAG, "Unable to get parameter %u range for MIDI scaling", (unsigned)param_index);
+        return 0.0f;
+    }
+ 
     // scale 0..127 midi value to param
     return min + (((float)midi_value / 127.0f) * (max - min));
+
 }
 
 /****************************************************************************
