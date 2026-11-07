@@ -67,6 +67,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_icon_val_dly;
     lv_obj_t *ui_icon_val_dst;
     lv_obj_t *ui_val_settings;
+    lv_obj_t *ui_debug_text_area;
     lv_obj_t *ui_left_arrow;
     lv_obj_t *ui_right_arrow;
     lv_obj_t *ui_entry_keyboard;

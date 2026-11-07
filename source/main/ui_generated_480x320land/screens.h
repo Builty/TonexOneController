@@ -43,6 +43,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_bpm_indicator;
     lv_obj_t *ui_preset_details_text_area;
     lv_obj_t *ui_tuner_button;
+    lv_obj_t *ui_debug_text_area;
     lv_obj_t *ui_bottom_panel_tonex;
     lv_obj_t *ui_settings_image;
     lv_obj_t *ui_icon_reverb;

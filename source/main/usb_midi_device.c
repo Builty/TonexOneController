@@ -28,6 +28,7 @@ limitations under the License.
 #include "driver/i2c_master.h"
 #include "usb_comms.h"
 #include "usb_midi_device.h"
+#include "main.h"
 #include "control.h"
 #include "display.h"
 #include "wifi_config.h"
@@ -205,6 +206,7 @@ void usb_midi_device_init(class_driver_t* driver_obj, uint16_t vendor_id, uint16
     if (midi_host_open(vendor_id, product_id, interface_index, &dev_config, &midi_dev) != ESP_OK)
     {
         ESP_LOGE(TAG, "midi_host_open failed");
+        DEBUG_LOG_USB("USB Midi open failed");
     }
 
      // get the channel to use
@@ -215,6 +217,8 @@ void usb_midi_device_init(class_driver_t* driver_obj, uint16_t vendor_id, uint16
     {
         midi_serial_channel--;
     }
+
+    DEBUG_LOG_USB("USB Midi open OK");
 }
 
 /****************************************************************************
@@ -229,4 +233,5 @@ void usb_midi_device_deinit(void)
     midi_host_close(midi_dev);
     vTaskDelay(200);
     midi_dev = NULL;
+    DEBUG_LOG_USB("USB Midi closed");
 }

@@ -41,6 +41,7 @@ limitations under the License.
 #include "esp_task_wdt.h"
 #include "usb_comms.h"
 #include "usb/cdc_acm_host.h"
+#include "main.h"
 #include "usb_tonex_common.h"
 #include "usb_tonex_one.h"
 #include "usb_tonex_one_plus.h"
@@ -50,6 +51,7 @@ limitations under the License.
 #include "usb_midi_device.h"
 #include "control.h"
 #include "task_priorities.h"
+#include "display.h"
 
 #ifdef CONFIG_USB_HOST_ENABLE_ENUM_FILTER_CALLBACK
 #define ENABLE_ENUM_FILTER_CALLBACK
@@ -257,6 +259,7 @@ void class_driver_task(void *arg)
             if (usb_host_device_open(driver_obj.client_hdl, addr, &s->drv.dev_hdl) != ESP_OK) 
             {
                 ESP_LOGE(TAG, "Failed to open USB device");
+                DEBUG_LOG_USB("USB open failed");
                 s->drv.dev_addr = 0;
                 continue;
             }
@@ -272,6 +275,7 @@ void class_driver_task(void *arg)
             if (dd->bDeviceClass == 0x09) 
             {
                 ESP_LOGI(TAG, "Found USB Hub, close it");
+                DEBUG_LOG_USB("USB hub detected");
                 usb_host_device_close(driver_obj.client_hdl, s->drv.dev_hdl);
                 s->drv.dev_hdl = NULL;
                 s->drv.dev_addr = 0;
@@ -327,12 +331,17 @@ void class_driver_task(void *arg)
                 if (midi_interface_index != 0xFF)
                 {
                     ESP_LOGI(TAG, "Found USB Midi device");
+                    DEBUG_LOG_USB("USB Midi detected");
 
                     usb_midi_device_init(&s->drv, dd->idVendor, dd->idProduct, midi_interface_index, usb_input_queue);
                 }
                 else
                 {
-                    ESP_LOGI(TAG, "Found unexpected USB device");
+                    char debug_text[50];
+                    sprintf(debug_text, "USB unexpected device %d %d %d", dd->bDeviceClass, dd->idVendor, dd->idProduct);
+
+                    ESP_LOGI(TAG, "Unexpected device");
+                    DEBUG_LOG_USB(debug_text);
 
                     // close it
                     usb_host_device_close(driver_obj.client_hdl, s->drv.dev_hdl);

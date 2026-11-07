@@ -25,6 +25,13 @@ extern "C" {
 
 #define APP_VERSION		"3.0.0.2"
 
+// for debug only, must be commented out for normal builds
+//#define ENABLE_BT_DEBUG_LOG
+//#define ENABLE_USB_DEBUG_LOG
+//#define ENABLE_MIDI_DEBUG_LOG
+
+
+
 #define I2C_MASTER_NUM_1                0          
 #define I2C_MASTER_NUM_2                1          
 
@@ -822,6 +829,30 @@ extern SemaphoreHandle_t I2CMutex_2;
 #endif
 
 esp_err_t i2c_master_reset(void);
+
+
+// debug logging 
+#if defined ENABLE_BT_DEBUG_LOG
+    #define DEBUG_LOG_BT(x)    UI_SetDebugText(x)
+#else
+    // do nothing
+    #define DEBUG_LOG_BT(x)    
+#endif
+
+#if defined ENABLE_USB_DEBUG_LOG
+    #define DEBUG_LOG_USB(x)    UI_SetDebugText(x)
+#else
+    // do nothing
+    #define DEBUG_LOG_USB(x)    
+#endif
+
+#if defined ENABLE_MIDI_DEBUG_LOG
+    #define DEBUG_LOG_MIDI(x)    UI_SetDebugText(x)
+#else
+    // do nothing
+    #define DEBUG_LOG_MIDI(x)    
+#endif
+
 
 #ifdef __cplusplus
 } /*extern "C"*/

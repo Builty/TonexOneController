@@ -111,7 +111,8 @@ enum UIElements
     UI_ELEMENT_PARAMETERS,
     UI_ELEMENT_TOAST,
     UI_ELEMENT_TUNER_FREQ,
-    UI_ELEMENT_TUNER_STATE
+    UI_ELEMENT_TUNER_STATE,
+    UI_ELEMENT_DEBUG_TEXT
 };
 
 enum UIAction
@@ -119,6 +120,7 @@ enum UIAction
     UI_ACTION_SET_STATE,
     UI_ACTION_SET_LABEL_TEXT,
     UI_ACTION_SET_ENTRY_TEXT,
+    UI_ACTION_SET_DEBUG_TEXT,
     UI_ACTION_NONE = 0xFF
 };
 
@@ -1158,6 +1160,29 @@ void UI_SetPresetDescription(char* text)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+void UI_SetDebugText(char* text)
+{
+    tUIUpdate ui_update;
+
+    // build command
+    ui_update.ElementID = UI_ELEMENT_DEBUG_TEXT;
+    ui_update.Action = UI_ACTION_SET_DEBUG_TEXT;
+    strncpy(ui_update.Text, text, MAX_UI_TEXT - 1);
+
+    // send to queue
+    if (xQueueSend(ui_update_queue, (void*)&ui_update, 0) != pdPASS)
+    {
+        ESP_LOGE(TAG, "UI Update queue send failed!");            
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void UI_RefreshParameterValues(void)
 {
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
@@ -1396,7 +1421,17 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
         {
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             element_1 = objects.ui_preset_details_text_area;
-#endif            
+#endif         
+        } break;
+
+        case UI_ELEMENT_DEBUG_TEXT:
+        {
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
+            // enable debug text
+            lv_obj_clear_flag(objects.ui_debug_text_area, LV_OBJ_FLAG_HIDDEN);
+
+            element_1 = objects.ui_debug_text_area;
+#endif  //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
         } break;
 
         case UI_ELEMENT_PARAMETERS:
@@ -1643,6 +1678,30 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
             lv_textarea_set_text(element_1, update->Text);
 #endif            
+        } break;
+
+        case UI_ACTION_SET_DEBUG_TEXT:
+        {
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
+            // append to end of text area
+            lv_textarea_set_cursor_pos(element_1, LV_TEXTAREA_CURSOR_LAST);
+            lv_textarea_add_text(element_1, " - ");
+            lv_textarea_add_text(element_1, update->Text);
+
+            // Check length (character count, UTF-8 safe)
+            const char *txt = lv_textarea_get_text(element_1);
+            uint32_t len = _lv_txt_get_encoded_length(txt);
+
+            if (len > 256)
+            {
+                // Drop the oldest characters
+                uint32_t excess = len - 256;
+                uint32_t byte_offset = _lv_txt_encoded_get_byte_id(txt, excess);
+
+                // Replace with the remaining (newest) text
+                lv_textarea_set_text(element_1, txt + byte_offset);
+            }
+#endif  //CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
         } break;
 
         case UI_ACTION_NONE:

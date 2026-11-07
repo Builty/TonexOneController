@@ -2775,6 +2775,66 @@
                   "groupIndex": 0
                 },
                 {
+                  "objID": "a773ef7b-a559-46c7-ce41-6f0facd2ba63",
+                  "type": "LVGLTextareaWidget",
+                  "left": 7,
+                  "top": 167,
+                  "width": 788,
+                  "height": 223,
+                  "customInputs": [],
+                  "customOutputs": [],
+                  "style": {
+                    "objID": "cf2bf03a-80cc-4511-cfb4-73e2bf142217",
+                    "useStyle": "default",
+                    "conditionalStyles": [],
+                    "childStyles": []
+                  },
+                  "hiddenInEditor": false,
+                  "timeline": [],
+                  "eventHandlers": [],
+                  "identifier": "ui_DebugTextArea",
+                  "leftUnit": "px",
+                  "topUnit": "px",
+                  "widthUnit": "px",
+                  "heightUnit": "px",
+                  "children": [],
+                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SNAPPABLE|SCROLLABLE",
+                  "hiddenFlag": true,
+                  "hiddenFlagType": "literal",
+                  "clickableFlag": false,
+                  "clickableFlagType": "literal",
+                  "flagScrollbarMode": "",
+                  "flagScrollDirection": "",
+                  "scrollSnapX": "",
+                  "scrollSnapY": "",
+                  "checkedStateType": "literal",
+                  "disabledState": true,
+                  "disabledStateType": "literal",
+                  "states": "",
+                  "localStyles": {
+                    "objID": "d71d8a41-2bca-471a-d878-64cc4805a308",
+                    "definition": {
+                      "MAIN": {
+                        "DEFAULT": {
+                          "text_color": "#FFFDFD",
+                          "text_font": "MONTSERRAT_36",
+                          "border_color": "563F2A",
+                          "bg_color": "#080808"
+                        }
+                      }
+                    }
+                  },
+                  "group": "",
+                  "groupIndex": 0,
+                  "text": "",
+                  "textType": "literal",
+                  "placeholder": "",
+                  "oneLineMode": false,
+                  "passwordMode": false,
+                  "acceptedCharacters": "",
+                  "maxTextLength": 256
+                },
+                {
                   "objID": "516fed02-ebdb-4c62-ba10-6f956fd361ca",
                   "type": "LVGLImageWidget",
                   "left": 88,

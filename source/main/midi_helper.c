@@ -31,6 +31,7 @@ limitations under the License.
 #include "esp_vfs_fat.h"
 #include "esp_ota_ops.h"
 #include "sys/param.h"
+#include "main.h"
 #include "control.h"
 #include "usb_comms.h"
 #include "usb/usb_host.h"
@@ -40,6 +41,7 @@ limitations under the License.
 #include "midi_helper.h"
 #include "midi_helper_tonex.h"
 #include "midi_helper_valeton.h"
+#include "display.h"
 
 static const char *TAG = "app_midi_helper";
 
@@ -180,6 +182,7 @@ uint8_t midi_helper_process_incoming_data(uint8_t* data, uint8_t length, uint8_t
 
     ESP_LOGI(TAG, "Midi incoming data len: %d: ", (int)length);
     ESP_LOG_BUFFER_HEX(TAG, data, length);
+    DEBUG_LOG_MIDI("Midi data RX");
 
     // make sure we have enough data
     if (length < 2)
@@ -227,6 +230,8 @@ uint8_t midi_helper_process_incoming_data(uint8_t* data, uint8_t length, uint8_t
         {
             case 0xC0:
             {
+                DEBUG_LOG_MIDI("Midi data PC");
+
                 // Program change Should be 0xC0 XX (XX = preset index, 0-based)
                 if (channel == midi_channel)
                 {
@@ -237,6 +242,10 @@ uint8_t midi_helper_process_incoming_data(uint8_t* data, uint8_t length, uint8_t
 
                     // set preset
                     control_request_preset_index(map_val); 
+                }
+                else
+                {
+                    DEBUG_LOG_MIDI("Midi wrong chan");
                 }
 
                 ptr++;
@@ -249,6 +258,8 @@ uint8_t midi_helper_process_incoming_data(uint8_t* data, uint8_t length, uint8_t
                 uint8_t change_num = *ptr++;
                 uint8_t value = *ptr++;
                 bytes_processed += 2;
+
+                DEBUG_LOG_MIDI("Midi data CC");
 
                 if (enable_CC && (channel == midi_channel)) 
                 {
@@ -281,6 +292,7 @@ uint8_t midi_helper_process_incoming_data(uint8_t* data, uint8_t length, uint8_t
             default:
             {
                 ESP_LOGW(TAG, "Midi incoming unexpected command %02X", (int)command);
+                DEBUG_LOG_MIDI("Midi data unexpected");
             } break;
         }
     }

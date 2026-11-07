@@ -46,11 +46,12 @@ limitations under the License.
 #include "esp_bt_defs.h"
 #include "esp_bt_device.h"
 
-
+#include "main.h"
 #include "control.h"
 #include "task_priorities.h"
 #include "midi_control.h"
 #include "midi_helper.h"
+#include "display.h"
 
 static const char *TAG = "MidiBT";
 #define GATTC_TAG        "GATTC_CLIENT"
@@ -749,6 +750,8 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
         ESP_LOGI(GATTS_TAG, "Disconnected, remote "ESP_BD_ADDR_STR", reason 0x%02x", ESP_BD_ADDR_HEX(param->disconnect.remote_bda), param->disconnect.reason);
         esp_ble_gap_start_advertising(&adv_params);
         control_set_bt_status(0);
+
+        DEBUG_LOG_BT("GATS discon");
         break;
 
     case ESP_GATTS_CONF_EVT:
@@ -985,6 +988,8 @@ static void __attribute__((unused)) gattc_profile_a_event_handler(esp_gattc_cb_e
 
                                         // update UI to show a BT connected
                                         control_set_bt_status(1);
+
+                                        DEBUG_LOG_BT("GATC conn");
                                     }
                                 }  
                             }                   
@@ -1130,6 +1135,8 @@ static void __attribute__((unused)) gattc_profile_a_event_handler(esp_gattc_cb_e
             // update UI to show a BT disconnected
             control_set_bt_status(0);
 
+            DEBUG_LOG_BT("GATC disconn");
+
             if (memcmp(p_data->disconnect.remote_bda, gl_profile_tab.remote_bda, 6) == 0)
             {
                 ESP_LOGI(GATTC_TAG, "Device A disconnected");
@@ -1255,6 +1262,7 @@ static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *par
             show_bonded_devices();
 
             control_set_bt_status(1);
+            DEBUG_LOG_BT("GAP conn");
             break;
         }
 
@@ -1262,6 +1270,7 @@ static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *par
         {
             ESP_LOGD(GATTS_TAG, "Bond device remove, status %d, device "ESP_BD_ADDR_STR"", param->remove_bond_dev_cmpl.status, ESP_BD_ADDR_HEX(param->remove_bond_dev_cmpl.bd_addr));
             control_set_bt_status(0);
+            DEBUG_LOG_BT("GAP disconn");
             break;
         }
 
@@ -1354,6 +1363,10 @@ static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *par
                                     esp_ble_gap_stop_scanning();
                                     esp_ble_gattc_open(gl_profile_tab.gattc_if, scan_result->scan_rst.bda, scan_result->scan_rst.ble_addr_type, true);
                                     Isconnecting = true;
+
+                                    char debug[64];
+                                    sprintf(debug, "BT found %s", adv_name);
+                                    DEBUG_LOG_BT(debug);
                                 }
                                 break;
                             }
@@ -1579,6 +1592,8 @@ static void init_BLE(void)
             ESP_LOGE(GATTC_TAG, "gattc app register error, error code = %x", ret);
             return;
         }
+
+        DEBUG_LOG_BT("BT Central");
     }
     else if (control_get_config_item_int(CONFIG_ITEM_BT_MODE) == BT_MODE_PERIPHERAL)
     {
@@ -1625,6 +1640,8 @@ static void init_BLE(void)
         and the init key means which key you can distribute to the slave. */
         esp_ble_gap_set_security_param(ESP_BLE_SM_SET_INIT_KEY, &init_key, sizeof(uint8_t));
         esp_ble_gap_set_security_param(ESP_BLE_SM_SET_RSP_KEY, &rsp_key, sizeof(uint8_t));
+
+        DEBUG_LOG_BT("BT Perip");
     }
 
     // set MTU
