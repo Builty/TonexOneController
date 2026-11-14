@@ -221,8 +221,15 @@ static esp_err_t footswitch_read_single_onboard(uint8_t number, uint8_t* switch_
         result = ESP_OK;
         *switch_state = (value == 0);
 
+        //ESP_LOGE(TAG, "ws_io_extension_input %d", value);
+
         // don't poll too hard or chip can lock up
         vTaskDelay(pdMS_TO_TICKS(10));
+    }
+    else
+    {
+        // debug
+        ESP_LOGE(TAG, "ws_io_extension_input failed");
     }
 #else
     // other boards can use direct IO pin

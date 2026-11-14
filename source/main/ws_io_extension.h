@@ -21,7 +21,7 @@ limitations under the License.
 
 #include "esp_err.h"
 
-esp_err_t ws_io_extension_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex);
+esp_err_t ws_io_extension_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex, uint8_t io_states);
 esp_err_t ws_io_extension_io_mode(uint8_t pin);
 esp_err_t ws_io_extension_output(uint8_t pin, uint8_t value);
 esp_err_t ws_io_extension_input(uint8_t pin, uint8_t* state);

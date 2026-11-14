@@ -104,7 +104,7 @@ static esp_err_t __attribute__((unused)) ws_io_extension_read(uint8_t reg, uint8
 
 	if (xSemaphoreTake(I2CMutexHandle, pdMS_TO_TICKS(200)) == pdTRUE)
     {		
-		res = i2c_master_transmit_receive(dev_handle, &reg, sizeof(reg), val, sizeof(val), pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+		res = i2c_master_transmit_receive(dev_handle, &reg, sizeof(uint8_t), val, sizeof(uint8_t), pdMS_TO_TICKS(I2C_TIMEOUT_MS));
 
         if (res != ESP_OK)
         {
@@ -126,7 +126,7 @@ static esp_err_t __attribute__((unused)) ws_io_extension_read(uint8_t reg, uint8
 *****************************************************************************/
 esp_err_t __attribute__((unused)) ws_io_extension_output(uint8_t pin, uint8_t value) 
 {
-    esp_err_t ret;
+    esp_err_t ret = ESP_FAIL;
 
     // Update the output value based on the pin and value
     if (value == 1)
@@ -140,20 +140,13 @@ esp_err_t __attribute__((unused)) ws_io_extension_output(uint8_t pin, uint8_t va
         io_extension_obj.Last_io_value &= (~(1 << pin)); 
     }
 
-    uint8_t data[2] = {IO_EXTENSION_IO_OUTPUT_ADDR, io_extension_obj.Last_io_value}; 
-        
-    // do the transfer
-    if (xSemaphoreTake(I2CMutexHandle, pdMS_TO_TICKS(200)) == pdTRUE)
-    {		        
-        if (i2c_master_transmit(dev_handle, data, 2, pdMS_TO_TICKS(I2C_TIMEOUT_MS)) != ESP_OK)
-        {
-            ESP_LOGE(TAG, "ws_io_extension_output write failed");
-        }
-        else
-        {
-            ret = ESP_OK;
-        }
-        xSemaphoreGive(I2CMutexHandle);
+    if (ws_io_extension_write(IO_EXTENSION_IO_OUTPUT_ADDR, io_extension_obj.Last_io_value) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "ws_io_extension_output write failed");
+    }
+    else
+    {
+        ret = ESP_OK;
     }
     
     return ret;    
@@ -168,28 +161,21 @@ esp_err_t __attribute__((unused)) ws_io_extension_output(uint8_t pin, uint8_t va
 *****************************************************************************/
 esp_err_t __attribute__((unused)) ws_io_extension_input(uint8_t pin, uint8_t* state) 
 {
-    esp_err_t ret;
+    esp_err_t ret = ESP_FAIL;
     uint8_t value = 0;
     *state = 0;
 
-    uint8_t data[1] = {IO_EXTENSION_IO_INPUT_ADDR}; 
-        
-    // do the transfer
-    if (xSemaphoreTake(I2CMutexHandle, pdMS_TO_TICKS(200)) == pdTRUE)
-    {		      
-        if (i2c_master_transmit_receive(dev_handle, data, 1, &value, 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS)) != ESP_OK)
+    if (ws_io_extension_read(IO_EXTENSION_IO_INPUT_ADDR, &value) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "ws_io_extension_input failed");
+    }
+    else
+    {
+        if ((value & (1 << pin)) != 0)
         {
-            ESP_LOGE(TAG, "ws_io_extension_input failed");
+            *state = 1;
         }
-        else
-        {
-            if ((value & (1 << pin)) != 0)
-            {
-                *state = 1;
-            }
-            ret = ESP_OK;
-        }
-        xSemaphoreGive(I2CMutexHandle);
+        ret = ESP_OK;
     }
     
     return ret;    
@@ -204,25 +190,18 @@ esp_err_t __attribute__((unused)) ws_io_extension_input(uint8_t pin, uint8_t* st
 *****************************************************************************/
 esp_err_t __attribute__((unused)) ws_io_extension_input_all(uint8_t* state) 
 {
-    esp_err_t ret;
+    esp_err_t ret = ESP_FAIL;
     uint8_t value = 0;
     *state = 0;
-
-    uint8_t data[1] = {IO_EXTENSION_IO_INPUT_ADDR}; 
         
-    // do the transfer
-    if (xSemaphoreTake(I2CMutexHandle, pdMS_TO_TICKS(200)) == pdTRUE)
-    {		      
-        if (i2c_master_transmit_receive(dev_handle, data, 1, &value, 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS)) != ESP_OK)
-        {
-            ESP_LOGE(TAG, "ws_io_extension_input_all failed");
-        }
-        else
-        {
-            *state = value;
-            ret = ESP_OK;
-        }
-        xSemaphoreGive(I2CMutexHandle);
+    if (ws_io_extension_read(IO_EXTENSION_IO_INPUT_ADDR, &value) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "ws_io_extension_input_all failed");
+    }
+    else
+    {
+        *state = value;
+        ret = ESP_OK;
     }
     
     return ret;    
@@ -237,7 +216,7 @@ esp_err_t __attribute__((unused)) ws_io_extension_input_all(uint8_t* state)
 *****************************************************************************/
 esp_err_t __attribute__((unused)) ws_io_extension_pwm_output(uint8_t value) 
 {
-    esp_err_t ret;
+    esp_err_t ret = ESP_FAIL;
     
     // hack from Waveshare code to clamp
     if (value >= 97)
@@ -245,23 +224,14 @@ esp_err_t __attribute__((unused)) ws_io_extension_pwm_output(uint8_t value)
         value = 97;
     }
     
-    uint8_t data[2] = {IO_EXTENSION_PWM_ADDR, value}; 
-
     // Calculate the duty cycle based on the resolution (12 bits??)
-    data[1] = value * (255 / 100.0);
-    
-    // do the transfer
-    if (xSemaphoreTake(I2CMutexHandle, pdMS_TO_TICKS(200)) == pdTRUE)
-    {		        
-        if (i2c_master_transmit(dev_handle, data, 2, pdMS_TO_TICKS(I2C_TIMEOUT_MS)) != ESP_OK)
-        {
-            ESP_LOGE(TAG, "ws_io_extension_pwm_output write failed");
-        }
-        else
-        {
-            ret = ESP_OK;
-        }
-        xSemaphoreGive(I2CMutexHandle);
+    if (ws_io_extension_write(IO_EXTENSION_PWM_ADDR, (uint8_t)((float)value * (255.0f / 100.0f))) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "ws_io_extension_pwm_output write failed");
+    }
+    else
+    {
+        ret = ESP_OK;
     }
     
     return ret;    
@@ -277,25 +247,18 @@ esp_err_t __attribute__((unused)) ws_io_extension_pwm_output(uint8_t value)
 esp_err_t __attribute__((unused)) ws_io_extension_read_adc(uint8_t* value) 
 {
     uint8_t val = 0;
-    esp_err_t ret;
+    esp_err_t ret = ESP_FAIL;
     
     *value = 0;
 
-    uint8_t data[1] = {IO_EXTENSION_ADC_ADDR}; 
-        
-    // do the transfer
-    if (xSemaphoreTake(I2CMutexHandle, pdMS_TO_TICKS(200)) == pdTRUE)
-    {		      
-        if (i2c_master_transmit_receive(dev_handle, data, 1, &val, 1, pdMS_TO_TICKS(I2C_TIMEOUT_MS)) != ESP_OK)
-        {
-            ESP_LOGE(TAG, "ws_io_extension_read_adc write failed");
-        }
-        else
-        {
-            *value = val;
-            ret = ESP_OK;
-        }
-        xSemaphoreGive(I2CMutexHandle);
+    if (ws_io_extension_read(IO_EXTENSION_ADC_ADDR, &val) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "ws_io_extension_read_adc write failed");
+    }
+    else
+    {
+        *value = val;
+        ret = ESP_OK;
     }
     
     return ret;    
@@ -310,21 +273,25 @@ esp_err_t __attribute__((unused)) ws_io_extension_read_adc(uint8_t* value)
 *****************************************************************************/
 esp_err_t __attribute__((unused)) ws_io_extension_io_mode(uint8_t pin) 
 {
-    esp_err_t ret;
-    uint8_t data[2] = {IO_EXTENSION_Mode, pin}; 
+    esp_err_t ret = ESP_FAIL;
+    uint8_t verify = 0;
     
-    // Write the 8-bit value to the IO mode register 
-    if (xSemaphoreTake(I2CMutexHandle, pdMS_TO_TICKS(200)) == pdTRUE)
-    {		        
-        if (i2c_master_transmit(dev_handle, data, 2, pdMS_TO_TICKS(I2C_TIMEOUT_MS)) != ESP_OK)
+    ESP_LOGI(TAG, "ws_io_extension_io_mode %d", pin);    
+
+    if (ws_io_extension_write(IO_EXTENSION_Mode, pin) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "ws_io_extension_io_mode write failed");
+    }
+    else
+    {
+        // debug: read back to verify
+        vTaskDelay(10);
+        if (ws_io_extension_read(IO_EXTENSION_Mode, &verify) == ESP_OK)
         {
-            ESP_LOGE(TAG, "ws_io_extension_io_mode write failed");
+            ESP_LOGI(TAG, "ws_io_extension_io_mode verify %d %d", verify, pin);
         }
-        else
-        {
-            ret = ESP_OK;
-        }
-        xSemaphoreGive(I2CMutexHandle);
+
+        ret = ESP_OK;
     }
     
     return ret;    
@@ -339,7 +306,7 @@ esp_err_t __attribute__((unused)) ws_io_extension_io_mode(uint8_t pin)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
-esp_err_t ws_io_extension_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex)
+esp_err_t ws_io_extension_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex, uint8_t io_states)
 {
 #if CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_43C
 	// save handles
@@ -353,8 +320,11 @@ esp_err_t ws_io_extension_init(i2c_master_bus_handle_t bus_handle, SemaphoreHand
     };
     ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_config, &dev_handle));
 
-    // Set IO states for pins all pins (1 = output)   
-    ws_io_extension_io_mode(0xff); 
+    // Set IO states for pins (1 = output)   
+    if (ws_io_extension_io_mode(io_states) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "ws_io_extension_io_mode init failed");
+    }
 
     // Initialize control flags for IO output enable and open-drain output mode
     io_extension_obj.Last_io_value = 0xF7;
