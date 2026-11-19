@@ -1,6 +1,6 @@
 #include "images.h"
 
-const ext_img_desc_t images[116] = {
+const ext_img_desc_t images[118] = {
     { "arrow_left", &img_arrow_left },
     { "arrow_right", &img_arrow_right },
     { "bt_conn", &img_bt_conn },
@@ -62,7 +62,6 @@ const ext_img_desc_t images[116] = {
     { "smythbuilt", &img_smythbuilt },
     { "tick", &img_tick },
     { "usb_fail", &img_usb_fail },
-    { "usb_ok", &img_usb_ok },
     { "wifi_conn", &img_wifi_conn },
     { "wifi_disconn", &img_wifi_disconn },
     { "settings", &img_settings },
@@ -117,4 +116,7 @@ const ext_img_desc_t images[116] = {
     { "amp_disabled", &img_amp_disabled },
     { "cab_disabled", &img_cab_disabled },
     { "tuner", &img_tuner },
+    { "usb_hub_1", &img_usb_hub_1 },
+    { "usb_hub_2", &img_usb_hub_2 },
+    { "usb_ok", &img_usb_ok },
 };

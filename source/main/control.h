@@ -329,6 +329,7 @@ void control_request_ab_bank_down(void);
 void control_set_usb_status(uint32_t status);
 void control_set_bt_status(uint32_t status);
 void control_set_wifi_status(uint32_t status);
+void control_set_usb_hub_status(uint32_t status);
 void control_set_amp_skin_index(uint32_t status);
 void control_set_skin_next(void);
 void control_set_skin_previous(void);

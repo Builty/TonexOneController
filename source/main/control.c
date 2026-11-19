@@ -88,7 +88,8 @@ enum CommandEvents
     EVENT_SET_CONFIG_ITEM_STRING,
     EVENT_TRIGGER_TAP_TEMPO,
     EVENT_UPDATE_FOOTSWITCH_LEDS,
-    EVENT_TUNER_REQUEST
+    EVENT_TUNER_REQUEST,
+    EVENT_SET_USB_HUB_STATUS
 };
 
 typedef struct
@@ -267,6 +268,7 @@ typedef struct
     tConfigData ConfigData;
     tTapTempo TapTempo;
     uint8_t SyncComplete;
+    uint32_t USBHubStatus;
 } tControlData;
 
 static const char *TAG = "app_control";
@@ -474,6 +476,16 @@ static uint8_t process_control_command(tControlMessage* message)
 #if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
             // update UI
             UI_SetWiFiStatus(ControlData.WiFiStatus);
+#endif
+        } break;
+
+        case EVENT_SET_USB_HUB_STATUS:
+        {
+            ControlData.USBHubStatus = message->Value;
+
+#if CONFIG_TONEX_CONTROLLER_HAS_DISPLAY
+            // update UI
+            UI_SetUSBHubStatus(ControlData.USBHubStatus);
 #endif
         } break;
 
@@ -1331,6 +1343,29 @@ void control_set_wifi_status(uint32_t status)
     if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
     {
         ESP_LOGE(TAG, "control_set_wifi_status queue send failed!");            
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
+void control_set_usb_hub_status(uint32_t status)
+{
+    tControlMessage message;
+
+    ESP_LOGI(TAG, "control_set_usb_hub_status %d", (int)status);
+
+    message.Event = EVENT_SET_USB_HUB_STATUS;
+    message.Value = status;
+
+    // send to queue
+    if (xQueueSend(control_input_queue, (void*)&message, pdMS_TO_TICKS(CONTROL_QUEUE_WRITE_TIMEOUT)) != pdPASS)
+    {
+        ESP_LOGE(TAG, "control_set_usb_hub_status queue send failed!");            
     }
 }
 

@@ -27,9 +27,11 @@ typedef struct _objects_t {
     lv_obj_t *ui_top_panel;
     lv_obj_t *ui_usb_status_fail;
     lv_obj_t *ui_project_heading_label;
+    lv_obj_t *ui_hub_status_disconn;
     lv_obj_t *ui_wi_fi_status_disconn;
     lv_obj_t *ui_bt_status_disconn;
     lv_obj_t *ui_ik_logo;
+    lv_obj_t *ui_hub_status_conn;
     lv_obj_t *ui_wi_fi_status_conn;
     lv_obj_t *ui_bt_status_conn;
     lv_obj_t *ui_usb_status_ok;

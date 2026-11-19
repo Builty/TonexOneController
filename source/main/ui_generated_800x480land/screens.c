@@ -79,6 +79,14 @@ void create_screen_screen1() {
                             lv_label_set_text_static(obj, "Tonex Controller");
                         }
                         {
+                            // ui_HubStatusDisconn
+                            lv_obj_t *obj = lv_img_create(parent_obj);
+                            objects.ui_hub_status_disconn = obj;
+                            lv_obj_set_pos(obj, 587, -19);
+                            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                            lv_img_set_src(obj, &img_usb_hub_1);
+                        }
+                        {
                             // ui_WiFiStatusDisconn
                             lv_obj_t *obj = lv_img_create(parent_obj);
                             objects.ui_wi_fi_status_disconn = obj;
@@ -101,6 +109,15 @@ void create_screen_screen1() {
                             lv_obj_set_pos(obj, -22, -17);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_smythbuilt);
+                        }
+                        {
+                            // ui_HubStatusConn
+                            lv_obj_t *obj = lv_img_create(parent_obj);
+                            objects.ui_hub_status_conn = obj;
+                            lv_obj_set_pos(obj, 587, -19);
+                            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                            lv_img_set_src(obj, &img_usb_hub_2);
+                            lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                         }
                         {
                             // ui_WiFiStatusConn

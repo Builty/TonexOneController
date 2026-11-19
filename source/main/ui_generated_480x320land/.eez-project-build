@@ -124,6 +124,8 @@
     "ui_image_tick.c",
     "ui_image_tuner.c",
     "ui_image_usb_fail.c",
+    "ui_image_usb_hub_1.c",
+    "ui_image_usb_hub_2.c",
     "ui_image_usb_ok.c",
     "ui_image_wifi_conn.c",
     "ui_image_wifi_disconn.c",

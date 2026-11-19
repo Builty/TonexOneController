@@ -96,7 +96,6 @@ extern const lv_img_dsc_t img_skin_whitemodern;
 extern const lv_img_dsc_t img_skin_woodamp;
 extern const lv_img_dsc_t img_smythbuilt;
 extern const lv_img_dsc_t img_usb_fail;
-extern const lv_img_dsc_t img_usb_ok;
 extern const lv_img_dsc_t img_wifi_conn;
 extern const lv_img_dsc_t img_wifi_disconn;
 extern const lv_img_dsc_t img_amp_off;
@@ -123,6 +122,9 @@ extern const lv_img_dsc_t img_amp_disabled;
 extern const lv_img_dsc_t img_cab_disabled;
 extern const lv_img_dsc_t img_tick;
 extern const lv_img_dsc_t img_tuner;
+extern const lv_img_dsc_t img_usb_hub_1;
+extern const lv_img_dsc_t img_usb_hub_2;
+extern const lv_img_dsc_t img_usb_ok;
 
 #ifndef EXT_IMG_DESC_T
 #define EXT_IMG_DESC_T
@@ -132,7 +134,7 @@ typedef struct _ext_img_desc_t {
 } ext_img_desc_t;
 #endif
 
-extern const ext_img_desc_t images[116];
+extern const ext_img_desc_t images[118];
 
 #ifdef __cplusplus
 }

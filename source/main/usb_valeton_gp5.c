@@ -1545,6 +1545,31 @@ static void __attribute__((unused)) usb_valeton_gp5_get_preset(uint8_t index)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+static void usb_valeton_gp5_set_ctl_assignment(uint8_t block_index, uint8_t enabled)
+{
+    // Payload nibbles corresponding to "010005114d000" + effect + "0" + val
+    // (the send_sysex helper adds F0, CRC, chunk headers, and F7)
+    uint8_t midi_tx[] = {
+        0x01, 0x00, 0x05, 0x11, 0x4D, 0x00,
+        0x00, 0x00,   // block index (high/low nibble)
+        0x00, 0x00    // enabled (0 or 1)
+    };
+
+    midi_tx[6] = (block_index >> 4) & 0x0F;
+    midi_tx[7] = block_index & 0x0F;
+    midi_tx[9] = enabled ? 1 : 0;
+
+    ESP_LOGI(TAG, "Set CTL assignment block %d = %d", block_index, enabled);
+    usb_valeton_gp5_send_sysex(midi_tx, sizeof(midi_tx), 0x01);
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 static void usb_valeton_gp5_set_preset(uint8_t index)
 {
     ESP_LOGI(TAG, "Set preset %d", index);

@@ -72,9 +72,16 @@ limitations under the License.
 #define USB_ADDR_Q_LEN                  4
 #define USB_MAX_SLOTS                   4
 
+enum DeviceTypes
+{
+    DEVICE_TYPE_MODELLER,
+    DEVICE_TYPE_MIDI_CONTROLLER
+};
+
 typedef struct 
 {
     class_driver_t drv;
+    uint8_t device_type;
 } usb_slot_t;
 
 static const char *TAG = "app_usb";
@@ -290,6 +297,8 @@ void class_driver_task(void *arg)
                 AmpModellerType = AMP_MODELLER_TONEX_ONE;
 
                 usb_tonex_one_init(&s->drv, usb_input_queue);
+
+                s->device_type = DEVICE_TYPE_MODELLER;
             }
             else if ((dd->idVendor == IK_MULTIMEDIA_USB_VENDOR) && (dd->idProduct == TONEX_PRODUCT_ID))
             {
@@ -298,6 +307,8 @@ void class_driver_task(void *arg)
                 AmpModellerType = AMP_MODELLER_TONEX;
 
                 usb_tonex_init(&s->drv, usb_input_queue);
+
+                s->device_type = DEVICE_TYPE_MODELLER;
             }
             else if ((dd->idVendor == VALETON_USB_VENDOR) && (dd->idProduct == VALETON_GP5_PRODUCT_ID))
             {
@@ -306,6 +317,8 @@ void class_driver_task(void *arg)
                 AmpModellerType = AMP_MODELLER_VALETON_GP5;
 
                 usb_valeton_gp5_init(&s->drv, usb_input_queue);
+
+                s->device_type = DEVICE_TYPE_MODELLER;
             }
             else if ((dd->idVendor == IK_MULTIMEDIA_USB_VENDOR) && (dd->idProduct == TONEX_PLUG_PRODUCT_ID))
             {
@@ -314,6 +327,8 @@ void class_driver_task(void *arg)
                 AmpModellerType = AMP_MODELLER_TONEX_PLUG;
 
                 usb_tonex_plug_init(&s->drv, usb_input_queue);
+
+                s->device_type = DEVICE_TYPE_MODELLER;
             }
             else if ((dd->idVendor == IK_MULTIMEDIA_USB_VENDOR) && (dd->idProduct == TONEX_ONE_PLUS_PRODUCT_ID))
             {
@@ -322,6 +337,8 @@ void class_driver_task(void *arg)
                 AmpModellerType = AMP_MODELLER_TONEX_ONE_PLUS;
 
                 usb_tonex_one_plus_init(&s->drv, usb_input_queue);
+
+                s->device_type = DEVICE_TYPE_MODELLER;
             }
             else
             {
@@ -334,6 +351,9 @@ void class_driver_task(void *arg)
                     DEBUG_LOG_USB("USB Midi detected");
 
                     usb_midi_device_init(&s->drv, dd->idVendor, dd->idProduct, midi_interface_index, usb_input_queue);
+
+                    s->device_type = DEVICE_TYPE_MIDI_CONTROLLER;
+                    control_set_usb_hub_status(1);
                 }
                 else
                 {
@@ -364,57 +384,55 @@ void class_driver_task(void *arg)
 
             if (s->drv.actions & CLASS_DRIVER_ACTION_CLOSE_DEV) 
             {
-                uint8_t was_modeller = 0;
-
                 ESP_LOGI(TAG, "USB close device");
 
-                // Release the interface
-                if (AmpModellerType != AMP_MODELLER_NONE)
+                usb_host_interface_release(driver_obj.client_hdl, s->drv.dev_hdl, 1);
+
+                if (s->device_type == DEVICE_TYPE_MODELLER)
                 {
-                    usb_host_interface_release(driver_obj.client_hdl, s->drv.dev_hdl, 1);
-                    was_modeller = 1;
-                }
-                
-                // clean up
-                switch (AmpModellerType)
-                {
-                    case AMP_MODELLER_TONEX_ONE:
+                    // clean up
+                    switch (AmpModellerType)
                     {
-                        usb_tonex_one_deinit();
-                    } break;
+                        case AMP_MODELLER_TONEX_ONE:
+                        {
+                            usb_tonex_one_deinit();
+                        } break;
 
-                    case AMP_MODELLER_TONEX:
-                    {
-                        usb_tonex_deinit();
-                    } break;
+                        case AMP_MODELLER_TONEX:
+                        {
+                            usb_tonex_deinit();
+                        } break;
 
-                    case AMP_MODELLER_VALETON_GP5:
-                    {
-                        usb_valeton_gp5_deinit();
-                    } break;
+                        case AMP_MODELLER_VALETON_GP5:
+                        {
+                            usb_valeton_gp5_deinit();
+                        } break;
 
-                    case AMP_MODELLER_TONEX_PLUG:
-                    {
-                        usb_tonex_plug_deinit();
-                    } break;
+                        case AMP_MODELLER_TONEX_PLUG:
+                        {
+                            usb_tonex_plug_deinit();
+                        } break;
 
-                    case AMP_MODELLER_TONEX_ONE_PLUS:
-                    {
-                        usb_tonex_one_plus_deinit();
-                    } break;
+                        case AMP_MODELLER_TONEX_ONE_PLUS:
+                        {
+                            usb_tonex_one_plus_deinit();
+                        } break;
 
-                    default:
-                    {
-                        // nothing needed
-                    } break;
-                }
+                        default:
+                        {
+                            // nothing needed
+                        } break;
+                    }
 
-                if (was_modeller)
-                {
                     AmpModellerType = AMP_MODELLER_NONE;
 
                     // update UI
                     control_set_usb_status(0);
+                }
+                else if (s->device_type == DEVICE_TYPE_MIDI_CONTROLLER)
+                {
+                    // update UI
+                    control_set_usb_hub_status(0);
                 }
 
                 // close device
@@ -885,6 +903,16 @@ void init_usb_comms(void)
 
     // reserve DMA capable large contiguous memory blocks
     tonex_common_preallocate_memory();
+
+    // debug logging
+    //esp_log_level_set("USBH", ESP_LOG_DEBUG);
+    //esp_log_level_set("ENUM", ESP_LOG_DEBUG);
+    //esp_log_level_set("HUB", ESP_LOG_DEBUG);
+    //esp_log_level_set("EXT_PORT", ESP_LOG_DEBUG);
+    //esp_log_level_set("EXT_HUB", ESP_LOG_DEBUG);
+    //esp_log_level_set("HCD", ESP_LOG_DEBUG);
+    //esp_log_level_set("USB_DWC", ESP_LOG_DEBUG);
+    // end debug
 
     //Create USB daemon task
     xTaskCreatePinnedToCore(host_lib_daemon_task,

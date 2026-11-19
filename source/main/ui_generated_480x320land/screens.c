@@ -63,7 +63,7 @@ void create_screen_screen1() {
                             // ui_USBStatusFail
                             lv_obj_t *obj = lv_img_create(parent_obj);
                             objects.ui_usb_status_fail = obj;
-                            lv_obj_set_pos(obj, 400, -21);
+                            lv_obj_set_pos(obj, 401, -21);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_usb_fail);
                             lv_img_set_zoom(obj, 192);
@@ -81,10 +81,19 @@ void create_screen_screen1() {
                             lv_label_set_text_static(obj, "TONEX Controller");
                         }
                         {
+                            // ui_HubStatusDisconn
+                            lv_obj_t *obj = lv_img_create(parent_obj);
+                            objects.ui_hub_status_disconn = obj;
+                            lv_obj_set_pos(obj, 323, -21);
+                            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                            lv_img_set_src(obj, &img_usb_hub_1);
+                            lv_img_set_zoom(obj, 192);
+                        }
+                        {
                             // ui_WiFiStatusDisconn
                             lv_obj_t *obj = lv_img_create(parent_obj);
                             objects.ui_wi_fi_status_disconn = obj;
-                            lv_obj_set_pos(obj, 333, -21);
+                            lv_obj_set_pos(obj, 344, -21);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_wifi_disconn);
                             lv_img_set_zoom(obj, 192);
@@ -93,7 +102,7 @@ void create_screen_screen1() {
                             // ui_BTStatusDisconn
                             lv_obj_t *obj = lv_img_create(parent_obj);
                             objects.ui_bt_status_disconn = obj;
-                            lv_obj_set_pos(obj, 381, -21);
+                            lv_obj_set_pos(obj, 387, -21);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_bt_disconn);
                             lv_img_set_zoom(obj, 192);
@@ -108,10 +117,20 @@ void create_screen_screen1() {
                             lv_img_set_zoom(obj, 192);
                         }
                         {
+                            // ui_HubStatusConn
+                            lv_obj_t *obj = lv_img_create(parent_obj);
+                            objects.ui_hub_status_conn = obj;
+                            lv_obj_set_pos(obj, 323, -21);
+                            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                            lv_img_set_src(obj, &img_usb_hub_2);
+                            lv_img_set_zoom(obj, 192);
+                            lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                        }
+                        {
                             // ui_WiFiStatusConn
                             lv_obj_t *obj = lv_img_create(parent_obj);
                             objects.ui_wi_fi_status_conn = obj;
-                            lv_obj_set_pos(obj, 333, -21);
+                            lv_obj_set_pos(obj, 344, -21);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_wifi_conn);
                             lv_img_set_zoom(obj, 192);
@@ -121,7 +140,7 @@ void create_screen_screen1() {
                             // ui_BTStatusConn
                             lv_obj_t *obj = lv_img_create(parent_obj);
                             objects.ui_bt_status_conn = obj;
-                            lv_obj_set_pos(obj, 381, -21);
+                            lv_obj_set_pos(obj, 387, -21);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_bt_conn);
                             lv_img_set_zoom(obj, 192);
@@ -131,7 +150,7 @@ void create_screen_screen1() {
                             // ui_USBStatusOK
                             lv_obj_t *obj = lv_img_create(parent_obj);
                             objects.ui_usb_status_ok = obj;
-                            lv_obj_set_pos(obj, 400, -21);
+                            lv_obj_set_pos(obj, 401, -21);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_usb_ok);
                             lv_img_set_zoom(obj, 192);

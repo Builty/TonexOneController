@@ -112,7 +112,8 @@ enum UIElements
     UI_ELEMENT_TOAST,
     UI_ELEMENT_TUNER_FREQ,
     UI_ELEMENT_TUNER_STATE,
-    UI_ELEMENT_DEBUG_TEXT
+    UI_ELEMENT_DEBUG_TEXT,
+    UI_ELEMENT_USB_HUB_STATUS
 };
 
 enum UIAction
@@ -984,6 +985,29 @@ void UI_SetWiFiStatus(uint8_t state)
 * RETURN:      
 * NOTES:       
 *****************************************************************************/
+void UI_SetUSBHubStatus(uint8_t state)
+{
+    tUIUpdate ui_update;
+
+    // build command
+    ui_update.ElementID = UI_ELEMENT_USB_HUB_STATUS;
+    ui_update.Action = UI_ACTION_SET_STATE;
+    ui_update.Value = state;
+
+    // send to queue
+    if (xQueueSend(ui_update_queue, (void*)&ui_update, 0) != pdPASS)
+    {
+        ESP_LOGE(TAG, "UI Update queue send failed!");            
+    }
+}
+
+/****************************************************************************
+* NAME:        
+* DESCRIPTION: 
+* PARAMETERS:  
+* RETURN:      
+* NOTES:       
+*****************************************************************************/
 void UI_SetTunerState(uint8_t state)
 {
     tUIUpdate ui_update;
@@ -1398,6 +1422,13 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
             element_1 = objects.ui_wi_fi_status_conn;
         } break;
 
+        case UI_ELEMENT_USB_HUB_STATUS:
+        {
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI            
+            element_1 = objects.ui_hub_status_conn;
+#endif            
+        } break;
+
         case UI_ELEMENT_PRESET_NAME:
         {
             element_1 = objects.ui_preset_heading_label;
@@ -1598,8 +1629,27 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
                     lv_obj_add_flag(objects.ui_wi_fi_status_disconn, LV_OBJ_FLAG_HIDDEN);
                     lv_obj_clear_flag(objects.ui_wi_fi_status_conn, LV_OBJ_FLAG_HIDDEN);
                 }
-            }
+            }          
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
+            else if (element_1 == objects.ui_hub_status_conn)
+            {
+                if (update->Value == 0)
+                {
+                    ESP_LOGI(TAG, "Show USB Hub disconn");
+
+                    // show the Hub disconnected image
+                    lv_obj_add_flag(objects.ui_hub_status_conn, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_hub_status_disconn, LV_OBJ_FLAG_HIDDEN);
+                }
+                else
+                {
+                    ESP_LOGI(TAG, "Show USB Hub conn");
+
+                    // show the Hub connected image
+                    lv_obj_add_flag(objects.ui_hub_status_disconn, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_clear_flag(objects.ui_hub_status_conn, LV_OBJ_FLAG_HIDDEN);
+                }
+            }
             else if (element_1 == objects.ui_skin_image)
             {
                 // is the skin image different from what we have loaded?
